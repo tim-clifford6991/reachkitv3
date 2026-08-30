@@ -164,6 +164,12 @@ approve — a requirement or a journey.** Both rounds are dispatched by the
 owner's verb — no agent can invoke another agent. Round one runs on the
 returned draft and its findings go back to the author to fold in; round
 two runs on the result, before the draft is treated as ready to approve.
+One exception, learned at scale: a draft that faithfully transcribes a
+cited, settled specification takes round one only — fidelity and
+testability — because its decisions were already made where it cites;
+round two is reserved for drafts that decide. A conflict between
+transcribed drafts, or with their source, routes to `/decide` or a merge,
+never into another round.
 `/decide` and
 `/feedback` produce no such draft — a decision is derived and
 self-certified (rule 3.2) and feedback is triage, not an owner approval —
@@ -280,6 +286,12 @@ dependencies.
 - **7.3 UX preview gate.** A WO touching customer-visible surface needs a
   signed preview first. UI uses named tokens and registered components only.
   Long LLM-generated text in the UI is a defect.
+- **7.4 Vertical slices.** Approval and expansion proceed one journey at a
+  time: approve a journey's requirements, expand them, build them, then
+  take the next — everything else stays draft inventory, which blocks
+  nothing. A corpus-wide horizontal pass belongs to `/requirement-cleanup`
+  alone. *Learned at 66 simultaneous drafts: every seam edit rippled
+  through all of them, and nothing reached a blueprint.*
 
 ## 8. What does not change
 
