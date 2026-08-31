@@ -72,8 +72,13 @@ answer that question belongs in another artifact.**
 **Rule 2.1 — requirements are sacred.** A REQ states behaviour and nothing
 else. Its changelog lives in `requirements/history/`, its answered questions
 are deleted once ruled, and its evidence lives in `registry/evidence/`.
-**One page.** A requirement that has grown past one page is cleaned up
-(`/requirement-cleanup`), never left.
+**The cap is seams-aware.** Prose — story, rationale, non-goals — fits one
+screen; acceptance criteria are a numbered list with a soft budget of ~12.
+Past the budget, look for a second *behavior* — but never split to satisfy
+length where the halves could not state themselves without citing each
+other: a seam costs more than a long page (measured 10:1 in tokens on the
+first live corpus). A requirement that has outgrown its behavior is
+cleaned up (`/requirement-cleanup`), never left.
 
 **Rule 2.2 — significance threshold.** An ADR is written only when the
 decision is architecturally significant **and** reversing it later costs more
@@ -204,7 +209,14 @@ directories.
 
 **Rule 4.2 — an agent that finds its instruction wrong says so.** *On the
 reference corpus, three implementers overrode the orchestrator in a week and
-all three were right.*
+all three were right.* It says so **once, in one place** — the objection,
+the evidence, one line for each side. After the owner rules, it executes
+without re-argument, recording any residual risk as a `rests-on` row, never
+as prose relitigated in every later return.
+
+**Rule 4.3 — returns are deltas.** An agent's return states what changed,
+what stands, and the counts — never a restatement of content the files
+already hold. The corpus is the record; the return is the diff.
 
 ## 5. The knowledge graph
 
