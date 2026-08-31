@@ -1,0 +1,1566 @@
+{
+  "coverage": {
+    "satisfies": {
+      "carrying": 0,
+      "total": 74
+    },
+    "covers": {
+      "carrying": 0,
+      "total": 74
+    },
+    "implements": {
+      "carrying": 0,
+      "total": 74
+    },
+    "decides-for": {
+      "carrying": 0,
+      "total": 74
+    },
+    "about": {
+      "carrying": 0,
+      "total": 74
+    },
+    "depends-on": {
+      "carrying": 57,
+      "total": 74
+    },
+    "blocked-by": {
+      "carrying": 0,
+      "total": 74
+    },
+    "cites-retired": {
+      "carrying": 0,
+      "total": 74
+    },
+    "supersedes": {
+      "carrying": 18,
+      "total": 74
+    },
+    "rests-on": {
+      "carrying": 23,
+      "total": 74
+    },
+    "code": {
+      "carrying": 0,
+      "total": 74
+    },
+    "exercises": {
+      "carrying": 6,
+      "total": 74
+    },
+    "origin": {
+      "carrying": 0,
+      "total": 74
+    }
+  },
+  "nodes": {
+    "JN-001": {
+      "id": "JN-001",
+      "type": "journey",
+      "title": "A stranger scans their domain and leaves with a finished page",
+      "status": "approved",
+      "depends-on": [],
+      "blocked-by": [],
+      "rests-on": [],
+      "supersedes": [],
+      "persona": "founder who has never heard of ReachKit, arriving from a link or a search",
+      "steps": [
+        {
+          "step": "Types their domain into the one field on the landing page, or opens a shared report link — and a scan starts, unless a report for that domain already exists",
+          "exercises": [
+            "REQ-001"
+          ]
+        },
+        {
+          "step": "Waits through a scan that names each stage and returns a readable report inside a minute — or, when the scan stops early, gets back an incomplete report that says what is missing and offers them one re-scan there and then, without waiting out the week a finished report waits; or, when the measurement fails, is told in writing what happened and offered a retry; or, when a limit is met, is told in writing which limit it was and, where there is one to give, when they may scan again",
+          "exercises": [
+            "REQ-001",
+            "REQ-003",
+            "REQ-004"
+          ]
+        },
+        {
+          "step": "Reads the verdict at the top: one score, its band in words, its three drivers, and a dash with a written line wherever something could not be measured",
+          "exercises": [
+            "REQ-004",
+            "REQ-093"
+          ]
+        },
+        {
+          "step": "Reads what AI tells buyers — on how many of their market's biggest searches an AI answer appears, which brands it names instead of them, and the search and volume behind each question",
+          "exercises": [
+            "REQ-006"
+          ]
+        },
+        {
+          "step": "Reads their Google presence — their share of those same searches beside each rival, the biggest searches they are absent from, and the standing line saying every figure here was measured on US Google in English and that more countries are coming",
+          "exercises": [
+            "REQ-008",
+            "REQ-091"
+          ]
+        },
+        {
+          "step": "Corrects the category when the report has read their business as the wrong kind of market, and returns to the verdict, the AI answers and the Google presence to read them again against the corrected market",
+          "exercises": [
+            "REQ-094"
+          ]
+        },
+        {
+          "step": "Reads the three problems, copies the free robots fix, and reads the complete method in the DIY sections",
+          "exercises": [
+            "REQ-009"
+          ]
+        },
+        {
+          "step": "Reads what the first page would be — its title, what it targets, who it takes ground from, and how many more were found behind it — and gives their email address as the trade, told before they type what else that address will receive",
+          "exercises": [
+            "REQ-010"
+          ]
+        },
+        {
+          "step": "Receives the finished page in their inbox, and at most three follow-ups afterwards, stopping the moment they subscribe or opt out",
+          "exercises": [
+            "REQ-010"
+          ]
+        }
+      ],
+      "file": "sdlc-factory/docs/journeys/JN-001.md"
+    },
+    "JN-002": {
+      "id": "JN-002",
+      "type": "journey",
+      "title": "Buying ReachKit and starting it",
+      "status": "approved",
+      "depends-on": [],
+      "blocked-by": [],
+      "rests-on": [],
+      "supersedes": [],
+      "persona": "founder",
+      "steps": [
+        {
+          "step": "Chooses Start ReachKit where the price is offered — their own report, or a price surface with no report behind it — and pays €49, having created no account",
+          "exercises": [
+            "REQ-021",
+            "REQ-020",
+            "REQ-022"
+          ]
+        },
+        {
+          "step": "Opens the sign-in email that the payment produced and lands on setup",
+          "exercises": [
+            "REQ-024"
+          ]
+        },
+        {
+          "step": "If they stop partway, is asked to come back and finish setup, and picks up where they left off",
+          "exercises": [
+            "REQ-025",
+            "REQ-024"
+          ]
+        },
+        {
+          "step": "Settles the site address — confirms or corrects the domain their report measured, or types it in when the purchase had no report behind it",
+          "exercises": [
+            "REQ-021"
+          ]
+        },
+        {
+          "step": "Or, where setup will not accept the address they give, reads one written line saying so that names a way to reach a person and says they may cancel without finishing, and finds every answer they have already given still there when they come back",
+          "exercises": [
+            "REQ-021",
+            "REQ-024"
+          ]
+        },
+        {
+          "step": "Reads the market we inferred and confirms or corrects it — or states it in their own words, where nothing was measured for the domain their account will use",
+          "exercises": [
+            "REQ-026",
+            "REQ-021"
+          ]
+        },
+        {
+          "step": "Confirms who they compete with — the suggestions we found, plus any rival they know and we don't, up to five",
+          "exercises": [
+            "REQ-026"
+          ]
+        },
+        {
+          "step": "Chooses whether pages go out on their own and where they publish, then submits the three decisions once",
+          "exercises": [
+            "REQ-025",
+            "REQ-028"
+          ]
+        },
+        {
+          "step": "Watches the deep pass run and arrives inside the app — and, where it found less than a month of pages to write, is told that on arrival rather than weeks later",
+          "exercises": [
+            "REQ-029",
+            "REQ-091",
+            "REQ-095"
+          ]
+        }
+      ],
+      "file": "sdlc-factory/docs/journeys/JN-002.md"
+    },
+    "JN-003": {
+      "id": "JN-003",
+      "type": "journey",
+      "title": "The daily page — from tomorrow's plan to a page live on my domain",
+      "status": "approved",
+      "depends-on": [
+        "JN-002"
+      ],
+      "blocked-by": [],
+      "rests-on": [
+        {
+          "claim": "The customer's timezone is captured once and stored as one preference, so 'the evening before', the veto window and 'the next morning' are the customer's own local times throughout this journey — the single stored preference REQ-073 criterion 1 captures with a stated default ('the time zone is the one their browser reported at first sign-in, which they may change here at any time afterwards').",
+          "disposition": "confirmed"
+        }
+      ],
+      "supersedes": [],
+      "persona": "A paying solo founder, three weeks into the subscription, who opens ReachKit for five minutes most evenings and expects a page to go out whether or not they do.",
+      "steps": [
+        {
+          "step": "Opens the app after the evening's notice and looks at the calendar to see what is planned, what is live, and whether anything is waiting on them",
+          "exercises": [
+            "REQ-040",
+            "REQ-041",
+            "REQ-043",
+            "REQ-092"
+          ]
+        },
+        {
+          "step": "Selects tomorrow's page and reads why it exists — the search it targets, who answers that search today, and what would count as it having worked",
+          "exercises": [
+            "REQ-043",
+            "REQ-047"
+          ]
+        },
+        {
+          "step": "Opens the full draft and reads it end to end, checking what it is grounded in, that it sounds like their business, and that it makes no claim they forbid",
+          "exercises": [
+            "REQ-045",
+            "REQ-050",
+            "REQ-053",
+            "REQ-055",
+            "REQ-093"
+          ]
+        },
+        {
+          "step": "Fixes a sentence they disagree with, watching the page re-render as they type, closes the tab without saving anything explicitly, and where the edit trips their do-not-claim list is told which entry it matched and edits it again",
+          "exercises": [
+            "REQ-045",
+            "REQ-053"
+          ]
+        },
+        {
+          "step": "Approves it, vetoes it, or does nothing at all and lets the veto window run out — and can stop everything in one action if they change their mind",
+          "exercises": [
+            "REQ-057",
+            "REQ-056"
+          ]
+        },
+        {
+          "step": "Finds the page live the next morning on their own domain, or waiting as a draft in their own WordPress — or, where a check still stood against it, finds it unpublished and still theirs to fix, with what held it named",
+          "exercises": [
+            "REQ-045",
+            "REQ-056",
+            "REQ-057",
+            "REQ-059",
+            "REQ-060"
+          ]
+        },
+        {
+          "step": "Checks a day later that the page is genuinely reachable, indexable and readable by AI assistants, and sees plainly when one of those checks failed",
+          "exercises": [
+            "REQ-062"
+          ]
+        },
+        {
+          "step": "On the rare occasion the pages worth writing are running short, is told so while the calendar is still full — and, on a day that does carry none, reads which kind of empty day it is: nothing in their market was worth publishing, a page was planned and did not go live, or there is an instruction for them to carry out first",
+          "exercises": [
+            "REQ-095",
+            "REQ-043",
+            "REQ-047",
+            "REQ-053",
+            "REQ-092"
+          ]
+        },
+        {
+          "step": "Takes the whole library with them whenever they want — copying one page, exporting everything, or unpublishing a page they regret",
+          "exercises": [
+            "REQ-045",
+            "REQ-056",
+            "REQ-078"
+          ]
+        }
+      ],
+      "file": "sdlc-factory/docs/journeys/JN-003.md"
+    },
+    "JN-004": {
+      "id": "JN-004",
+      "type": "journey",
+      "title": "Changing your account, and leaving",
+      "status": "approved",
+      "depends-on": [
+        "JN-002"
+      ],
+      "blocked-by": [],
+      "rests-on": [],
+      "supersedes": [],
+      "persona": "A paying customer, weeks into the daily loop, who needs to change one thing about their account — or has decided to go",
+      "steps": [
+        {
+          "step": "Opens Settings to change one thing, and sees the whole of what is theirs to change",
+          "exercises": [
+            "REQ-070"
+          ]
+        },
+        {
+          "step": "Corrects the domain they are measured under, the market they are measured in, and the rivals they are measured against",
+          "exercises": [
+            "REQ-071"
+          ]
+        },
+        {
+          "step": "Changes how and when pages go out, and reconnects a destination that stopped working",
+          "exercises": [
+            "REQ-073",
+            "REQ-074"
+          ]
+        },
+        {
+          "step": "Turns off an email they no longer want",
+          "exercises": [
+            "REQ-075"
+          ]
+        },
+        {
+          "step": "Updates the card, checks an invoice, or cancels the plan",
+          "exercises": [
+            "REQ-076"
+          ]
+        },
+        {
+          "step": "Moves the address they sign in with, or signs out",
+          "exercises": [
+            "REQ-077"
+          ]
+        },
+        {
+          "step": "Takes everything they have published away with them",
+          "exercises": [
+            "REQ-078"
+          ]
+        },
+        {
+          "step": "Pulls their pages off the web, or closes the account for good",
+          "exercises": [
+            "REQ-079"
+          ]
+        },
+        {
+          "step": "Comes back after the plan has lapsed, signs in with a fresh link, and takes their pages or resumes — having been told twice beforehand which day the pages ReachKit hosts for them stop being served",
+          "exercises": [
+            "REQ-076",
+            "REQ-078"
+          ]
+        }
+      ],
+      "file": "sdlc-factory/docs/journeys/JN-004.md"
+    },
+    "JN-005": {
+      "id": "JN-005",
+      "type": "journey",
+      "title": "The Monday check-in — is any of this actually working?",
+      "status": "approved",
+      "depends-on": [
+        "JN-002"
+      ],
+      "blocked-by": [],
+      "rests-on": [],
+      "supersedes": [],
+      "persona": "paying solo founder, weeks into the subscription, judging whether to keep paying",
+      "steps": [
+        {
+          "step": "Opens Monday's email and reads what moved this week, with sections simply absent where nothing could be measured — and, on a week only partly measured, one line naming which sections could not be",
+          "exercises": [
+            "REQ-065",
+            "REQ-064",
+            "REQ-063"
+          ]
+        },
+        {
+          "step": "Opens the app to Overview and reads whether they appear in more searches than they did, with every number carrying its change or its goal — or, on a week the product could not measure, reads that instead of a number",
+          "exercises": [
+            "REQ-040",
+            "REQ-041",
+            "REQ-065",
+            "REQ-092"
+          ]
+        },
+        {
+          "step": "Reads how far ahead each competitor they confirmed still is — as a ratio, or as plain numbers while they appear in fewer than ten searches — and whether that distance is shrinking",
+          "exercises": [
+            "REQ-041"
+          ]
+        },
+        {
+          "step": "Reads the verdict on each page they published — working, too early to judge, not working, or no longer judgeable because the test it was given stopped being measurable — against the test that page was created with, and on a week only partly measured reads instead, for each page the week could not judge, that it was not measured this week",
+          "exercises": [
+            "REQ-063",
+            "REQ-047",
+            "REQ-065"
+          ]
+        }
+      ],
+      "file": "sdlc-factory/docs/journeys/JN-005.md"
+    },
+    "JN-006": {
+      "id": "JN-006",
+      "type": "journey",
+      "title": "The domain owner — correcting or removing a public report about my business",
+      "status": "approved",
+      "depends-on": [],
+      "blocked-by": [],
+      "rests-on": [],
+      "supersedes": [],
+      "persona": "the owner of a business whose domain someone else scanned, who has never used ReachKit and did not ask for a report about them to exist",
+      "steps": [
+        {
+          "step": "Opens a public report about their own domain, sent to them by someone else — never found in a search, because no report is indexed — and reads all of it with no account, session or payment",
+          "exercises": [
+            "REQ-001"
+          ]
+        },
+        {
+          "step": "Reads which market the report measured their business in — shown on every report — and corrects it, the one correction a free report allows to whoever is reading, then reads the report re-measured against the business they actually run",
+          "exercises": [
+            "REQ-094"
+          ]
+        },
+        {
+          "step": "Or, wanting the report gone rather than corrected, reads on the report itself the address to write to and asks there for it to be removed",
+          "exercises": [
+            "REQ-002"
+          ]
+        },
+        {
+          "step": "Returns within five working days and finds the address no longer serving the report, and one written line there naming the address that would bring it back",
+          "exercises": [
+            "REQ-002"
+          ]
+        }
+      ],
+      "file": "sdlc-factory/docs/journeys/JN-006.md"
+    },
+    "REQ-001": {
+      "id": "REQ-001",
+      "type": "requirement",
+      "title": "One field starts a free scan, and /scan/{domain} is the one public address that serves it",
+      "status": "draft",
+      "depends-on": [
+        "REQ-002"
+      ],
+      "blocked-by": [],
+      "rests-on": [],
+      "supersedes": [
+        "REQ-012"
+      ],
+      "file": "sdlc-factory/docs/requirements/REQ-001.md"
+    },
+    "REQ-002": {
+      "id": "REQ-002",
+      "type": "requirement",
+      "title": "A domain's owner can have the report about their domain removed, on written request to the address the report names",
+      "status": "draft",
+      "depends-on": [],
+      "blocked-by": [],
+      "rests-on": [],
+      "supersedes": [],
+      "file": "sdlc-factory/docs/requirements/REQ-002.md"
+    },
+    "REQ-003": {
+      "id": "REQ-003",
+      "type": "requirement",
+      "title": "The scan ends at a bounded moment — a report inside 60 seconds, or one written line naming the limit it met",
+      "status": "draft",
+      "depends-on": [
+        "REQ-001",
+        "REQ-002"
+      ],
+      "blocked-by": [],
+      "rests-on": [
+        {
+          "claim": "The free battery — own fetches plus 12 live SERP calls plus the suggestion call — completes within 60 s at the p95 of vendor response time",
+          "disposition": "open"
+        },
+        {
+          "claim": "Visitors are counted by network address, so several founders behind one shared network share one hourly allowance and one in-flight slot",
+          "disposition": "open"
+        },
+        {
+          "claim": "A free visitor has no account and therefore no stated timezone, so every time this requirement tells a visitor is an elapsed duration, never a clock time",
+          "disposition": "confirmed"
+        }
+      ],
+      "supersedes": [
+        "REQ-015"
+      ],
+      "file": "sdlc-factory/docs/requirements/REQ-003.md"
+    },
+    "REQ-004": {
+      "id": "REQ-004",
+      "type": "requirement",
+      "title": "The report opens with one score, its band and its drivers — and what could not be measured says so, while a measured zero stays a zero",
+      "status": "draft",
+      "depends-on": [],
+      "blocked-by": [],
+      "rests-on": [],
+      "supersedes": [
+        "REQ-005"
+      ],
+      "file": "sdlc-factory/docs/requirements/REQ-004.md"
+    },
+    "REQ-005": {
+      "id": "REQ-005",
+      "type": "requirement",
+      "title": "What could not be measured says so; a measured zero stays a zero",
+      "status": "superseded",
+      "depends-on": [
+        "REQ-004"
+      ],
+      "blocked-by": [],
+      "rests-on": [],
+      "supersedes": [],
+      "file": "sdlc-factory/docs/requirements/REQ-005.md"
+    },
+    "REQ-006": {
+      "id": "REQ-006",
+      "type": "requirement",
+      "title": "The AI-answers card states its denominator, names who was cited instead, and shows the search behind each of the 12 questions",
+      "status": "draft",
+      "depends-on": [],
+      "blocked-by": [],
+      "rests-on": [],
+      "supersedes": [
+        "REQ-007"
+      ],
+      "file": "sdlc-factory/docs/requirements/REQ-006.md"
+    },
+    "REQ-007": {
+      "id": "REQ-007",
+      "type": "requirement",
+      "title": "Every one of the 12 questions shows the search it came from",
+      "status": "superseded",
+      "depends-on": [
+        "REQ-006"
+      ],
+      "blocked-by": [],
+      "rests-on": [],
+      "supersedes": [],
+      "file": "sdlc-factory/docs/requirements/REQ-007.md"
+    },
+    "REQ-008": {
+      "id": "REQ-008",
+      "type": "requirement",
+      "title": "Google presence is shown as share of the market's 12 biggest searches, beside each rival",
+      "status": "draft",
+      "depends-on": [],
+      "blocked-by": [],
+      "rests-on": [],
+      "supersedes": [
+        "REQ-013"
+      ],
+      "file": "sdlc-factory/docs/requirements/REQ-008.md"
+    },
+    "REQ-009": {
+      "id": "REQ-009",
+      "type": "requirement",
+      "title": "The report names three problems and gives the whole method away free",
+      "status": "draft",
+      "depends-on": [],
+      "blocked-by": [],
+      "rests-on": [],
+      "supersedes": [],
+      "file": "sdlc-factory/docs/requirements/REQ-009.md"
+    },
+    "REQ-010": {
+      "id": "REQ-010",
+      "type": "requirement",
+      "title": "A finished page is the trade for an email address, and follow-up stops at three per domain",
+      "status": "draft",
+      "depends-on": [],
+      "blocked-by": [],
+      "rests-on": [],
+      "supersedes": [
+        "REQ-011"
+      ],
+      "file": "sdlc-factory/docs/requirements/REQ-010.md"
+    },
+    "REQ-011": {
+      "id": "REQ-011",
+      "type": "requirement",
+      "title": "Follow-up stops at three emails per domain, and stops early on conversion or opt-out",
+      "status": "superseded",
+      "depends-on": [
+        "REQ-010"
+      ],
+      "blocked-by": [],
+      "rests-on": [],
+      "supersedes": [],
+      "file": "sdlc-factory/docs/requirements/REQ-011.md"
+    },
+    "REQ-012": {
+      "id": "REQ-012",
+      "type": "requirement",
+      "title": "A return visit reads the stored report instead of re-running the scan",
+      "status": "superseded",
+      "depends-on": [
+        "REQ-002"
+      ],
+      "blocked-by": [],
+      "rests-on": [],
+      "supersedes": [],
+      "file": "sdlc-factory/docs/requirements/REQ-012.md"
+    },
+    "REQ-013": {
+      "id": "REQ-013",
+      "type": "requirement",
+      "title": "The report states which market it was measured in",
+      "status": "superseded",
+      "depends-on": [],
+      "blocked-by": [],
+      "rests-on": [],
+      "supersedes": [],
+      "file": "sdlc-factory/docs/requirements/REQ-013.md"
+    },
+    "REQ-014": {
+      "id": "REQ-014",
+      "type": "requirement",
+      "title": "The founder can correct the market when the report guessed it wrong",
+      "status": "superseded",
+      "depends-on": [
+        "REQ-006"
+      ],
+      "blocked-by": [],
+      "rests-on": [],
+      "supersedes": [],
+      "file": "sdlc-factory/docs/requirements/REQ-014.md"
+    },
+    "REQ-015": {
+      "id": "REQ-015",
+      "type": "requirement",
+      "title": "The free funnel says so in writing when it hits a limit",
+      "status": "superseded",
+      "depends-on": [
+        "REQ-001"
+      ],
+      "blocked-by": [],
+      "rests-on": [
+        {
+          "claim": "Visitors are counted by network address, so several founders behind one shared network share one hourly allowance and one in-flight slot",
+          "disposition": "open"
+        },
+        {
+          "claim": "A free visitor has no account and therefore no stated timezone, so every time this requirement tells a visitor is an elapsed duration, never a clock time",
+          "disposition": "confirmed"
+        }
+      ],
+      "supersedes": [],
+      "file": "sdlc-factory/docs/requirements/REQ-015.md"
+    },
+    "REQ-020": {
+      "id": "REQ-020",
+      "type": "requirement",
+      "title": "Buying requires no account and no configuration first",
+      "status": "draft",
+      "depends-on": [],
+      "blocked-by": [],
+      "rests-on": [],
+      "supersedes": [],
+      "file": "sdlc-factory/docs/requirements/REQ-020.md"
+    },
+    "REQ-021": {
+      "id": "REQ-021",
+      "type": "requirement",
+      "title": "Where the offer lives, what a purchase carries into setup, and an account with nothing measured yet",
+      "status": "draft",
+      "depends-on": [
+        "REQ-001",
+        "REQ-020",
+        "REQ-022",
+        "REQ-025",
+        "REQ-026",
+        "REQ-070",
+        "REQ-076"
+      ],
+      "blocked-by": [],
+      "rests-on": [
+        {
+          "claim": "A site address given at setup is enough to run the onboarding deep pass with no prior free scan",
+          "disposition": "open"
+        }
+      ],
+      "supersedes": [
+        "REQ-090"
+      ],
+      "file": "sdlc-factory/docs/requirements/REQ-021.md"
+    },
+    "REQ-022": {
+      "id": "REQ-022",
+      "type": "requirement",
+      "title": "€49 a month, VAT included, one price, and what checkout records",
+      "status": "draft",
+      "depends-on": [
+        "REQ-076"
+      ],
+      "blocked-by": [],
+      "rests-on": [
+        {
+          "claim": "Stripe Checkout collects and stores the billing-address country on every purchase without extra configuration (BUILD §13)",
+          "disposition": "open"
+        }
+      ],
+      "supersedes": [
+        "REQ-023"
+      ],
+      "file": "sdlc-factory/docs/requirements/REQ-022.md"
+    },
+    "REQ-023": {
+      "id": "REQ-023",
+      "type": "requirement",
+      "title": "Checkout records the buyer's country and VAT ID",
+      "status": "superseded",
+      "depends-on": [
+        "REQ-022",
+        "REQ-076"
+      ],
+      "blocked-by": [],
+      "rests-on": [
+        {
+          "claim": "Stripe Checkout collects and stores the billing-address country on every purchase without extra configuration (BUILD §13)",
+          "disposition": "open"
+        },
+        {
+          "claim": "Stripe's customer portal can add or correct a customer's tax ID after checkout. No in-corpus source establishes it: BUILD.md §13 states only 'VAT ID field on' at Checkout and 'Portal for card/cancel'. Criterion 4's correction route was placed there by owner ruling (2026-08-29) from knowledge outside the corpus; the vendor behaviour itself is unverified (rule 1.2).",
+          "disposition": "open"
+        }
+      ],
+      "supersedes": [],
+      "file": "sdlc-factory/docs/requirements/REQ-023.md"
+    },
+    "REQ-024": {
+      "id": "REQ-024",
+      "type": "requirement",
+      "title": "A completed payment, and nothing else, opens the account",
+      "status": "draft",
+      "depends-on": [
+        "REQ-020",
+        "REQ-064"
+      ],
+      "blocked-by": [],
+      "rests-on": [],
+      "supersedes": [],
+      "file": "sdlc-factory/docs/requirements/REQ-024.md"
+    },
+    "REQ-025": {
+      "id": "REQ-025",
+      "type": "requirement",
+      "title": "Setup is three decisions and one submit",
+      "status": "draft",
+      "depends-on": [
+        "REQ-024",
+        "REQ-064",
+        "REQ-070",
+        "REQ-076"
+      ],
+      "blocked-by": [],
+      "rests-on": [],
+      "supersedes": [],
+      "file": "sdlc-factory/docs/requirements/REQ-025.md"
+    },
+    "REQ-026": {
+      "id": "REQ-026",
+      "type": "requirement",
+      "title": "The founder settles the market at setup, and the rivals that derive from it",
+      "status": "draft",
+      "depends-on": [
+        "REQ-025"
+      ],
+      "blocked-by": [],
+      "rests-on": [],
+      "supersedes": [
+        "REQ-027"
+      ],
+      "file": "sdlc-factory/docs/requirements/REQ-026.md"
+    },
+    "REQ-027": {
+      "id": "REQ-027",
+      "type": "requirement",
+      "title": "Up to five competitors, suggested or typed",
+      "status": "superseded",
+      "depends-on": [
+        "REQ-025"
+      ],
+      "blocked-by": [],
+      "rests-on": [],
+      "supersedes": [],
+      "file": "sdlc-factory/docs/requirements/REQ-027.md"
+    },
+    "REQ-028": {
+      "id": "REQ-028",
+      "type": "requirement",
+      "title": "How and where pages publish, chosen at setup with working defaults",
+      "status": "draft",
+      "depends-on": [
+        "REQ-025"
+      ],
+      "blocked-by": [],
+      "rests-on": [],
+      "supersedes": [],
+      "file": "sdlc-factory/docs/requirements/REQ-028.md"
+    },
+    "REQ-029": {
+      "id": "REQ-029",
+      "type": "requirement",
+      "title": "The wait after setup always ends in the app",
+      "status": "draft",
+      "depends-on": [
+        "REQ-025"
+      ],
+      "blocked-by": [],
+      "rests-on": [
+        {
+          "claim": "The onboarding deep pass completes fast enough that a founder will wait on a progress screen rather than leave",
+          "disposition": "open"
+        }
+      ],
+      "supersedes": [],
+      "file": "sdlc-factory/docs/requirements/REQ-029.md"
+    },
+    "REQ-040": {
+      "id": "REQ-040",
+      "type": "requirement",
+      "title": "The app is three places, and the publishing state is visible from all of them",
+      "status": "draft",
+      "depends-on": [
+        "REQ-065",
+        "REQ-071"
+      ],
+      "blocked-by": [],
+      "rests-on": [
+        {
+          "claim": "The customer's timezone is captured once and stored as one preference, and every scheduled time and window the product shows or acts on is expressed in it — the single stored preference REQ-073 criterion 1 captures with a stated default ('the time zone is the one their browser reported at first sign-in, which they may change here at any time afterwards').",
+          "disposition": "confirmed"
+        }
+      ],
+      "supersedes": [],
+      "file": "sdlc-factory/docs/requirements/REQ-040.md"
+    },
+    "REQ-041": {
+      "id": "REQ-041",
+      "type": "requirement",
+      "title": "Overview answers whether the work is working, what needs the customer today, and how far ahead each rival still is",
+      "status": "draft",
+      "depends-on": [
+        "REQ-065",
+        "REQ-093"
+      ],
+      "blocked-by": [],
+      "rests-on": [
+        {
+          "claim": "Ranking data for the customer's root domain includes rows for pages served on the hosted `content.` subdomain, so pages ReachKit publishes register as the customer's own wins on the growth chart.",
+          "disposition": "open"
+        },
+        {
+          "claim": "Ten ranked searches is the point below which a rival-to-customer ratio misleads more than it informs, so the ratio module stays locked until the customer reaches it.",
+          "disposition": "open"
+        }
+      ],
+      "supersedes": [
+        "REQ-042"
+      ],
+      "file": "sdlc-factory/docs/requirements/REQ-041.md"
+    },
+    "REQ-042": {
+      "id": "REQ-042",
+      "type": "requirement",
+      "title": "Overview shows how far ahead each rival still is, and never fakes a ratio",
+      "status": "superseded",
+      "depends-on": [],
+      "blocked-by": [],
+      "rests-on": [
+        {
+          "claim": "Ten ranked searches is the point below which a rival-to-customer ratio misleads more than it informs, so the ratio module stays locked until the customer reaches it.",
+          "disposition": "open"
+        }
+      ],
+      "supersedes": [],
+      "file": "sdlc-factory/docs/requirements/REQ-042.md"
+    },
+    "REQ-043": {
+      "id": "REQ-043",
+      "type": "requirement",
+      "title": "The calendar shows one page a day while supply lasts, is never padded, and selecting a day says why that page exists",
+      "status": "draft",
+      "depends-on": [
+        "REQ-047",
+        "REQ-056"
+      ],
+      "blocked-by": [],
+      "rests-on": [
+        {
+          "claim": "The customer's timezone is captured once and stored as one preference, so a calendar day begins and ends in the customer's own local day, not the server's — the setting REQ-073 criterion 1 records, defaulting to 'the one their browser reported' at first sign-in.",
+          "disposition": "confirmed"
+        }
+      ],
+      "supersedes": [
+        "REQ-044"
+      ],
+      "file": "sdlc-factory/docs/requirements/REQ-043.md"
+    },
+    "REQ-044": {
+      "id": "REQ-044",
+      "type": "requirement",
+      "title": "Selecting a day says why that page exists and what can be done about it now",
+      "status": "superseded",
+      "depends-on": [
+        "REQ-043",
+        "REQ-048",
+        "REQ-049"
+      ],
+      "blocked-by": [],
+      "rests-on": [],
+      "supersedes": [],
+      "file": "sdlc-factory/docs/requirements/REQ-044.md"
+    },
+    "REQ-045": {
+      "id": "REQ-045",
+      "type": "requirement",
+      "title": "The customer reads the whole page, edits it as Markdown, and can copy it out for any destination",
+      "status": "draft",
+      "depends-on": [
+        "REQ-050",
+        "REQ-053",
+        "REQ-057",
+        "REQ-093"
+      ],
+      "blocked-by": [],
+      "rests-on": [],
+      "supersedes": [
+        "REQ-046",
+        "REQ-061"
+      ],
+      "file": "sdlc-factory/docs/requirements/REQ-045.md"
+    },
+    "REQ-046": {
+      "id": "REQ-046",
+      "type": "requirement",
+      "title": "A draft is edited as Markdown with a live preview, and saves itself",
+      "status": "superseded",
+      "depends-on": [
+        "REQ-045",
+        "REQ-053",
+        "REQ-057"
+      ],
+      "blocked-by": [],
+      "rests-on": [],
+      "supersedes": [],
+      "file": "sdlc-factory/docs/requirements/REQ-046.md"
+    },
+    "REQ-047": {
+      "id": "REQ-047",
+      "type": "requirement",
+      "title": "Every page proposed comes from measured evidence, states the test that would prove it worked, and targets only what the customer could win",
+      "status": "draft",
+      "depends-on": [
+        "REQ-093"
+      ],
+      "blocked-by": [],
+      "rests-on": [
+        {
+          "claim": "A top-10 containing a domain that ranks for no more than the greater of 500 searches and five times the customer's own count marks a target a small site can realistically win, and leaves a non-empty winnable set for a customer at zero.",
+          "disposition": "open"
+        },
+        {
+          "claim": "A domain ranking for no more than the greater of 100 searches and twice the customer's own count reads to the customer as a site roughly their own size, which is what the word Winnable promises them. The floor is 100 rather than 500 because at 500 this expression and criterion 9's are equal for every customer ranking below 250 searches, so every queued target banded Winnable and the Reach band was unreachable for the cold-start founder.",
+          "disposition": "open"
+        }
+      ],
+      "supersedes": [
+        "REQ-048",
+        "REQ-049"
+      ],
+      "file": "sdlc-factory/docs/requirements/REQ-047.md"
+    },
+    "REQ-048": {
+      "id": "REQ-048",
+      "type": "requirement",
+      "title": "Every opportunity states up front the test that would make it a success",
+      "status": "superseded",
+      "depends-on": [
+        "REQ-047"
+      ],
+      "blocked-by": [],
+      "rests-on": [],
+      "supersedes": [],
+      "file": "sdlc-factory/docs/requirements/REQ-048.md"
+    },
+    "REQ-049": {
+      "id": "REQ-049",
+      "type": "requirement",
+      "title": "Only targets the customer could realistically win are queued",
+      "status": "superseded",
+      "depends-on": [
+        "REQ-047"
+      ],
+      "blocked-by": [],
+      "rests-on": [
+        {
+          "claim": "A top-10 containing a domain that ranks for no more than the greater of 500 searches and five times the customer's own count marks a target a small site can realistically win, and leaves a non-empty winnable set for a customer at zero.",
+          "disposition": "open"
+        },
+        {
+          "claim": "A domain ranking for no more than the greater of 100 searches and twice the customer's own count reads to the customer as a site roughly their own size, which is what the word Winnable promises them. The floor is 100 rather than 500 because at 500 this expression and criterion 1's are equal for every customer ranking below 250 searches, so every queued target banded Winnable and the Reach band was unreachable for the cold-start founder.",
+          "disposition": "open"
+        }
+      ],
+      "supersedes": [],
+      "file": "sdlc-factory/docs/requirements/REQ-049.md"
+    },
+    "REQ-050": {
+      "id": "REQ-050",
+      "type": "requirement",
+      "title": "A generated draft passes every hard rule or is never queued",
+      "status": "draft",
+      "depends-on": [
+        "REQ-047",
+        "REQ-053"
+      ],
+      "blocked-by": [],
+      "rests-on": [
+        {
+          "claim": "Three hundred characters is the opening a reader judges a page by, so a page that reaches the end of it without naming the brand is answering the search rather than funnelling the reader.",
+          "disposition": "open"
+        },
+        {
+          "claim": "Eighty-five per cent similarity, by one fixed measure applied to every comparison, is the point at which two pages compete with each other rather than each earning its own place.",
+          "disposition": "open"
+        }
+      ],
+      "supersedes": [
+        "REQ-051",
+        "REQ-052",
+        "REQ-054"
+      ],
+      "file": "sdlc-factory/docs/requirements/REQ-050.md"
+    },
+    "REQ-051": {
+      "id": "REQ-051",
+      "type": "requirement",
+      "title": "No invented people appear in a generated page",
+      "status": "superseded",
+      "depends-on": [
+        "REQ-053"
+      ],
+      "blocked-by": [],
+      "rests-on": [],
+      "supersedes": [],
+      "file": "sdlc-factory/docs/requirements/REQ-051.md"
+    },
+    "REQ-052": {
+      "id": "REQ-052",
+      "type": "requirement",
+      "title": "A generated page answers the question before it names the product",
+      "status": "superseded",
+      "depends-on": [
+        "REQ-053"
+      ],
+      "blocked-by": [],
+      "rests-on": [
+        {
+          "claim": "Three hundred characters is the opening a reader judges a page by, so a page that reaches the end of it without naming the brand is answering the search rather than funnelling the reader.",
+          "disposition": "open"
+        }
+      ],
+      "supersedes": [],
+      "file": "sdlc-factory/docs/requirements/REQ-052.md"
+    },
+    "REQ-053": {
+      "id": "REQ-053",
+      "type": "requirement",
+      "title": "The customer's do-not-claim list is a hard filter on output, and a stopped draft has one recovery path",
+      "status": "draft",
+      "depends-on": [
+        "REQ-056",
+        "REQ-057"
+      ],
+      "blocked-by": [],
+      "rests-on": [],
+      "supersedes": [],
+      "file": "sdlc-factory/docs/requirements/REQ-053.md"
+    },
+    "REQ-054": {
+      "id": "REQ-054",
+      "type": "requirement",
+      "title": "A page that near-duplicates the customer's published set is never queued",
+      "status": "superseded",
+      "depends-on": [
+        "REQ-047",
+        "REQ-053"
+      ],
+      "blocked-by": [],
+      "rests-on": [
+        {
+          "claim": "Eighty-five per cent similarity, by one fixed measure applied to every comparison, is the point at which two pages compete with each other rather than each earning its own place.",
+          "disposition": "open"
+        }
+      ],
+      "supersedes": [],
+      "file": "sdlc-factory/docs/requirements/REQ-054.md"
+    },
+    "REQ-055": {
+      "id": "REQ-055",
+      "type": "requirement",
+      "title": "Brand voice is one field the customer writes, and nothing is learned about them",
+      "status": "draft",
+      "depends-on": [
+        "REQ-050",
+        "REQ-053"
+      ],
+      "blocked-by": [],
+      "rests-on": [],
+      "supersedes": [],
+      "file": "sdlc-factory/docs/requirements/REQ-055.md"
+    },
+    "REQ-056": {
+      "id": "REQ-056",
+      "type": "requirement",
+      "title": "A page moves through defined publish states, a retry never publishes twice, and stopping is instant",
+      "status": "draft",
+      "depends-on": [
+        "REQ-070"
+      ],
+      "blocked-by": [],
+      "rests-on": [],
+      "supersedes": [
+        "REQ-058"
+      ],
+      "file": "sdlc-factory/docs/requirements/REQ-056.md"
+    },
+    "REQ-057": {
+      "id": "REQ-057",
+      "type": "requirement",
+      "title": "Nothing publishes without an approval or an expired veto window",
+      "status": "draft",
+      "depends-on": [
+        "REQ-056"
+      ],
+      "blocked-by": [],
+      "rests-on": [],
+      "supersedes": [],
+      "file": "sdlc-factory/docs/requirements/REQ-057.md"
+    },
+    "REQ-058": {
+      "id": "REQ-058",
+      "type": "requirement",
+      "title": "Publishing has hard limits whatever the settings, and stops instantly",
+      "status": "superseded",
+      "depends-on": [
+        "REQ-057",
+        "REQ-070"
+      ],
+      "blocked-by": [],
+      "rests-on": [],
+      "supersedes": [],
+      "file": "sdlc-factory/docs/requirements/REQ-058.md"
+    },
+    "REQ-059": {
+      "id": "REQ-059",
+      "type": "requirement",
+      "title": "Pages publish to the customer's own domain, and never rank on ours",
+      "status": "draft",
+      "depends-on": [
+        "REQ-056"
+      ],
+      "blocked-by": [],
+      "rests-on": [],
+      "supersedes": [],
+      "file": "sdlc-factory/docs/requirements/REQ-059.md"
+    },
+    "REQ-060": {
+      "id": "REQ-060",
+      "type": "requirement",
+      "title": "A customer on WordPress publishes to their existing site",
+      "status": "draft",
+      "depends-on": [
+        "REQ-056"
+      ],
+      "blocked-by": [],
+      "rests-on": [],
+      "supersedes": [],
+      "file": "sdlc-factory/docs/requirements/REQ-060.md"
+    },
+    "REQ-061": {
+      "id": "REQ-061",
+      "type": "requirement",
+      "title": "The content is the customer's — exportable and reversible at any time",
+      "status": "superseded",
+      "depends-on": [],
+      "blocked-by": [],
+      "rests-on": [],
+      "supersedes": [],
+      "file": "sdlc-factory/docs/requirements/REQ-061.md"
+    },
+    "REQ-062": {
+      "id": "REQ-062",
+      "type": "requirement",
+      "title": "A published page is verified a day later, and the result is shown",
+      "status": "draft",
+      "depends-on": [
+        "REQ-056"
+      ],
+      "blocked-by": [],
+      "rests-on": [],
+      "supersedes": [],
+      "file": "sdlc-factory/docs/requirements/REQ-062.md"
+    },
+    "REQ-063": {
+      "id": "REQ-063",
+      "type": "requirement",
+      "title": "Every Monday each published page is judged against the test it was created with",
+      "status": "draft",
+      "depends-on": [
+        "REQ-047",
+        "REQ-056",
+        "REQ-062",
+        "REQ-065",
+        "REQ-071"
+      ],
+      "blocked-by": [],
+      "rests-on": [],
+      "supersedes": [],
+      "file": "sdlc-factory/docs/requirements/REQ-063.md"
+    },
+    "REQ-064": {
+      "id": "REQ-064",
+      "type": "requirement",
+      "title": "Emails state only what was measured — a missing number omits its section, never prints 0",
+      "status": "draft",
+      "depends-on": [],
+      "blocked-by": [],
+      "rests-on": [],
+      "supersedes": [
+        "REQ-013"
+      ],
+      "file": "sdlc-factory/docs/requirements/REQ-064.md"
+    },
+    "REQ-065": {
+      "id": "REQ-065",
+      "type": "requirement",
+      "title": "Every active site is re-measured once a week, and a week that could not be measured says so",
+      "status": "draft",
+      "depends-on": [],
+      "blocked-by": [],
+      "rests-on": [
+        {
+          "claim": "Every date and week boundary this requirement states to a customer — the day the week's measurement was taken, the day the next one is due — is stated in the customer's own stated time zone, the single stored preference REQ-073 criterion 3 governs.",
+          "disposition": "confirmed"
+        }
+      ],
+      "supersedes": [],
+      "file": "sdlc-factory/docs/requirements/REQ-065.md"
+    },
+    "REQ-070": {
+      "id": "REQ-070",
+      "type": "requirement",
+      "title": "Settings holds only what is the customer's to decide",
+      "status": "draft",
+      "depends-on": [],
+      "blocked-by": [],
+      "rests-on": [],
+      "supersedes": [],
+      "file": "sdlc-factory/docs/requirements/REQ-070.md"
+    },
+    "REQ-071": {
+      "id": "REQ-071",
+      "type": "requirement",
+      "title": "Changing what the site is measured as — domain, market or rivals — takes effect at the next re-measurement and never reads as movement",
+      "status": "draft",
+      "depends-on": [
+        "REQ-021",
+        "REQ-043",
+        "REQ-063",
+        "REQ-065",
+        "REQ-070"
+      ],
+      "blocked-by": [],
+      "rests-on": [
+        {
+          "claim": "Every customer-facing scheduled time and date in this requirement — the date a re-measurement is due, the date a question set changed, the date pages resume — is stated in the customer's own stated time zone, the single stored preference REQ-073 criterion 3 governs.",
+          "disposition": "confirmed"
+        }
+      ],
+      "supersedes": [
+        "REQ-072",
+        "REQ-080"
+      ],
+      "file": "sdlc-factory/docs/requirements/REQ-071.md"
+    },
+    "REQ-072": {
+      "id": "REQ-072",
+      "type": "requirement",
+      "title": "The customer decides who they are compared against",
+      "status": "superseded",
+      "depends-on": [
+        "REQ-065"
+      ],
+      "blocked-by": [],
+      "rests-on": [],
+      "supersedes": [],
+      "file": "sdlc-factory/docs/requirements/REQ-072.md"
+    },
+    "REQ-073": {
+      "id": "REQ-073",
+      "type": "requirement",
+      "title": "The customer sets how and when pages go out",
+      "status": "draft",
+      "depends-on": [
+        "REQ-057"
+      ],
+      "blocked-by": [],
+      "rests-on": [
+        {
+          "claim": "Every customer has a stated time zone from first sign-in onward — the browser reports one then and criterion 1 makes it settable afterwards — so every customer-facing scheduled time and date in the product has a zone to be stated in and none falls back to the server's.",
+          "disposition": "confirmed"
+        }
+      ],
+      "supersedes": [],
+      "file": "sdlc-factory/docs/requirements/REQ-073.md"
+    },
+    "REQ-074": {
+      "id": "REQ-074",
+      "type": "requirement",
+      "title": "A broken destination is a state the customer can fix, not an error loop",
+      "status": "draft",
+      "depends-on": [
+        "REQ-043",
+        "REQ-056",
+        "REQ-064",
+        "REQ-070"
+      ],
+      "blocked-by": [],
+      "rests-on": [],
+      "supersedes": [],
+      "file": "sdlc-factory/docs/requirements/REQ-074.md"
+    },
+    "REQ-075": {
+      "id": "REQ-075",
+      "type": "requirement",
+      "title": "The customer chooses which recurring emails they receive",
+      "status": "draft",
+      "depends-on": [
+        "REQ-064"
+      ],
+      "blocked-by": [],
+      "rests-on": [
+        {
+          "claim": "The three toggles in BUILD §4.7 are the three recurring emails a paying customer receives — draft-ready, published, weekly — and every other kind in the set REQ-064 registers is transactional or pre-purchase and therefore not togglable. What a toggle reaches is an occasion rather than a whole kind: one occasion of a togglable kind is itself transactional and stays outside these toggles — the draft-ready mail sent under autopilot at a veto window of zero, which is the whole of the customer's telling that a page is going live and which REQ-057 criterion 7 keeps unsuppressible.",
+          "disposition": "confirmed"
+        }
+      ],
+      "supersedes": [],
+      "file": "sdlc-factory/docs/requirements/REQ-075.md"
+    },
+    "REQ-076": {
+      "id": "REQ-076",
+      "type": "requirement",
+      "title": "Billing and cancellation are self-service, and cancelling keeps everything running to the paid-through date",
+      "status": "draft",
+      "depends-on": [
+        "REQ-057",
+        "REQ-059",
+        "REQ-064",
+        "REQ-065",
+        "REQ-078"
+      ],
+      "blocked-by": [],
+      "rests-on": [
+        {
+          "claim": "Stripe's customer portal can be configured so that a customer adds or corrects the tax ID (VAT number) on their own billing record there. Nothing in this corpus establishes that capability: BUILD.md §13 names the portal only for card and cancellation, and puts the VAT ID field at Checkout. Criterion 2 rests on it (rule 1.2 — the vendor behaviour is asserted from outside the corpus and is unverified in it).",
+          "disposition": "open"
+        },
+        {
+          "claim": "Every customer-facing date this requirement states — the next invoice date, the paid-through date access ends on — is stated in the customer's own stated time zone, the single stored preference REQ-073 criterion 3 governs.",
+          "disposition": "confirmed"
+        }
+      ],
+      "supersedes": [],
+      "file": "sdlc-factory/docs/requirements/REQ-076.md"
+    },
+    "REQ-077": {
+      "id": "REQ-077",
+      "type": "requirement",
+      "title": "Changing the address you sign in with never locks you out",
+      "status": "draft",
+      "depends-on": [
+        "REQ-064",
+        "REQ-076"
+      ],
+      "blocked-by": [],
+      "rests-on": [],
+      "supersedes": [],
+      "file": "sdlc-factory/docs/requirements/REQ-077.md"
+    },
+    "REQ-078": {
+      "id": "REQ-078",
+      "type": "requirement",
+      "title": "The customer can export everything ReachKit wrote for them, always",
+      "status": "draft",
+      "depends-on": [],
+      "blocked-by": [],
+      "rests-on": [],
+      "supersedes": [],
+      "file": "sdlc-factory/docs/requirements/REQ-078.md"
+    },
+    "REQ-079": {
+      "id": "REQ-079",
+      "type": "requirement",
+      "title": "Nothing is destroyed before it is handed back",
+      "status": "draft",
+      "depends-on": [
+        "REQ-050",
+        "REQ-064",
+        "REQ-070",
+        "REQ-074",
+        "REQ-076",
+        "REQ-078"
+      ],
+      "blocked-by": [],
+      "rests-on": [],
+      "supersedes": [],
+      "file": "sdlc-factory/docs/requirements/REQ-079.md"
+    },
+    "REQ-080": {
+      "id": "REQ-080",
+      "type": "requirement",
+      "title": "Changing the site's domain measures the new one, and never reads as movement",
+      "status": "superseded",
+      "depends-on": [
+        "REQ-021",
+        "REQ-063",
+        "REQ-065",
+        "REQ-070"
+      ],
+      "blocked-by": [],
+      "rests-on": [
+        {
+          "claim": "Every customer-facing date this requirement states — the date the re-measurement is due, the date pages resume — is stated in the customer's own stated time zone, the single stored preference REQ-073 criterion 3 governs ('it publishes at that hour in the customer's stated time zone').",
+          "disposition": "confirmed"
+        }
+      ],
+      "supersedes": [],
+      "file": "sdlc-factory/docs/requirements/REQ-080.md"
+    },
+    "REQ-090": {
+      "id": "REQ-090",
+      "type": "requirement",
+      "title": "The report ends in an offer, and the scan behind it carries into checkout",
+      "status": "superseded",
+      "depends-on": [
+        "REQ-001",
+        "REQ-021",
+        "REQ-022",
+        "REQ-025",
+        "REQ-026"
+      ],
+      "blocked-by": [],
+      "rests-on": [],
+      "supersedes": [],
+      "file": "sdlc-factory/docs/requirements/REQ-090.md"
+    },
+    "REQ-091": {
+      "id": "REQ-091",
+      "type": "requirement",
+      "title": "A domain that ranks for nothing still gets a working product",
+      "status": "draft",
+      "depends-on": [
+        "REQ-004"
+      ],
+      "blocked-by": [],
+      "rests-on": [],
+      "supersedes": [],
+      "file": "sdlc-factory/docs/requirements/REQ-091.md"
+    },
+    "REQ-092": {
+      "id": "REQ-092",
+      "type": "requirement",
+      "title": "When the product stops its own work, it says so — never that there was nothing worth publishing",
+      "status": "draft",
+      "depends-on": [
+        "REQ-040",
+        "REQ-043",
+        "REQ-056"
+      ],
+      "blocked-by": [],
+      "rests-on": [],
+      "supersedes": [],
+      "file": "sdlc-factory/docs/requirements/REQ-092.md"
+    },
+    "REQ-093": {
+      "id": "REQ-093",
+      "type": "requirement",
+      "title": "The product speaks in written words; only the page it writes is generated",
+      "status": "draft",
+      "depends-on": [
+        "REQ-006"
+      ],
+      "blocked-by": [],
+      "rests-on": [],
+      "supersedes": [],
+      "file": "sdlc-factory/docs/requirements/REQ-093.md"
+    },
+    "REQ-094": {
+      "id": "REQ-094",
+      "type": "requirement",
+      "title": "The free report shows the market it measured in and lets one reader correct it",
+      "status": "draft",
+      "depends-on": [
+        "REQ-001",
+        "REQ-003",
+        "REQ-006"
+      ],
+      "blocked-by": [],
+      "rests-on": [],
+      "supersedes": [
+        "REQ-014"
+      ],
+      "file": "sdlc-factory/docs/requirements/REQ-094.md"
+    },
+    "REQ-095": {
+      "id": "REQ-095",
+      "type": "requirement",
+      "title": "Supply runs a month deep, is topped up every week, and a customer whose supply is short is told when we know it — not when the calendar empties",
+      "status": "draft",
+      "depends-on": [
+        "REQ-029",
+        "REQ-047",
+        "REQ-065"
+      ],
+      "blocked-by": [],
+      "rests-on": [
+        {
+          "claim": "The onboarding deep pass, on the pinned battery (12 question SERPs, up to 13 target SERPs, rival ranked rows, two suggestion calls, up to 25 measured pages), can yield 30 qualifying unused opportunities for a customer who ranks for nothing — the default customer under the cold-start law. No yield has been measured; `BUILD.md` §16 milestone 6 ('Real supply fills the calendar; empty days honest') is the first point at which it can be.",
+          "disposition": "open"
+        },
+        {
+          "claim": "Seven unused opportunities — one week of pages — is the count at which a customer must be told supply is short, because the weekly re-measurement (REQ-065 criterion 1) is the only event that replenishes supply and cannot arrive sooner than the following Monday.",
+          "disposition": "open"
+        }
+      ],
+      "supersedes": [],
+      "file": "sdlc-factory/docs/requirements/REQ-095.md"
+    }
+  }
+}
