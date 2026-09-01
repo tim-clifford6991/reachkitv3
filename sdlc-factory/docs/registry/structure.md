@@ -34,7 +34,7 @@ node's `## Decisions`.
 | `src/lib/scan/**` | The one scan pipeline — tier is a parameter — plus free-path admission control, the time and spend ceilings, degradation, and the stored report blob. | BP-012; leaves BP-023, BP-036, BP-050 | `runScan()` · `admitFreeScan()` · `readCurrentReport()` |
 | `src/lib/opportunities/**` | The opportunity engine — the eight types, their evidence, their acceptance tests, winnability banding, ranking, supply depth and weekly verdicts. | BP-013; leaves BP-040, BP-041, BP-051 | `deriveOpportunities()` · `bandWinnability()` · `supplyDepth()` · `judgePublished()` |
 | `src/lib/generate/**` | The content engine — brief → outline → grounded draft → answerability pass → claim check, with every hard rule enforced in code. | BP-014; leaves BP-042, BP-043 | `generateDraft()` · `runHardRules()` · `claimCheck()` |
-| `src/lib/publish/**` | The publishing subsystem — the state machine, the veto/approval rule, the destination adapters, idempotency, retries, health and 24-hour verification. | BP-015; leaves BP-035, BP-045, BP-046, BP-048, BP-049, BP-057, BP-058 | `transition()` · `becomesPublishable()` · `publish()` · `verifyLive()` · destination adapters under `src/lib/publish/destinations/**` |
+| `src/lib/publish/**` | The publishing subsystem — the state machine, the veto/approval rule, the destination adapters, idempotency, retries, health, the 24-hour verification and the page record a customer opens. | BP-015 (no migration glob — withdrawn 2026-09-01 under rule 2a); leaves BP-035, BP-045 (`publications`; `machine/`, `attempt/`, `record/`, `switch/`, `ceilings/`, `types.ts`), BP-046 (`publishable/`), BP-048 (`destinations/wordpress/`), BP-049 (`verify/`), BP-057 (`settings/`), BP-058 (`destinations/` except `wordpress/`; `destinations`) | `transition()` · `becomesPublishable()` · `publish()` · `verifyLive()` · `pageRecordFor()` · destination adapters under `src/lib/publish/destinations/**` |
 | `src/lib/mail/**` | The mail seam — one `sendEmail()`, one branded shell with a plain-text alternative, the register of nine mail kinds and their stoppability, and sequence scheduling. | BP-016; leaves BP-029, BP-053, BP-059 | `sendEmail()` · `MAIL_KINDS` · `scheduleSequence()` |
 | `src/lib/account/**` | Account, billing and lifecycle — Stripe checkout/webhook/portal, provisioning, magic-link identity, active-access, export, unpublish-all and erasure. | BP-017; leaves BP-030, BP-031, BP-032, BP-060, BP-061, BP-062, BP-063 | `handleStripeWebhook()` · `provisionFromPayment()` · `hasActiveAccess()` · `exportEverything()` · `deleteAccount()` |
 | `src/ui/**` | The design system — daisyUI 5 theme tokens, the registered component set, the closed chart inventory, fonts. | BP-018 | `src/ui/theme.css` · `src/ui/components/**` · `src/ui/charts/**` |
@@ -107,14 +107,48 @@ node's `## Decisions`.
 ## Scope conflicts
 
 **None open.** Three were found and resolved in the 2026-08-31 consolidation
-pass; none needed a `blocked-by` edge, because each resolution was subtractive
-and landed inside a node its own owner could edit.
+pass and two more on 2026-09-01; none needed a `blocked-by` edge, because each
+resolution was subtractive and landed inside a node its own owner could edit.
+A sixth sweep on 2026-09-01, after ADR-072, ADR-084, ADR-085 and ADR-086 landed,
+added one directory (`src/lib/publish/record/**` and `tests/publish/record/**`,
+both BP-045's, inside `src/lib/publish/**` which BP-015 anchors — rule 2, no
+conflict) and two files inside a glob BP-049 already owned whole
+(`verify/answer.ts`, `verify/site.ts`). No node's glob overlaps another's.
+
+The two found on 2026-09-01 are the same shape as the `*_leads*.sql` row below
+and were missed when it was fixed: the resolution was applied to one identical
+pair and not carried across to the others. Every `code:` glob in the corpus was
+re-swept for identical pairs afterwards and no third case remains.
 
 | Conflict | Resolution |
 |---|---|
+| `supabase/migrations/*_publications*.sql` declared identically by BP-015 and BP-045 | Rule 2a: BP-045 specifies every column on the topic and keeps the glob; BP-015 withdrew it and its data-model section now cites BP-045. Found 2026-09-01. |
+| `supabase/migrations/*_destinations*.sql` declared identically by BP-015 and BP-058 | Rule 2a: BP-058 specifies every column on the topic and keeps the glob; BP-015 withdrew it and its data-model section now cites BP-058. Found 2026-09-01. |
 | `src/app/api/stripe/**` wanted by BP-001 and BP-017 | Rule 1: every `src/app/api/**` file is BP-001's and is transport-only; signature verification stays inside BP-017. Reasoning in BP-001's `## Decisions`. |
 | `*_leads*.sql` and `*_suppressions*.sql` declared identically by BP-016 and BP-029 | Rule 2a: BP-029 specifies the columns and keeps both globs; BP-016 withdrew them and its data-model section now cites BP-029. |
 | `src/app/(account)/setup/waiting/**` and `src/app/api/setup/progress/route.ts` claimed by BP-036 inside BP-001's globs | Rule 2b / ADR-091 point 3: BP-036 owns both by the more specific glob, declared in its decision 4. BP-001's globs are unchanged. |
+
+## Unowned paths (recorded, not resolved — rule 2.2a)
+
+**Six mail-template directories have no owning `code:` glob.** ADR-040 partitions
+`src/lib/mail/templates/<kind>/` by the node that owns each kind's occasions, and
+BP-029 declares three of the nine (`first-page`, `first-page-unavailable`,
+`nurture`). The other six — `magic-link`, `draft-ready`, `published`, `weekly`,
+`setup-reminder`, `account` — are declared by nobody, so `file → blueprint`
+(rule 5.6) cannot answer for them and the librarian would flag any file landing
+there as having no home.
+
+This is **pre-existing and was not caused by the 2026-09-01 rulings**; it is
+recorded here rather than fixed for two reasons. It is corpus-wide — six
+directories across at least five candidate owners (BP-046 for `draft-ready`,
+BP-049 for `published`, BP-051/BP-050 for `weekly`, BP-061 for `magic-link`,
+BP-033 for `setup-reminder`, BP-063 and BP-058 for `account`, whose occasions
+five requirements share) — and fixing the one this pass touched would close a
+sixth of a gap while making the map read as complete, which is worse than
+leaving it visible. And `account` has no single owner under ADR-040's own rule:
+its occasions come from REQ-024, REQ-074, REQ-076, REQ-077 and REQ-079, which is
+a genuine question about ADR-040's partition and not a missing line. Owed as its
+own pass; it blocks nothing, because no file exists.
 
 Two overlaps are **by design and are not conflicts**: a component's directory
 glob against its own leaves' narrower globs (rule 2), and a component's topic
