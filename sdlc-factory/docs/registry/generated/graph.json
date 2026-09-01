@@ -2,55 +2,55 @@
   "coverage": {
     "satisfies": {
       "carrying": 44,
-      "total": 405
+      "total": 419
     },
     "covers": {
       "carrying": 32,
-      "total": 405
+      "total": 419
     },
     "implements": {
-      "carrying": 245,
-      "total": 405
+      "carrying": 253,
+      "total": 419
     },
     "decides-for": {
-      "carrying": 22,
-      "total": 405
+      "carrying": 28,
+      "total": 419
     },
     "about": {
       "carrying": 0,
-      "total": 405
+      "total": 419
     },
     "depends-on": {
-      "carrying": 366,
-      "total": 405
+      "carrying": 375,
+      "total": 419
     },
     "blocked-by": {
-      "carrying": 1,
-      "total": 405
+      "carrying": 2,
+      "total": 419
     },
     "cites-retired": {
       "carrying": 0,
-      "total": 405
+      "total": 419
     },
     "supersedes": {
-      "carrying": 18,
-      "total": 405
+      "carrying": 21,
+      "total": 419
     },
     "rests-on": {
-      "carrying": 250,
-      "total": 405
+      "carrying": 268,
+      "total": 419
     },
     "code": {
       "carrying": 63,
-      "total": 405
+      "total": 419
     },
     "exercises": {
       "carrying": 6,
-      "total": 405
+      "total": 419
     },
     "origin": {
       "carrying": 0,
-      "total": 405
+      "total": 419
     }
   },
   "nodes": {
@@ -389,7 +389,7 @@
       "id": "ADR-071",
       "type": "decision",
       "title": "LANDMINE — four ways a page has no ordinary verdict, and why none of them may be merged",
-      "status": "accepted",
+      "status": "superseded",
       "decides-for": [
         "BP-016",
         "BP-019",
@@ -405,6 +405,34 @@
       ],
       "supersedes": [],
       "file": "sdlc-factory/docs/decisions/ADR-071.md"
+    },
+    "ADR-072": {
+      "id": "ADR-072",
+      "type": "decision",
+      "title": "LANDMINE — four ways a page has no ordinary verdict, none of which may be merged, and all four of which are now terminal: nothing restores a page to judgement",
+      "status": "accepted",
+      "decides-for": [
+        "BP-016",
+        "BP-019",
+        "BP-049",
+        "BP-051"
+      ],
+      "depends-on": [],
+      "blocked-by": [],
+      "rests-on": [
+        {
+          "claim": "The node cut from REQ-065 exposes, per site and week, whether that week was not measured at all (c3) or measured only in part (c4), and which measurements the partial week holds. BP-051 distinguishes `no_week` from `not_measured` from that distinction alone. Carried forward unchanged from ADR-071.",
+          "disposition": "open"
+        },
+        {
+          "claim": "Nothing in the product ever fetches a published page's address after the 24-hour check, so no later observation can contradict a `page_not_found` cause. REQ-062's and REQ-063's non-goals both state it and REQ-065 criterion 1's weekly re-measurement visits no page; this is what makes Decision 5's terminality safe rather than merely stated. It is an assumption about every future node under BP-015 and BP-012, not only about the two that exist.",
+          "disposition": "open"
+        }
+      ],
+      "supersedes": [
+        "ADR-071"
+      ],
+      "file": "sdlc-factory/docs/decisions/ADR-072.md"
     },
     "ADR-080": {
       "id": "ADR-080",
@@ -434,7 +462,7 @@
       "id": "ADR-081",
       "type": "decision",
       "title": "Unpublish is scoped by liveness: a page ReachKit published to the customer's WordPress is returned to draft there; a page it created but never made live is named, and not touched",
-      "status": "accepted",
+      "status": "superseded",
       "decides-for": [
         "BP-015",
         "BP-045",
@@ -455,6 +483,171 @@
       ],
       "supersedes": [],
       "file": "sdlc-factory/docs/decisions/ADR-081.md"
+    },
+    "ADR-082": {
+      "id": "ADR-082",
+      "type": "decision",
+      "title": "Unpublish is scoped by liveness, and states which of five things happened — the four outcomes REQ-056 criterion 16 now names, plus the hosted removal",
+      "status": "superseded",
+      "decides-for": [
+        "BP-015",
+        "BP-045",
+        "BP-048",
+        "BP-063"
+      ],
+      "depends-on": [],
+      "blocked-by": [],
+      "rests-on": [
+        {
+          "claim": "The WordPress REST API lets an application-password user with `edit_posts` set an existing post's status back to `draft` on a post that user's own credential created, without any other field of that post changing. Carried forward unchanged from ADR-081; BP-048's `rests-on` already assumes the write path for creation and for the SEO fields, and that the same path can set status back is assumed here and is not verified in this corpus.",
+          "disposition": "open"
+        },
+        {
+          "claim": "A publication row records whether ReachKit itself made the page live at that destination, so the two populations this ruling separates are decidable from stored data and never from a re-read of the customer's site. Carried forward unchanged from ADR-081. `publications.live_url` is null for every WordPress delivery (BP-048's data-model delta), so the discriminator cannot be `live_url` and BP-045 carries an explicit one.",
+          "disposition": "open"
+        },
+        {
+          "claim": "A WordPress REST request can tell 'the post is no longer there' (a 404 for a post id we hold) apart from 'the site could not be reached' (DNS failure, connection reset, timeout, 5xx) reliably enough to choose between the `already_gone` and `unreachable` arms. The two arms carry different promises to the customer — nothing is theirs to remove, versus the post may still be live — so a mapping that collapses them would make one of REQ-056 criterion 16's outcomes unreachable. BP-048's `errors.ts` is where the mapping lives; nothing in this corpus verifies that a misconfigured host cannot answer 404 for an unreachable site.",
+          "disposition": "open"
+        }
+      ],
+      "supersedes": [
+        "ADR-081"
+      ],
+      "file": "sdlc-factory/docs/decisions/ADR-082.md"
+    },
+    "ADR-083": {
+      "id": "ADR-083",
+      "type": "decision",
+      "title": "LANDMINE — a ReachKit post in a customer's WordPress carries two marks, not one: the invisible idempotency marker and a visible findability stamp, and neither may be made to do the other's job",
+      "status": "accepted",
+      "decides-for": [
+        "BP-005",
+        "BP-048",
+        "BP-058",
+        "BP-063"
+      ],
+      "depends-on": [],
+      "blocked-by": [],
+      "rests-on": [
+        {
+          "claim": "Every WordPress site a customer can connect lets ReachKit give the posts it creates there something the customer can list posts by in their own WordPress admin and can tell from posts they wrote themselves, under the application password they gave. Inherited verbatim in substance from REQ-060's own `rests-on` row, which the requirements-analyst raised and could not discharge. Which attribute that is, and whether every install and every credential permits one, is unverified in this corpus.",
+          "disposition": "open"
+        },
+        {
+          "claim": "An application-password user holding `edit_posts` — the capability BP-048 already assumes for creating a post and writing its SEO fields — can also assign a tag term to the post it is creating, and can cause that term to exist if it does not. WordPress's default role map is what this rests on and nothing in this corpus verifies it; if it is refuted, the stamp needs a capability BP-048 does not assume and this decision's mechanism changes while its shape (two marks, never one) does not.",
+          "disposition": "open"
+        },
+        {
+          "claim": "A term assigned to a post at creation is visible to the customer in their own wp-admin post list, and filterable there, without a plugin. This is what makes the stamp answer REQ-060 criterion 6 at all; unverified here.",
+          "disposition": "open"
+        }
+      ],
+      "supersedes": [],
+      "file": "sdlc-factory/docs/decisions/ADR-083.md"
+    },
+    "ADR-084": {
+      "id": "ADR-084",
+      "type": "decision",
+      "title": "LANDMINE — every CMS is published live in one call, and the two booleans that used to be one must never be merged back: the empty unpublish arm has inverted",
+      "status": "accepted",
+      "decides-for": [
+        "BP-005",
+        "BP-015",
+        "BP-019",
+        "BP-039",
+        "BP-045",
+        "BP-046",
+        "BP-048",
+        "BP-049",
+        "BP-051",
+        "BP-053",
+        "BP-058",
+        "BP-063"
+      ],
+      "depends-on": [],
+      "blocked-by": [],
+      "rests-on": [
+        {
+          "claim": "The WordPress REST API lets an application-password user create a post with `status: 'publish'` in a single request and returns that post's public permalink in the same response, so a delivery is live at a known address with no second call. Nothing in this repository has spoken to a WordPress install (`00-project.md`, 'Greenfield. No source code on disk yet'), so this is assumed and not verified here.",
+          "disposition": "open"
+        },
+        {
+          "claim": "An application-password user that holds `edit_posts` but not `publish_posts` — WordPress's Contributor role in the default map — can still create a post, and WordPress silently holds it at `draft` or `pending` rather than honouring `status: 'publish'` or refusing the request. This is the whole ground for Decision 3; if it is refuted and such a request is refused outright, Decision 3's probe becomes belt-and-braces rather than the only thing standing between the owner's ruling and a silently drafted post, and its shape does not change.",
+          "disposition": "open"
+        },
+        {
+          "claim": "The WordPress REST API lets an application-password user with `edit_posts` set an existing post's status back to `draft` on a post that user's own credential created, without any other field of that post changing. Carried forward unchanged from ADR-082, which carried it from ADR-081. Unverified in this corpus.",
+          "disposition": "open"
+        },
+        {
+          "claim": "A WordPress REST request can tell 'the post is no longer there' (a 404 for a post id we hold) apart from 'the site could not be reached' (DNS failure, connection reset, timeout, 5xx) reliably enough to choose between ADR-082's `already_gone` and `unreachable` arms. Carried forward unchanged from ADR-082; BP-048's `errors.ts` is where the mapping lives and nothing in this corpus verifies that a misconfigured host cannot answer 404 for an unreachable site.",
+          "disposition": "open"
+        },
+        {
+          "claim": "A publication row records whether ReachKit itself made the page live at that destination, so ADR-082's two unpublish populations stay decidable from stored data and never from a re-read of the customer's site. Carried forward from ADR-082 and now standing on a *different* footing: `publications.live_url` is no longer null for WordPress rows, so the wrong derivation `live_url != null` now over-classifies where it used to under-classify. Decision 4.",
+          "disposition": "open"
+        }
+      ],
+      "supersedes": [
+        "ADR-082"
+      ],
+      "file": "sdlc-factory/docs/decisions/ADR-084.md"
+    },
+    "ADR-085": {
+      "id": "ADR-085",
+      "type": "decision",
+      "title": "LANDMINE — the one check has three outcomes, and \"could not be confirmed\" asserts nothing, is final, and must never be merged with \"no page found\"",
+      "status": "accepted",
+      "decides-for": [
+        "BP-039",
+        "BP-045",
+        "BP-049",
+        "BP-051",
+        "BP-053"
+      ],
+      "depends-on": [],
+      "blocked-by": [],
+      "rests-on": [
+        {
+          "claim": "A page-address fetch can tell an unambiguous 404 or 410 from every other answer reliably enough to choose between `page_not_found` and `could_not_confirm`. This is ADR-084's fourth `rests-on` row, raised there for a WordPress post-id fetch through `BP-048`'s `errors.ts`, and it is now load-bearing for `BP-049`'s fetch of the page's own public address as well — a different call, against a different host, with the same failure mode. Nothing in this repository has fetched a customer's page (`00-project.md`, 'Greenfield. No source code on disk yet'); a misconfigured host that answers 404 for a site that is in fact unreachable would put a page in the wrong arm, and the arms have opposite consequences (Decision 4).",
+          "disposition": "open"
+        },
+        {
+          "claim": "REQ-062 criterion 4's `page_not_found` and REQ-063 criterion 6's `page_not_found` cause are the same event recorded once — BP-049 writes it and BP-051 reads it — so the corpus never derives 'no page was found' twice from two fetches. True by construction here because there is only ever one fetch; it stops being true the moment anything else looks at a published page's address, which REQ-062's and REQ-063's non-goals both forbid.",
+          "disposition": "open"
+        }
+      ],
+      "supersedes": [],
+      "file": "sdlc-factory/docs/decisions/ADR-085.md"
+    },
+    "ADR-086": {
+      "id": "ADR-086",
+      "type": "decision",
+      "title": "A credential that cannot publish is its own occasion inside the failing state: a distinct line and an action that leads to a different account — amends ADR-084 Decision 3",
+      "status": "accepted",
+      "decides-for": [
+        "BP-045",
+        "BP-046",
+        "BP-048",
+        "BP-058"
+      ],
+      "depends-on": [
+        "ADR-084"
+      ],
+      "blocked-by": [],
+      "rests-on": [
+        {
+          "claim": "An application-password user that holds `edit_posts` but not `publish_posts` can be told apart from one that can publish, over the REST API, without creating a post — the probe ADR-084 Decision 3 names as `canPublish(cfg)`. Carried forward from ADR-084's second `rests-on` row, on which this file's whole occasion depends. Nothing in this repository has spoken to a WordPress install (`00-project.md`, 'Greenfield. No source code on disk yet').",
+          "disposition": "open"
+        },
+        {
+          "claim": "REQ-074 gains a criterion for the destinations list in this occasion. REQ-060 criterion 7 fixes what the customer must and must not be told and narrowed its own non-goal to REQ-074 criterion 1 accordingly, leaving REQ-074 covering only the expired-credential occasion. Until that criterion exists, BP-058 renders this occasion from REQ-060 criterion 7 alone — which is enough to build and not enough to be the destinations list's own promise (rule 5.7). Raised by the requirements-analyst in `requirements/history/REQ-056-057-060-2026-09-01-adr-084-review-round-two-folded.md`; nobody held REQ-074 that pass and this file does not edit requirements.",
+          "disposition": "open"
+        }
+      ],
+      "supersedes": [],
+      "file": "sdlc-factory/docs/decisions/ADR-086.md"
     },
     "ADR-090": {
       "id": "ADR-090",
@@ -1009,8 +1202,6 @@
       "supersedes": [],
       "code": [
         "src/lib/publish/**",
-        "supabase/migrations/*_destinations*.sql",
-        "supabase/migrations/*_publications*.sql",
         "tests/publish/**"
       ],
       "file": "sdlc-factory/docs/blueprints/BP-015.md"
@@ -1831,7 +2022,8 @@
         "BP-019",
         "BP-037",
         "BP-039",
-        "BP-050"
+        "BP-050",
+        "BP-056"
       ],
       "blocked-by": [],
       "rests-on": [
@@ -1872,6 +2064,7 @@
         "BP-019",
         "BP-037",
         "BP-044",
+        "BP-045",
         "BP-050"
       ],
       "blocked-by": [],
@@ -1879,6 +2072,10 @@
         {
           "claim": "The customer's time zone is captured once and stored as one preference, so a calendar day begins and ends in the customer's own local day (REQ-073 criterion 1)",
           "disposition": "confirmed"
+        },
+        {
+          "claim": "For every post ReachKit delivered to a customer's WordPress, an address inside that WordPress that opens that post for whoever is signed in there can be formed **from what ReachKit recorded at delivery** — the site's base URL and the post id. Carried from REQ-043's own `rests-on` row, which the 2026-09-01 fold corrected: the assumption is not about the application password the customer gave, which is not the credential the signed-in customer arrives with. Where none can be formed for a post, criterion 12's second way cannot be offered and the detail says so in its place.",
+          "disposition": "open"
         }
       ],
       "supersedes": [],
@@ -2111,12 +2308,14 @@
         "src/lib/publish/attempt/**",
         "src/lib/publish/ceilings/**",
         "src/lib/publish/machine/**",
+        "src/lib/publish/record/**",
         "src/lib/publish/switch/**",
         "src/lib/publish/types.ts",
         "supabase/migrations/*_publications*.sql",
         "tests/publish/attempt/**",
         "tests/publish/ceilings/**",
         "tests/publish/machine/**",
+        "tests/publish/record/**",
         "tests/publish/switch/**"
       ],
       "file": "sdlc-factory/docs/blueprints/BP-045.md"
@@ -2137,7 +2336,8 @@
         "BP-016",
         "BP-019",
         "BP-045",
-        "BP-057"
+        "BP-057",
+        "BP-058"
       ],
       "blocked-by": [],
       "rests-on": [],
@@ -2210,6 +2410,22 @@
         {
           "claim": "A post created by us carries a marker we can find again on a later request — post meta written at creation and readable back by the same application-password user — so a retry whose first outcome was never recorded finds the existing post instead of creating a second one",
           "disposition": "open"
+        },
+        {
+          "claim": "Every WordPress site a customer can connect lets ReachKit give the posts it creates there something the customer can list posts by in their own wp-admin and can tell from posts they wrote themselves, under the application password they gave. Raised by the requirements-analyst on REQ-060 and carried here undischarged: this repository has never spoken to a WordPress install and there is nothing in it to discharge it with. Where an install permits none, REQ-060 criterion 6 cannot be met there and REQ-079 criterion 6's mail has no place to name — which is REQ-060's own stated consequence (ADR-083 Decision 4).",
+          "disposition": "open"
+        },
+        {
+          "claim": "An application-password user holding `edit_posts` can assign a `post_tag` term to the post it is creating, and can cause that term to exist if it does not. WordPress's default role map is what ADR-083 Decision 1 rests on in choosing a tag over a category; nothing in this corpus verifies it.",
+          "disposition": "open"
+        },
+        {
+          "claim": "The WordPress REST API lets an application-password user create a post with `status: 'publish'` in a single request and returns that post's public permalink in the same response, so a delivery is live at a known address with no second call. ADR-084's first `rests-on` row, carried here because this node is where the call is made. Unverified in this corpus.",
+          "disposition": "open"
+        },
+        {
+          "claim": "An application-password user that holds `edit_posts` but not `publish_posts` can still create a post, and WordPress silently holds it at `draft` or `pending` rather than honouring `status: 'publish'` or refusing the request. ADR-084's second `rests-on` row, and the whole ground for `canPublish`. If it is refuted and such a request is refused outright, the probe becomes belt-and-braces rather than the only thing standing between the owner's ruling and a silently drafted post, and its shape does not change.",
+          "disposition": "open"
         }
       ],
       "supersedes": [],
@@ -2240,7 +2456,16 @@
         "BP-047"
       ],
       "blocked-by": [],
-      "rests-on": [],
+      "rests-on": [
+        {
+          "claim": "A fetch of a page's own public address can tell an unambiguous 404 or 410 from every other answer reliably enough to choose between REQ-062 criterion 4's second and third outcomes. This is ADR-084's fourth `rests-on` row, raised there for a WordPress post-id fetch, and it is load-bearing here for a different call against a different host (ADR-085). A misconfigured host answering 404 for a site that is in fact unreachable puts a page in the arm that stops its verdicts forever (ADR-072).",
+          "disposition": "open"
+        },
+        {
+          "claim": "A page served by a customer's CMS carries its own identity in server-rendered markup — a canonical link or `og:url` resolving to the fetched address, or failing both a `<title>` matching the published title — even where its body is withheld behind client JavaScript. This is what lets `could_not_confirm` (\"what came back was not the page ReachKit published\") be decided separately from `aiReadable: false` (a page whose body a script-less reader cannot see). Nothing in this corpus has fetched a customer's page; if it is refuted for some CMS, a JavaScript-gated page reads as not-confirmed instead of as failing the one check that exists to catch it.",
+          "disposition": "open"
+        }
+      ],
       "supersedes": [],
       "code": [
         "src/lib/publish/verify/**",
@@ -2294,7 +2519,8 @@
         "BP-010",
         "BP-013",
         "BP-015",
-        "BP-040"
+        "BP-040",
+        "BP-049"
       ],
       "blocked-by": [],
       "rests-on": [
@@ -2303,7 +2529,7 @@
           "disposition": "open"
         },
         {
-          "claim": "BP-015's `DestinationAdapter` exposes whether a destination serves the page publicly. REQ-063 c1's population is pages published to such a destination; a WordPress delivery the customer must publish themselves is outside it (REQ-063's second non-goal). Discharged 2026-08-31: `servesPublicly` is declared on the adapter in BP-015's interface and in BP-045's `types.ts`, where the shape actually lives; it was missing from the second and has been added.",
+          "claim": "BP-015's `DestinationAdapter` exposes whether a destination serves the page publicly. REQ-063 c1's population is pages published to such a destination. Discharged 2026-08-31: `servesPublicly` is declared on the adapter in BP-015's interface and in BP-045's `types.ts`, where the shape actually lives; it was missing from the second and has been added. **Re-read 2026-09-01 (ADR-084): the field is now `true` at both destinations, so the population includes every WordPress page — the seam held and no rule here changed. The clause that used to end this row, 'a WordPress delivery the customer must publish themselves is outside it', is refuted, and the non-goal it cited has been deleted from REQ-063.**",
           "disposition": "confirmed"
         },
         {
@@ -2373,9 +2599,7 @@
         "BP-019",
         "BP-059"
       ],
-      "blocked-by": [
-        "REQ-064"
-      ],
+      "blocked-by": [],
       "rests-on": [
         {
           "claim": "Resend accepts one request carrying both an HTML body and a plain-text alternative, so criterion 5's guarantee is a property of the request this node builds rather than of a second send",
@@ -2547,6 +2771,10 @@
         {
           "claim": "`draft/generate` is invoked once per active site per day even on a day where supply is exhausted and no draft is written, so the once-per-breakage mail of criterion 6 has a daily occasion without a seventh job id",
           "disposition": "open"
+        },
+        {
+          "claim": "REQ-074 gains a criterion for the destinations list in the `failing`-because-cannot-publish state. REQ-060 criterion 7 fixes what the customer must and must not be told there and narrowed its own non-goal to REQ-074 criterion 1 accordingly, so REQ-074 today covers only the expired-credential occasion. Until that criterion exists this node renders the occasion from REQ-060 criterion 7 alone — enough to build, and not enough for the destinations list to own the promise (rule 5.7). Raised by the requirements-analyst on 2026-09-01; nobody held REQ-074 that pass and the architect does not edit requirements. Recorded here, not as a `blocked-by`: REQ-074 is silent on this occasion, and silence is a gap, not a conflict (rule 2.3).",
+          "disposition": "open"
         }
       ],
       "supersedes": [],
@@ -2705,6 +2933,7 @@
         "BP-005",
         "BP-015",
         "BP-016",
+        "BP-058",
         "BP-060",
         "BP-062"
       ],
@@ -2931,7 +3160,7 @@
           ]
         },
         {
-          "step": "Finds the page live the next morning on their own domain, or waiting as a draft in their own WordPress — or, where a check still stood against it, finds it unpublished and still theirs to fix, with what held it named",
+          "step": "Finds the page live the next morning on their own domain or in their own WordPress, published without their having done anything — or, where something stopped it going out, finds it waiting on them instead of live, with what stopped it named, and sends it out again or drops it for good",
           "exercises": [
             "REQ-045",
             "REQ-056",
@@ -2941,7 +3170,7 @@
           ]
         },
         {
-          "step": "Checks a day later that the page is genuinely reachable, indexable and readable by AI assistants, and sees plainly when one of those checks failed",
+          "step": "Checks a day later that the page is genuinely reachable, indexable and readable by AI assistants, and sees plainly when one of those checks failed — or, where what is wrong is their whole site rather than this page, or where nothing was found at the page's address, or where the check could not settle the question either way, reads that with the date it was looked for and no blame put on them, instead of a failure against the page",
           "exercises": [
             "REQ-062"
           ]
@@ -2957,8 +3186,9 @@
           ]
         },
         {
-          "step": "Takes the whole library with them whenever they want — copying one page, exporting everything, or unpublishing a page they regret",
+          "step": "Finds a page again on the calendar weeks later — where it stands, a way through to read it as any visitor does, and, for a page in their own WordPress, a second way that opens the post inside their own WordPress, or, where ReachKit already knows a way leads nowhere, reads that in its place — and takes the whole library with them whenever they want: copying one page, exporting everything, or unpublishing a page they regret",
           "exercises": [
+            "REQ-043",
             "REQ-045",
             "REQ-056",
             "REQ-078"
@@ -3577,13 +3807,19 @@
       "status": "approved",
       "depends-on": [
         "REQ-047",
-        "REQ-056"
+        "REQ-056",
+        "REQ-060",
+        "REQ-062"
       ],
       "blocked-by": [],
       "rests-on": [
         {
           "claim": "The customer's timezone is captured once and stored as one preference, so a calendar day begins and ends in the customer's own local day, not the server's — the setting REQ-073 criterion 1 records, defaulting to 'the one their browser reported' at first sign-in.",
           "disposition": "confirmed"
+        },
+        {
+          "claim": "For every post ReachKit delivered to a customer's WordPress, ReachKit can form, from what it recorded at delivery, an address inside that WordPress that opens that post for whoever is signed in there. Whether every install permits one is unverified in this corpus — REQ-060 carries the parallel assumption for finding those posts in bulk. Where none can be formed for a post, criterion 12's second way through cannot be offered and the detail says so in its place.",
+          "disposition": "open"
         }
       ],
       "supersedes": [
@@ -3809,7 +4045,7 @@
       "id": "REQ-056",
       "type": "requirement",
       "title": "A page moves through defined publish states, a retry never publishes twice, and stopping is instant",
-      "status": "in-review",
+      "status": "approved",
       "depends-on": [
         "REQ-070"
       ],
@@ -3826,7 +4062,8 @@
       "title": "Nothing publishes without an approval or an expired veto window",
       "status": "approved",
       "depends-on": [
-        "REQ-056"
+        "REQ-056",
+        "REQ-060"
       ],
       "blocked-by": [],
       "rests-on": [],
@@ -3866,10 +4103,16 @@
       "title": "A customer on WordPress publishes to their existing site",
       "status": "approved",
       "depends-on": [
-        "REQ-056"
+        "REQ-056",
+        "REQ-074"
       ],
       "blocked-by": [],
-      "rests-on": [],
+      "rests-on": [
+        {
+          "claim": "Every WordPress site a customer can connect lets ReachKit give the posts it creates there something the customer can list posts by in their own WordPress admin and can tell from posts they wrote themselves, under the application password they gave. Which attribute that is, and whether every install and every credential permits one, is unverified in this corpus; where a connected site permits none, criterion 6 cannot be met and REQ-079 criterion 6's mail has no place to name.",
+          "disposition": "open"
+        }
+      ],
       "supersedes": [],
       "file": "sdlc-factory/docs/requirements/REQ-060.md"
     },
@@ -3961,6 +4204,7 @@
       "status": "approved",
       "depends-on": [
         "REQ-021",
+        "REQ-041",
         "REQ-043",
         "REQ-063",
         "REQ-065",
@@ -4099,9 +4343,11 @@
       "id": "REQ-079",
       "type": "requirement",
       "title": "Nothing is destroyed before it is handed back",
-      "status": "in-review",
+      "status": "approved",
       "depends-on": [
         "REQ-050",
+        "REQ-056",
+        "REQ-060",
         "REQ-064",
         "REQ-070",
         "REQ-074",
@@ -4109,7 +4355,12 @@
         "REQ-078"
       ],
       "blocked-by": [],
-      "rests-on": [],
+      "rests-on": [
+        {
+          "claim": "A connected WordPress site permits one place that brings every post ReachKit created there up together, so criterion 6's mail has a place to name — the same assumption REQ-060 carries for its criterion 6, unverified in this corpus. Where a site permits none, criterion 6's mail says so and still carries its counts; the customer is then left with pages live on their own domain that no product surface can point them to.",
+          "disposition": "open"
+        }
+      ],
       "supersedes": [],
       "file": "sdlc-factory/docs/requirements/REQ-079.md"
     },
@@ -7339,7 +7590,12 @@
         "WO-214"
       ],
       "blocked-by": [],
-      "rests-on": [],
+      "rests-on": [
+        {
+          "claim": "`UnpublishResult`'s `{ ok: false; reason: FailureReason }` arm — a publication whose unpublish did not complete at all, as against `unreachable`, which ADR-082 Decision 3a makes `ok: true` because the page did reach `unpublished` — is named by neither REQ-079 criterion 4 nor BP-063's `UnpublishAllResult`. This work order routes it into `stillLive` (see the file plan's chosen-under-rule-1.1 note): the page is still live at its destination, and the only other counter the result carries is `takenDown`, so the alternative is that a live page is reported in neither and disappears from the one sentence criterion 4 promises about it. Cost of reversing: one arm in one switch and one test row.",
+          "disposition": "open"
+        }
+      ],
       "supersedes": [],
       "file": "sdlc-factory/docs/work-orders/WO-142.md"
     },
@@ -7363,7 +7619,16 @@
         "WO-142"
       ],
       "blocked-by": [],
-      "rests-on": [],
+      "rests-on": [
+        {
+          "claim": "A connected WordPress site permits one place that brings every post ReachKit created there up together, so criterion 6's mail has a place to name — REQ-079's own `rests-on` row and BP-048's, unverified in this corpus, and answered per destination by BP-058's `stamp_capable` (ADR-083). Where a site permits none, `place` is `null`, the sentence says so and still carries its count, and the customer is left with pages live on their own domain that no product surface can point them to. That sentence is owner-owed and is BP-063's first Open question; this work order renders whatever the registry holds and mints none.",
+          "disposition": "open"
+        },
+        {
+          "claim": "`publications.unpublish_outcome` records, per publication, which of `UnpublishResult`'s five arms the run produced (BP-045's column, ADR-082 Decision 6 carried forward by ADR-084), so the four counts this mail carries are read from the run's own outcomes and no population is re-derived here (rule 2.4). The count for an arm with no rows is not zero — the key is absent from the map.",
+          "disposition": "open"
+        }
+      ],
       "supersedes": [],
       "file": "sdlc-factory/docs/work-orders/WO-143.md"
     },
@@ -7908,13 +8173,22 @@
         "WO-182",
         "WO-207",
         "WO-248",
-        "WO-249"
+        "WO-249",
+        "WO-258",
+        "WO-259"
       ],
-      "blocked-by": [],
+      "blocked-by": [
+        "BP-039",
+        "REQ-043"
+      ],
       "rests-on": [
         {
           "claim": "The three winnability band words are owner-owed; this WO emits the handle and never a word, and rendering goes through BP-019's BAND_LABELS registry (ADR-001). Discharged 2026-08-31 by owner ruling — Winnable, Reach, Not yet, under band.winnability.{winnable,reach,notYet}",
           "disposition": "confirmed"
+        },
+        {
+          "claim": "`pageRecordFor(draftId)` and the whole `PageRecord` it returns are BP-045's `src/lib/publish/record/`, added to the capability index on 2026-09-01 and cut by **no work order in the corpus** as of 2026-09-02 — a grep of all 246 work orders for `PageRecord`, `pageRecordFor` and `record/index.ts` returns nothing. It falls in the BP-045 block (WO-206 to WO-239 and the new ids WO-261 to WO-270), not this one. If it is absent when work starts, the implementer adds nothing under `src/lib/publish/` — it logs `failed` naming the missing read and stops (constitution rule 4.2).",
+          "disposition": "open"
         }
       ],
       "supersedes": [],
@@ -7962,7 +8236,9 @@
         "WO-166",
         "WO-167",
         "WO-248",
-        "WO-249"
+        "WO-249",
+        "WO-258",
+        "WO-259"
       ],
       "blocked-by": [],
       "rests-on": [
@@ -8897,7 +9173,15 @@
           "disposition": "open"
         },
         {
-          "claim": "BP-050 exposes, per site and week, whether that week was not measured at all (REQ-065 c3) or measured only in part (c4), and which measurements the partial week holds, so a `WeekMeasurements` can be built from it without a fresh measurement (ADR-071's `rests-on`). The *shape* is no longer assumed: BP-051 decision 5 declares `WeekMeasurements` in its own `## Public interface` as of 2026-08-31.",
+          "claim": "BP-050 exposes, per site and week, whether that week was not measured at all (REQ-065 c3) or measured only in part (c4), and which measurements the partial week holds, so a `WeekMeasurements` can be built from it without a fresh measurement (ADR-072's first `rests-on`, carried from ADR-071). The *shape* is no longer assumed: BP-051 decision 5 declares `WeekMeasurements` in its own `## Public interface` as of 2026-08-31.",
+          "disposition": "open"
+        },
+        {
+          "claim": "`CheckId` — `'reachable' | 'indexable' | 'sitemap' | 'aiReadable'` — is declared by BP-049 in `src/lib/publish/verify/verify.ts` and is importable from a module under `src/lib/opportunities/`. `VerifyNote`'s `checks_failed` arm names it and this work order declares no second copy of it (rule 2.4). The direction `src/lib/opportunities -> src/lib/publish` is not the cycle `structure.md` rule 6 forbids; the forbidden direction here is `src/lib/scan -> src/lib/opportunities` (BP-051 decision 5).",
+          "disposition": "open"
+        },
+        {
+          "claim": "BP-051's `## Public interface` code fence, as it stands on disk on 2026-09-02, splices the `VerifyNote` declaration into the middle of the `WeekStanding` union, so `WeekStanding`'s `not_judgeable`, `not_measured` and `no_week` arms read as arms of `VerifyNote`. The two unions are separated in the `## Interfaces` block below, and every member, comment and arm is otherwise copied character-for-character. Reported to the architect rather than resolved here; the blueprint is not this agent's to edit (constitution 4). If the architect's correction differs from the separation below, this work order is re-extracted from it.",
           "disposition": "open"
         }
       ],
@@ -8925,7 +9209,7 @@
           "disposition": "open"
         },
         {
-          "claim": "The four `NotJudgeableCause` conditions are observable to this module's caller: the tracked search set for the week (REQ-071 c7), the publication's unpublished state (REQ-056 c7), and the site's recorded domain change (REQ-071 c14).",
+          "claim": "`NotJudgeableCause` has **five** members since 2026-09-01 (ADR-072 Decision 5a) and this pure function produces **two** of them: `search_untracked` and `question_left_set`, both read as an absent key in `WeekMeasurements`. The other three are the caller's, from stored state this function's declared inputs do not carry — `domain_changed` needs the publication's own domain to compare `WeekMeasurements.domain` against, `unpublished` needs the publication's state (REQ-056 c7), and `page_not_found` is BP-049's recorded outcome and is never derived anywhere (ADR-085). BP-051's doc comment on `evaluateAcceptance` still reads \"which of the four causes stops it being decidable\" and its `WeekMeasurements.domain` comment reads \"Compared with the publication's\"; neither the count nor that comparison is reachable from the declared signature. The signature is copied unchanged below and the split of work is stated in the file plan; reported to the architect rather than resolved here.",
           "disposition": "open"
         }
       ],
@@ -8946,20 +9230,25 @@
         "WO-177",
         "WO-203",
         "WO-204",
-        "WO-206"
+        "WO-206",
+        "WO-234"
       ],
       "blocked-by": [],
       "rests-on": [
         {
-          "claim": "BP-050's `accountForWeek` distinguishes a week that was not measured at all from one measured only in part, and names which parts are unmeasured; `no_week` and `not_measured` are derived from that distinction alone (ADR-071's `rests-on`).",
+          "claim": "BP-050's `accountForWeek` distinguishes a week that was not measured at all from one measured only in part, and names which parts are unmeasured; `no_week` and `not_measured` are derived from that distinction alone (ADR-072's first `rests-on`, carried from ADR-071).",
           "disposition": "open"
         },
         {
-          "claim": "BP-015's `DestinationAdapter.servesPublicly` is the population boundary: a page delivered to a destination the customer must publish themselves is not judged (BP-051's second `rests-on`). Discharged 2026-08-31: `servesPublicly` is declared on the adapter in BP-015's interface and in BP-045's `src/lib/publish/types.ts`, where the shape actually lives; it was missing from the second and has been added.",
+          "claim": "BP-015's `DestinationAdapter.servesPublicly` is the population boundary. Discharged 2026-08-31: the field is declared on the adapter in BP-015's interface and in BP-045's `src/lib/publish/types.ts`, where the shape actually lives. **Re-read 2026-09-01 (ADR-084): it is now `true` at both destinations, so the judged population includes every WordPress page and no rule in this work order changed to admit it.** The clause that used to end this row — that a WordPress delivery the customer must publish themselves is outside the population — is refuted, and the REQ-063 non-goal it rested on has been deleted from the requirement.",
           "disposition": "confirmed"
         },
         {
-          "claim": "BP-062's 24-hour verification records a failure time per publication, read here and shown beside a verdict, never in place of one.",
+          "claim": "BP-049 records, per publication, the whole `VerifyOutcome` of the one check at 24 hours — `found` with its four `Measured<boolean>`, `page_not_found`, or `could_not_confirm` — each carrying its own `checkedAt`, and `dispositionFor` returns it. This node reads that record and never re-derives, re-fetches or retries it (ADR-085 Decision 3). WO-234 writes it; the shape is declared in BP-045's `src/lib/publish/types.ts` (WO-206) and re-exported by BP-049.",
+          "disposition": "open"
+        },
+        {
+          "claim": "A prior `not_judgeable` row for a publication is answerable by one indexed read on `page_verdicts` before any evaluation is attempted, which is what makes ADR-072 Decision 5c's terminality-by-row rather than terminality-by-flag implementable at this node's NFR budget (one bulk insert per site per week, ≤8 pages).",
           "disposition": "open"
         },
         {
@@ -8973,11 +9262,14 @@
     "WO-206": {
       "id": "WO-206",
       "type": "work-order",
-      "title": "The publishing type leaf — State, Actor, DraftView, Publication, DestinationAdapter, DeliveryResult",
+      "title": "The publishing type leaf — State, Actor, DraftView, Publication, DestinationAdapter, DeliveryResult, VerifyOutcome",
       "status": "approved",
       "implements": [
+        "ADR-084",
+        "ADR-085",
         "BP-045",
-        "REQ-056"
+        "REQ-056",
+        "REQ-062"
       ],
       "depends-on": [
         "WO-001"
@@ -8986,6 +9278,10 @@
       "rests-on": [
         {
           "claim": "`DraftView` carries the ten fields BP-046 requires of it — `id`, `siteId`, `state`, `vetoDeadline`, `approvedAt`, `approvedBy`, `hasUnsavedEdit`, `claimRecheckOutstanding`, `told` and the `GoverningPair` in force — and BP-014's draft row is the source of the last four; this work order declares the shape, it does not populate it.",
+          "disposition": "open"
+        },
+        {
+          "claim": "`Measured<T>` is importable into `src/lib/publish/types.ts` from `src/lib/measure/` (BP-010) without creating a cycle: `src/lib/measure/` imports nothing from `src/lib/publish/`. structure.md rule 6 forbids a cycle between `src/lib/` modules, and BP-045's leaf rule is narrower — `types.ts` imports nothing from `src/lib/publish/`, which an import from `src/lib/measure/` does not violate. Asserted by this work order's dependency test, not assumed.",
           "disposition": "open"
         }
       ],
@@ -9017,6 +9313,7 @@
       "status": "approved",
       "implements": [
         "ADR-080",
+        "ADR-084",
         "BP-045",
         "REQ-056"
       ],
@@ -9139,8 +9436,10 @@
       "title": "publish() — the delivery call after the commit, and the outcome written exactly as it happened",
       "status": "approved",
       "implements": [
+        "ADR-084",
         "BP-045",
-        "REQ-056"
+        "REQ-056",
+        "REQ-062"
       ],
       "depends-on": [
         "WO-206",
@@ -9160,6 +9459,7 @@
       "title": "Retry at most three times, withheld while the switch is off — and unpublish()",
       "status": "approved",
       "implements": [
+        "ADR-084",
         "BP-045",
         "REQ-056"
       ],
@@ -9210,8 +9510,11 @@
       "title": "The telling — what the customer is told, when the pair changes, and the one mail that cannot be suppressed",
       "status": "approved",
       "implements": [
+        "ADR-084",
+        "ADR-086",
         "BP-046",
-        "REQ-057"
+        "REQ-057",
+        "REQ-060"
       ],
       "depends-on": [
         "WO-041",
@@ -9219,7 +9522,9 @@
         "WO-106",
         "WO-206",
         "WO-215",
-        "WO-218"
+        "WO-218",
+        "WO-226",
+        "WO-266"
       ],
       "blocked-by": [],
       "rests-on": [
@@ -9560,6 +9865,8 @@
       "title": "When a check is due, and the two ways it never will be",
       "status": "approved",
       "implements": [
+        "ADR-084",
+        "ADR-085",
         "BP-049",
         "REQ-062"
       ],
@@ -9580,6 +9887,7 @@
       "title": "bodyCoverage() — the one operational definition of \"returns its whole page content\"",
       "status": "approved",
       "implements": [
+        "ADR-085",
         "BP-049",
         "REQ-062"
       ],
@@ -9594,9 +9902,11 @@
     "WO-234": {
       "id": "WO-234",
       "type": "work-order",
-      "title": "verifyLive() — four outcomes as Measured<boolean>, never inferred from each other",
+      "title": "verifyLive() — one fetch, three outcomes, and four Measured<boolean> in the one arm that has them",
       "status": "approved",
       "implements": [
+        "ADR-084",
+        "ADR-085",
         "BP-049",
         "REQ-062"
       ],
@@ -9607,7 +9917,9 @@
         "WO-208",
         "WO-231",
         "WO-232",
-        "WO-233"
+        "WO-233",
+        "WO-261",
+        "WO-262"
       ],
       "blocked-by": [],
       "rests-on": [],
@@ -9620,6 +9932,8 @@
       "title": "The published message — the live address and all four outcomes, sent whether they passed or failed",
       "status": "approved",
       "implements": [
+        "ADR-084",
+        "ADR-085",
         "BP-049",
         "REQ-062"
       ],
@@ -9628,7 +9942,8 @@
         "WO-104",
         "WO-106",
         "WO-232",
-        "WO-234"
+        "WO-234",
+        "WO-262"
       ],
       "blocked-by": [],
       "rests-on": [],
@@ -9641,6 +9956,8 @@
       "title": "The WordPress REST client and the one place a vendor payload stops",
       "status": "approved",
       "implements": [
+        "ADR-084",
+        "ADR-086",
         "BP-048",
         "REQ-060"
       ],
@@ -9656,11 +9973,14 @@
     "WO-237": {
       "id": "WO-237",
       "type": "work-order",
-      "title": "The WordPress adapter — a draft, never live, at most one post, and the marker that makes it so",
+      "title": "The WordPress adapter — one create call that publishes live, at most one post, and the marker that makes it so",
       "status": "approved",
       "implements": [
         "ADR-080",
+        "ADR-084",
+        "ADR-086",
         "BP-048",
+        "REQ-056",
         "REQ-060"
       ],
       "depends-on": [
@@ -9675,6 +9995,18 @@
         {
           "claim": "A post created by us carries a marker we can find again on a later request — post meta written at creation and readable back by the same application-password user — so a retry whose first outcome was never recorded finds the existing post instead of creating a second one.",
           "disposition": "open"
+        },
+        {
+          "claim": "The WordPress REST API lets an application-password user create a post with `status: 'publish'` in a single request and returns that post's public permalink in the same response, so a delivery is live at a known address with no second call. ADR-084's first `rests-on` row, carried here because this node is where the call is made. Nothing in this repository has spoken to a WordPress install (`00-project.md`, 'Greenfield. No source code on disk yet').",
+          "disposition": "open"
+        },
+        {
+          "claim": "An application-password user that holds `edit_posts` but not `publish_posts` can still create a post, and WordPress silently holds it at `draft` or `pending` rather than honouring `status: 'publish'` or refusing the request. ADR-084's second `rests-on` row, and the whole ground for the status assertion on the create response. If it is refuted and such a request is refused outright, that assertion becomes belt-and-braces rather than the only thing standing between the owner's ruling and a silently drafted post, and its shape does not change.",
+          "disposition": "open"
+        },
+        {
+          "claim": "ADR-083's stamp — the `post_tag` term the create call carries, `canStamp`, `WORDPRESS_STAMP_SLUG` and `stampApplied` — is cut by no work order anywhere in this corpus (verified 2026-09-02 by grep over all 245 work orders: `canStamp`, `stampCapability`, `stamp_capable`, `post_tag` and `WORDPRESS_STAMP_SLUG` appear in none of them). BP-048 requires the term to be written **in the create call and never afterwards**, so it cannot be added by a later work order without becoming 'a later write into their site', which REQ-060 criterion 6 forbids in terms — which is what BP-048 means by the work-order sequence being load-bearing rather than a preference. This work order declares `stampApplied` because BP-048's interface does, and does **not** implement the stamp; see the stop condition in `## Steps`.",
+          "disposition": "open"
         }
       ],
       "supersedes": [],
@@ -9686,6 +10018,7 @@
       "title": "Yoast and RankMath — detected, never assumed, and neither present is a success",
       "status": "approved",
       "implements": [
+        "ADR-084",
         "BP-048",
         "REQ-060"
       ],
@@ -9706,11 +10039,11 @@
     "WO-239": {
       "id": "WO-239",
       "type": "work-order",
-      "title": "The WordPress unpublish — two populations, one stored discriminator, and the arm that is empty today",
+      "title": "The WordPress unpublish — four outcomes, one stored discriminator, and the arm that is empty now",
       "status": "draft",
       "implements": [
         "ADR-080",
-        "ADR-081",
+        "ADR-084",
         "BP-048",
         "REQ-056",
         "REQ-079"
@@ -9724,11 +10057,15 @@
       "blocked-by": [],
       "rests-on": [
         {
-          "claim": "The WordPress REST API lets an application-password user with `edit_posts` set an existing post's status back to `draft` on a post that user's own credential created, without any other field of that post changing. BP-048's `rests-on` already assumes the write path for creation and for the SEO fields; that the same path can set status back is assumed here and is not verified in this corpus.",
+          "claim": "The WordPress REST API lets an application-password user with `edit_posts` set an existing post's status back to `draft` on a post that user's own credential created, without any other field of that post changing. BP-048's `rests-on` already assumes the write path for creation and for the SEO fields; that the same path can set status back is assumed here and is not verified in this corpus. Carried forward from ADR-082, which carried it from ADR-081.",
           "disposition": "open"
         },
         {
-          "claim": "The two written lines the customer reads — the never-live line `publish.wordpress.namedForRemoval`, which BP-048 names, and the was-live line, which no node has yet named a key for — are BP-019/BP-020's and their strings are the owner's (ADR-081, Consequences). Nothing in this work order blocks on either: it returns an `UnpublishResult` handle and composes no sentence.",
+          "claim": "A WordPress REST request can tell 'the post is no longer there' (a 404 for a post id we hold) apart from 'the site could not be reached' (DNS failure, connection reset, timeout, 5xx) reliably enough to choose between the `already_gone` and `unreachable` arms. ADR-082's fourth `rests-on`, carried here because this module is where the two arms are taken. Nothing in this corpus verifies that a misconfigured host cannot answer 404 for an unreachable site; the mapping itself is WO-236's `errors.ts`.",
+          "disposition": "open"
+        },
+        {
+          "claim": "The written lines the customer reads — `publish.wordpress.namedForRemoval`, the was-live line, the `already_gone` line, the `unreachable` line and the retry action's label — are BP-019/BP-020's and their strings are the owner's (ADR-082 and ADR-084, Open questions). Nothing in this work order blocks on any of them: it returns an `UnpublishResult` handle and composes no sentence.",
           "disposition": "open"
         }
       ],
@@ -10280,6 +10617,235 @@
       ],
       "supersedes": [],
       "file": "sdlc-factory/docs/work-orders/WO-257.md"
+    },
+    "WO-258": {
+      "id": "WO-258",
+      "type": "work-order",
+      "title": "WayThrough, and the first way: the page as a visitor sees it, decided from the record and never from a look",
+      "status": "draft",
+      "implements": [
+        "BP-039",
+        "REQ-043"
+      ],
+      "depends-on": [
+        "WO-041",
+        "WO-206"
+      ],
+      "blocked-by": [],
+      "rests-on": [
+        {
+          "claim": "`pageRecordFor(draftId)` and the `PageRecord` it returns are BP-045's `src/lib/publish/record/`, added to the capability index on 2026-09-01 and cut by **no work order in the corpus** as of 2026-09-02 — a grep of all 246 work orders for `PageRecord`, `pageRecordFor` and `record/index.ts` returns nothing. It falls in the BP-045 block (WO-206 to WO-239 and the new ids WO-261 to WO-270), not this one. This work order needs only the **type**, which BP-045 declares in `src/lib/publish/types.ts` (WO-206), and constructs its own fixtures; if the type is absent when work starts, the implementer adds nothing under `src/lib/publish/` — it logs `failed` naming the missing declaration and stops (constitution rule 4.2).",
+          "disposition": "open"
+        },
+        {
+          "claim": "`PageRecord.address.offered === false` — REQ-056 criterion 6's `never_made_live` arm — is **unreachable in production since ADR-084 Decision 1**, which makes every page created live at every destination, and REQ-043 criterion 12 names no refusal ground for it: its three grounds are `unpublished_by_us`, `page_not_found` and `no_admin_address`, and none of them is 'ReachKit never made this page live'. This work order therefore gives that input **no runtime arm**: `wayAsVisitor` narrows on it and closes with `const _never: never`, so the day the arm gains members the file stops compiling rather than defaulting into an offered way with an undefined address. Reported to the architect: it is either criterion 12's fourth ground or BP-045's arm to retire, and neither is a planner's to choose.",
+          "disposition": "open"
+        }
+      ],
+      "supersedes": [],
+      "file": "sdlc-factory/docs/work-orders/WO-258.md"
+    },
+    "WO-259": {
+      "id": "WO-259",
+      "type": "work-order",
+      "title": "The second way: an address inside the customer's own WordPress, formed from what ReachKit recorded at delivery",
+      "status": "draft",
+      "implements": [
+        "BP-039",
+        "REQ-043"
+      ],
+      "depends-on": [
+        "WO-041",
+        "WO-206",
+        "WO-258"
+      ],
+      "blocked-by": [
+        "BP-039",
+        "BP-045"
+      ],
+      "rests-on": [
+        {
+          "claim": "An address of the form `<baseUrl>/wp-admin/post.php?post=<postId>&action=edit` opens that post inside the customer's own WordPress for whoever is signed in there, on every install a customer can connect. This is REQ-043's own `rests-on` row and BP-039's second — 'for every post ReachKit delivered to a customer's WordPress, an address inside that WordPress that opens that post for whoever is signed in there can be formed from what ReachKit recorded at delivery — the site's base URL and the post id' — narrowed here to the one concrete template this work order builds. Nothing in this repository has spoken to a WordPress install (`00-project.md`, 'Greenfield. No source code on disk yet'), so `wp-admin` sitting at that relative path, and `post.php` taking those two parameters, are assumed and not verified here. Where an install serves its admin elsewhere the address 404s inside the customer's own site, which is the failure this template's cost-of-reversing names.",
+          "disposition": "open"
+        },
+        {
+          "claim": "The credential the signed-in customer arrives at that address with is **their own WordPress session**, not the application password ReachKit holds. BP-039 states it: 'This panel therefore has no dependency on what the *application password* can do — the credential the signed-in customer arrives with is not ReachKit's.' So what the address opens, and whether the post is editable there, is theirs and is not promised by this work order (REQ-043's non-goal, as rewritten 2026-09-01).",
+          "disposition": "confirmed"
+        }
+      ],
+      "supersedes": [],
+      "file": "sdlc-factory/docs/work-orders/WO-259.md"
+    },
+    "WO-261": {
+      "id": "WO-261",
+      "type": "work-order",
+      "title": "classify() — a whitelist of two statuses, never a blacklist, and identity decided apart from readability",
+      "status": "draft",
+      "implements": [
+        "ADR-085",
+        "BP-049",
+        "REQ-062"
+      ],
+      "depends-on": [
+        "WO-001",
+        "WO-206"
+      ],
+      "blocked-by": [],
+      "rests-on": [
+        {
+          "claim": "A fetch of a page's own public address can tell an unambiguous 404 or 410 from every other answer reliably enough to choose between REQ-062 criterion 4's second and third outcomes. This is ADR-084's fourth `rests-on` row, raised there for a WordPress post-id fetch, and it is load-bearing here for a different call against a different host (ADR-085's first row). A misconfigured host answering 404 for a site that is in fact unreachable puts a page in the arm that stops its verdicts forever (ADR-072). Nothing in this repository has fetched a customer's page (`00-project.md`, 'Greenfield. No source code on disk yet').",
+          "disposition": "open"
+        },
+        {
+          "claim": "A page served by a customer's CMS carries its own identity in server-rendered markup — a canonical link or `og:url` resolving to the fetched address, or failing both a `<title>` matching the published title — even where its body is withheld behind client JavaScript. BP-049's second `rests-on`, carried here because this module is where the split is implemented. If it is refuted for some CMS, a JavaScript-gated page reads as `not_our_page` instead of as failing the one check that exists to catch it — which is the safe direction: it asserts nothing.",
+          "disposition": "open"
+        }
+      ],
+      "supersedes": [],
+      "file": "sdlc-factory/docs/work-orders/WO-261.md"
+    },
+    "WO-262": {
+      "id": "WO-262",
+      "type": "work-order",
+      "title": "A site's condition — recorded only from an answer that site gave, and never a suppression on a non-answer",
+      "status": "draft",
+      "implements": [
+        "ADR-085",
+        "BP-049",
+        "REQ-062"
+      ],
+      "depends-on": [
+        "WO-001",
+        "WO-011",
+        "WO-206",
+        "WO-208"
+      ],
+      "blocked-by": [],
+      "rests-on": [
+        {
+          "claim": "`publications.verify jsonb` can carry a `siteCondition` field beside the serialised `VerifyOutcome` without a column of its own, and the most recent non-null one for a destination is readable in one indexed query over that jsonb. BP-049 decision 5 fixes the shape; the index that makes the read one query is this work order's to choose and lands on WO-208's migration topic, which this work order may not write — see `## Out of scope`.",
+          "disposition": "open"
+        }
+      ],
+      "supersedes": [],
+      "file": "sdlc-factory/docs/work-orders/WO-262.md"
+    },
+    "WO-263": {
+      "id": "WO-263",
+      "type": "work-order",
+      "title": "The page record — the address under the label its current state earns, and the one check's outcome inseparable from it",
+      "status": "draft",
+      "implements": [
+        "ADR-084",
+        "ADR-085",
+        "BP-045",
+        "REQ-056",
+        "REQ-062"
+      ],
+      "depends-on": [
+        "WO-001",
+        "WO-011",
+        "WO-206",
+        "WO-208",
+        "WO-213",
+        "WO-214",
+        "WO-232"
+      ],
+      "blocked-by": [],
+      "rests-on": [
+        {
+          "claim": "The three surfaces that state a published page's standing — the day panel (BP-039), the draft view (BP-044) and Overview (BP-001) — call `pageRecordFor` rather than re-deriving liveness from a column. This work order ships the read model and the type that makes the re-derivation unnecessary; it cannot make those surfaces call it, and the work orders that build them are not this pass's. Until they do, REQ-062 criterion 7's promise holds by construction only for callers of this function.",
+          "disposition": "open"
+        },
+        {
+          "claim": "The two sentences REQ-056 criterion 6's address-label pair needs — `record.address.publiclyReadableAt` and `record.address.wasPublishedAt` — and the never-made-live line `record.address.neverMadeLive` are owner-owed customer-visible strings (REQ-093, constitution §1's rights table) and are not written anywhere in this corpus. This work order names the three keys and supplies the address; it mints no sentence and does not block on them, because every assertion below is on a key.",
+          "disposition": "open"
+        }
+      ],
+      "supersedes": [],
+      "file": "sdlc-factory/docs/work-orders/WO-263.md"
+    },
+    "WO-264": {
+      "id": "WO-264",
+      "type": "work-order",
+      "title": "canPublish() — can this credential publish, not merely create, and it is not the stamp probe",
+      "status": "draft",
+      "implements": [
+        "ADR-084",
+        "ADR-086",
+        "BP-048",
+        "REQ-060"
+      ],
+      "depends-on": [
+        "WO-001",
+        "WO-206",
+        "WO-236",
+        "WO-237"
+      ],
+      "blocked-by": [],
+      "rests-on": [
+        {
+          "claim": "An application-password user that holds `edit_posts` but not `publish_posts` — WordPress's Contributor role in the default map — can be told apart from one that can publish, over the REST API, **without creating a post**. ADR-084's second `rests-on` row and ADR-086's first, and the whole ground for this probe. Nothing in this repository has spoken to a WordPress install (`00-project.md`, 'Greenfield. No source code on disk yet'). If it is refuted and such a request is refused outright, the probe becomes belt-and-braces rather than the only thing standing between the owner's ruling and a silently drafted post, and its shape does not change.",
+          "disposition": "open"
+        }
+      ],
+      "supersedes": [],
+      "file": "sdlc-factory/docs/work-orders/WO-264.md"
+    },
+    "WO-265": {
+      "id": "WO-265",
+      "type": "work-order",
+      "title": "publish_capable — the one probe result on the destinations row that is a health input",
+      "status": "draft",
+      "implements": [
+        "ADR-084",
+        "ADR-086",
+        "BP-058",
+        "REQ-060"
+      ],
+      "depends-on": [
+        "WO-011",
+        "WO-223"
+      ],
+      "blocked-by": [],
+      "rests-on": [],
+      "supersedes": [],
+      "file": "sdlc-factory/docs/work-orders/WO-265.md"
+    },
+    "WO-266": {
+      "id": "WO-266",
+      "type": "work-order",
+      "title": "cannot_publish — a fourth occasion inside three states, and an action that leads to a different account",
+      "status": "draft",
+      "implements": [
+        "ADR-084",
+        "ADR-086",
+        "BP-058",
+        "REQ-060",
+        "REQ-074"
+      ],
+      "depends-on": [
+        "WO-001",
+        "WO-206",
+        "WO-225",
+        "WO-226",
+        "WO-227",
+        "WO-264",
+        "WO-265"
+      ],
+      "blocked-by": [],
+      "rests-on": [
+        {
+          "claim": "REQ-074 gains a criterion for the destinations list in the `failing`-because-cannot-publish state. REQ-060 criterion 7 fixes what the customer must and must not be told there and narrowed its own non-goal to REQ-074 criterion 1 accordingly, so REQ-074 today covers only the expired-credential occasion. Until that criterion exists this work order renders the occasion from REQ-060 criterion 7 alone — enough to build, and not enough for the destinations list to own the promise (rule 5.7). BP-058's third `rests-on` and ADR-086's second; raised by the requirements-analyst on 2026-09-01 and not closed. Recorded here, not as a `blocked-by`: REQ-074 is silent on this occasion, and silence is a gap, not a conflict (rule 2.3).",
+          "disposition": "open"
+        },
+        {
+          "claim": "The sentence the customer reads in this occasion, and the label of the `reconnect_other_account` action, are owner-owed customer-visible strings and are not written anywhere in this corpus (ADR-084's and ADR-086's Open questions, both open). This work order names the key, the reason and the action and mints no sentence; every assertion below is on a key or a union member, so nothing here blocks on them — but the destinations list cannot render this occasion to a customer until the owner supplies them.",
+          "disposition": "open"
+        }
+      ],
+      "supersedes": [],
+      "file": "sdlc-factory/docs/work-orders/WO-266.md"
     }
   }
 }

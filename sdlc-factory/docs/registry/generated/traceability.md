@@ -5,7 +5,7 @@
 # Traceability — REQ → BP → WO → TST
 
 - `satisfies` is projected from 44 of 63 blueprints — the rest are silent on it.
-- `implements` is projected from 245 of 245 work orders — the rest are silent on it.
+- `implements` is projected from 253 of 253 work orders — the rest are silent on it.
 - `covers` is projected from 32 of 63 blueprints — the rest are silent on it.
 - `verdict` is projected from 0 of 0 validation nodes — the rest declare none and render `unknown`.
 
@@ -114,6 +114,8 @@ One row per chain leg reached from an approved requirement's `satisfies` edges �
 | REQ-043 | BP-039 | WO-166 | — |
 | REQ-043 | BP-039 | WO-167 | — |
 | REQ-043 | BP-039 | WO-168 | — |
+| REQ-043 | BP-039 | WO-258 | — |
+| REQ-043 | BP-039 | WO-259 | — |
 | REQ-044 | — | — | — |
 | REQ-045 | BP-044 | WO-169 | — |
 | REQ-045 | BP-044 | WO-170 | — |
@@ -163,6 +165,7 @@ One row per chain leg reached from an approved requirement's `satisfies` edges �
 | REQ-056 | BP-045 | WO-212 | — |
 | REQ-056 | BP-045 | WO-213 | — |
 | REQ-056 | BP-045 | WO-214 | — |
+| REQ-056 | BP-045 | WO-263 | — |
 | REQ-057 | BP-046 | WO-215 | — |
 | REQ-057 | BP-046 | WO-216 | — |
 | REQ-057 | BP-046 | WO-217 | — |
@@ -174,11 +177,14 @@ One row per chain leg reached from an approved requirement's `satisfies` edges �
 | REQ-060 | BP-048 | WO-237 | — |
 | REQ-060 | BP-048 | WO-238 | — |
 | REQ-060 | BP-048 | WO-239 | — |
+| REQ-060 | BP-048 | WO-264 | — |
 | REQ-061 | — | — | — |
 | REQ-062 | BP-049 | WO-232 | — |
 | REQ-062 | BP-049 | WO-233 | — |
 | REQ-062 | BP-049 | WO-234 | — |
 | REQ-062 | BP-049 | WO-235 | — |
+| REQ-062 | BP-049 | WO-261 | — |
+| REQ-062 | BP-049 | WO-262 | — |
 | REQ-063 | BP-051 | WO-203 | — |
 | REQ-063 | BP-051 | WO-204 | — |
 | REQ-063 | BP-051 | WO-205 | — |
@@ -210,6 +216,8 @@ One row per chain leg reached from an approved requirement's `satisfies` edges �
 | REQ-074 | BP-058 | WO-226 | — |
 | REQ-074 | BP-058 | WO-227 | — |
 | REQ-074 | BP-058 | WO-228 | — |
+| REQ-074 | BP-058 | WO-265 | — |
+| REQ-074 | BP-058 | WO-266 | — |
 | REQ-075 | BP-059 | WO-107 | — |
 | REQ-075 | BP-059 | WO-108 | — |
 | REQ-076 | BP-060 | WO-129 | — |
