@@ -17,6 +17,7 @@ pipeline with gates, traceability, and a living knowledge base under
 | **9:1** | queue-to-voice ratio: the owner answered 54 questions and initiated 6 sentences |
 | **22:1** | documentation-to-code — 21,880 lines against 982 |
 | **11** | median number of artifacts stating any one fact. The designed number is four |
+| **14,824** | words per approved requirement on the second live corpus, at zero lines of code — the cost every subagent pays on every turn, and the one the factory had never measured |
 
 Two root causes, both fixed below: agents read the anti-fabrication rule
 (§1.2) as a ban on choosing a design **parameter** — a category error — and
@@ -115,10 +116,54 @@ unrepresentable gets an empty index that looks healthy — and an index that
 reaches a correct-looking value through an error handler is how a derived
 index starts lying.
 
+**2.3b — an assumption is discharged by the first stage that can observe
+it, and never survives `done`.** A work order's `rests-on` rows are
+dispositioned by its validator — `confirmed`, `refuted`, or
+`undischargeable` with the reason — before the verdict; the librarian
+refuses `done` while any row is `open`, naming the row (rule 3.1). A row
+on a blueprint, decision or requirement is dispositioned by the validator
+of the first work order that implements it and observed the claim; the
+rest are dispositioned by the architect on its own read at wave close
+(rule 1.1), and only a row whose disposition changes what is promised
+reaches the owner. The budget is a ratio, not a cap: open rows per
+approved artifact is reported on every run, and past its threshold the
+corpus is generating claims faster than it discharges them. *Measured on
+the second live corpus: 405 open, 58 confirmed, 0 refuted — a loud index
+nobody reads, rule 5.5 inverted.*
+
 **Rule 2.4 — one claim, one home.** A fact is stated in exactly one artifact.
 Everything downstream cites it. Restating a decision's theorem inside a
 requirement is how the second copy gets minted, and the second copy is how
 they diverge.
+
+**Rule 2.5 — a document that says what the code will say is a defect.**
+The corpus holds three things: what the product promises (REQ, JN), why
+the shape was chosen (ADR, the decision sections of a BP), and how work
+moves (WO, TST, FB, the registry). The code holds the rest. Before
+writing a paragraph, ask which of the three it is; a paragraph that is
+none of them — a signature the module will declare, a schema the
+migration will state, a step the implementer will take anyway — is
+written once, in the code, and cited from the artifact by anchor (rule
+5.3). Rule 2.2 is this rule applied to decisions; the planner's floor
+(rule 2.6) is this rule applied to work orders. *Measured on the second
+live corpus before any code existed: 681,900 live words, 14,824 per
+approved requirement, 253 work orders totalling more lines than the
+first corpus's whole implementation.*
+
+**Rule 2.6 — a work order is a slice, never a file.** The unit of a work
+order is one journey step end to end, or one capability from its
+interface to its test — cut vertically through whatever files that
+takes, never horizontally along a layer, a directory, or a file. The
+merge test, mirroring rule 2.1's: **two work orders that cannot state
+their goal and stop condition without citing each other are one work
+order.** A set that fails it is merged before it is approved — a merge,
+never a discard: criteria and file plans carried verbatim, the replaced
+orders kept as `superseded` — and a set that cannot be merged inside a
+day is a blueprint that has not finished deciding; it goes back to the
+architect, not forward to the wave. *Measured on the second live corpus:
+253 work orders for 46 approved requirements, median five each, 33,383
+lines — larger than the first corpus's whole implementation, before a
+line of it existed.*
 
 ## 3. Stage gates
 
@@ -140,6 +185,8 @@ implementation, never an artifact's approval.)
 - No `ui: yes` work order reaches `done` without a placement note — its
   latest validation section carries a `Placement:` line before the
   librarian sets it.
+- No work order reaches `done` with an `open` `rests-on` row — its
+  validator dispositioned every row it carries (2.3b).
 - Statuses: `draft → in-review → approved → superseded`; work orders alone
   add the terminal `done`, set only by the librarian after merge.
 
@@ -186,7 +233,9 @@ so round two does not apply to either. A draft carrying open
 **Owner verbs.** Exactly five verbs are the owner's: `/require`,
 `/requirement-cleanup`, `/decide`, `/feedback`, and `/wave`. Everything
 else — including `/review` — is a system verb: invoked by an owner verb,
-by an agent, or directly, but never a stage gate itself.
+by an agent, or directly, but never a stage gate itself. The owner speaks
+through the orchestrator loop (`/factory`, §9) — the five verbs are where
+their decisions land, not what they must remember to type.
 
 All but the reviewer own one directory; several agents serve more than
 one verb — the table below, not a per-verb rule, is the ownership record.
@@ -195,13 +244,47 @@ one verb — the table below, not a per-verb rule, is the ownership record.
 |---|---|---|---|
 | requirements-analyst | `requirements/`, `journeys/` | wording, splitting, criterion form | anything that changes what is promised |
 | architect | `blueprints/`, `decisions/` | structure, parameters, boundaries, names | a customer-visible consequence |
-| planner | `work-orders/` | scope, sequence, file plans, stop conditions | a WO that cannot be bounded to a day |
+| planner | `work-orders/` | scope, sequence, file plans, stop conditions | a WO that cannot be bounded to a day, or a slice (rule 2.6) that cannot be cut below a day without failing the merge test |
 | implementer | `src/`, `tests/` | implementation within the plan | a plan that is wrong — say so |
 | validator | verdicts | pass / findings / reject | nothing; independence is the product |
 | librarian | `registry/`, statuses | whether a gate is met | nothing; it refuses |
 | design-guardian | `design/` | tokens, components, layout | customer-visible copy |
 | feedback-triage | `feedback/` | routing | defect vs preference |
 | reviewer | nothing | what is ambiguous, missing, conflicting, untestable | nothing; it only asks |
+
+**The routing map.** One row per verb: the stage it serves, who calls it,
+the agent it dispatches, the skill that agent loads, and the model tier the
+agent runs on (rule 4.4). The owner-facing surface is `/factory` and the
+five rows whose caller is `owner`; every other row is internal — invoked by
+the loop or by an owner verb, never something the owner must remember. A
+skill is loaded by exactly one agent (the artifact's author) and cited by
+the others that write the same file; a system verb has exactly one caller.
+A verb with no caller, or a skill with no loader, is folded or deleted at
+the next rung. This table is the only place routing is stated: the router
+hook renders its `owner` rows every turn and restates nothing.
+
+| Stage | Verb | Caller | Agent | Loads skill | Model |
+|---|---|---|---|---|---|
+| cockpit | `/factory` | owner | orchestrator (this session) | — | owner's |
+| intake | `/require` | owner | requirements-analyst | prd-writing · journey-writing · conflict-detection | fable |
+| intake | `/review` | `/require` · `/requirement-cleanup` (rule 3.4) | reviewer | review-rounds | opus |
+| cleanup | `/requirement-cleanup` | owner | requirements-analyst · architect (anchors) | cleanup-routing | fable |
+| cleanup | `/relink` | `/requirement-cleanup` | architect · planner | — | fable |
+| decision | `/decide` | owner | architect | — | fable |
+| expand | `/expand-requirement` | `/factory` | architect · planner | blueprint-writing | fable |
+| cut | `/workorder` (cut · consolidate) | `/factory` | planner | work-order-writing · wave-planning | fable |
+| preview | `/design` | `/factory` (a `ui: yes` WO with no signed preview) | design-guardian | design-system | sonnet |
+| wave | `/wave` | owner | planner (propose) · librarian (write · show · close) · architect (close: upstream rows) | — | fable · haiku |
+| build | `/implement` | `/factory` | implementer | — | sonnet |
+| verify | `/validate` | `/factory` | design-guardian (UI-fit) · validator | — | sonnet |
+| verify | `/regress` | `/factory` | validator | — | sonnet |
+| feedback | `/feedback` | owner | feedback-triage | — | haiku |
+| backward pass | `/sync` | `/factory` (a change to an existing artifact; an out-of-band change) | librarian | traceability | haiku |
+| state | `/console` | `/factory` (`next` · `--check`) | the binary | — | — |
+| install | `/factory-init` | owner, once, before a corpus exists | main session (scaffolding exemption) | — | owner's |
+| install | `/codebase-scan` | `/factory-init` (brownfield) | requirements-analyst · architect · design-guardian | (each its own) | per agent |
+| *fold 0.12.0* | `/status` | none — its content is `next` plus the checkpoint's coverage line | librarian | — | haiku |
+| *fold 0.12.0* | `/blueprint` | none — `/expand-requirement` step 2 is the same dispatch | architect | blueprint-writing | fable |
 
 **Rule 4.1 — delegate.** Route stage work to the matching agent; keep
 orchestrator context clean. Agents run in parallel only on disjoint
@@ -217,6 +300,15 @@ as prose relitigated in every later return.
 **Rule 4.3 — returns are deltas.** An agent's return states what changed,
 what stands, and the counts — never a restatement of content the files
 already hold. The corpus is the record; the return is the diff.
+
+**Rule 4.4 — the model is chosen by what the agent decides, not by how
+much it writes.** An agent that decides what is promised or what shape
+the system takes runs on the strongest tier; an agent working inside an
+approved plan runs on a fast one; an agent doing bookkeeping the console
+already derives runs on the cheapest. The tier is declared once, in each
+agent's own `model:` front-matter, and read from the routing map. The
+validator's independence is a different session, not a bigger model. The
+orchestrator session is the owner's model.
 
 ## 5. The knowledge graph
 
@@ -327,6 +419,18 @@ Classify each statement as: new requirement · change to an existing artifact
 (name the ID) · question · feedback on built software · architectural
 constraint. Echo the classification as a short table, then dispatch. Never
 silently drop a statement.
+
+**The standing interface is the orchestrator loop.** The owner speaks;
+`/factory` classifies, consults `factory-console next`, and drives whole
+segments — chains of system verbs — without stopping between them. The
+individual verbs remain as surgical tools; needing to pick one is the
+exception, not the interface.
+
+**Rule 9.1 — checkpoint batching.** Owner-facing items — clarifying
+questions (rule 1.3), approvals due, rulings due, preview sign-offs —
+accumulate and present as ONE structured checkpoint per pause, each item
+one line, never a drip across turns. Answering a checkpoint is the owner's
+acceptance; the batch commits on it.
 
 ## 10. Definition of done
 
