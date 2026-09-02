@@ -26,5 +26,8 @@
   },
   "enabledPlugins": {
     "sdlc-factory@timclifford": false
+  },
+  "env": {
+    "SDLC_FACTORY_GUARD": "off"
   }
 }
