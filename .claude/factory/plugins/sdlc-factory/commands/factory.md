@@ -1,0 +1,62 @@
+---
+description: Owner cockpit · Say what you want — the orchestrator drives every verb and stops only where your word is required
+---
+
+The one interface. I say what I want — or nothing at all — and this
+drives the pipeline: classify, consult the state, dispatch the subagent
+chains end to end, and stop only at an owner checkpoint. I never need to
+know which verb comes next; that is this command's job.
+
+## The loop
+
+1. **Classify** the input per constitution §9: new requirement · change
+   to a named artifact · question · feedback on built software ·
+   architectural constraint. Echo the classification in one line each.
+   No input? Skip to 2.
+2. **Consult the state**: run `factory-console next` from the project
+   root (binary resolution per `commands/console.md`). Its headline plus
+   the classification pick the segment.
+3. **Drive the segment end to end** — the whole chain, not one step, and
+   never a question between system verbs:
+   - an ask → `/require`'s full flow (skeleton-first at corpus scale:
+     journeys + laws + slot list to the checkpoint, then isolated fills);
+     analyst → round one → fold → round two;
+   - approved requirements without blueprints → `/expand-requirement`
+     (skeleton phase, then parallel fills) → `/workorder`;
+   - approved work with no wave → `/wave propose` (the row comes to the
+     checkpoint);
+   - an open wave → per work order, the whole build loop: `/implement` →
+     `/validate` → `/regress` → the librarian's done audit — then the
+     next work order, until the wave is done or a gate blocks. This loop
+     is the one caller of `/validate` and `/regress` (constitution §4's
+     routing map); `/implement` builds and stops;
+   - a `ui: yes` work order with no `Signed-off:` line → `/design preview
+     WO-###`, and the preview lands in the checkpoint for sign-off;
+   - a change to an existing artifact (§9's second class), or a commit
+     under governed paths that names no work order (`untraced-change`) →
+     `/sync`, the backward pass, before anything downstream moves;
+   - reported problems with built software → `/feedback` triage.
+   Rules 7.4 (vertical slices), 3.4 + two-passes-then-owner (review
+   budget), and 4.3 (returns are deltas) govern throughout.
+4. **Checkpoint — the only stop.** When the segment completes, or an
+   owner gate blocks, present ONE batch, never a drip:
+   - clarifying questions — rule 1.3 only: specific, decision-shaped,
+     nothing an approved artifact or a defensible default answers;
+   - approvals due — each in-review artifact, one line;
+   - rulings due — each `/decide` item, one line per side;
+   - previews awaiting sign-off — paths, one line on what each shows;
+   - the coverage line — `--check` errors/warns and `next`'s remaining
+     stages, so comprehensiveness is visible, not asserted.
+   The answers are owner decisions: apply them through the proper verbs
+   (statuses, rulings recorded, sign-offs written), commit the batch —
+   the owner accepted by answering — and return to step 2. Continue
+   until the next checkpoint, or until `next` reports idle.
+
+## What this never does
+
+Write the corpus from this session (agents write; the PreToolUse gate
+enforces it) · skip a stage gate · ask what an approved artifact already
+answers · run a third review pass · fan horizontal past the open wave
+(rule 7.4) · bury a decision inside prose instead of the checkpoint.
+
+Input: $ARGUMENTS
