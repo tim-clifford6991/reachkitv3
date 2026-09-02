@@ -257,6 +257,9 @@ One row per chain leg reached from an approved requirement's `satisfies` edges �
 | REQ-096 | BP-052 | WO-086 | — |
 | REQ-096 | BP-052 | WO-087 | — |
 | REQ-096 | BP-052 | WO-088 | — |
+| REQ-097 | — | — | — |
+| REQ-098 | — | — | — |
+| REQ-099 | — | — | — |
 
 ## Coverage (`covers` — non-gate-bearing, rule 5.4)
 
