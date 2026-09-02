@@ -116,7 +116,9 @@ node's `## Decisions`.
    declared on the `src/lib/` side and re-exported by the surface. ADR-092
    Decision 3 is the corpus's one instance: the hosted cache tags.
 7. **A new top-level directory requires an ADR.** The top-level set is fixed at
-   `src/`, `supabase/`, `tests/`, `public/`, `sdlc-factory/`.
+   `src/`, `supabase/`, `tests/`, `public/`, `sdlc-factory/`, and `.claude/`
+   (the factory's vendored agents, commands, skills and console — tooling, not
+   product; committed 2026-09-02 under commit 61f1fd0).
 
 ## Scope conflicts
 
