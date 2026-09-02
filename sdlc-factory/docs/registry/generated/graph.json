@@ -2,55 +2,55 @@
   "coverage": {
     "satisfies": {
       "carrying": 44,
-      "total": 419
+      "total": 421
     },
     "covers": {
       "carrying": 32,
-      "total": 419
+      "total": 421
     },
     "implements": {
       "carrying": 253,
-      "total": 419
+      "total": 421
     },
     "decides-for": {
-      "carrying": 28,
-      "total": 419
+      "carrying": 30,
+      "total": 421
     },
     "about": {
       "carrying": 0,
-      "total": 419
+      "total": 421
     },
     "depends-on": {
       "carrying": 375,
-      "total": 419
+      "total": 421
     },
     "blocked-by": {
       "carrying": 2,
-      "total": 419
+      "total": 421
     },
     "cites-retired": {
       "carrying": 0,
-      "total": 419
+      "total": 421
     },
     "supersedes": {
       "carrying": 21,
-      "total": 419
+      "total": 421
     },
     "rests-on": {
-      "carrying": 268,
-      "total": 419
+      "carrying": 271,
+      "total": 421
     },
     "code": {
       "carrying": 63,
-      "total": 419
+      "total": 421
     },
     "exercises": {
       "carrying": 6,
-      "total": 419
+      "total": 421
     },
     "origin": {
       "carrying": 0,
-      "total": 419
+      "total": 421
     }
   },
   "nodes": {
@@ -642,8 +642,8 @@
           "disposition": "open"
         },
         {
-          "claim": "REQ-074 gains a criterion for the destinations list in this occasion. REQ-060 criterion 7 fixes what the customer must and must not be told and narrowed its own non-goal to REQ-074 criterion 1 accordingly, leaving REQ-074 covering only the expired-credential occasion. Until that criterion exists, BP-058 renders this occasion from REQ-060 criterion 7 alone — which is enough to build and not enough to be the destinations list's own promise (rule 5.7). Raised by the requirements-analyst in `requirements/history/REQ-056-057-060-2026-09-01-adr-084-review-round-two-folded.md`; nobody held REQ-074 that pass and this file does not edit requirements.",
-          "disposition": "open"
+          "claim": "REQ-074 gains a criterion for the destinations list in this occasion. REQ-060 criterion 7 fixes what the customer must and must not be told and narrowed its own non-goal to REQ-074 criterion 1 accordingly, leaving REQ-074 covering only the expired-credential occasion. Until that criterion exists, BP-058 renders this occasion from REQ-060 criterion 7 alone — which is enough to build and not enough to be the destinations list's own promise (rule 5.7). Raised by the requirements-analyst in `requirements/history/REQ-056-057-060-2026-09-01-adr-084-review-round-two-folded.md`; nobody held REQ-074 that pass and this file does not edit requirements. **Discharged 2026-09-02: REQ-074 criterion 8 exists (`requirements/history/REQ-074-2026-09-01-cannot-publish-criterion-and-jn-004-step.md`) and states the promise for any destination, not for WordPress alone. It ratifies this file's Decisions 1, 2 and 3 clause for clause — the `failing` state, the connection-is-live line, the three prohibitions and the action that leads to a different account — and adds one limb this file did not fix: a re-entry of the stored credential leaves the destination not reading as working. BP-058 renders that limb with no new branch and records how (its `## Error & edge behavior`). This row is discharged, not amended: no Decision in this file changes and its `status: accepted` stands (rule 2.2b).**",
+          "disposition": "confirmed"
         }
       ],
       "supersedes": [],
@@ -699,6 +699,70 @@
       ],
       "supersedes": [],
       "file": "sdlc-factory/docs/decisions/ADR-091.md"
+    },
+    "ADR-092": {
+      "id": "ADR-092",
+      "type": "decision",
+      "title": "LANDMINE — the publishing subsystem's six leaves are one strongly connected component, and the edges are true: the cycle is broken at file granularity, never by deleting a depends-on",
+      "status": "accepted",
+      "decides-for": [
+        "BP-015",
+        "BP-045",
+        "BP-046",
+        "BP-047",
+        "BP-048",
+        "BP-057",
+        "BP-058"
+      ],
+      "depends-on": [],
+      "blocked-by": [],
+      "rests-on": [
+        {
+          "claim": "A lint rule can be expressed over import specifiers that resolve inside `src/lib/publish/`, so the directory partial order in Decision 3 is machine-checkable rather than review-checkable. `structure.md` rule 6 already asserts the module-level version of this ('a cycle between `src/lib/` modules is a build failure'), and BP-001 decision 2 already places a cross-module lint invariant in the root toolchain. No such rule exists yet in a repository with no code; the work order that first creates `src/lib/publish/types.ts` is where it lands.",
+          "disposition": "open"
+        }
+      ],
+      "supersedes": [],
+      "file": "sdlc-factory/docs/decisions/ADR-092.md"
+    },
+    "ADR-093": {
+      "id": "ADR-093",
+      "type": "decision",
+      "title": "LANDMINE — content fits its box or the box changes: one layout law over three named bands, text is never shrunk to fit, and no type step below the floor may be minted",
+      "status": "proposed",
+      "decides-for": [
+        "BP-001",
+        "BP-004",
+        "BP-018",
+        "BP-022",
+        "BP-027",
+        "BP-033",
+        "BP-036",
+        "BP-037",
+        "BP-038",
+        "BP-039",
+        "BP-044",
+        "BP-047",
+        "BP-055"
+      ],
+      "depends-on": [],
+      "blocked-by": [],
+      "rests-on": [
+        {
+          "claim": "A layout engine is available wherever the conformance suite of Decision 6 runs — a real browser, not jsdom. In jsdom every box metric is 0, so `scrollWidth <= clientWidth` and every containment assertion in Decision 6 holds for every element on every page, and the suite reports a clean run over a corpus it never measured. No test runner exists on disk yet; the work order that first creates `tests/ui/layout/` is where this is discharged, and Decision 6 point 5's canary is what discharges it.",
+          "disposition": "open"
+        },
+        {
+          "claim": "Nothing in this repository enforces a failing suite (rule 3.3). Checked 2026-09-02: no `.github/workflows`, no `.husky`, no `core.hooksPath`, no non-sample hook in `.git/hooks`. Until one exists a layout failure is recorded, not enforced — the same platform gap ADR-010 point 6 records for the presentation sweeps.",
+          "disposition": "open"
+        },
+        {
+          "claim": "No approved requirement promises that the product works at every screen size. Checked 2026-09-02 over all of `requirements/`: the words mobile, responsive, breakpoint, screen size and phone appear in none of them, and the single narrow-viewport clause in the corpus is REQ-040 criterion 5, which promises only that the three destinations stay reachable. This ADR therefore derives its scope from an owner ruling and from `BUILD.md` §4, not from an approved promise — and the promise itself is owed (see Consequences, 'What the analyst owes').",
+          "disposition": "undischargeable"
+        }
+      ],
+      "supersedes": [],
+      "file": "sdlc-factory/docs/decisions/ADR-093.md"
     },
     "BP-001": {
       "id": "BP-001",
@@ -1234,7 +1298,12 @@
         "BP-019"
       ],
       "blocked-by": [],
-      "rests-on": [],
+      "rests-on": [
+        {
+          "claim": "Six of ADR-040's nine template directories — `magic-link`, `draft-ready`, `published`, `weekly`, `setup-reminder`, `account` — have no leaf `code:` glob, so `src/lib/mail/templates/<kind>/**` resolves to **this node** by the module anchor (structure.md rule 2). That is the arrangement ADR-040 Alternative 3 rejected, and this node is carrying it by default rather than by decision. It is not fixed here: ADR-040 point 2 assigns each directory to the node owning that kind's occasions, and for five of the six that node is a leaf of another component (BP-046, BP-049, BP-051/BP-050, BP-061, BP-033), so applying it literally would create five new instances of structure.md rule 2b where the corpus has one — restructuring with no file on disk (rule 2.2a). `account`'s occasions span REQ-024, REQ-074, REQ-076, REQ-077 and REQ-079, so ADR-040's own rule names five owners and picks none. Assessed 2026-09-02 by the architect; the trigger to resolve it is the first template file, and the resolution is an ADR amending ADR-040 point 2. Nothing is blocked: no file exists and no work order writes one.",
+          "disposition": "open"
+        }
+      ],
       "supersedes": [],
       "code": [
         "src/lib/mail/**",
@@ -2363,6 +2432,7 @@
         "BP-014",
         "BP-018",
         "BP-019",
+        "BP-045",
         "BP-058"
       ],
       "blocked-by": [],
@@ -2535,6 +2605,10 @@
         {
           "claim": "The four verdict words and the one written line criterion 6 requires are owner-owed and not yet written. This node emits handles; until BP-019's copy registry holds the strings, no surface and no mail can render a verdict.",
           "disposition": "open"
+        },
+        {
+          "claim": "An `unblock` acceptance whose `Barrier` is absent from `WeekMeasurements.gatesCleared` has **no declared `NotJudgeableCause`**. `evaluateAcceptance` produces two causes and both are read from the other two maps (`positions`, `namesCustomer`); WO-204's file plan asserts exactly those two, and its own test row expects an absent barrier to be \"undecided rather than failing\" — undecided as what is not stated anywhere. Two readings are open and neither is derivable from REQ-063 or REQ-047 as they stand: it is a partly measured week (`not_measured`, no row, REQ-065 c4) or it is a sixth cause. Raised 2026-09-02 by the architect against this node's own interface; not decided here, because the choice changes which pages carry a permanent `not_judgeable` row and that is REQ-063 c6's promise, not a parameter. Nothing is blocked: no work order writes the `gate_cleared` branch yet.",
+          "disposition": "open"
         }
       ],
       "supersedes": [],
@@ -2676,7 +2750,8 @@
         "BP-018",
         "BP-019",
         "BP-033",
-        "BP-037"
+        "BP-037",
+        "BP-058"
       ],
       "blocked-by": [],
       "rests-on": [],
@@ -2759,7 +2834,6 @@
         "BP-017",
         "BP-019",
         "BP-045",
-        "BP-047",
         "BP-048"
       ],
       "blocked-by": [],
@@ -2773,8 +2847,8 @@
           "disposition": "open"
         },
         {
-          "claim": "REQ-074 gains a criterion for the destinations list in the `failing`-because-cannot-publish state. REQ-060 criterion 7 fixes what the customer must and must not be told there and narrowed its own non-goal to REQ-074 criterion 1 accordingly, so REQ-074 today covers only the expired-credential occasion. Until that criterion exists this node renders the occasion from REQ-060 criterion 7 alone — enough to build, and not enough for the destinations list to own the promise (rule 5.7). Raised by the requirements-analyst on 2026-09-01; nobody held REQ-074 that pass and the architect does not edit requirements. Recorded here, not as a `blocked-by`: REQ-074 is silent on this occasion, and silence is a gap, not a conflict (rule 2.3).",
-          "disposition": "open"
+          "claim": "REQ-074 gains a criterion for the destinations list in the `failing`-because-cannot-publish state. REQ-060 criterion 7 fixes what the customer must and must not be told there and narrowed its own non-goal to REQ-074 criterion 1 accordingly, so REQ-074 today covers only the expired-credential occasion. Until that criterion exists this node renders the occasion from REQ-060 criterion 7 alone — enough to build, and not enough for the destinations list to own the promise (rule 5.7). Raised by the requirements-analyst on 2026-09-01; nobody held REQ-074 that pass and the architect does not edit requirements. **Discharged 2026-09-02: REQ-074 criterion 8 exists and carries it, stated for any destination rather than for WordPress alone (`requirements/history/REQ-074-2026-09-01-cannot-publish-criterion-and-jn-004-step.md`). This node's own ancestor now owns the promise its destinations list renders, so rule 5.7 is satisfied for the occasion. Criterion 8 ratifies every clause this node already carried — the `failing` state, the connection-is-live line, the three prohibitions, the action to a different account — and adds one that was not specified anywhere: a re-entry of the stored credential leaves the destination not reading as working, publishes nothing, and tells the customer the account still cannot publish. That clause is now stated under *Error & edge behavior*.**",
+          "disposition": "confirmed"
         }
       ],
       "supersedes": [],
@@ -3201,7 +3275,7 @@
       "id": "JN-004",
       "type": "journey",
       "title": "Changing your account, and leaving",
-      "status": "approved",
+      "status": "in-review",
       "depends-on": [
         "JN-002"
       ],
@@ -3256,6 +3330,13 @@
         {
           "step": "Pulls their pages off the web, or closes the account for good",
           "exercises": [
+            "REQ-079"
+          ]
+        },
+        {
+          "step": "Opens their own WordPress once the account is gone and, going to the one place ReachKit's last mail pointed them to, finds every page it ever created there together in one list, with nothing they wrote themselves mixed in — or, where their own site allows no such place, has been told that in the mail rather than left to hunt through their posts one at a time",
+          "exercises": [
+            "REQ-060",
             "REQ-079"
           ]
         },
@@ -4258,7 +4339,7 @@
       "id": "REQ-074",
       "type": "requirement",
       "title": "A broken destination is a state the customer can fix, not an error loop",
-      "status": "approved",
+      "status": "in-review",
       "depends-on": [
         "REQ-043",
         "REQ-056",
