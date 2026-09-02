@@ -5,7 +5,7 @@
 # Traceability — REQ → BP → WO → TST
 
 - `satisfies` is projected from 44 of 63 blueprints — the rest are silent on it.
-- `implements` is projected from 253 of 253 work orders — the rest are silent on it.
+- `implements` is projected from 255 of 255 work orders — the rest are silent on it.
 - `covers` is projected from 32 of 63 blueprints — the rest are silent on it.
 - `verdict` is projected from 0 of 0 validation nodes — the rest declare none and render `unknown`.
 

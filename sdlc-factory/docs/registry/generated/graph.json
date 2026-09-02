@@ -2,55 +2,55 @@
   "coverage": {
     "satisfies": {
       "carrying": 44,
-      "total": 421
+      "total": 423
     },
     "covers": {
       "carrying": 32,
-      "total": 421
+      "total": 423
     },
     "implements": {
-      "carrying": 253,
-      "total": 421
+      "carrying": 255,
+      "total": 423
     },
     "decides-for": {
       "carrying": 30,
-      "total": 421
+      "total": 423
     },
     "about": {
       "carrying": 0,
-      "total": 421
+      "total": 423
     },
     "depends-on": {
-      "carrying": 375,
-      "total": 421
+      "carrying": 377,
+      "total": 423
     },
     "blocked-by": {
       "carrying": 2,
-      "total": 421
+      "total": 423
     },
     "cites-retired": {
       "carrying": 0,
-      "total": 421
+      "total": 423
     },
     "supersedes": {
-      "carrying": 21,
-      "total": 421
+      "carrying": 23,
+      "total": 423
     },
     "rests-on": {
-      "carrying": 271,
-      "total": 421
+      "carrying": 273,
+      "total": 423
     },
     "code": {
       "carrying": 63,
-      "total": 421
+      "total": 423
     },
     "exercises": {
       "carrying": 6,
-      "total": 421
+      "total": 423
     },
     "origin": {
       "carrying": 0,
-      "total": 421
+      "total": 423
     }
   },
   "nodes": {
@@ -4625,7 +4625,7 @@
         "WO-001",
         "WO-029",
         "WO-030",
-        "WO-031"
+        "WO-268"
       ],
       "blocked-by": [],
       "rests-on": [
@@ -4740,7 +4740,7 @@
       "id": "WO-008",
       "type": "work-order",
       "title": "Supabase project config and the migration naming convention check",
-      "status": "approved",
+      "status": "superseded",
       "implements": [
         "BP-002"
       ],
@@ -4756,7 +4756,7 @@
       "id": "WO-009",
       "type": "work-order",
       "title": "Baseline schema — the eight tables no other node owns",
-      "status": "approved",
+      "status": "superseded",
       "implements": [
         "BP-002"
       ],
@@ -4781,7 +4781,7 @@
       "id": "WO-010",
       "type": "work-order",
       "title": "RLS default-deny policies and the two policy invariants CI holds",
-      "status": "approved",
+      "status": "superseded",
       "implements": [
         "BP-002"
       ],
@@ -4802,7 +4802,7 @@
       "id": "WO-011",
       "type": "work-order",
       "title": "The two Postgres clients — db(), dbAdmin() and the generated Database type",
-      "status": "approved",
+      "status": "superseded",
       "implements": [
         "BP-002"
       ],
@@ -4824,7 +4824,7 @@
         "BP-002"
       ],
       "depends-on": [
-        "WO-010"
+        "WO-267"
       ],
       "blocked-by": [],
       "rests-on": [],
@@ -4842,7 +4842,7 @@
       "depends-on": [
         "WO-001",
         "WO-005",
-        "WO-011"
+        "WO-267"
       ],
       "blocked-by": [],
       "rests-on": [
@@ -5007,7 +5007,7 @@
         "BP-007"
       ],
       "depends-on": [
-        "WO-010"
+        "WO-267"
       ],
       "blocked-by": [],
       "rests-on": [
@@ -5029,8 +5029,8 @@
       ],
       "depends-on": [
         "WO-006",
-        "WO-011",
-        "WO-021"
+        "WO-021",
+        "WO-267"
       ],
       "blocked-by": [],
       "rests-on": [],
@@ -5145,8 +5145,8 @@
       ],
       "depends-on": [
         "WO-001",
-        "WO-011",
-        "WO-029"
+        "WO-029",
+        "WO-267"
       ],
       "blocked-by": [],
       "rests-on": [
@@ -5220,7 +5220,7 @@
       "id": "WO-031",
       "type": "work-order",
       "title": "Registered components, part 1 — Btn, Card, Badge, Alert, Stat, Tabs, Table, Progress",
-      "status": "approved",
+      "status": "superseded",
       "implements": [
         "BP-018"
       ],
@@ -5246,7 +5246,7 @@
       "id": "WO-032",
       "type": "work-order",
       "title": "Registered components, part 2 — Toggle, Steps, Join, Collapse, Input, Divider, Kbd",
-      "status": "approved",
+      "status": "superseded",
       "implements": [
         "BP-018"
       ],
@@ -5276,7 +5276,7 @@
         "BP-018"
       ],
       "depends-on": [
-        "WO-032"
+        "WO-268"
       ],
       "blocked-by": [],
       "rests-on": [
@@ -5326,7 +5326,7 @@
         "BP-018"
       ],
       "depends-on": [
-        "WO-032"
+        "WO-268"
       ],
       "blocked-by": [],
       "rests-on": [
@@ -5829,7 +5829,7 @@
         "REQ-003"
       ],
       "depends-on": [
-        "WO-011"
+        "WO-267"
       ],
       "blocked-by": [],
       "rests-on": [
@@ -5857,9 +5857,9 @@
       ],
       "depends-on": [
         "WO-006",
-        "WO-011",
         "WO-051",
-        "WO-056"
+        "WO-056",
+        "WO-267"
       ],
       "blocked-by": [],
       "rests-on": [
@@ -5890,8 +5890,8 @@
         "REQ-003"
       ],
       "depends-on": [
-        "WO-011",
-        "WO-057"
+        "WO-057",
+        "WO-267"
       ],
       "blocked-by": [],
       "rests-on": [],
@@ -5941,9 +5941,9 @@
       ],
       "depends-on": [
         "WO-006",
-        "WO-011",
         "WO-056",
-        "WO-059"
+        "WO-059",
+        "WO-267"
       ],
       "blocked-by": [],
       "rests-on": [
@@ -5968,9 +5968,9 @@
       ],
       "depends-on": [
         "WO-006",
-        "WO-011",
         "WO-051",
-        "WO-057"
+        "WO-057",
+        "WO-267"
       ],
       "blocked-by": [],
       "rests-on": [
@@ -6095,13 +6095,12 @@
         "REQ-009"
       ],
       "depends-on": [
-        "WO-031",
-        "WO-032",
         "WO-041",
         "WO-064",
         "WO-065",
         "WO-248",
-        "WO-249"
+        "WO-249",
+        "WO-268"
       ],
       "blocked-by": [],
       "rests-on": [
@@ -6156,14 +6155,14 @@
         "REQ-004"
       ],
       "depends-on": [
-        "WO-031",
         "WO-041",
         "WO-055",
         "WO-061",
         "WO-066",
         "WO-067",
         "WO-248",
-        "WO-249"
+        "WO-249",
+        "WO-268"
       ],
       "blocked-by": [],
       "rests-on": [
@@ -6225,10 +6224,10 @@
         "REQ-001"
       ],
       "depends-on": [
-        "WO-031",
-        "WO-032",
+        "WO-002",
         "WO-041",
-        "WO-062"
+        "WO-062",
+        "WO-268"
       ],
       "blocked-by": [],
       "rests-on": [
@@ -6567,12 +6566,12 @@
       ],
       "depends-on": [
         "WO-006",
-        "WO-011",
         "WO-022",
         "WO-023",
         "WO-024",
         "WO-077",
-        "WO-084"
+        "WO-084",
+        "WO-267"
       ],
       "blocked-by": [],
       "rests-on": [
@@ -6675,8 +6674,8 @@
         "REQ-071"
       ],
       "depends-on": [
-        "WO-011",
-        "WO-083"
+        "WO-083",
+        "WO-267"
       ],
       "blocked-by": [],
       "rests-on": [],
@@ -6693,11 +6692,11 @@
         "REQ-071"
       ],
       "depends-on": [
-        "WO-011",
         "WO-019",
         "WO-083",
         "WO-089",
-        "WO-091"
+        "WO-091",
+        "WO-267"
       ],
       "blocked-by": [],
       "rests-on": [],
@@ -6741,8 +6740,8 @@
         "REQ-071"
       ],
       "depends-on": [
-        "WO-011",
-        "WO-089"
+        "WO-089",
+        "WO-267"
       ],
       "blocked-by": [],
       "rests-on": [
@@ -6917,8 +6916,8 @@
         "REQ-075"
       ],
       "depends-on": [
-        "WO-011",
-        "WO-104"
+        "WO-104",
+        "WO-267"
       ],
       "blocked-by": [],
       "rests-on": [
@@ -6957,7 +6956,7 @@
         "REQ-010"
       ],
       "depends-on": [
-        "WO-011"
+        "WO-267"
       ],
       "blocked-by": [],
       "rests-on": [
@@ -7004,9 +7003,9 @@
         "REQ-010"
       ],
       "depends-on": [
-        "WO-011",
         "WO-109",
-        "WO-110"
+        "WO-110",
+        "WO-267"
       ],
       "blocked-by": [],
       "rests-on": [],
@@ -7023,8 +7022,8 @@
         "REQ-010"
       ],
       "depends-on": [
-        "WO-011",
-        "WO-109"
+        "WO-109",
+        "WO-267"
       ],
       "blocked-by": [],
       "rests-on": [],
@@ -7061,11 +7060,11 @@
       ],
       "depends-on": [
         "WO-006",
-        "WO-011",
         "WO-106",
         "WO-109",
         "WO-112",
-        "WO-113"
+        "WO-113",
+        "WO-267"
       ],
       "blocked-by": [],
       "rests-on": [],
@@ -7083,14 +7082,14 @@
       ],
       "depends-on": [
         "WO-006",
-        "WO-011",
         "WO-106",
         "WO-110",
         "WO-111",
         "WO-112",
         "WO-113",
         "WO-114",
-        "WO-199"
+        "WO-199",
+        "WO-267"
       ],
       "blocked-by": [],
       "rests-on": [
@@ -7112,7 +7111,7 @@
         "REQ-022"
       ],
       "depends-on": [
-        "WO-011"
+        "WO-267"
       ],
       "blocked-by": [],
       "rests-on": [],
@@ -7187,9 +7186,9 @@
         "REQ-022"
       ],
       "depends-on": [
-        "WO-011",
         "WO-116",
-        "WO-118"
+        "WO-118",
+        "WO-267"
       ],
       "blocked-by": [],
       "rests-on": [
@@ -7215,7 +7214,7 @@
         "REQ-021"
       ],
       "depends-on": [
-        "WO-011"
+        "WO-267"
       ],
       "blocked-by": [],
       "rests-on": [],
@@ -7291,7 +7290,7 @@
         "REQ-024"
       ],
       "depends-on": [
-        "WO-011"
+        "WO-267"
       ],
       "blocked-by": [],
       "rests-on": [],
@@ -7404,7 +7403,7 @@
         "REQ-076"
       ],
       "depends-on": [
-        "WO-011"
+        "WO-267"
       ],
       "blocked-by": [],
       "rests-on": [],
@@ -7421,7 +7420,7 @@
         "REQ-076"
       ],
       "depends-on": [
-        "WO-011"
+        "WO-267"
       ],
       "blocked-by": [],
       "rests-on": [],
@@ -7438,8 +7437,8 @@
         "REQ-076"
       ],
       "depends-on": [
-        "WO-011",
-        "WO-129"
+        "WO-129",
+        "WO-267"
       ],
       "blocked-by": [],
       "rests-on": [],
@@ -7528,7 +7527,7 @@
         "REQ-077"
       ],
       "depends-on": [
-        "WO-011"
+        "WO-267"
       ],
       "blocked-by": [],
       "rests-on": [],
@@ -7570,10 +7569,10 @@
       ],
       "depends-on": [
         "WO-006",
-        "WO-011",
         "WO-106",
         "WO-135",
-        "WO-136"
+        "WO-136",
+        "WO-267"
       ],
       "blocked-by": [],
       "rests-on": [],
@@ -7590,7 +7589,7 @@
         "REQ-078"
       ],
       "depends-on": [
-        "WO-011"
+        "WO-267"
       ],
       "blocked-by": [],
       "rests-on": [],
@@ -7608,10 +7607,10 @@
         "REQ-078"
       ],
       "depends-on": [
-        "WO-011",
         "WO-131",
         "WO-136",
-        "WO-138"
+        "WO-138",
+        "WO-267"
       ],
       "blocked-by": [],
       "rests-on": [],
@@ -7629,7 +7628,7 @@
       ],
       "depends-on": [
         "WO-006",
-        "WO-011"
+        "WO-267"
       ],
       "blocked-by": [],
       "rests-on": [],
@@ -7691,13 +7690,13 @@
       ],
       "depends-on": [
         "WO-006",
-        "WO-011",
         "WO-106",
         "WO-133",
         "WO-136",
         "WO-140",
         "WO-141",
-        "WO-142"
+        "WO-142",
+        "WO-267"
       ],
       "blocked-by": [],
       "rests-on": [
@@ -7723,9 +7722,9 @@
         "REQ-079"
       ],
       "depends-on": [
-        "WO-011",
         "WO-140",
-        "WO-143"
+        "WO-143",
+        "WO-267"
       ],
       "blocked-by": [],
       "rests-on": [
@@ -7747,9 +7746,9 @@
         "REQ-025"
       ],
       "depends-on": [
-        "WO-011",
         "WO-041",
-        "WO-131"
+        "WO-131",
+        "WO-267"
       ],
       "blocked-by": [],
       "rests-on": [
@@ -7863,8 +7862,8 @@
         "REQ-029"
       ],
       "depends-on": [
-        "WO-011",
-        "WO-150"
+        "WO-150",
+        "WO-267"
       ],
       "blocked-by": [],
       "rests-on": [],
@@ -7931,13 +7930,13 @@
         "REQ-040"
       ],
       "depends-on": [
-        "WO-011",
         "WO-049",
         "WO-174",
         "WO-175",
         "WO-176",
         "WO-177",
-        "WO-215"
+        "WO-215",
+        "WO-267"
       ],
       "blocked-by": [],
       "rests-on": [
@@ -8064,11 +8063,11 @@
         "REQ-041"
       ],
       "depends-on": [
-        "WO-031",
         "WO-035",
         "WO-041",
         "WO-158",
-        "WO-249"
+        "WO-249",
+        "WO-268"
       ],
       "blocked-by": [],
       "rests-on": [
@@ -8145,12 +8144,12 @@
         "REQ-041"
       ],
       "depends-on": [
-        "WO-031",
         "WO-049",
         "WO-156",
         "WO-165",
         "WO-188",
-        "WO-190"
+        "WO-190",
+        "WO-268"
       ],
       "blocked-by": [],
       "rests-on": [
@@ -8341,11 +8340,11 @@
         "REQ-045"
       ],
       "depends-on": [
-        "WO-011",
         "WO-041",
         "WO-043",
         "WO-200",
-        "WO-215"
+        "WO-215",
+        "WO-267"
       ],
       "blocked-by": [],
       "rests-on": [
@@ -8367,9 +8366,9 @@
         "REQ-045"
       ],
       "depends-on": [
-        "WO-011",
         "WO-169",
-        "WO-200"
+        "WO-200",
+        "WO-267"
       ],
       "blocked-by": [],
       "rests-on": [],
@@ -8386,8 +8385,8 @@
         "REQ-045"
       ],
       "depends-on": [
-        "WO-011",
-        "WO-169"
+        "WO-169",
+        "WO-267"
       ],
       "blocked-by": [],
       "rests-on": [],
@@ -8478,9 +8477,9 @@
       ],
       "depends-on": [
         "WO-006",
-        "WO-011",
         "WO-131",
-        "WO-174"
+        "WO-174",
+        "WO-267"
       ],
       "blocked-by": [],
       "rests-on": [
@@ -8546,9 +8545,9 @@
       ],
       "depends-on": [
         "WO-006",
-        "WO-011",
         "WO-041",
-        "WO-220"
+        "WO-220",
+        "WO-267"
       ],
       "blocked-by": [],
       "rests-on": [],
@@ -8565,13 +8564,13 @@
         "REQ-070"
       ],
       "depends-on": [
-        "WO-011",
         "WO-078",
         "WO-104",
         "WO-132",
         "WO-178",
         "WO-225",
-        "WO-226"
+        "WO-226",
+        "WO-267"
       ],
       "blocked-by": [],
       "rests-on": [
@@ -8619,8 +8618,8 @@
         "REQ-047"
       ],
       "depends-on": [
-        "WO-011",
-        "WO-052"
+        "WO-052",
+        "WO-267"
       ],
       "blocked-by": [],
       "rests-on": [
@@ -8765,13 +8764,13 @@
       ],
       "depends-on": [
         "WO-006",
-        "WO-011",
         "WO-022",
         "WO-026",
         "WO-181",
         "WO-182",
         "WO-184",
-        "WO-185"
+        "WO-185",
+        "WO-267"
       ],
       "blocked-by": [],
       "rests-on": [
@@ -8820,8 +8819,8 @@
         "REQ-095"
       ],
       "depends-on": [
-        "WO-011",
-        "WO-181"
+        "WO-181",
+        "WO-267"
       ],
       "blocked-by": [],
       "rests-on": [
@@ -8914,8 +8913,8 @@
         "REQ-055"
       ],
       "depends-on": [
-        "WO-011",
-        "WO-181"
+        "WO-181",
+        "WO-267"
       ],
       "blocked-by": [],
       "rests-on": [
@@ -9065,9 +9064,9 @@
         "REQ-055"
       ],
       "depends-on": [
-        "WO-011",
         "WO-181",
-        "WO-191"
+        "WO-191",
+        "WO-267"
       ],
       "blocked-by": [],
       "rests-on": [
@@ -9160,11 +9159,11 @@
         "REQ-053"
       ],
       "depends-on": [
-        "WO-011",
         "WO-022",
         "WO-026",
         "WO-052",
-        "WO-191"
+        "WO-191",
+        "WO-267"
       ],
       "blocked-by": [],
       "rests-on": [
@@ -9399,7 +9398,7 @@
         "REQ-056"
       ],
       "depends-on": [
-        "WO-011"
+        "WO-267"
       ],
       "blocked-by": [],
       "rests-on": [],
@@ -9416,7 +9415,6 @@
         "REQ-056"
       ],
       "depends-on": [
-        "WO-011",
         "WO-196",
         "WO-206",
         "WO-207",
@@ -9425,7 +9423,8 @@
         "WO-211",
         "WO-215",
         "WO-216",
-        "WO-223"
+        "WO-223",
+        "WO-267"
       ],
       "blocked-by": [],
       "rests-on": [
@@ -9447,9 +9446,9 @@
         "REQ-056"
       ],
       "depends-on": [
-        "WO-011",
         "WO-206",
-        "WO-208"
+        "WO-208",
+        "WO-267"
       ],
       "blocked-by": [],
       "rests-on": [
@@ -9472,9 +9471,9 @@
       ],
       "depends-on": [
         "WO-006",
-        "WO-011",
         "WO-206",
-        "WO-208"
+        "WO-208",
+        "WO-267"
       ],
       "blocked-by": [],
       "rests-on": [
@@ -9652,9 +9651,9 @@
       ],
       "depends-on": [
         "WO-006",
-        "WO-011",
         "WO-041",
-        "WO-206"
+        "WO-206",
+        "WO-267"
       ],
       "blocked-by": [],
       "rests-on": [
@@ -9693,8 +9692,8 @@
         "REQ-073"
       ],
       "depends-on": [
-        "WO-011",
-        "WO-218"
+        "WO-218",
+        "WO-267"
       ],
       "blocked-by": [],
       "rests-on": [
@@ -9754,7 +9753,7 @@
         "REQ-074"
       ],
       "depends-on": [
-        "WO-011"
+        "WO-267"
       ],
       "blocked-by": [],
       "rests-on": [],
@@ -9773,8 +9772,8 @@
       ],
       "depends-on": [
         "WO-005",
-        "WO-011",
-        "WO-223"
+        "WO-223",
+        "WO-267"
       ],
       "blocked-by": [],
       "rests-on": [],
@@ -9952,10 +9951,10 @@
         "REQ-062"
       ],
       "depends-on": [
-        "WO-011",
         "WO-206",
         "WO-208",
-        "WO-213"
+        "WO-213",
+        "WO-267"
       ],
       "blocked-by": [],
       "rests-on": [],
@@ -10165,11 +10164,10 @@
       "depends-on": [
         "WO-002",
         "WO-003",
-        "WO-031",
-        "WO-032",
         "WO-041",
         "WO-118",
-        "WO-121"
+        "WO-121",
+        "WO-268"
       ],
       "blocked-by": [],
       "rests-on": [
@@ -10333,9 +10331,9 @@
       "depends-on": [
         "WO-002",
         "WO-003",
-        "WO-031",
         "WO-041",
-        "WO-112"
+        "WO-112",
+        "WO-268"
       ],
       "blocked-by": [],
       "rests-on": [
@@ -10563,9 +10561,8 @@
       ],
       "depends-on": [
         "WO-001",
-        "WO-009",
-        "WO-010",
-        "WO-052"
+        "WO-052",
+        "WO-267"
       ],
       "blocked-by": [],
       "rests-on": [
@@ -10797,9 +10794,9 @@
       ],
       "depends-on": [
         "WO-001",
-        "WO-011",
         "WO-206",
-        "WO-208"
+        "WO-208",
+        "WO-267"
       ],
       "blocked-by": [],
       "rests-on": [
@@ -10825,12 +10822,12 @@
       ],
       "depends-on": [
         "WO-001",
-        "WO-011",
         "WO-206",
         "WO-208",
         "WO-213",
         "WO-214",
-        "WO-232"
+        "WO-232",
+        "WO-267"
       ],
       "blocked-by": [],
       "rests-on": [
@@ -10885,8 +10882,8 @@
         "REQ-060"
       ],
       "depends-on": [
-        "WO-011",
-        "WO-223"
+        "WO-223",
+        "WO-267"
       ],
       "blocked-by": [],
       "rests-on": [],
@@ -10927,6 +10924,74 @@
       ],
       "supersedes": [],
       "file": "sdlc-factory/docs/work-orders/WO-266.md"
+    },
+    "WO-267": {
+      "id": "WO-267",
+      "type": "work-order",
+      "title": "The Supabase substrate — project config, baseline schema, RLS default-deny, and the two clients",
+      "status": "approved",
+      "implements": [
+        "BP-002"
+      ],
+      "depends-on": [
+        "WO-001",
+        "WO-005"
+      ],
+      "blocked-by": [],
+      "rests-on": [
+        {
+          "claim": "`fetches` is one of `BUILD.md` §10's nine but `structure.md` rule 3 makes `*_fetches*.sql` BP-007's topic, and BP-007's `## Data model delta` fully specifies the table including its unique key and its index. Derivation (rule 1.1): the baseline creates the eight tables no other node owns and BP-007's own migration (WO-021) creates `fetches`, so one table has one writer. Reversal cost: moving one `create table` between two migrations that both run once, before any data exists — cheap today, a data migration later, which is why it is recorded now.",
+          "disposition": "open"
+        },
+        {
+          "claim": "`publications` carries no `verdict` column, `BUILD.md` §10's key-column list notwithstanding: BP-002's data-model delta states the exclusion and BP-051 decision 1 holds the reasoning. The baseline is written without it and BP-051's `page_verdicts` is the home of a page's standing.",
+          "disposition": "open"
+        },
+        {
+          "claim": "`users.deleted_at` does not exist until BP-063's `*_users_erasure_*.sql` lands. The policy condition ADR-051 requires is therefore written here against a column this migration adds a nullable placeholder for, or the policies are re-issued by BP-063's migration. The implementer takes the first: the baseline gains no column, this policy migration adds `users.deleted_at timestamptz` as its own precondition, and BP-063 owns every rule about setting it.",
+          "disposition": "open"
+        }
+      ],
+      "supersedes": [
+        "WO-008",
+        "WO-009",
+        "WO-010",
+        "WO-011"
+      ],
+      "file": "sdlc-factory/docs/work-orders/WO-267.md"
+    },
+    "WO-268": {
+      "id": "WO-268",
+      "type": "work-order",
+      "title": "The fifteen registered components — Btn, Card, Badge, Alert, Stat, Tabs, Table, Progress, Toggle, Steps, Join, Collapse, Input, Divider, Kbd — and the closed barrel",
+      "status": "approved",
+      "implements": [
+        "BP-018"
+      ],
+      "depends-on": [
+        "WO-029",
+        "WO-030"
+      ],
+      "blocked-by": [],
+      "rests-on": [
+        {
+          "claim": "**No approved requirement states the design system.** BP-018 carries `satisfies: []` and says so in its own status grounds. Acceptance below is quoted from BP-018 and `BUILD.md` §2.2 and §2.5; none is inherited from a requirement.",
+          "disposition": "open"
+        },
+        {
+          "claim": "`sdlc-factory/docs/design/components.md` is an empty registry with no rows. BP-018 decision 1 makes entry in that file the precondition of export: \"a new component enters `sdlc-factory/docs/design/components.md` as `proposed` with its data contract and states before it can be exported.\" The eight components below must be registered there by the design-guardian — with the data contract and states this work order's preview shows — before this work order can be signed off. The planner may not write that file.",
+          "disposition": "open"
+        },
+        {
+          "claim": "The seven components below must be registered in `sdlc-factory/docs/design/components.md` — an empty table today — by the design-guardian before this work order can be signed off (BP-018 decision 1). The planner may not write that file.",
+          "disposition": "open"
+        }
+      ],
+      "supersedes": [
+        "WO-031",
+        "WO-032"
+      ],
+      "file": "sdlc-factory/docs/work-orders/WO-268.md"
     }
   }
 }
