@@ -2,55 +2,55 @@
   "coverage": {
     "satisfies": {
       "carrying": 44,
-      "total": 423
+      "total": 424
     },
     "covers": {
       "carrying": 32,
-      "total": 423
+      "total": 424
     },
     "implements": {
       "carrying": 255,
-      "total": 423
+      "total": 424
     },
     "decides-for": {
       "carrying": 30,
-      "total": 423
+      "total": 424
     },
     "about": {
       "carrying": 0,
-      "total": 423
+      "total": 424
     },
     "depends-on": {
       "carrying": 377,
-      "total": 423
+      "total": 424
     },
     "blocked-by": {
       "carrying": 2,
-      "total": 423
+      "total": 424
     },
     "cites-retired": {
       "carrying": 0,
-      "total": 423
+      "total": 424
     },
     "supersedes": {
       "carrying": 23,
-      "total": 423
+      "total": 424
     },
     "rests-on": {
       "carrying": 273,
-      "total": 423
+      "total": 424
     },
     "code": {
       "carrying": 63,
-      "total": 423
+      "total": 424
     },
     "exercises": {
       "carrying": 6,
-      "total": 423
+      "total": 424
     },
     "origin": {
       "carrying": 0,
-      "total": 423
+      "total": 424
     }
   },
   "nodes": {
@@ -4590,11 +4590,21 @@
       "supersedes": [],
       "file": "sdlc-factory/docs/requirements/REQ-096.md"
     },
+    "TST-001": {
+      "id": "TST-001",
+      "type": "validation",
+      "title": "WO-001 validation report",
+      "status": "pass",
+      "validates": [
+        "WO-001"
+      ],
+      "file": "sdlc-factory/docs/work-orders/WO-001.md"
+    },
     "WO-001": {
       "id": "WO-001",
       "type": "work-order",
       "title": "Next.js toolchain, build configuration and the repo's root files",
-      "status": "approved",
+      "status": "done",
       "implements": [
         "BP-001"
       ],
@@ -4607,7 +4617,7 @@
         },
         {
           "claim": "`factory.config.json` carries `\"schema\": null` and no `typeCheck` key, so the project's type-check command is derived here rather than read: `npm run typecheck` -> `tsc --noEmit`, the ecosystem's native compiler invocation for a TypeScript project. It cannot be run before this work order lands, because the repo holds no TypeScript.",
-          "disposition": "open"
+          "disposition": "confirmed"
         }
       ],
       "supersedes": [],

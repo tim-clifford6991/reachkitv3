@@ -20,7 +20,6 @@
 - BP-015 (blueprint, approved) — no work order's `implements` names it. sdlc-factory/docs/blueprints/BP-015.md
 - BP-016 (blueprint, approved) — no work order's `implements` names it. sdlc-factory/docs/blueprints/BP-016.md
 - BP-017 (blueprint, approved) — no work order's `implements` names it. sdlc-factory/docs/blueprints/BP-017.md
-- WO-001 (work-order, approved) — no TST section validates it. sdlc-factory/docs/work-orders/WO-001.md
 - WO-002 (work-order, approved) — no TST section validates it. sdlc-factory/docs/work-orders/WO-002.md
 - WO-003 (work-order, approved) — no TST section validates it. sdlc-factory/docs/work-orders/WO-003.md
 - WO-004 (work-order, approved) — no TST section validates it. sdlc-factory/docs/work-orders/WO-004.md
