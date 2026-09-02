@@ -37,7 +37,7 @@ node's `## Decisions`.
 | `src/lib/publish/**` | The publishing subsystem — the state machine, the veto/approval rule, the destination adapters, idempotency, retries, health, the 24-hour verification and the page record a customer opens. | BP-015 (no migration glob — withdrawn 2026-09-01 under rule 2a); leaves BP-035, BP-045 (`publications`; `machine/`, `attempt/`, `record/`, `switch/`, `ceilings/`, `types.ts`), BP-046 (`publishable/`), BP-048 (`destinations/wordpress/`), BP-049 (`verify/`), BP-057 (`settings/`), BP-058 (`destinations/` except `wordpress/`; `destinations`) | `transition()` · `becomesPublishable()` · `publish()` · `verifyLive()` · `pageRecordFor()` · destination adapters under `src/lib/publish/destinations/**` |
 | `src/lib/mail/**` | The mail seam — one `sendEmail()`, one branded shell with a plain-text alternative, the register of nine mail kinds and their stoppability, and sequence scheduling. | BP-016; leaves BP-029, BP-053, BP-059 | `sendEmail()` · `MAIL_KINDS` · `scheduleSequence()` |
 | `src/lib/account/**` | Account, billing and lifecycle — Stripe checkout/webhook/portal, provisioning, magic-link identity, active-access, export, unpublish-all and erasure. | BP-017; leaves BP-030, BP-031, BP-032, BP-060, BP-061, BP-062, BP-063 | `handleStripeWebhook()` · `provisionFromPayment()` · `hasActiveAccess()` · `exportEverything()` · `deleteAccount()` |
-| `src/ui/**` | The design system — daisyUI 5 theme tokens, the registered component set, the closed chart inventory, fonts. | BP-018 | `src/ui/theme.css` · `src/ui/components/**` · `src/ui/charts/**` |
+| `src/ui/**` · `tests/ui/**` | The design system — daisyUI 5 theme tokens, the registered component set, the closed chart inventory, fonts, the three layout bands and the `Surface` root, and the layout conformance suite (**ADR-093**). | BP-018 | `src/ui/theme.css` · `src/ui/components/**` · `src/ui/charts/**` · `src/ui/layout/**` (`BANDS`, `Surface`) · `tests/ui/layout/**` |
 | `src/lib/presentation/**` | The presentation-law layer — the copy registry (every sentence the product speaks), the rendering of `Measured<T>`, the cold-start line, the generated-text label, the stopped-work statement, and the band-label registry. | BP-019 (its own `bands.ts`, `measured.ts`, `index.ts`); leaves BP-020 (`copy/` **and** `generated/`), BP-021 (`place/`; `coldstart/` is BP-021's under `tests/` only), BP-054 (`stopped/`) | `copy()` · `renderMeasured()` · `emptyStateLine()` · `stoppedWorkStatement()` · `BAND_LABELS` |
 
 ## Rules this map fixes
@@ -101,6 +101,20 @@ node's `## Decisions`.
    → `src/lib/{config,egress,costs,db}`. No `src/lib/` module imports from
    `src/app/`. A cycle between `src/lib/` modules is a build failure, not a
    review comment.
+   **6a — the rule's subject is the module, and inside one module the same rule
+   applies one level down** (**ADR-092**). A `depends-on` edge between sibling
+   leaves of one component is not a module dependency and rule 6 says nothing
+   about it; the six leaves of BP-015 are one strongly connected component at
+   node granularity and acyclic at file granularity, which is the granularity
+   that compiles. ADR-092 states the directory partial order inside
+   `src/lib/publish/` and forbids the cleanup that would delete true
+   `depends-on` edges to make the graph read clean.
+   **6b — a name that crosses the boundary is an import too.** A `src/lib/`
+   module that reads a `src/app/` export "by name" — retyping the literal rather
+   than importing it — keeps rule 6 in the letter and breaks rule 2.4, and the
+   two copies diverge on the first rename. Where both sides need a name, it is
+   declared on the `src/lib/` side and re-exported by the surface. ADR-092
+   Decision 3 is the corpus's one instance: the hosted cache tags.
 7. **A new top-level directory requires an ADR.** The top-level set is fixed at
    `src/`, `supabase/`, `tests/`, `public/`, `sdlc-factory/`.
 
@@ -128,27 +142,58 @@ re-swept for identical pairs afterwards and no third case remains.
 | `*_leads*.sql` and `*_suppressions*.sql` declared identically by BP-016 and BP-029 | Rule 2a: BP-029 specifies the columns and keeps both globs; BP-016 withdrew them and its data-model section now cites BP-029. |
 | `src/app/(account)/setup/waiting/**` and `src/app/api/setup/progress/route.ts` claimed by BP-036 inside BP-001's globs | Rule 2b / ADR-091 point 3: BP-036 owns both by the more specific glob, declared in its decision 4. BP-001's globs are unchanged. |
 
-## Unowned paths (recorded, not resolved — rule 2.2a)
+## Unowned paths (assessed 2026-09-02 — the record corrected, the assignment
+declined)
 
-**Six mail-template directories have no owning `code:` glob.** ADR-040 partitions
-`src/lib/mail/templates/<kind>/` by the node that owns each kind's occasions, and
-BP-029 declares three of the nine (`first-page`, `first-page-unavailable`,
-`nurture`). The other six — `magic-link`, `draft-ready`, `published`, `weekly`,
-`setup-reminder`, `account` — are declared by nobody, so `file → blueprint`
-(rule 5.6) cannot answer for them and the librarian would flag any file landing
-there as having no home.
+**Six mail-template directories have no *leaf* `code:` glob**: `magic-link`,
+`draft-ready`, `published`, `weekly`, `setup-reminder`, `account`. ADR-040
+partitions `src/lib/mail/templates/<kind>/` by the node that owns each kind's
+occasions, and BP-029 declares three of the nine (`first-page`,
+`first-page-unavailable`, `nurture`).
 
-This is **pre-existing and was not caused by the 2026-09-01 rulings**; it is
-recorded here rather than fixed for two reasons. It is corpus-wide — six
-directories across at least five candidate owners (BP-046 for `draft-ready`,
-BP-049 for `published`, BP-051/BP-050 for `weekly`, BP-061 for `magic-link`,
-BP-033 for `setup-reminder`, BP-063 and BP-058 for `account`, whose occasions
-five requirements share) — and fixing the one this pass touched would close a
-sixth of a gap while making the map read as complete, which is worse than
-leaving it visible. And `account` has no single owner under ADR-040's own rule:
-its occasions come from REQ-024, REQ-074, REQ-076, REQ-077 and REQ-079, which is
-a genuine question about ADR-040's partition and not a missing line. Owed as its
-own pass; it blocks nothing, because no file exists.
+**Correction, 2026-09-02.** This section previously said `file → blueprint`
+(rule 5.6) "cannot answer for them and the librarian would flag any file landing
+there as having no home". **That was wrong.** BP-016 declares
+`src/lib/mail/**` and `tests/mail/**`, so by rule 2 above — a component anchors
+a directory, a leaf narrows it — every file in all six directories resolves to
+**BP-016**. Nothing is homeless and nothing would be flagged. A map that
+overstates a gap is as bad as one that hides it; this one did, for a day.
+
+What is actually true is narrower and worth more: **the answer is BP-016, which
+is the arrangement ADR-040's Alternative 3 examined and rejected** — "a flat
+`templates/` directory globbed by BP-016 alone, with feature nodes owning no
+template files … it makes BP-016 the owner of every customer-visible mail body,
+which puts nine requirements' content behind one node". So the default in force
+is the one the decision ruled against.
+
+**The assignment is declined, and the reason is not the one given on
+2026-09-01.** ADR-040 decision point 2 — "a feature node's `code:` globs
+`src/lib/mail/templates/<kind>/**` once per kind it owns" — was written when
+every mail node in the corpus was a leaf of BP-016 (BP-029, BP-053, BP-059 all
+are). It is not true of these six. The nodes that own these kinds' occasions are
+leaves of **other** components: BP-046 (`draft-ready`, `src/lib/publish/`),
+BP-049 (`published`, `src/lib/publish/`), BP-051 or BP-050 (`weekly`,
+`src/lib/opportunities/` or `src/lib/scan/`), BP-061 (`magic-link`,
+`src/lib/account/`), BP-033 (`setup-reminder`, `src/app/`). Applying point 2
+literally makes five nodes cross-container owners under rule 2b, where the
+corpus has **one** instance (BP-036) and that one is argued in ADR-091. Turning
+one instance into six, with no file on disk, is the restructuring rule 2.2a
+forbids — and it would be done to satisfy a partition rule whose own premise
+does not hold for the directories it would be applied to.
+
+`account` fails on top of that for the reason recorded in 2026-09-01: its
+occasions come from REQ-024, REQ-074, REQ-076, REQ-077 and REQ-079, so ADR-040's
+"the node that owns that kind's occasions" names five nodes and picks none.
+
+**What would clear it, and when.** An ADR amending ADR-040 point 2 for kinds
+whose occasion-owner lives outside `src/lib/mail/` — either a mail-side leaf per
+kind, or BP-016 by declaration rather than by default. **The trigger is the
+first template file**, not the next architecture pass: today the question is
+which of two defensible partitions to adopt with nothing at stake, and the
+moment a file lands the answer costs a path move that invalidates every mail
+node's glob at once (ADR-040's own Consequences say so). Recorded as a
+`rests-on` on **BP-016**, `open`, so it is visible in the derived assumptions
+view and not only in this authored map (rule 5.5).
 
 Two overlaps are **by design and are not conflicts**: a component's directory
 glob against its own leaves' narrower globs (rule 2), and a component's topic
