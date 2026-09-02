@@ -15,7 +15,10 @@ on a signature, not on a drawing. The owner ruling four token values on
 signing a sheet are different acts. **Nor did the owner's second 2026-09-02
 ruling** — nothing clipped, every screen size — which changed `RivalSparkline`'s
 geometry, three surfaces' narrow-viewport behaviour and nine tokens, and moved
-no row. A rebuild is a drawing too.
+no row. A rebuild is a drawing too. **Nor did the owner's third 2026-09-02
+ruling**, which approved a card idiom ("A · Six boxes") and is recorded in §7:
+endorsing a *shape* is a third kind of act alongside ruling a value and signing
+a sheet, and it moves rows exactly as the other two did — not at all.
 
 **Two closed sets, plus their surfaces.** `BUILD.md` §2.2: *"daisyUI components
 only — no bespoke widgets."* Custom CSS is admitted for exactly five things:
@@ -143,6 +146,34 @@ should *replace* the HTML sheet as the medium rule 7.3 is satisfied by on this
 project is an owner ruling via `/decide`; until one lands, both stand and
 neither supersedes the other.
 
+**A sixth artifact now exists and flips nothing either.** `previews/app/`'s
+`/variants` routes (2026-09-02) render the overview and the report through
+seven independently-settable token axes — `tokens.md` §8. It registers no
+component, uses only the rows above, and adds no state to any of them: a
+variant is a `--v-*` token set over **unchanged component contracts**, the
+same shape §4 gap 8's narrow-viewport proposals take. Two of its positions
+spend tokens the registry does not hold (`--r-edge`, `--shadow-lift`) and both
+carry a `proposed` mark wherever they appear. **No row here moved.**
+
+**A seventh artifact now exists and flips nothing either.** `previews/app/`'s
+`/idiom` routes (2026-09-02) draw the card idiom the owner approved on three
+screens — the overview as Take A, the sign-in screen `BUILD.md` §4 never
+described, and the landing page. Every rule is scoped under `.ci`, so the four
+sheets, the five walkthroughs, `/variants` and `/directions` are untouched and
+remain the baselines. It proposes **one new row and four widenings** (§7),
+spends **six values nobody has ruled** (`tokens.md` §9), raises five questions
+it does not answer, and owes twenty-six customer-visible strings. **No row here
+moved.**
+
+Drawing it found one thing about a registered component, recorded rather than
+fixed: **`Collapse` writes its own radius inline** (`primitives.tsx`,
+`style={{ borderRadius: "var(--r-field)" }}`), so no stylesheet can reach it.
+The value is right and named; the *placement* means the one primitive whose
+corner cannot be re-themed is the one on the public report. Every other
+primitive takes its radius from a class. Worth moving into `globals.css` when
+`Collapse`'s row is next touched — it is a preview-file defect, not a contract
+one, and it does not block a signature.
+
 Three things the running app holds that a sheet could only state, recorded
 because they are now properties of the drawing rather than captions on it: an
 intended-empty state's tone is a type admitting `neutral | ok` only; a chart's
@@ -249,3 +280,91 @@ Two further parts, same status:
   it is handed, and a count the sidebar does not have already renders as no
   count. No chart needs one either — a chart is handed its series; what is
   loading is the module around it.
+
+## 7. The approved card idiom — 2026-09-02
+
+The owner ruled, verbatim: *"This is exactly what we need - 'A · Six boxes'
+is my preference and what we should proceed with."* Take A is one card per
+module with the three stat tiles broken out — six boxes on the overview.
+The idiom itself is in `tokens.md` §9; what it does to **this** file is
+below.
+
+> **An approved idiom is not a signed preview, and no row above moved.**
+> A row flips on a signature (§5) and none exists. The owner endorsing a
+> *shape* is a third kind of act alongside ruling a value and signing a
+> sheet, and it moves rows in the same way the other two did: not at all.
+
+Drawn as live code at `/idiom`, `/idiom/overview`, `/idiom/signin` and
+`/idiom/landing` in `previews/app/`, every rule scoped under `.ci`. The four
+sheets, the five walkthroughs, `/variants` and `/directions` are untouched
+and are the baselines these are read against.
+
+### 7.1 One new row — `proposed`
+
+| Component | Status | Data contract | States | Owning BP |
+|---|---|---|---|---|
+| `ActionPanel` | proposed | The tinted panel every request-to-act renders as. `tone` admits **`accent` and `warn` only** — `--ok`/`--warn`/`--bad` are state colours (§2.5) and a request is not a state, so `ok` and `bad` have **no position to pass**, refused by the type rather than by convention. Required: `icon`, `title` (the owner's), `line` (the owner's — **one** short explanatory line, §2.5's dim line and never a paragraph), and the CTA label. Holds no copy of its own | **default** · **in-flight** (the CTA is disabled while the action posts — never removed, so the panel does not change height under the pointer) · **withheld** (the action cannot be taken right now: **one written line takes the CTA's place**. The variant carries a required account and **has no `cta` member at all**, so a disabled button with no explanation is unbuildable) | BP-018 |
+
+**Why `Alert` is not this.** `Alert` is the nearest registered thing and it
+is the wrong one on all four counts: it states a fact where a panel asks for
+a decision; it takes four tones where a panel may take two; it has no icon
+chip, no bold title and no dim line; and its `message` is one string where a
+panel's title and line are two, ranked. Widening `Alert` to hold them would
+give one component two purposes, which is rule 7.1 seen from the component
+side.
+
+### 7.2 Four widenings — all `proposed`, none usable until approved
+
+| # | Contract | The gap | Owning BP |
+|---|---|---|---|
+| 1 | `Card` **head slot** | The registered contract takes an `eyebrow` and a `verdict`. The idiom's head is an **icon chip**, the eyebrow, and an **optional right-hand pill**, above the verdict. Three slots the contract does not name | BP-018 (widening) |
+| 2 | `Btn` **outline secondary · quiet tertiary · `--r-pill`** | `BUILD.md` §2.2 gives `btn` *"(+primary/ghost/sm/block)"* and the §1 row follows it. The idiom needs **three ranks, not two**, and all three at `--r-pill`. Rank is what makes "one primary action per screen" checkable by looking; with two ranks a secondary and a tertiary are the same button. A fourth arm exists and is not a rank: on an accent ground the solid primary **inverts** to `--on-accent` fill with an `--accent` label — two named tokens, no third value | BP-018 (widening) |
+| 3 | `Stat` **label placeable in the head** | `Stat` prints its own eyebrow label. The idiom's card head already carries one, and a tile with two eyebrows states the same claim twice (rule 2.4). **Everything else registered about `Stat` is unchanged and deliberately so** — the mono numeral utility, the `delta`-XOR-`goal` union, and the three `measured`/`measured-zero`/`unmeasured` states. The label stays a required prop and rides the accessible name, so a figure whose label moved into the head is not an unlabelled number to a screen reader | BP-018 (widening) |
+| 4 | `Progress` **on-accent skin** | The sign-in glass card needs a determinate bar on an accent ground, where `--sunk` and `--chart-*` have no contrast. Track and fill take `--on-accent` at the two alphas §2.1 already states. It stays **determinate** — `value` and `max` both required, neither nullable — and it is **not** a sixth chart form, the same call the §1 row already makes for the report's driver mini-bars | BP-018 (widening) |
+
+### 7.3 Not registry rows, and must not become any
+
+`IdiomScope`, `CardHead`, `IdiomCard`, `IdiomBtn` and `StatFigure` in
+`previews/app/src/app/idiom/parts.tsx` are the **drawings of the four
+widenings above**, not five new components. They exist so the owner has
+something to rule on. Production UI code names `Card`, `Btn` and `Stat`.
+This is §4's own rule about screen compositions, applied to a widening.
+
+### 7.4 What the idiom raises about a component and does not settle
+
+**`GrowthLine`'s labelling.** The idiom says *"only the two endpoints
+labelled"*, and `GrowthLine` already labels exactly two **values** — the
+endpoint, and the start value in `BUILD.md` §4.5's footnote pair. The marks
+under the plot carry a **week tick**, not a value. If the ruling meant the
+ticks as well, that is a change to a registered chart's contract rather than
+a CSS rule, and §2.4's *"every bar and point direct-labelled"* is on the
+other side of it. **Raised, not taken**; the chart is drawn unchanged.
+
+**`Input`'s label, on the sign-in screen.** The §1 row requires a
+placeholder **and** a label, never defaulted. The live page the owner
+endorsed shows a placeholder and no visible label. Either the owner writes
+the label — it is `S1` in the owed-string list on `/idiom` — or `Input`'s row
+gains an arm for a visually-hidden one. Both are rulings; the bracketed slot
+renders on the screen in the meantime.
+
+### 7.5 Checkout is not ours, and this file has never held one
+
+Checked across `design/` on 2026-09-02: **no row in this file, no token, no
+sheet and no preview route renders a payment field, a card number, an
+invoice or a price form**, and none is added by the idiom's three screens.
+The report's pricing card (§4.1 module 6) carries a start action that is a
+**redirect and nothing else**. Checkout, billing, invoicing and every
+billing notification are Stripe's entirely — which is why none of it has a
+surface here, and why none may be added by a work order without the ruling
+below landing first.
+
+> **`BUILD.md` §4.7's Settings `Billing` card is PENDING AN OWNER RULING and
+> is not to be built.** §4.7 specifies it as *"plan, next invoice, card,
+> invoices link, Update card / Cancel plan + 'cancelling keeps everything
+> running until {date}'"*. Several of those are things Stripe owns outright,
+> and what survives is the analyst's open question. **It is deliberately not
+> redesigned here**: guessing which rows survive would put a second home
+> under a fact the analyst is settling (rule 2.4), and a Billing card drawn
+> on a guess is the most likely way a payment surface arrives in this
+> product by accident. No preview draws it, no row here describes it, and a
+> work order that plans it is refused until the ruling lands.
