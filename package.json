@@ -1,0 +1,45 @@
+{
+  "name": "reachkit",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint .",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit",
+    "db:types": "supabase gen types typescript --local > src/lib/db/types.generated.ts"
+  },
+  "dependencies": {
+    "next": "16.3.4",
+    "react": "19.2.8",
+    "react-dom": "19.2.8",
+    "lucide-react": "1.39.0",
+    "@fontsource/plus-jakarta-sans": "5.3.0",
+    "@fontsource/jetbrains-mono": "5.3.0",
+    "@supabase/supabase-js": "2.114.0",
+    "stripe": "22.6.1",
+    "resend": "6.25.0",
+    "inngest": "4.18.1",
+    "@anthropic-ai/sdk": "0.123.0",
+    "zod": "4.5.4"
+  },
+  "devDependencies": {
+    "typescript": "5.9.3",
+    "tailwindcss": "4.3.3",
+    "@tailwindcss/postcss": "4.3.3",
+    "daisyui": "5.7.27",
+    "postcss": "8.5.26",
+    "vitest": "4.1.11",
+    "jsdom": "29.0.0",
+    "eslint": "9.39.5",
+    "eslint-config-next": "16.3.4",
+    "typescript-eslint": "8.69.0",
+    "supabase": "2.116.0",
+    "@types/node": "22.20.1",
+    "@types/react": "19.2.18",
+    "@types/react-dom": "19.2.5"
+  }
+}

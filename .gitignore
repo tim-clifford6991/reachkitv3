@@ -1,1 +1,7 @@
 .DS_Store
+node_modules/
+.next/
+.env*.local
+coverage/
+tsconfig.tsbuildinfo
+next-env.d.ts
