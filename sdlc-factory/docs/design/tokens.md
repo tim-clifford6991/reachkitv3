@@ -5,9 +5,10 @@
   numerals), §2.4 (chart constraints), §2.5 (the meaning rules that bind how a
   token may be used). Values are **transcribed**, not derived, except the six
   rows §2.1 explicitly delegates (see "Derived at a stated rule"), the
-  **four rows the owner ruled on 2026-09-02** (see "Ruled, not derived"), and
-  the **nine rows the design-guardian derived under rule 1.1 on 2026-09-02**
-  (see §2b, "Derived under rule 1.1"). Those three sets are kept apart on
+  **four rows the owner ruled on 2026-09-02** (see "Ruled, not derived"), the
+  **ten rows the design-guardian derived under rule 1.1 on 2026-09-02**
+  (see §2b, "Derived under rule 1.1"), and the **six the approved card idiom
+  proposes and nobody has ruled** (see §9). Those four sets are kept apart on
   purpose: a value's *authority* is part of the value.
 - Owning blueprint: BP-018.
 
@@ -216,6 +217,12 @@ required prop, so nothing new is asked of a caller. And where seven cells
 cannot each clear 96px at all, the grid changes rather than the type: below
 `--breakpoint-md` the month and the week strip are seven **rows**. That last
 part is a **proposal, not a derivation** — see §7.
+
+### The eyebrow's tracking — derived under rule 1.1, 2026-09-02
+
+| Token | Value | Derivation | Reversal cost |
+|---|---|---|---|
+| `--t-eyebrow-track` | `.1em` | §8 recorded this as a gap the variant exploration **found and did not fill**: §2.3 gives an eyebrow a size and a case and **no tracking**, and `previews/app/src/app/globals.css` spent `.09em` on `.eb` as a bare literal — the last unnamed value in the type block, in the one file that claims two recorded exemptions and no others. Named here at the value the approved card idiom draws (§9). The change from `.09` to `.1` is visible nowhere at 11px; what changed is that the value has a name | one declaration and one call site |
 
 ### Two content measures
 
@@ -468,3 +475,142 @@ re-argued per surface:
 4. **A required prop of unknown length is never given a fixed height.** A
    badge, a button and an alert all take an owner's string; all three size to
    their content.
+
+## 8. The variant exploration — `proposed`, and law nowhere
+
+Drawn 2026-09-02 in `previews/app/src/app/variants/` after the owner asked for
+"a handful of variants I can choose specific elements from". **Nothing in this
+section is law and nothing in it is signed.** It is recorded here so the two
+values it spends are visible as proposals rather than as values that arrived by
+being drawn.
+
+**The shape, because it is what keeps the ruled values ruled.** A variant is
+not a redraw and not a second scale. It is an **application layer** — a set of
+`--v-*` tokens, each of which resolves to a token this file already declares.
+`--v-card-pad` is always some `var(--s-N)`; `--v-r-card` is always some
+`var(--r-*)`. The seven-step ladder and the 1.25 heading scale are untouched;
+what varies is **which rung a surface picks**. A variant that redeclared `--s-4`
+would be replacing a value the owner ruled, which rule 1.2 forbids in the
+direction that matters here.
+
+Seven axes, each independently settable: density · separation · radius · type
+contrast · colour application · chrome weight · data presentation. The
+vocabulary is `previews/app/src/app/variants/axes.ts`; every value is
+`previews/app/src/app/variants/variants.css`, scoped entirely under `.v` so no
+other route can see it (rule 2.4 — one home).
+
+### Two tokens the exploration spends and this file does not hold
+
+| Token | Value | Wanted by | Why it is not derivable |
+|---|---|---|---|
+| `--r-edge` | `4px` | the radius axis's `edge` position | A **fourth** radius under `--r-field`. `BUILD.md` §2.1 states three and calls them *"these exact values"*. This adds one rather than editing one, so it is an addition to a transcribed set — the owner's word, not a parameter. Reversal cost: one line, and the `edge` position disappears with it |
+| `--shadow-lift` | light `0 1px 2px rgb(24 24 48/.04), 0 6px 16px rgb(24 24 48/.07)` · dark `0 1px 2px rgb(0 0 0/.5), 0 6px 16px rgb(0 0 0/.5)` | the separation axis's `shadow` position | `--shadow-card` is a 1px hairline shadow and cannot carry a card's edge once the border is removed. Its dark value takes the same construction as the owner's ruled dark `--shadow-card` — the light geometry re-inked at a second alpha — but the light value itself is new and §2.1 states no rule that yields it. Reversal cost: one declaration and one position |
+
+Both are declared **only** inside `.v` and every screen that spends one carries
+a visible `proposed` mark, so neither can reach a walkthrough or a specimen
+sheet by accident.
+
+### Two gaps the exploration found rather than filled
+
+| Gap | Standing |
+|---|---|
+| **An eighth spacing step** | The ruled ladder ends at `--s-7` 48px, so the `airy` density position tops out there. A genuinely airier page section wants a 64px step. **Not drawn** — an eighth step is a proposal against the owner's own ruling, not a parameter rule 1.1 gives an agent |
+| ~~The eyebrow's letter-spacing~~ | **Closed 2026-09-02, rule 1.1.** `--t-eyebrow-track` `.1em` (§2b), at the value the approved card idiom draws. The bare `.09em` literal is gone from `.eb`. The `--v-eyebrow-track` positions in `variants.css` are unaffected — a variant applying a value differently is what that layer is for |
+| **The eyebrow's ink** | §1 above annotates `--ink-3` as *"Provenance and eyebrow text (§2.5: 'always quiet')"*. §2.5's verbatim rule is about **provenance**; the eyebrow pairing is this file's own annotation, not `BUILD.md`'s. The type axis's `loud` position raises the eyebrow to `--ink-2`, which is therefore **an edit to this file** rather than a variant applying it, and is marked as one wherever it is drawn. The explanatory line is *not* in the same position: §4 binds it to `--ink-3` by name and no position moves it |
+
+**The design-guardian's own recommendation spends none of this.** The tuple
+drawn at `/variants/guardian` — separation `fill`, radius `crisp`, type
+`poised`, chrome `hairline`, figure `rule` — selects only tokens
+`globals.css` declares today. It needs a ruling on five positions and on no
+value.
+
+**One of its two proposed values has moved out of `.v` and is still
+proposed.** See §9: `--shadow-lift` is now spent by an idiom the owner
+endorsed, not only by an exploration the owner rejected, so its declaration
+moved to `globals.css` §1c — one home (rule 2.4). `.v` inherits it at the
+same values in the same three theme states. `--r-edge` did not move and is
+still scoped to `.v` alone.
+
+## 9. The approved card idiom — 2026-09-02
+
+The owner rejected the seven-axis `variants/` set and the five `directions/`
+set as too structural, was shown three card-density takes on the workspace
+overview, and ruled, verbatim: *"This is exactly what we need - 'A · Six
+boxes' is my preference and what we should proceed with."*
+
+**What was approved is the idiom, not a preview.** Take A is one card per
+module with the three stat tiles broken out as three separate boxes — six
+boxes on the overview. The idiom below held constant across all three takes
+and is what that ruling endorses. It is drawn as live code at `/idiom`,
+`/idiom/overview`, `/idiom/signin` and `/idiom/landing` in
+`previews/app/`. **A ruling on an idiom is not a signature on a sheet:** no
+row in `components.md` moved, and none may (see that file's own §7).
+
+### 9.1 The idiom, and what it spends
+
+| Rule | What it spends |
+|---|---|
+| Soft grey `--bg` ground, white `--surface` cards **separated by shadow, never a border** | `--shadow-lift` (`proposed`) — `--shadow-card` is a 1px hairline and cannot carry a card's edge once the border is gone |
+| Card head: a rounded-square icon chip in `--accent-bg`/`--accent`, an 11px uppercase eyebrow at `.1em` in `--ink-3`, an optional pill on the right | `--t-eyebrow-track` (below, §2b) and **no size token** — the chip is `--s-6` square. The ladder is closed (§2) and 32 is the rung the drawn 30 lands on; a `30px` token would be a value between two rungs, which the ladder's own rule refuses |
+| Card padding `--s-5`, `--s-6` for a larger card | Two rungs of the ruled ladder. **Which card is "larger" is a judgement no token holds** — ADR-093 decision 4 hands exactly that to the preview gate, so it is a caller's opt-in (`pad="lg"`) and never inferred from a column count |
+| **Anything asking the customer to act is a tinted panel** — `--accent-bg` or `--warn-bg`, a white icon chip, a bold title, one dim explanatory line, a pill CTA | Existing tone tokens only. It is a **new registry row**, `ActionPanel`, `proposed` — `components.md` §7 |
+| Pill buttons throughout: one solid accent primary, an outline secondary, a quiet tertiary | `--r-pill`, already law. It is a **widening of `Btn`**, `proposed`. On an accent ground the solid primary inverts to `--on-accent` fill with an `--accent` label — two named tokens, no third value |
+| Growth chart: soft area fill under the accent line, endpoint dot with a `--surface` ring, only the two endpoints labelled | Nothing new. `GrowthLine` already draws all three, and §4.5's footnote pair *is* the second label. See §9.4 for what is raised about it |
+| `--ok`/`--warn`/`--bad` reserved for state; the accent is never a state colour | §2.5's law, unchanged. Recorded here because an idiom that spends the accent on every card head is exactly where it gets broken |
+
+### 9.2 The two values the owner did **not** rule
+
+Both are drawn, both are `proposed`, and neither may be read later as
+something the ruling implied. Rule 1.2 cuts in this direction too.
+
+| | Standing |
+|---|---|
+| **Card radius `--r-card: 18px`** | Against the **ruled** `--r-box: 14px`. Kept as a **second variable**, not an edit of the first, so both exist until the owner rules — re-drawing a ruled value is exactly what an idiom must not do by being drawn. Every idiom surface names `--r-card` and nothing else. Reversal cost: one declaration, and every card falls back to 14 |
+| **Headline numerals in the sans at 700–800** | Against `BUILD.md` §2.3's flat statement, verbatim: *"Every numeral, date, URL, search query and code-like string is JetBrains Mono with `tabular-nums`."* The owner's two reference screenshots both set the big numbers in a heavy sans, and the take the owner approved used sans; the nine-screen artifact defaulted to mono. **The owner has not ruled.** Built so **one token flips it** — `--t-num-headline-face`, defaulting to `--font-mono`, which is what §2.3 states and therefore what conforms. It reaches the **headline** figure only: a date, a URL, a search query and a provenance line stay mono either way. And `tabular-nums` is never dropped — it comes from the `.num` utility and the face rule cannot reach it, so §2.3's mechanical half survives whichever way the face goes. Reversal cost: one declaration |
+
+### 9.3 The six proposed values, declared once
+
+All six are in `previews/app/src/app/globals.css` §1c, at `:root`, not under
+the idiom's scope class — a value with two homes is rule 2.4's second copy,
+and `--shadow-lift` already had one.
+
+| Token | Value | Derivation | Reversal cost |
+|---|---|---|---|
+| `--r-card` | `18px` | §9.2. **Not ruled** | one declaration |
+| `--t-num-headline-face` | `var(--font-mono)` | §9.2. **Not ruled** | one declaration |
+| `--shadow-lift` | light `0 1px 2px rgb(24 24 48/.04), 0 6px 16px rgb(24 24 48/.07)` · dark the same geometry re-inked at a second alpha | Shadow-only separation is the idiom's first rule and `--shadow-card` cannot serve it. The dark construction is §2.1's own pattern for the `-bg`/`-line` pairs and the one the owner's dark `--shadow-card` ruling took. Raised by §8; moved here when an endorsed idiom started spending it | one declaration and one rule |
+| `--grad-accent` | `radial-gradient(circle at 78% 22%, --on-accent at 28%, transparent 62%)` over flat `--accent` | **Derived, not minted.** `design/` has no gradient anywhere and the set has no second accent stop, so the stops are taken from tokens that exist: the ground is `--accent` and the highlight is `--on-accent` at **28%**, which is `BUILD.md` §2.1's own stated alpha — *"+ matching -bg/-line at 12%/28% alpha"*. No colour is invented and no second stop is minted. The three position proportions are geometry inside the element's own box, the same class of value as an SVG coordinate (§7's exemption), and are stated here rather than smuggled | one declaration and two call sites |
+| `--on-accent-quiet` | `--on-accent` mixed 72% toward `--accent` | The quiet ink on an accent ground. `--ink-3` is the quiet ink on `--bg` and the set has no on-accent equivalent, so the sign-in panel's mono domain line had nothing to take. Mixed **toward the ground**, not to transparency, because that is the relationship `--ink-3` has to `--ink`; a low alpha to transparent puts running text under any contrast floor | one declaration |
+| `--w-form` | `420px` | A **third content measure**. Neither existing one fits a single form column: at the 15px body `--w-read` 704 runs to about 94 characters, outside the 45–75 measure, and 420 runs to about 56, inside it. It is also the column the page the owner endorsed draws | one declaration, two call sites |
+
+**Two values the idiom needs and this file does not add.** The sign-in
+panel's glass card is `--on-accent` at **12%** for its fill and **28%** for
+its hairline border — the pair `BUILD.md` §2.1 states verbatim, applied to
+`--on-accent` instead of to a state hue. That is the same derivation the six
+dark `-bg`/`-line` values already take (§1, "Derived at a stated rule"), so
+no proportion is invented, no colour is, and no token is added: the two are
+named `--glass-fill` and `--glass-line` inside the idiom's own scope, where
+the **names** are the system's and the **values** are `BUILD.md`'s. The dark
+pill on that panel is `--ink` on `--surface`, two named tokens that invert
+with the theme rather than pinning a light-mode colour.
+
+### 9.4 What the idiom raised and this file does not answer
+
+| Question | Standing |
+|---|---|
+| **Where does the sign-in panel's specimen score come from?** | The right panel shows a Discoverability Score for a named domain to a stranger who has not signed in. A real recent scan, a fixed specimen, or a placeholder — the three are not equivalent. Only the first is a measurement; the second must be labelled as one; the third is a number the product invents and shows to a customer, which is **rule 1.2**. The same question binds the landing hero's component — one question, not two. **Raised, not answered, and neither surface is built until it is ruled** |
+| **Did "only the two endpoints labelled" mean the axis ticks too?** | `GrowthLine` already labels exactly two values — the endpoint, and the start value in §4.5's footnote pair. The marks under the plot carry a **week tick**, not a value. If the ruling meant those as well, that is a change to a registered chart's contract, not a CSS rule, and §2.4's *"every bar and point direct-labelled"* is on the other side of it. **Not taken** |
+| **The reference screenshot's bar and its figure disagree** | The glass card sets the score at `47/100` and draws its bar at roughly 40%. Two renderings of one fact that disagree are rule 2.4's second copy arriving as a picture, so the drawing puts the bar at the figure and records the deviation. If the 40% is a different measure, it is a second fact and needs its own label |
+| **The narrow viewport for the sign-in split** | **Decided (rule 1.1), not deferred.** Below `--breakpoint-lg` the panel does not sit beside the form, does not go above it, and is not dropped: it follows the form in flow, full width, on the same ground. The rule that decides it — the screen has exactly one primary action and it must be the first thing on the screen at every width; the panel carries no action and no route, so following the form costs the customer nothing, while putting it above pushes an email field below the fold on a phone. Dropping it was the other candidate and is refused for a weaker but real reason: ADR-093's whole shape is a designed narrow arm rather than a hidden surface. Reversal cost: one media query and the order of two children. `--breakpoint-lg` is itself derived — two form columns (2 × `--w-form` = 840) plus a generous inset either side (2 × (`--s-7` + `--s-6`) = 160) is 1000, and 1024 is the smallest named step that clears it |
+| **The video is a new asset class** | **Decided.** *Absent* (no asset produced): the block does not render at all — no placeholder, no "coming soon", no empty frame; the hero above it does not depend on it and the sections close up behind it. *Loading*: the poster is the video's own first frame and ships with it, so the block renders its final size on the first paint and nothing moves when the player mounts — there is no separate loading state and no spinner (REQ-003 c1's rule, generalised). *Blocked* (a content policy, a tracking blocker, no network): the poster stays and one written line plus the video's own address takes the play control's place, in `warn` and never `bad` — red is the customer's own problem shown to them (§2.5) and a player we could not mount is ours |
+
+### 9.5 Checkout has no surface here, and never had one
+
+Checked across `design/` on 2026-09-02: **no component, token, sheet or
+preview route renders a payment field, a card number, an invoice or a price
+form**, and none is added. The report's pricing card carries a start action
+that is a redirect and nothing else. Checkout, billing, invoicing and every
+billing notification are Stripe's entirely, which is why none of it has a
+surface in this file. `BUILD.md` §4.7's Settings **Billing** card is
+recorded in `components.md` §7 as **pending an owner ruling** — not
+redesigned on a guess, and not built in the meantime.

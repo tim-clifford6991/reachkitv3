@@ -6,6 +6,8 @@ import { OUTSTANDING } from "@/mock/data";
 export default function Index() {
   const sheets = ROUTES.filter((r) => r.kind === "sheet");
   const walks = ROUTES.filter((r) => r.kind === "walk");
+  const variants = ROUTES.filter((r) => r.kind === "variants");
+  const idiom = ROUTES.filter((r) => r.kind === "idiom");
   return (
     <main className="pv-wrap">
       <SheetHead
@@ -51,6 +53,24 @@ export default function Index() {
         working. Each one says so on itself. None of them is a gate anyone has passed.
       </P>
       <RouteList routes={walks} />
+
+      <h2 className="pv-h2">The approved card idiom — the one thing here the owner has ruled on</h2>
+      <P>
+        The owner rejected the seven-axis variant set and the five directions as too structural,
+        and approved a card idiom on 2026-09-02 — &ldquo;A · Six boxes&rdquo;. These routes draw it
+        on three screens. <strong>An approved idiom is still not a signed preview:</strong> it
+        moves no row in <Mono>components.md</Mono>, and it spends six values nobody has ruled, two
+        of which the owner explicitly left open.
+      </P>
+      <RouteList routes={idiom} />
+
+      <h2 className="pv-h2">Variants — an exploration alongside, not a replacement</h2>
+      <P>
+        The walkthroughs above are the baseline and are untouched. These routes render the same
+        two screens through different token sets, one named axis at a time, so an element can be
+        taken from one without taking the rest of it.
+      </P>
+      <RouteList routes={variants} />
 
       <h2 className="pv-h2">Still outstanding — strings nobody may write but you</h2>
       <P>

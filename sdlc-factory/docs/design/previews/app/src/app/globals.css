@@ -217,6 +217,14 @@
      changed. */
   --border-hair: 1px;
 
+  /* THE EYEBROW'S TRACKING. tokens.md §8 recorded this as a gap the variant
+     exploration found and did not fill: §2.3 gives an eyebrow a size and a
+     case and NO tracking, and this file spent `.09em` on `.eb` as a bare
+     literal — the one unnamed value left in the type block. Named here at
+     the value the approved card idiom draws (2026-09-02). Reversal cost:
+     one declaration and one call site. */
+  --t-eyebrow-track: .1em;
+
   /* The floor for one cell of a 7-across grid — the calendar day and the
      week-strip day. Below this a cell cannot hold a two-digit mono date,
      the widest registered stage chip ("Your review") and one line of page
@@ -249,6 +257,69 @@
   --w-sidebar: 222px;
   --w-day-panel: 290px;
   --grid-week: repeat(7, minmax(0, 1fr));
+
+  /* ── THE APPROVED CARD IDIOM, 2026-09-02 — tokens.md §9 ────────────────
+     The owner approved the idiom ("A · Six boxes"). These six values are
+     what drawing it costs, and NOT ONE OF THEM IS RULED. Each carries its
+     derivation and reversal cost in tokens.md §9. They are declared at
+     :root rather than under the idiom's own scope class because a value
+     with two homes is rule 2.4's second copy, and --shadow-lift already
+     had one (see the note in variants.css §0).
+
+     --r-card    A card radius against the ruled --r-box 14px. The idiom
+                 draws 18. KEPT AS A SECOND VARIABLE, not an edit of
+                 --r-box, so both can exist until the owner rules; every
+                 idiom surface names --r-card and nothing else, so refusing
+                 it is one declaration.
+     --shadow-lift  Moved here from `.v` in variants.css. --shadow-card is
+                 a 1px hairline and cannot carry a card's edge once the
+                 border is removed, which is exactly what "separated by
+                 shadow, never a border" asks for. Its dark value is the
+                 light geometry re-inked at a second alpha — §2.1's own
+                 pattern for the -bg/-line pairs, and the construction the
+                 owner's dark --shadow-card ruling took.
+     --grad-accent  The sign-in panel's ground. DERIVED, not invented: the
+                 highlight is --on-accent at 28%, which is BUILD.md §2.1's
+                 own stated alpha (`+ matching -bg/-line at 12%/28%
+                 alpha`), over a flat --accent. No second accent stop is
+                 minted and no new colour exists. The three position
+                 proportions are geometry inside the element's own box —
+                 the same class of value as an SVG coordinate, which
+                 tokens.md §7 already exempts, and stated rather than
+                 smuggled.
+     --on-accent-quiet  The quiet ink on an accent ground: --ink-3 is the
+                 quiet ink on --bg and there is no on-accent equivalent, so
+                 the domain line on the sign-in panel had nothing to take.
+                 Mixed TOWARD THE GROUND rather than to transparency,
+                 because that is the relationship --ink-3 has to --ink.
+     --w-form    A single form column. Neither content measure fits: at 15px
+                 body, --w-read 704 runs to ~94 characters, outside the
+                 45–75 measure, and 420 runs to ~56, inside it.
+     --t-num-headline-face  THE ONE TOKEN THAT FLIPS THE NUMERAL QUESTION.
+                 Default is --font-mono, which is what BUILD.md §2.3 states
+                 and therefore what conforms. See tokens.md §9. */
+  --r-card: 18px;
+  --shadow-lift: 0 1px 2px rgb(24 24 48/.04), 0 6px 16px rgb(24 24 48/.07);
+  --w-form: 420px;
+  --t-num-headline-face: var(--font-mono);
+  /* Composed entirely of var() references, so both re-resolve per theme and
+     neither needs a dark branch of its own. */
+  --grad-accent: radial-gradient(
+    circle at 78% 22%,
+    color-mix(in oklab, var(--on-accent) 28%, transparent) 0%,
+    transparent 62%
+  );
+  --on-accent-quiet: color-mix(in oklab, var(--on-accent) 72%, var(--accent));
+}
+/* --shadow-lift is a colour value, so it takes BUILD.md §2.1's three-state
+   shape and is never defined only inside a dark block. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --shadow-lift: 0 1px 2px rgb(0 0 0/.5), 0 6px 16px rgb(0 0 0/.5);
+  }
+}
+:root[data-theme="dark"] {
+  --shadow-lift: 0 1px 2px rgb(0 0 0/.5), 0 6px 16px rgb(0 0 0/.5);
 }
 
 /* ─────────────────────────────────────────────────────────────────────────
@@ -413,13 +484,22 @@ img, svg, table, pre {
 .rk-h3 { font-size: var(--t-h3); font-weight: 700; letter-spacing: var(--t-head-track); text-wrap: balance; margin: 0; }
 .rk-h4 { font-size: var(--t-h4); font-weight: 700; letter-spacing: var(--t-head-track); text-wrap: balance; margin: 0; }
 .rk-num-big { font-size: var(--t-h1); font-weight: 700; letter-spacing: var(--t-head-track); line-height: 1.05; }
+/* THE HEADLINE-NUMERAL SEAM, and it is deliberately one declaration wide.
+   BUILD.md §2.3, verbatim: "Every numeral, date, URL, search query and
+   code-like string is JetBrains Mono with `tabular-nums`." The owner's two
+   reference screenshots set the big numbers in a heavy sans and the owner
+   HAS NOT RULED, so this resolves to --font-mono by default and renders
+   exactly what §2.3 states. `tabular-nums` is never dropped: it comes from
+   `.num` and this rule cannot reach it, so the mechanical half of §2.3's
+   rule survives whichever way the face goes. tokens.md §9. */
+.rk-num-big .num { font-family: var(--t-num-headline-face); }
 @media (min-width: 640px) { /* --breakpoint-sm */
   .rk-h1      { font-size: var(--t-h1); }
   .rk-h2      { font-size: var(--t-h2); }
   .rk-num-big { font-size: var(--t-num-big); }
 }
 
-.eb { font-size: var(--t-eyebrow-size); text-transform: uppercase; letter-spacing: .09em; color: var(--ink-3); font-weight: 600; margin: 0; }
+.eb { font-size: var(--t-eyebrow-size); text-transform: uppercase; letter-spacing: var(--t-eyebrow-track); color: var(--ink-3); font-weight: 600; margin: 0; }
 .explain { font-size: var(--t-explain-size); color: var(--ink-3); margin: 0; }
 .prov { font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-size: var(--t-eyebrow-size); color: var(--ink-3); margin: 0; }
 .dim { color: var(--ink-2); }
