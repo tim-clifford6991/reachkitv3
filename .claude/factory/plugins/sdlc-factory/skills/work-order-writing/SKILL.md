@@ -107,7 +107,7 @@ too big — split it.
 The last section before the validation report — the checkpoint any agent
 resumes from (constitution rule 6.1: "a run that writes no log line did
 not happen"). Body text, not front-matter: it carries no edge the
-registry projects, only history read in order. Seven line forms, newest
+registry projects, only history read in order. Eight line forms, newest
 last:
 
     - <YYYY-MM-DD> created — <agent>
@@ -115,15 +115,28 @@ last:
     - <YYYY-MM-DD> finished — <agent> — <one line>
     - <YYYY-MM-DD> failed — <agent> — <why> — next: <the step to resume at>
     - <YYYY-MM-DD> preview — design-guardian — v<n> — <url>
+    - <YYYY-MM-DD> ruled — owner — <one line>
     - <YYYY-MM-DD> opened — migration <version>
     - <YYYY-MM-DD> guard — <agent> wrote <file> outside §4's <zone>/ row — allowed under SDLC_FACTORY_GUARD=log
 
-The seventh is the guard's alone (0.12.0): in an unattended run the write
+The eighth is the guard's alone (0.12.0): in an unattended run the write
 gate records an out-of-row subagent write here instead of prompting, and
-the librarian audits the line on `/sync`. The sixth is migration-only: a `factory upgrade` backfill writes it when it
+the librarian audits the line on `/sync`. The seventh is migration-only: a `factory upgrade` backfill writes it when it
 adds the section to a work order (or the work-order template) that predates
 constitution rule 6.1, rather than fabricating a `created` line for a run
 that never happened.
+
+The sixth is the owner's, written by the librarian on the owner's behalf
+(0.13.1) — the main session cannot write a corpus and the owner does not
+type into files. It records a gate this work order does not meet and that
+the owner has waived anyway: `- 2026-09-03 ruled — owner — build first,
+sheet drawn after against the code as built`. It is the one way past the
+preview gate (rule 7.3), which `factory-console next`, `/implement` and
+the implementer otherwise all refuse. Written where the next agent
+resumes rather than said in a session nobody can read back, so a waiver
+is a fact in the file forever — and `preview-without-url` keeps reporting
+the order until a sheet is actually published, waiver or not (rule 3.3:
+a refusal is recorded, not enforced, where nothing enforces it).
 
 The fifth is the only line in this section a checker reads (0.13.0,
 constitution rule 7.3). The design-guardian writes one per publication of

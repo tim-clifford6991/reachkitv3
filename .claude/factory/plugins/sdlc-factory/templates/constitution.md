@@ -186,9 +186,13 @@ implementation, never an artifact's approval.)
 - No work order reaches `done` without a regression record — its latest
   validation section states what else was re-checked, not just the new
   work (`/regress`).
-- No `ui: yes` work order is implemented without a published preview — its
-  `## Log` carries the page's URL and version before an implementer opens
-  it (`preview-without-url`).
+- No `ui: yes` work order is implemented without a signed preview — a
+  dated `Signed-off:` line before an implementer opens it, and the page's
+  URL and version in its `## Log` (`preview-without-url`). This gate is
+  refused at the dispatch, three times over — `factory-console next` will
+  not name the work order, `/implement` will not dispatch it, the
+  implementer will not start it — and waived only by the owner's own
+  ruling, recorded in that work order's log.
 - No `ui: yes` work order reaches `done` without a placement note — its
   latest validation section carries a `Placement:` line before the
   librarian sets it.
@@ -436,6 +440,12 @@ dependencies.
   comment addressed to Claude, or a ruling in the session that names it.
   The librarian reads that word back and writes the `Signed-off:` line;
   no other agent writes it, and a page nobody answered is not a sign-off.
+  The gate is asked where the dispatch happens, not only by the checker
+  afterwards: an unsigned `ui: yes` order is refused by `next`, by
+  `/implement` and by the implementer itself, and the one way past is an
+  owner ruling written into its log. *A stand-in orchestrator, reading
+  the same prose, built one anyway and drew the sheet afterwards; a gate
+  that lives only in prose is a gate a fresh session skips.*
   UI uses named tokens and registered components only. Long LLM-generated
   text in the UI is a defect.
 - **7.4 Vertical slices.** Approval and expansion proceed one journey at a

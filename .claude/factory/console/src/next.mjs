@@ -14,6 +14,36 @@
 const cap = (ids, n = 8) =>
   ids.length <= n ? ids.join(", ") : ids.slice(0, n).join(", ") + ` … +${ids.length - n}`;
 
+// Rule 7.3's gate, asked where the dispatch happens (0.13.1).
+//
+// Until this, the gate lived in prose — `/implement`'s preconditions, the
+// design-system skill's step order — and in `preview-without-url`, which
+// runs after the fact. On ReachKit v3's W2 a stand-in orchestrator read the
+// prose, dispatched the implementer for a `ui: yes` work order with no
+// signed preview, and only caught it afterwards. A gate that is only prose
+// is a gate that a fresh session skips, so this verb refuses to point at
+// `/implement` for such a work order and points at `/design` instead.
+//
+// The signal is the `Signed-off:` bullet carrying a real DATE. An unsigned
+// work order cut from the template carries the literal `Signed-off: <date>`
+// placeholder (`skills/work-order-writing/SKILL.md`: the planner never
+// dates it in advance), so presence of the key proves nothing and only a
+// date does — the librarian writes it, and nobody else (rule 7.3).
+const SIGNED_OFF = /^\s*[-*]?\s*Signed-off:\s*\d{4}-\d{2}-\d{2}/m;
+// The one way past the gate: the owner's own ruling, recorded in the log
+// where the next agent resumes (rule 6.1) rather than given in a session
+// nobody can read back. Waives, and stays visible in the file forever.
+const OWNER_RULING = /^\s*[-*]\s*\d{4}-\d{2}-\d{2}\s+ruled\s+[—-]\s+owner\b/m;
+
+/** @returns {string|null} why rule 7.3 holds this work order, or null if it doesn't. */
+export function previewGate(n) {
+  if (!n || n.y !== "work-order" || !n.u) return null;
+  const body = n.b || "";
+  if (SIGNED_OFF.test(body)) return null;
+  if (OWNER_RULING.test(body)) return null;
+  return `${n.i} is ui: yes and carries no signed preview — rule 7.3 holds it before an implementer opens it`;
+}
+
 export function computeNext(graph) {
   const nodes = graph.nodes;
   const byId = new Map(nodes.map((n) => [n.i, n]));
@@ -46,7 +76,13 @@ export function computeNext(graph) {
   if (w.current) {
     const row = (w.list || []).find((r) => r.id === w.current);
     const undone = (row?.wos || []).filter((id) => byId.get(id)?.s !== "done");
-    if (undone.length) stages.push({
+    const held = undone.length ? previewGate(byId.get(undone[0])) : null;
+    if (undone.length && held) stages.push({
+      key: "preview-gate", verb: `/design preview ${undone[0]}`,
+      ids: undone,
+      why: `wave ${w.current} is open and ${undone[0]} is first in its order, but ${held}`,
+    });
+    else if (undone.length) stages.push({
       key: "wave-open", verb: `/implement ${undone[0]}`,
       ids: undone,
       why: `wave ${w.current} is open — ${undone.length} of ${row.wos.length} work order(s) not done; ${undone[0]} is first in its order`,

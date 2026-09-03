@@ -56,13 +56,15 @@ Consumes: … / Exposes: … (verbatim from BP)
 <how to revert safely>
 
 ## Log
-> The checkpoint any agent resumes from (constitution rule 6.1). Six
+> The checkpoint any agent resumes from (constitution rule 6.1). Seven
 > line forms, newest last: `created — <agent>`, `started — <agent>`,
 > `finished — <agent> — <one line>`, `failed — <agent> — <why> — next:
 > <the step to resume at>`, `preview — design-guardian — v<n> — <url>`
 > (rule 7.3: one line per publication of this WO's preview sheet — the
-> only line here a checker reads, `preview-without-url`), and `opened —
-> migration <version>` — the
+> only line here a checker reads, `preview-without-url`), `ruled — owner
+> — <one line>` (the owner's own waiver of a gate this order does not
+> meet, written by the librarian; the only way past the preview gate),
+> and `opened — migration <version>` — the
 > migration-only form a `factory upgrade` backfill uses when it adds this
 > section to a work order (or this template) that predates rule 6.1,
 > rather than fabricating a history of runs that never happened. A failed

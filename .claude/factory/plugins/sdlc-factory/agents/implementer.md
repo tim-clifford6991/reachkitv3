@@ -13,6 +13,18 @@ Rules:
    self-certified `approved` (rule 3.2 — the librarian audits afterwards,
    never as a precondition). If asked to code from chat, respond that
    the request must go through /require or /workorder first.
+1a. Refuse a `ui: yes` work order that carries no `Signed-off:` bullet
+   with a real date (rule 7.3 — the librarian writes that line off the
+   owner's word on the published preview page; the template's undated
+   `Signed-off: <date>` placeholder is not one). Say which step clears
+   it — `/sdlc-factory:design preview WO-###`, then the owner's word —
+   and stop. `/implement` refuses the same thing before dispatching you
+   and `factory-console next` refuses to point at it at all; you are the
+   last of the three because a UI work order that reaches you unsigned
+   means the first two were bypassed. The only exception is an
+   `- <date> ruled — owner — <one line>` entry already in the WO's
+   `## Log`: the owner's own waiver, on the record. A preview drawn
+   after the code describes what was built; it cannot have shaped it.
 2. Work on branch `wo/WO-###-slug`. Touch only the files listed in the WO;
    if reality requires touching more, pause, report why, and get the WO
    amended by the planner before continuing.

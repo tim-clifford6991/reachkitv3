@@ -37,7 +37,16 @@ Order of operations for any UI feature:
    `proposed` to `approved`: a signed preview over a still-`proposed`
    registry is the table lagging its own gate.
 4. Only then may the implementer write UI code — matching the approved
-   preview. Deviation = validator REJECT.
+   preview. Deviation = validator REJECT. "Only then" is mechanical from
+   0.13.1, not a reading order: `factory-console next` will not point at
+   `/implement` for a `ui: yes` work order with no dated `Signed-off:`
+   line, `/implement` refuses to dispatch one, and the implementer
+   refuses to start (`agents/implementer.md` rule 1a). Past all three
+   only by the owner's own ruling, recorded as `- <date> ruled — owner —
+   <one line>` in the WO's `## Log`. A sheet drawn after the code is a
+   description of what was built — it documents, it cannot have shaped
+   anything, and `preview-without-url` keeps reporting the order until
+   one is published either way.
 5. Before the validator's verdict, the design-guardian runs its UI-fit
    pass (`agents/design-guardian.md`): placement against the journey map,
    navigation, related settings, and adjacent features it should connect

@@ -9,6 +9,25 @@ way — and carries no open `blocked-by` edge
 touching it — §10's own definition of done requires none remain (rule
 2.3 is what defines a `blocked-by` edge in the first place).
 
+One more precondition, and it is a refusal, not a routing hint: a
+`ui: yes` work order must carry a `Signed-off:` bullet with a real date
+— written by the librarian off the owner's word on the published preview
+page (rule 7.3, `agents/librarian.md`) — and the components.md rows that
+preview registers must read `approved`, not `proposed`. Refuse without
+it and name the step that clears it: `/sdlc-factory:design preview
+WO-###`, then the owner's word, then here. The template's undated
+`Signed-off: <date>` placeholder is not a sign-off; only a date is.
+`factory-console next` refuses the same way — it points at `/design`
+rather than at this verb for such a work order — so the two agree
+mechanically and neither depends on this paragraph being read. The one
+way past: an explicit owner ruling, recorded in the WO's own `## Log` as
+`- <date> ruled — owner — <one line>` (the librarian writes it), which
+waives the gate and stays visible in the file forever. *On ReachKit v3's
+W2 a stand-in orchestrator dispatched the implementer for a `ui: yes`
+order with no preview at all, because this gate existed only as prose
+here and as a checker finding after the fact; the sheet was drawn
+retroactively against the code as built.*
+
 One more precondition: the WO, and the blueprints it implements, must be
 committed on the main branch. An expand or workorder pass lands
 uncommitted and the owner accepts by committing — a WO absent from HEAD

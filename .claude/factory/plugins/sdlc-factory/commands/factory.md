@@ -31,15 +31,21 @@ know which verb comes next; that is this command's job.
      (skeleton phase, then parallel fills) → `/workorder`;
    - approved work with no wave → `/wave propose` (the row comes to the
      checkpoint);
-   - an open wave → per work order, the whole build loop: `/implement` →
+   - an open wave → per work order, the preview gate above first, then
+     the whole build loop: `/implement` →
      `/validate` → `/regress` → the librarian's done audit — then the
      next work order, until the wave is done or a gate blocks. This loop
      is the one caller of `/validate` and `/regress` (constitution §4's
      routing map); `/implement` builds and stops;
-   - a `ui: yes` work order with no `Signed-off:` line → `/design preview
-     WO-###`, whose published page lands in the checkpoint as a link for
-     sign-off; once the owner has answered — on the page or in the
-     session — the librarian reads it back and writes the line (rule 7.3);
+   - a `ui: yes` work order with no dated `Signed-off:` line → `/design
+     preview WO-###`, whose published page lands in the checkpoint as a
+     link for sign-off; once the owner has answered — on the page or in
+     the session — the librarian reads it back and writes the line (rule
+     7.3). This is a **stop**, not a preference: the loop does not reach
+     `/implement` for that work order, and `factory-console next` will
+     not name it either. The only way past is the owner's ruling,
+     recorded by the librarian as `- <date> ruled — owner — <one line>`
+     in the WO's own `## Log`;
    - a change to an existing artifact (§9's second class), or a commit
      under governed paths that names no work order (`untraced-change`) →
      `/sync`, the backward pass, before anything downstream moves;
