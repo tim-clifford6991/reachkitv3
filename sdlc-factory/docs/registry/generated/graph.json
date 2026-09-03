@@ -2,55 +2,55 @@
   "coverage": {
     "satisfies": {
       "carrying": 44,
-      "total": 444
+      "total": 445
     },
     "covers": {
       "carrying": 32,
-      "total": 444
+      "total": 445
     },
     "implements": {
       "carrying": 262,
-      "total": 444
+      "total": 445
     },
     "decides-for": {
-      "carrying": 30,
-      "total": 444
+      "carrying": 31,
+      "total": 445
     },
     "about": {
       "carrying": 0,
-      "total": 444
+      "total": 445
     },
     "depends-on": {
       "carrying": 387,
-      "total": 444
+      "total": 445
     },
     "blocked-by": {
-      "carrying": 4,
-      "total": 444
+      "carrying": 5,
+      "total": 445
     },
     "cites-retired": {
       "carrying": 0,
-      "total": 444
+      "total": 445
     },
     "supersedes": {
       "carrying": 23,
-      "total": 444
+      "total": 445
     },
     "rests-on": {
-      "carrying": 282,
-      "total": 444
+      "carrying": 283,
+      "total": 445
     },
     "code": {
       "carrying": 63,
-      "total": 444
+      "total": 445
     },
     "exercises": {
       "carrying": 6,
-      "total": 444
+      "total": 445
     },
     "origin": {
       "carrying": 0,
-      "total": 444
+      "total": 445
     }
   },
   "nodes": {
@@ -764,6 +764,27 @@
       "supersedes": [],
       "file": "sdlc-factory/docs/decisions/ADR-093.md"
     },
+    "ADR-094": {
+      "id": "ADR-094",
+      "type": "decision",
+      "title": "LANDMINE — the free report's AI matrix sets load_async_ai_overview; BUILD.md's own 'never set it' line is now wrong",
+      "status": "accepted",
+      "decides-for": [
+        "BP-007",
+        "BP-008",
+        "BP-025"
+      ],
+      "depends-on": [],
+      "blocked-by": [],
+      "rests-on": [
+        {
+          "claim": "DataForSEO refunds the load_async_ai_overview surcharge to the account balance after the fact and never adjusts the amount this client observes at call time (\"if the element is absent or contains asynchronous_ai_overview: false, all extra charges will be returned to your account balance\" — docs; \"the extra charge will be refunded\" — help center). Ledgering the surcharge-inclusive price on every flagged call is therefore conservative: recorded spend is always >= actual vendor spend, never the reverse.",
+          "disposition": "confirmed"
+        }
+      ],
+      "supersedes": [],
+      "file": "sdlc-factory/docs/decisions/ADR-094.md"
+    },
     "BP-001": {
       "id": "BP-001",
       "type": "blueprint",
@@ -1052,6 +1073,10 @@
         {
           "claim": "Labs `ranked_keywords` on a root domain returns rows for pages served on the `content.` subdomain; if it does not, hosted pages' wins are invisible to the growth chart and the client must query with subdomain inclusion or track the subdomain as a second target (BUILD §16 milestone 2 is the first measurement)",
           "disposition": "open"
+        },
+        {
+          "claim": "DataForSEO refunds the `load_async_ai_overview` surcharge to the account balance after the fact and never adjusts the amount this client observes at call time, so ledgering the surcharge-inclusive price on every flagged call cannot under-count spend (ADR-094)",
+          "disposition": "confirmed"
         }
       ],
       "supersedes": [],
@@ -2112,6 +2137,10 @@
         {
           "claim": "Ten ranked searches is the point below which a rival-to-customer ratio misleads more than it informs (inherited from REQ-041; BUILD.md 6.6 pins the threshold, nothing measures it)",
           "disposition": "open"
+        },
+        {
+          "claim": "The last n weeks' `report.answers` (BP-025's per-question AI-citation cells) are readable from the same weekly `scans` rows this node's NFR budget already reads as 'the last 12 weekly report headers', so windowing the ai_answers headline (decision 5) needs no wider read than that budget already declares. If 'headers' excludes the answers blob, the read must widen and the NFR budget line needs updating.",
+          "disposition": "open"
         }
       ],
       "supersedes": [],
@@ -2617,6 +2646,10 @@
         },
         {
           "claim": "An `unblock` acceptance whose `Barrier` is absent from `WeekMeasurements.gatesCleared` has **no declared `NotJudgeableCause`**. `evaluateAcceptance` produces two causes and both are read from the other two maps (`positions`, `namesCustomer`); WO-204's file plan asserts exactly those two, and its own test row expects an absent barrier to be \"undecided rather than failing\" — undecided as what is not stated anywhere. Two readings are open and neither is derivable from REQ-063 or REQ-047 as they stand: it is a partly measured week (`not_measured`, no row, REQ-065 c4) or it is a sixth cause. Raised 2026-09-02 by the architect against this node's own interface; not decided here, because the choice changes which pages carry a permanent `not_judgeable` row and that is REQ-063 c6's promise, not a parameter. Nothing is blocked: no work order writes the `gate_cleared` branch yet.",
+          "disposition": "open"
+        },
+        {
+          "claim": "A page's acceptance test typed as the `named_on` (AI-answer) form of REQ-047 criterion 6 is evaluated from one week's single measurement, the same per-prompt sampling noise `RESEARCH-ai-answer-stability.md` §4 measures for the free AI-answers card and for Overview's `ai_answers` headline (owner ruling 2026-09-03, BP-038 decision 5, ADR-094). That ruling was scoped to the card and to Overview's headline and was not extended to a page's own weekly verdict, so a `working`/`not_working` verdict resting on a `named_on` test carries the same noise unmitigated. Not decided here: whether a `named_on` test should smooth over a window like BP-038's, and that choice belongs to REQ-047/REQ-063, not to a silent change in this node's arithmetic.",
           "disposition": "open"
         }
       ],
@@ -3875,7 +3908,7 @@
       "id": "REQ-041",
       "type": "requirement",
       "title": "Overview answers whether the work is working, what needs the customer today, and how far ahead each rival still is",
-      "status": "approved",
+      "status": "in-review",
       "depends-on": [
         "REQ-065",
         "REQ-093"
@@ -8339,7 +8372,9 @@
         "WO-156",
         "WO-249"
       ],
-      "blocked-by": [],
+      "blocked-by": [
+        "REQ-041"
+      ],
       "rests-on": [
         {
           "claim": "Each goal's what-reaching-it-means line is an owner-owed string in BP-019's registry; this WO creates the keys and their tests, never the strings",
