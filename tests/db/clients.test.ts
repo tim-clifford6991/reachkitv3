@@ -229,9 +229,20 @@ describe('BP-002 error behaviour — "A `dbAdmin()` import from a client compone
     vi.unstubAllGlobals();
   });
 
+  // TST-004 Deviation 1: `env.ts` (BP-005/WO-005) carries its own,
+  // independent `SUPABASE_SERVICE_ROLE` guard whose message also contains
+  // the substring "server-only" — `dbAdmin()` reads `env.SUPABASE_SERVICE_ROLE`
+  // in the same function body, so a bare `/server-only/` match does not
+  // discriminate removal of *this* guard: the throw would still come from
+  // `env.ts` and still satisfy that regex. Both assertions below match only
+  // the substring unique to `dbAdmin()`'s own message (see `src/lib/db/
+  // index.ts`), so deleting `dbAdmin()`'s `typeof window` check fails these
+  // tests even though `env.ts`'s guard still throws on the same call.
+  const DB_ADMIN_OWN_MESSAGE = "dbAdmin() is server-only and cannot be evaluated in a client bundle.";
+
   it("dbAdmin() throws when evaluated where window exists", () => {
     vi.stubGlobal("window", {});
-    expect(() => dbIndexModule.dbAdmin()).toThrow();
+    expect(() => dbIndexModule.dbAdmin()).toThrow(DB_ADMIN_OWN_MESSAGE);
   });
 
   it("removing the runtime guard alone would not be caught by the build-time check — the two are independent (watch it fail first)", () => {
@@ -241,7 +252,7 @@ describe('BP-002 error behaviour — "A `dbAdmin()` import from a client compone
     // window` check from index.ts would not move the build-time tests
     // above, only this one.
     vi.stubGlobal("window", {});
-    expect(() => dbIndexModule.dbAdmin()).toThrow(/server-only/);
+    expect(() => dbIndexModule.dbAdmin()).toThrow(DB_ADMIN_OWN_MESSAGE);
   });
 
   it("dbAdmin() does not throw outside a client bundle", () => {
