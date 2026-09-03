@@ -2,55 +2,55 @@
   "coverage": {
     "satisfies": {
       "carrying": 44,
-      "total": 433
+      "total": 434
     },
     "covers": {
       "carrying": 32,
-      "total": 433
+      "total": 434
     },
     "implements": {
-      "carrying": 259,
-      "total": 433
+      "carrying": 260,
+      "total": 434
     },
     "decides-for": {
       "carrying": 30,
-      "total": 433
+      "total": 434
     },
     "about": {
       "carrying": 0,
-      "total": 433
+      "total": 434
     },
     "depends-on": {
-      "carrying": 384,
-      "total": 433
+      "carrying": 385,
+      "total": 434
     },
     "blocked-by": {
       "carrying": 4,
-      "total": 433
+      "total": 434
     },
     "cites-retired": {
       "carrying": 0,
-      "total": 433
+      "total": 434
     },
     "supersedes": {
       "carrying": 23,
-      "total": 433
+      "total": 434
     },
     "rests-on": {
-      "carrying": 278,
-      "total": 433
+      "carrying": 281,
+      "total": 434
     },
     "code": {
       "carrying": 63,
-      "total": 433
+      "total": 434
     },
     "exercises": {
       "carrying": 6,
-      "total": 433
+      "total": 434
     },
     "origin": {
       "carrying": 0,
-      "total": 433
+      "total": 434
     }
   },
   "nodes": {
@@ -790,6 +790,7 @@
         "REQ-045",
         "REQ-057",
         "REQ-070",
+        "REQ-073",
         "REQ-078",
         "REQ-094"
       ],
@@ -6961,6 +6962,10 @@
         {
           "claim": "BP-018's theme tokens are reachable from a server-rendered email string — i.e. the shell can resolve named token values at build or render time without a browser, so the mail frame uses named tokens rather than hard-coded hex",
           "disposition": "open"
+        },
+        {
+          "claim": "BP-053 decision 2's 'rejected at the type level for every other kind' is expressible inside the declared `composeMail` signature — the parameter's type narrowed on `kind` so that `measurement` is required for `'weekly'` and absent for the rest — with no field renamed and no second entry point. If the compiler cannot express it within that signature, the rejection degrades to a runtime refusal, which is a finding for the architect on BP-053, not a choice this order makes.",
+          "disposition": "open"
         }
       ],
       "supersedes": [],
@@ -6980,7 +6985,12 @@
         "WO-001"
       ],
       "blocked-by": [],
-      "rests-on": [],
+      "rests-on": [
+        {
+          "claim": "Every requirement `MAIL_KINDS` names in `occasionsFrom` is `approved` when this order validates. On disk today ten of the eleven are; REQ-074 is `status: in-review`, so `register-legality.test.ts` fails on the `account` row until the owner approves it — a true finding under BP-053 decision 4 ('retiring a requirement fails the mail test before it fails a customer'), not a defect in the test.",
+          "disposition": "open"
+        }
+      ],
       "supersedes": [],
       "file": "sdlc-factory/docs/work-orders/WO-104.md"
     },
@@ -7758,7 +7768,7 @@
     "WO-140": {
       "id": "WO-140",
       "type": "work-order",
-      "title": "The erasure migrations — the tombstone, the promised purge date, the publishing switch, and danger_tickets",
+      "title": "The erasure migrations — the promised purge date, the tombstone's comment, the publishing switch, and danger_tickets",
       "status": "approved",
       "implements": [
         "BP-063",
@@ -7769,7 +7779,12 @@
         "WO-267"
       ],
       "blocked-by": [],
-      "rests-on": [],
+      "rests-on": [
+        {
+          "claim": "WO-267's `supabase/migrations/00000000000002_rls.sql` adds `users.deleted_at timestamptz null` before this order's migration applies — the first branch of WO-267's third `rests-on` row, the one its implementer takes. If the other branch is what lands, this migration regains the `add column` and BP-063's migration re-issues the policies.",
+          "disposition": "open"
+        }
+      ],
       "supersedes": [],
       "file": "sdlc-factory/docs/work-orders/WO-140.md"
     },
@@ -9804,13 +9819,14 @@
         "WO-006",
         "WO-041",
         "WO-206",
-        "WO-267"
+        "WO-267",
+        "WO-272"
       ],
       "blocked-by": [],
       "rests-on": [
         {
-          "claim": "`sites.timezone` exists as BP-002's declared addition on the `sites` topic and is populated at first sign-in from the browser's report (REQ-073's own confirmed `rests-on`), so no read path here falls back to the server's zone.",
-          "disposition": "confirmed"
+          "claim": "`sites.timezone` is BP-017's column — its `## Data model delta` ('`sites` — as §10, plus `timezone`'), migrated by WO-272 under `*_sites_timezone_*.sql` as nullable with no default — and this order's `adoptBrowserTimezone` is its first-sign-in writer, called by WO-273's adapter from BP-001's account shell. The column is null only between provisioning (WO-126) and that first authenticated request, an interval in which nothing that reads it runs, so no read path here falls back to the server's zone and `readPublishingSettings` treats a null zone as an error, never a default. The row's earlier reading — the column as BP-002's declared addition, populated by no named order — was refuted by BP-002's own index text (WO-272's provenance note) and by BP-057's `## Data model delta` as amended 2026-09-03.",
+          "disposition": "open"
         }
       ],
       "supersedes": [],
@@ -11245,6 +11261,32 @@
       ],
       "supersedes": [],
       "file": "sdlc-factory/docs/work-orders/WO-272.md"
+    },
+    "WO-273": {
+      "id": "WO-273",
+      "type": "work-order",
+      "title": "The first-sign-in time zone post — the account shell reports the browser's zone once, through one adapter over adoptBrowserTimezone",
+      "status": "approved",
+      "implements": [
+        "BP-001",
+        "REQ-073"
+      ],
+      "depends-on": [
+        "WO-002",
+        "WO-003",
+        "WO-004",
+        "WO-136",
+        "WO-218"
+      ],
+      "blocked-by": [],
+      "rests-on": [
+        {
+          "claim": "BP-033's `SETUP_INCOMPLETE_ALLOWLIST` admits `/api/account/*` as its text on disk states, so the post lands for a founder whose setup is unfinished — BP-057: 'a founder who signs in and abandons setup has still signed in'. The list is BP-033's data; this order adds no entry to it and holds if the entry stands.",
+          "disposition": "open"
+        }
+      ],
+      "supersedes": [],
+      "file": "sdlc-factory/docs/work-orders/WO-273.md"
     }
   }
 }
