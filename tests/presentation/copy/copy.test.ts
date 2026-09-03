@@ -31,9 +31,17 @@ async function freshCopyWith(entries: Record<string, readonly [string, { slots: 
 describe("REQ-093 c4 — copy() refuses a measured key and takes no reader", () => {
   it("throws naming the key when its meta declares a 'measured' slot", async () => {
     const copyFn = await freshCopyWith({
-      "fixture.measured": ["irrelevant", { slots: { amount: "measured" }, fixedBy: "TEST" }],
+      "fixture.measured": ["irrelevant {amount}", { slots: { amount: "measured" }, fixedBy: "TEST" }],
     });
-    expect(() => copyFn("fixture.measured" as CopyKey)).toThrow("fixture.measured");
+    // `vars` supplies the one declared slot, so the general "slot named in
+    // meta.slots and absent from vars" throw (step 6c) cannot fire here —
+    // only the measured-slot check (step 6b) can. Without a satisfying
+    // `vars`, both throw paths embed the key in their message and the
+    // assertion below could not tell them apart (TST-018 defect 1).
+    expect(() => copyFn("fixture.measured" as CopyKey, { amount: "12" })).toThrow(
+      "declares a 'measured' slot"
+    );
+    expect(() => copyFn("fixture.measured" as CopyKey, { amount: "12" })).toThrow("fixture.measured");
     vi.doUnmock(REGISTRY_PATH);
   });
 

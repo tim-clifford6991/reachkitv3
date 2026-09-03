@@ -7,7 +7,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it } from "vitest";
 import { COPY, copy, type CopyKey, type CopyPartition } from "../../../src/lib/presentation/copy/index.ts";
 // OWNER_OWED is WO-041's own addition to the interface, not the blueprint's
 // (WO-041 `## Interfaces` "Exposes additionally") — it is declared in
@@ -97,24 +97,19 @@ describe("REQ-093 c1 — COPY is the only source of a product sentence", () => {
 });
 
 describe("REQ-093 c5 — the registry renders with every model unavailable", () => {
-  it("every non-owner-owed key returns its literal through copy(), including with @/lib/llm's exports replaced by a throwing stub", async () => {
-    vi.resetModules();
-    vi.doMock("@/lib/llm", () => {
-      return new Proxy(
-        {},
-        {
-          get() {
-            throw new Error("@/lib/llm was reached for — REQ-093 c5 forbids this on the copy read path");
-          },
-        }
-      );
-    });
-
-    const fresh = await import("../../../src/lib/presentation/copy/index.ts");
-    const freshRegistry = await import("../../../src/lib/presentation/copy/registry.ts");
-    const nonOwnerOwed = (Object.keys(fresh.COPY) as CopyKey[]).filter(
-      (key) => !freshRegistry.OWNER_OWED.includes(key)
-    );
+  // TST-018 defect 2: this test previously mocked `@/lib/llm` and asserted
+  // against the mock. `src/lib/llm/` does not exist in this repo yet and
+  // nothing in this module's import graph reaches for it (the c1
+  // zero-import-graph test above establishes that structurally), so the
+  // mock never fired — deleting the whole mock block left the test's
+  // outcome unchanged, i.e. it was dead code. What actually discriminates
+  // c5 is that every non-owner-owed key renders its stored literal through
+  // `copy()` with no lazy fetch, catalogue load or model call on the read
+  // path — the same property the c1 import-graph test proves has nothing
+  // to reach for. That assertion, plus the count (rule 5.5), is kept below
+  // without the vacuous mocking apparatus.
+  it("every non-owner-owed key returns its literal through copy(), with zero import path to a language model", () => {
+    const nonOwnerOwed = (Object.keys(COPY) as CopyKey[]).filter((key) => !OWNER_OWED.includes(key));
 
     // Count assertion (rule 5.5): today only the thirteen band/severity/
     // score words are filled; this is the first time this assertion has
@@ -122,10 +117,8 @@ describe("REQ-093 c5 — the registry renders with every model unavailable", () 
     expect(nonOwnerOwed.length).toBe(13);
 
     for (const key of nonOwnerOwed) {
-      expect(fresh.copy(key)).toBe(fresh.COPY[key]);
+      expect(copy(key)).toBe(COPY[key]);
     }
-
-    vi.doUnmock("@/lib/llm");
   });
 });
 
