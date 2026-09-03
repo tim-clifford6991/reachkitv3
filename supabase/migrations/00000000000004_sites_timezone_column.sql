@@ -1,0 +1,25 @@
+-- supabase/migrations/00000000000004_sites_timezone_column.sql
+--
+-- BP-017 `## Data model delta`: "`sites` — as §10, plus `timezone`,
+-- `publishing_enabled`." This migration ships exactly `timezone`;
+-- `publishing_enabled` is a leaf order's under its own sub-token (see
+-- WO-272's `## Out of scope`).
+--
+-- No default: REQ-073 criterion 1 — "where they have set nothing, … the
+-- time zone is the one their browser reported at first sign-in" — forbids
+-- a zone the customer did not state, so the column starts null rather than
+-- a server-chosen fallback (`'UTC'` or otherwise).
+--
+-- Nullable, per WO-272 `rests-on` row 2: a `sites` row exists from
+-- provisioning (WO-126), before first sign-in, and nothing that reads this
+-- column runs in that interval — WO-211's ceiling check and WO-218's
+-- settings read both follow sign-in and setup. No order in the corpus yet
+-- writes the browser's zone at first sign-in (WO-272 `## Out of scope`).
+--
+-- `structure.md` rule 3a: this file carries the `sites` topic token and no
+-- sub-token, because no registered leaf sub-token
+-- (`sites_provisioning`/`sites_hosting`/`sites_erasure`) claims this
+-- column; `topicOf()` resolves it to BP-017, the topic's owner (WO-272
+-- `rests-on` row 1).
+alter table sites
+  add column timezone text null;
