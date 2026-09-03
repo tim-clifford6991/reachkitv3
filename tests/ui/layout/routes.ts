@@ -1,0 +1,127 @@
+// tests/ui/layout/routes.ts
+//
+// ADR-010's idiom (ADR-093 decision 6: "The enforcement idiom is ADR-010's,
+// unchanged: a path-glob suite whose enumerator is the route tree, so a
+// surface added later is in scope by construction"). Walks
+// `src/app/**/page.tsx`, strips route groups from the URL it derives, and
+// fills a dynamic segment or a `(hosted)` page's `Host` header from the one
+// fixture map below — a segment or host with no row here fails, naming the
+// route, rather than being silently skipped (rule 5.5).
+import { readdirSync } from "node:fs";
+import path from "node:path";
+
+export interface EnumeratedRoute {
+  /** The URL path, route groups stripped and every dynamic segment filled. */
+  path: string;
+  /** The `Host` header to send — only present for a `(hosted)` page. */
+  host?: string;
+}
+
+/**
+ * One row per dynamic segment this suite knows how to fill, keyed by the
+ * segment's own bracket text (e.g. `"[domain]"`). Empty today: no dynamic
+ * route exists yet (`src/app/` holds no route at all — WO-269 rests-on row
+ * 5). The work order that adds the first one adds its row here.
+ */
+const SEGMENT_FIXTURES: Readonly<Record<string, string>> = {};
+
+/**
+ * One row per `(hosted)` page, keyed by the file's own path relative to the
+ * repo root (POSIX separators), naming the `Host` header the suite sends
+ * when rendering it. Empty today for the same reason as `SEGMENT_FIXTURES`.
+ */
+const HOST_FIXTURES: Readonly<Record<string, string>> = {};
+
+export class MissingRouteFixtureError extends Error {
+  constructor(
+    public readonly route: string,
+    reason: string
+  ) {
+    super(`tests/ui/layout/routes.ts: ${route} — ${reason}`);
+    this.name = "MissingRouteFixtureError";
+  }
+}
+
+function isRouteGroup(segment: string): boolean {
+  return segment.startsWith("(") && segment.endsWith(")");
+}
+
+function isDynamicSegment(segment: string): boolean {
+  return segment.startsWith("[") && segment.endsWith("]");
+}
+
+function walk(dir: string, out: string[]): void {
+  for (const entry of readdirSync(dir, { withFileTypes: true })) {
+    const full = path.join(dir, entry.name);
+    if (entry.isDirectory()) {
+      walk(full, out);
+    } else if (entry.isFile() && entry.name === "page.tsx") {
+      out.push(full);
+    }
+  }
+}
+
+export interface EnumerateOptions {
+  segmentFixtures?: Readonly<Record<string, string>>;
+  hostFixtures?: Readonly<Record<string, string>>;
+}
+
+/**
+ * Enumerates every `page.tsx` under `appRoot`, in App Router terms. `appRoot`
+ * is a parameter (rather than a hardcoded `src/app`) so `routes.test.ts` can
+ * point this function at a fixture tree; the production sweep
+ * (`layout.test.ts`) calls it with the real `src/app`.
+ */
+export function enumerateRoutes(appRoot: string, options: EnumerateOptions = {}): EnumeratedRoute[] {
+  const segmentFixtures = options.segmentFixtures ?? SEGMENT_FIXTURES;
+  const hostFixtures = options.hostFixtures ?? HOST_FIXTURES;
+
+  const pageFiles: string[] = [];
+  walk(appRoot, pageFiles);
+
+  const routes = pageFiles.map((file): EnumeratedRoute => {
+    const rel = path.relative(appRoot, path.dirname(file));
+    const segments = rel === "" ? [] : rel.split(path.sep);
+    const fsRoute = path.relative(process.cwd(), file).split(path.sep).join("/");
+
+    const urlSegments: string[] = [];
+    let host: string | undefined;
+
+    for (const segment of segments) {
+      if (isRouteGroup(segment)) {
+        if (segment === "(hosted)") {
+          const h = hostFixtures[fsRoute];
+          if (h === undefined) {
+            throw new MissingRouteFixtureError(
+              fsRoute,
+              "a (hosted) page has no Host fixture row in routes.ts's HOST_FIXTURES"
+            );
+          }
+          host = h;
+        }
+        continue; // route groups are stripped from the URL (Next.js semantics).
+      }
+      if (isDynamicSegment(segment)) {
+        const value = segmentFixtures[segment];
+        if (value === undefined) {
+          throw new MissingRouteFixtureError(
+            fsRoute,
+            `dynamic segment ${segment} has no fixture row in routes.ts's SEGMENT_FIXTURES`
+          );
+        }
+        urlSegments.push(value);
+      } else {
+        urlSegments.push(segment);
+      }
+    }
+
+    const urlPath = "/" + urlSegments.join("/");
+    return host !== undefined ? { path: urlPath, host } : { path: urlPath };
+  });
+
+  // Rule 5.5: the count this function enumerated is reported, not left to
+  // read as nothing-to-report when it is zero.
+  console.log(`tests/ui/layout/routes.ts: enumerated ${routes.length} route(s) under ${appRoot}`);
+
+  return routes;
+}
