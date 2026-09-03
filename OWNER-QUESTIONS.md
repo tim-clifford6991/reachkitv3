@@ -5,6 +5,21 @@ below it has the answer. An item without it is waiting for you.
 
 ---
 
+3. **Google's own AI-visibility report — DEFERRED 2026-09-03, not answered.**
+   Since 2026-08-31 Search Console reports, for every site worldwide, which of
+   its URLs appeared in AI Overviews and AI Mode (impressions by page,
+   country, device, date). Should ReachKit ask customers to connect Search
+   Console and show Google's observed figure beside its own sampled one, a new
+   customer-side dataset outside `BUILD.md` §6.3's closed list? —
+   `registry/evidence/RESEARCH-competitor-visibility-measurement.md` §4.
+
+   **Owner's ruling:** "Search Console connection is POSTPONED — not now,"
+   reason given verbatim: "we need to get users on app and later start
+   reviewing and improving based on feedback." This item is postponed, not
+   answered, and is kept open rather than deleted.
+
+---
+
 # Owner questions — UX simplification audit, 2026-09-03
 
 Five questions from the audit of `BUILD.md` §4 and the approved card idiom
