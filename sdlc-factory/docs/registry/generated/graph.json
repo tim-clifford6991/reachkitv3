@@ -2,55 +2,55 @@
   "coverage": {
     "satisfies": {
       "carrying": 44,
-      "total": 440
+      "total": 442
     },
     "covers": {
       "carrying": 32,
-      "total": 440
+      "total": 442
     },
     "implements": {
       "carrying": 261,
-      "total": 440
+      "total": 442
     },
     "decides-for": {
       "carrying": 30,
-      "total": 440
+      "total": 442
     },
     "about": {
       "carrying": 0,
-      "total": 440
+      "total": 442
     },
     "depends-on": {
       "carrying": 386,
-      "total": 440
+      "total": 442
     },
     "blocked-by": {
       "carrying": 4,
-      "total": 440
+      "total": 442
     },
     "cites-retired": {
       "carrying": 0,
-      "total": 440
+      "total": 442
     },
     "supersedes": {
       "carrying": 23,
-      "total": 440
+      "total": 442
     },
     "rests-on": {
       "carrying": 281,
-      "total": 440
+      "total": 442
     },
     "code": {
       "carrying": 63,
-      "total": 440
+      "total": 442
     },
     "exercises": {
       "carrying": 6,
-      "total": 440
+      "total": 442
     },
     "origin": {
       "carrying": 0,
-      "total": 440
+      "total": 442
     }
   },
   "nodes": {
@@ -4757,6 +4757,16 @@
       ],
       "file": "sdlc-factory/docs/work-orders/WO-269.md"
     },
+    "TST-008": {
+      "id": "TST-008",
+      "type": "validation",
+      "title": "WO-272 validation report",
+      "status": "unknown",
+      "validates": [
+        "WO-272"
+      ],
+      "file": "sdlc-factory/docs/work-orders/WO-272.md"
+    },
     "TST-009": {
       "id": "TST-009",
       "type": "validation",
@@ -4766,6 +4776,16 @@
         "WO-274"
       ],
       "file": "sdlc-factory/docs/work-orders/WO-274.md"
+    },
+    "TST-010": {
+      "id": "TST-010",
+      "type": "validation",
+      "title": "WO-272 re-validation report (Deviation resolved by WO-274)",
+      "status": "pass",
+      "validates": [
+        "WO-272"
+      ],
+      "file": "sdlc-factory/docs/work-orders/WO-272.md"
     },
     "WO-001": {
       "id": "WO-001",
@@ -11300,7 +11320,7 @@
       "id": "WO-272",
       "type": "work-order",
       "title": "users.notify and sites.timezone — the two component-level columns of BP-017's delta that no leaf sub-token claims, migrated and asserted",
-      "status": "approved",
+      "status": "done",
       "implements": [
         "BP-017"
       ],
@@ -11311,11 +11331,11 @@
       "rests-on": [
         {
           "claim": "WO-267's `topicOf()` resolves a `users`- or `sites`-topic migration whose remaining name segments match no registered sub-token to the topic's owner, BP-017, rather than refusing it. WO-267's naming test states the rule as 'exactly one assigned topic token or one sub-token of an assigned topic; a name carrying none, or two, fails', and this order's two file names each carry one topic token and no sub-token. Derivation (rule 1.1): structure.md rule 3a says a component-level column needs no sub-token ('the sub-token list is open and grows with the leaves'), so no new token is minted here. Reversal cost: a file rename before any data exists, or two rows in rule 3a's list — either is cheap; observable by this order's validator against WO-267's applied test.",
-          "disposition": "open"
+          "disposition": "confirmed"
         },
         {
           "claim": "`sites.timezone` is nullable because the `sites` row exists from provisioning (WO-126) and the zone arrives only at first sign-in (REQ-073 criterion 1: 'the time zone is the one their browser reported at first sign-in'), and REQ-073 forbids a zone the customer did not state; in the interval between, nothing that reads the column runs — WO-211's ceiling check and WO-218's settings read both follow sign-in and setup. WO-211 and WO-218 rest on the column being 'present and non-null for every site'; this order narrows that to every site past first sign-in, and reports that no order in the corpus yet writes the browser's zone at first sign-in. Reversal cost: `set not null` after a backfill — cheap before customers exist.",
-          "disposition": "open"
+          "disposition": "confirmed"
         }
       ],
       "supersedes": [],
