@@ -8,9 +8,13 @@
 
 **Status vocabulary.** `proposed` → `approved`. A row goes to `approved` when a
 preview carrying that component is signed off, and not before (design-system
-skill, step 3). **Every row below is `proposed`.** Six previews now exist
-(§5) and none is signed, and a drawn preview is not a signed one — a row flips
-on a signature, not on a drawing. The owner ruling four token values on
+skill, step 3). **The fifteen §1 rows are now `approved`; every other row
+below is still `proposed`.** (Read *every row below is `proposed`* before the
+owner's 2026-09-03 signatures; corrected here.) Six previews now exist (§5)
+and three are signed — `WO-029.html`, `WO-268.html` and `WO-002.html`, dated
+and sourced in §5 — and a drawn preview is not a signed one on its own: a row
+flips on a signature, not on a drawing, and only `WO-268.html`'s signature
+touches a §1 row (all fifteen, per §5's table). The owner ruling four token values on
 2026-09-02 (`tokens.md` §2) moved no row here either: ruling a value and
 signing a sheet are different acts. **Nor did the owner's second 2026-09-02
 ruling** — nothing clipped, every screen size — which changed `RivalSparkline`'s
@@ -36,21 +40,21 @@ that — no fallback, no placeholder, no sensible default.
 
 | Component | Status | Data contract | States | Owning BP |
 |---|---|---|---|---|
-| `Btn` | proposed | daisyUI `btn` (+`primary`/`ghost`/`sm`/`block`). `label` required. Also carries the copy-to-clipboard affordance — no separate copy component exists | default · disabled · in-flight (a submit that is disabled while posting) | BP-018 |
-| `Card` | proposed | `card`/`card-body`/`card-title`. Title slot takes a **verdict node**, not a metric label — §2.5: the card leads with the answer | default · degraded (one written line in place of a missing section — never an empty card, never a spinner) | BP-018 |
-| `Badge` | proposed | `badge` (+`primary`/`success`/`warning`/`error`/`ghost`), keyed by `Tone`. **Requires a text child** — a tone alone may never carry meaning | default | BP-018 |
-| `Alert` | proposed | `alert`, four tones. `message` required; no default empty-state sentence | default. **An intended-empty state takes `neutral` or `ok`, never `bad`/`warn`** (§2.5: an empty queue is a success state) | BP-018 |
-| `Stat` | proposed | `stats`/`stat`. Value renders through the mono numeral utility. One headline number per module; every value carries its delta or its goal, never bare | measured · measured-zero (prints `0`) · unmeasured (prints `—` plus one written line naming the reason) | BP-018 |
-| `Tabs` | proposed | `tabs`, boxed + bordered. Every tab label required | default · selected | BP-018 |
-| `Table` | proposed | `table` (+`zebra`), **always inside an `overflow-x-auto` wrap** — the wrap is part of the component, not the caller's job | rows · empty (caller-supplied written line) · **never a skeleton** | BP-018 |
-| `Progress` | proposed | `progress`. **Determinate only** — a caller cannot request an indeterminate bar. This is also the three driver mini-bars of the report's header strip (§4.1); mini-bars are *not* a sixth chart | default | BP-018 |
-| `Toggle` | proposed | `toggle`. Label required; no default on/off wording | on · off · disabled | BP-018 |
-| `Steps` | proposed | `steps`. **Each step's label required** — this is what the scan's named stages render through, so an unlabelled step cannot exist (REQ-003 c1: never an unlabelled spinner) | pending · active · done | BP-018 |
-| `Join` | proposed | `join`. Layout only | — | BP-018 |
-| `Collapse` | proposed | `collapse`. Summary text required. Server-rendered body, not a lazy fetch (REQ-009 c6 is readable without JavaScript) | collapsed · expanded | BP-018 |
-| `Input` | proposed | `input`. Placeholder **and** label required, never defaulted | default · invalid (one written line, value intact) · disabled | BP-018 |
-| `Divider` | proposed | `divider`. Layout only | — | BP-018 |
-| `Kbd` | proposed | `kbd`. Renders through the mono utility — a code-like string under §2.3. **Inline only**; it is not a code block (see §4) | — | BP-018 |
+| `Btn` | approved | daisyUI `btn` (+`primary`/`ghost`/`sm`/`block`). `label` required. Also carries the copy-to-clipboard affordance — no separate copy component exists | default · disabled · in-flight (a submit that is disabled while posting) | BP-018 |
+| `Card` | approved | `card`/`card-body`/`card-title`. Title slot takes a **verdict node**, not a metric label — §2.5: the card leads with the answer | default · degraded (one written line in place of a missing section — never an empty card, never a spinner) | BP-018 |
+| `Badge` | approved | `badge` (+`primary`/`success`/`warning`/`error`/`ghost`), keyed by `Tone`. **Requires a text child** — a tone alone may never carry meaning | default | BP-018 |
+| `Alert` | approved | `alert`, four tones. `message` required; no default empty-state sentence | default. **An intended-empty state takes `neutral` or `ok`, never `bad`/`warn`** (§2.5: an empty queue is a success state) | BP-018 |
+| `Stat` | approved | `stats`/`stat`. Value renders through the mono numeral utility. One headline number per module; every value carries its delta or its goal, never bare | measured · measured-zero (prints `0`) · unmeasured (prints `—` plus one written line naming the reason) | BP-018 |
+| `Tabs` | approved | `tabs`, boxed + bordered. Every tab label required | default · selected | BP-018 |
+| `Table` | approved | `table` (+`zebra`), **always inside an `overflow-x-auto` wrap** — the wrap is part of the component, not the caller's job | rows · empty (caller-supplied written line) · **never a skeleton** | BP-018 |
+| `Progress` | approved | `progress`. **Determinate only** — a caller cannot request an indeterminate bar. This is also the three driver mini-bars of the report's header strip (§4.1); mini-bars are *not* a sixth chart | default | BP-018 |
+| `Toggle` | approved | `toggle`. Label required; no default on/off wording | on · off · disabled | BP-018 |
+| `Steps` | approved | `steps`. **Each step's label required** — this is what the scan's named stages render through, so an unlabelled step cannot exist (REQ-003 c1: never an unlabelled spinner) | pending · active · done | BP-018 |
+| `Join` | approved | `join`. Layout only | — | BP-018 |
+| `Collapse` | approved | `collapse`. Summary text required. Server-rendered body, not a lazy fetch (REQ-009 c6 is readable without JavaScript) | collapsed · expanded | BP-018 |
+| `Input` | approved | `input`. Placeholder **and** label required, never defaulted | default · invalid (one written line, value intact) · disabled | BP-018 |
+| `Divider` | approved | `divider`. Layout only | — | BP-018 |
+| `Kbd` | approved | `kbd`. Renders through the mono utility — a code-like string under §2.3. **Inline only**; it is not a code block (see §4) | — | BP-018 |
 
 ## 2. Custom surfaces (4) — BP-018
 
@@ -124,29 +128,40 @@ from either superseded predecessor, WO-031 or WO-032 (`supersedes` retires a
 work order's status, not its front-matter). Recounted here: 36.) Each needs a
 signed preview before implementation (rule 7.3, step 2–3).
 
-**Six** sheets are drawn and **all six are unsigned**. (The count read *four*
-until two more were drawn on 2026-09-02, after this section was last written:
-`WO-002.html`, which WO-002 carries alone, and `WO-268.html`, which draws all
-fifteen §1 primitives at their registered contract for WO-268 — the
-2026-09-02 consolidation of WO-031 and WO-032. Corrected here.) The first two
-are foundation sheets — every later preview is read against them, so they
-were drawn first. The surface and chart sheets could not be drawn until the
-spacing and heading scales were ruled, because a surface is mostly spacing;
-that ruling landed 2026-09-02 and they followed. `WO-268.html` also follows
-that ruling — its own §0b reads `--breakpoint-lg`/`--breakpoint-xl` off
-`tokens.md` §2b — so it stands with the surface and chart sheets on that
-count, not with the two foundation sheets. `WO-002.html` needed no ruling to
-wait on: it draws no surface and no chart, only the route-group container and
-two already-registered components (`Badge`, `Divider`).
+**Six** sheets are drawn and **three are now signed**. (Read *all six are
+unsigned* before the owner's act below; corrected here.) The owner signed
+three on their published pages, dated 2026-09-03:
+
+| Sheet | Releases | URL |
+|---|---|---|
+| `previews/WO-029.html` | WO-029, WO-030 | https://claude.ai/code/artifact/907952de-89ab-40c8-b82e-08b200ae4750 |
+| `previews/WO-268.html` | WO-268 | https://claude.ai/code/artifact/84aee332-745d-47d0-b69c-1cf06874b76f |
+| `previews/WO-002.html` | WO-002 | https://claude.ai/code/artifact/dd46e79b-068e-418b-ab36-baba9ebe5c30 |
+
+`WO-031.html`, `WO-033.html` and `WO-035.html` remain unsigned. (The drawn
+count read *four* until two more were drawn on 2026-09-02, after this
+section was last written: `WO-002.html`, which WO-002 carries alone, and
+`WO-268.html`, which draws all fifteen §1 primitives at their registered
+contract for WO-268 — the 2026-09-02 consolidation of WO-031 and WO-032.
+Corrected here.) The first two are foundation sheets — every later preview
+is read against them, so they were drawn first. The surface and chart
+sheets could not be drawn until the spacing and heading scales were ruled,
+because a surface is mostly spacing; that ruling landed 2026-09-02 and they
+followed. `WO-268.html` also follows that ruling — its own §0b reads
+`--breakpoint-lg`/`--breakpoint-xl` off `tokens.md` §2b — so it stands with
+the surface and chart sheets on that count, not with the two foundation
+sheets. `WO-002.html` needed no ruling to wait on: it draws no surface and
+no chart, only the route-group container and two already-registered
+components (`Badge`, `Divider`).
 
 | Preview | Carries | What a signature does |
 |---|---|---|
-| `previews/WO-029.html` | WO-029 **and** WO-030 | Releases both work orders and makes the sheet the specimen every later preview is read against. **Flips no row in this file** — it registers no component. Its four open values are already ruled and no longer wait on it |
+| `previews/WO-029.html` | WO-029 **and** WO-030 | Releases both work orders and makes the sheet the specimen every later preview is read against. **Flips no row in this file** — it registers no component. Its four open values are already ruled and no longer wait on it. **Signed 2026-09-03**: https://claude.ai/code/artifact/907952de-89ab-40c8-b82e-08b200ae4750 |
 | `previews/WO-031.html` | WO-031 **and** WO-032 | Flips **all fifteen** §1 primitive rows from `proposed` to `approved`, and releases both work orders. **Superseded in this operative role by `previews/WO-268.html`** (ruling below) — WO-031 and WO-032 are themselves `status: superseded`, so a signature here would release two work orders nothing downstream implements. The sheet is not deleted or redrawn and stands unchanged in the record below (§5, "two are now wrong on screen") |
 | `previews/WO-033.html` | WO-033 **and** WO-034 | Flips **all four** §2 custom-surface rows; makes the three layout tokens law in `tokens.md`; closes §4 gaps 1 and 7, which are this sheet's own subject; and rules on the two proposals §8 of that sheet raises |
 | `previews/WO-035.html` | WO-035 **and** WO-036 | Flips **all five** §3 chart rows; closes §4 gap 6 or refuses it. Adds no sixth chart form — the inventory stays closed at five |
-| `previews/WO-002.html` | WO-002 | Releases WO-002 (the route-group skeleton, root layout, font wiring) to implementation. **Flips no row in this file** — it registers no component; `Badge` and `Divider` are already-registered §1 rows this sheet consumes, not defines |
-| `previews/WO-268.html` | WO-268 (`supersedes: [WO-031, WO-032]`) | Flips **all fifteen** §1 primitive rows from `proposed` to `approved`, and releases WO-268. Flips no widening (§7.2), no new row (`ActionPanel`, §7.1), no custom surface and no chart form; rules on no ADR-093 decision and mints no breakpoint token — all stand exactly as this sheet found them, cited and unmoved (its own sign-off text, verbatim). **Becomes the operative preview of record for the fifteen §1 primitives** in place of `previews/WO-031.html` (ruling below) |
+| `previews/WO-002.html` | WO-002 | Releases WO-002 (the route-group skeleton, root layout, font wiring) to implementation. **Flips no row in this file** — it registers no component; `Badge` and `Divider` are already-registered §1 rows this sheet consumes, not defines. **Signed 2026-09-03**: https://claude.ai/code/artifact/dd46e79b-068e-418b-ab36-baba9ebe5c30 |
+| `previews/WO-268.html` | WO-268 (`supersedes: [WO-031, WO-032]`) | Flips **all fifteen** §1 primitive rows from `proposed` to `approved`, and releases WO-268. Flips no widening (§7.2), no new row (`ActionPanel`, §7.1), no custom surface and no chart form; rules on no ADR-093 decision and mints no breakpoint token — all stand exactly as this sheet found them, cited and unmoved (its own sign-off text, verbatim). **Becomes the operative preview of record for the fifteen §1 primitives** in place of `previews/WO-031.html` (ruling below). **Signed 2026-09-03**: https://claude.ai/code/artifact/84aee332-745d-47d0-b69c-1cf06874b76f — the fifteen §1 rows above are now `approved` on this signature |
 
 **Ruling: `WO-268.html` extends `previews/WO-031.html`; it does not merely
 re-point to it.** WO-268's own body posed the two live options: "`design/previews/WO-031.html`
@@ -240,10 +255,14 @@ not an impression of it.
 | `WO-033.html` | **Wrong in three places.** `.cal-h` at 10px, `.day .d` at 10.5px and `.mlabels` — the dot-matrix column labels — at 8px are all under `--t-floor`, which now refuses them. Its day cells are drawn at `min-height: 44px` against a `.day` rule of 64 — a cell tighter than the sheet's own default, and tighter still than what `--w-cell-min` now asks for. And it draws the day panel beside the grid with no narrow form at all, which §4 gap 8 (c) now proposes | the day cell re-cut at the floor and at `--w-cell-min`, and a narrow form drawn or explicitly deferred |
 | `WO-035.html` | **Wrong in two places.** Its `.wday .d` at 10px, `.wday .m` at 9.5px and its four in-SVG label classes at 8–8.5px are all under `--t-floor` — and the in-SVG ones are worse than they read, because `viewBox` text scales with the container (`tokens.md` §7). Its `RivalSparkline` is the pre-rebuild `viewBox="0 0 120 32"` with the endpoint dot on the edge, which is the clipping the owner cited by name. **Its §2 argument about the gapped state's three parts stands unchanged** — that is a contract argument, and the rebuild kept every part of it | the strip re-cut at the floor, the chart labels moved out of coordinate space, and the sparkline redrawn at 132×44 |
 
-**No row in this file moved because of any of it.** Every row is still
-`proposed`; nothing is signed; no `Signed-off:` date exists. A ruling on a
+**No row in this file moved because of any of it** — the 2026-09-02 ruling
+or the staleness found in the table above. (Read *every row is still
+`proposed`; nothing is signed; no `Signed-off:` date exists* before the
+owner's 2026-09-03 signatures — three sheets are signed now, none of them
+`WO-031.html`, `WO-033.html` or `WO-035.html`, the three named in this
+table; see §5 above for dates and URLs. Corrected here.) A ruling on a
 value and a rebuild of a component are both drawings, and a row flips on a
-signature.
+signature, never on either of these.
 
 A §4 row moves only where the sheet that drew it says so. Gaps 1, 6 and 7 are
 contract widenings the surface and chart sheets draw *as their subject*, so a
