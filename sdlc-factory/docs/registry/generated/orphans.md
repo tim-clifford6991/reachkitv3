@@ -15,7 +15,9 @@
 
 ## Approved artifacts with no downstream
 
-- WO-003 (work-order, approved) — no TST section validates it. sdlc-factory/docs/work-orders/WO-003.md
+- REQ-097 (requirement, approved) — no blueprint's `satisfies` names it. sdlc-factory/docs/requirements/REQ-097.md
+- REQ-098 (requirement, approved) — no blueprint's `satisfies` names it. sdlc-factory/docs/requirements/REQ-098.md
+- REQ-099 (requirement, approved) — no blueprint's `satisfies` names it. sdlc-factory/docs/requirements/REQ-099.md
 - WO-004 (work-order, approved) — no TST section validates it. sdlc-factory/docs/work-orders/WO-004.md
 - WO-007 (work-order, approved) — no TST section validates it. sdlc-factory/docs/work-orders/WO-007.md
 - WO-012 (work-order, approved) — no TST section validates it. sdlc-factory/docs/work-orders/WO-012.md

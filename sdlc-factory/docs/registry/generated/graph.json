@@ -2,55 +2,55 @@
   "coverage": {
     "satisfies": {
       "carrying": 44,
-      "total": 458
+      "total": 459
     },
     "covers": {
       "carrying": 32,
-      "total": 458
+      "total": 459
     },
     "implements": {
       "carrying": 262,
-      "total": 458
+      "total": 459
     },
     "decides-for": {
       "carrying": 31,
-      "total": 458
+      "total": 459
     },
     "about": {
       "carrying": 0,
-      "total": 458
+      "total": 459
     },
     "depends-on": {
       "carrying": 387,
-      "total": 458
+      "total": 459
     },
     "blocked-by": {
       "carrying": 6,
-      "total": 458
+      "total": 459
     },
     "cites-retired": {
       "carrying": 0,
-      "total": 458
+      "total": 459
     },
     "supersedes": {
       "carrying": 23,
-      "total": 458
+      "total": 459
     },
     "rests-on": {
-      "carrying": 285,
-      "total": 458
+      "carrying": 286,
+      "total": 459
     },
     "code": {
       "carrying": 63,
-      "total": 458
+      "total": 459
     },
     "exercises": {
       "carrying": 6,
-      "total": 458
+      "total": 459
     },
     "origin": {
       "carrying": 0,
-      "total": 458
+      "total": 459
     }
   },
   "nodes": {
@@ -780,6 +780,10 @@
         {
           "claim": "DataForSEO refunds the load_async_ai_overview surcharge to the account balance after the fact and never adjusts the amount this client observes at call time (\"if the element is absent or contains asynchronous_ai_overview: false, all extra charges will be returned to your account balance\" — docs; \"the extra charge will be refunded\" — help center). Ledgering the surcharge-inclusive price on every flagged call is therefore conservative: recorded spend is always >= actual vendor spend, never the reverse.",
           "disposition": "confirmed"
+        },
+        {
+          "claim": "DataForSEO's documented refund of the load_async_ai_overview surcharge actually lands, so settling a flagged SERP to the base price where the ai_overview element is absent or carries asynchronous_ai_overview: false does not under-count real vendor spend (decision 3a). Nothing in this corpus can observe it: the refund goes to the account balance and never to the response. Discharged by reconciling one week of ledgered free-path spend against the DataForSEO account statement once live traffic exists. If refuted the exposure is bounded: <=0.2c per flagged SERP, <=2.4c per scan, <=1.5c of real overspend per corrected report (~$3/day at 200 corrected free scans).",
+          "disposition": "open"
         }
       ],
       "supersedes": [],
@@ -1087,7 +1091,7 @@
           "disposition": "open"
         },
         {
-          "claim": "DataForSEO refunds the `load_async_ai_overview` surcharge to the account balance after the fact and never adjusts the amount this client observes at call time, so ledgering the surcharge-inclusive price on every flagged call cannot under-count spend (ADR-094)",
+          "claim": "DataForSEO refunds the `load_async_ai_overview` surcharge to the account balance after the fact and never adjusts the amount this client observes at call time (ADR-094). Since ADR-094 decision 3a this node reserves the surcharge-inclusive price and settles from the response by the vendor's documented rule, so the claim this row rests on is now the refund itself landing — ADR-094's own second `rests-on` row carries it and names the reconciliation; this row states the call-time observation only",
           "disposition": "confirmed"
         }
       ],
@@ -1800,7 +1804,12 @@
         "BP-026"
       ],
       "blocked-by": [],
-      "rests-on": [],
+      "rests-on": [
+        {
+          "claim": "A corrected free report ordinarily fits inside CAPS.FREE_C 12c: the pair is 11.1c + 0.2c per SERP on which Google served an asynchronous AI Overview (ADR-094 decisions 5 and 3a), so it fits whenever at most four of the twelve did, and cache hits on the scan widen that. Two facts underneath it are unmeasured and only live traffic can settle them: how often Google serves an asynchronous overview on these twelve queries (the vendor says only that it does so 'frequently'), and BP-008's 30-day cache hit rate on the SERPs and suggestions call. If both run against us the correction truncates part-way through its SERP fan-out and REQ-094 criterion 7's partial result is the ordinary outcome for corrected reports. Raised 2026-09-03 with decision 4's amendment; restated the same day after decision 3a.",
+          "disposition": "open"
+        }
+      ],
       "supersedes": [],
       "code": [
         "src/lib/market/coherence/**",
@@ -3099,7 +3108,7 @@
       "id": "JN-001",
       "type": "journey",
       "title": "A stranger scans their domain and leaves with a finished page",
-      "status": "approved",
+      "status": "in-review",
       "depends-on": [],
       "blocked-by": [],
       "rests-on": [],
@@ -3128,14 +3137,14 @@
           ]
         },
         {
-          "step": "Reads the verdict at the top: one score, its band in words, its three drivers, and a dash with a written line wherever something could not be measured",
+          "step": "Reads the verdict at the top: one score, its band in words, one written line naming what holds the score down, and a dash with a written line wherever something could not be measured",
           "exercises": [
             "REQ-004",
             "REQ-093"
           ]
         },
         {
-          "step": "Reads what AI tells buyers — on how many of their market's biggest searches an AI answer appears, which brands it names instead of them, and the search and volume behind each question",
+          "step": "Reads what AI tells buyers — on how many of their market's biggest searches an AI answer appears, which brands it names instead of them, and the search behind each question",
           "exercises": [
             "REQ-006"
           ]
@@ -3585,8 +3594,8 @@
     "REQ-004": {
       "id": "REQ-004",
       "type": "requirement",
-      "title": "The report opens with one score, its band and its drivers — and what could not be measured says so, while a measured zero stays a zero",
-      "status": "approved",
+      "title": "The report opens with one score, its band and one line naming what holds it down — and what could not be measured says so, while a measured zero stays a zero",
+      "status": "in-review",
       "depends-on": [],
       "blocked-by": [],
       "rests-on": [],
@@ -3612,7 +3621,7 @@
       "id": "REQ-006",
       "type": "requirement",
       "title": "The AI-answers card states its denominator, names who was cited instead, and shows the search behind each of the 12 questions",
-      "status": "approved",
+      "status": "in-review",
       "depends-on": [],
       "blocked-by": [],
       "rests-on": [],
@@ -3638,7 +3647,7 @@
       "id": "REQ-008",
       "type": "requirement",
       "title": "Google presence is shown as share of the market's 12 biggest searches, beside each rival",
-      "status": "approved",
+      "status": "in-review",
       "depends-on": [],
       "blocked-by": [],
       "rests-on": [],
@@ -3935,7 +3944,7 @@
       "id": "REQ-041",
       "type": "requirement",
       "title": "Overview answers whether the work is working, what needs the customer today, and how far ahead each rival still is",
-      "status": "in-review",
+      "status": "approved",
       "depends-on": [
         "REQ-065",
         "REQ-093"
@@ -4619,7 +4628,7 @@
       "id": "REQ-094",
       "type": "requirement",
       "title": "The free report shows the market it measured in and lets one reader correct it",
-      "status": "approved",
+      "status": "in-review",
       "depends-on": [
         "REQ-001",
         "REQ-003",
@@ -4685,7 +4694,7 @@
       "id": "REQ-097",
       "type": "requirement",
       "title": "Stripe owns billing end to end — ReachKit renders no billing value and sends no billing mail",
-      "status": "draft",
+      "status": "approved",
       "depends-on": [
         "REQ-020",
         "REQ-021",
@@ -4711,7 +4720,7 @@
       "id": "REQ-098",
       "type": "requirement",
       "title": "The sign-in screen — one address, one link, and no form that opens an account",
-      "status": "draft",
+      "status": "approved",
       "depends-on": [
         "REQ-001",
         "REQ-020",
@@ -4730,7 +4739,7 @@
       "id": "REQ-099",
       "type": "requirement",
       "title": "The landing page carries the whole pitch — the first screen, then the demo, then why · what · how to start",
-      "status": "draft",
+      "status": "approved",
       "depends-on": [
         "REQ-001",
         "REQ-093"
@@ -4987,6 +4996,16 @@
       ],
       "file": "sdlc-factory/docs/work-orders/WO-062.md"
     },
+    "TST-025": {
+      "id": "TST-025",
+      "type": "validation",
+      "title": "WO-003 validation report",
+      "status": "pass",
+      "validates": [
+        "WO-003"
+      ],
+      "file": "sdlc-factory/docs/work-orders/WO-003.md"
+    },
     "WO-001": {
       "id": "WO-001",
       "type": "work-order",
@@ -5038,7 +5057,7 @@
       "id": "WO-003",
       "type": "work-order",
       "title": "Default-deny middleware and the one public allow-list",
-      "status": "approved",
+      "status": "done",
       "implements": [
         "BP-001"
       ],
@@ -6387,7 +6406,7 @@
       "id": "WO-062",
       "type": "work-order",
       "title": "POST /api/scan — the canonicaliser and starter, with a no-JavaScript path",
-      "status": "approved",
+      "status": "done",
       "implements": [
         "BP-022",
         "REQ-001",
@@ -6401,8 +6420,8 @@
       "rests-on": [
         {
           "claim": "`src/middleware.ts` lists every path in this node on its public allow-list, so no session is read on this route. The middleware is BP-001's; this repo carries no `src/` today",
-          "disposition": "open",
-          "reason": "TST-024 (validator): independently confirmed no `src/middleware.ts` exists anywhere in this repo (`find` returns nothing). WO-003 (`status: approved`, depends-on WO-001/WO-002 only) is the sole owner of that path and its own step 1 derives `PUBLIC_PATHS` from BP-001's public route list, which already names `POST /api/scan` verbatim (BP-001 `## Public interface`, line 73). The claim is therefore genuinely dischargeable, just not by this build — there is nothing on disk yet to observe it against. Left `open` deliberately (constitution §validator step 4a): this is the stage that can first observe it (WO-003's own validator, or a later `/regress` on WO-062 once WO-003 lands), not this one. Blocks WO-062's own `done` until then — expected and correct, not an oversight."
+          "disposition": "confirmed",
+          "reason": "TST-024 (validator): independently confirmed no `src/middleware.ts` exists anywhere in this repo (`find` returns nothing). WO-003 (`status: approved`, depends-on WO-001/WO-002 only) is the sole owner of that path and its own step 1 derives `PUBLIC_PATHS` from BP-001's public route list, which already names `POST /api/scan` verbatim (BP-001 `## Public interface`, line 73). The claim is therefore genuinely dischargeable, just not by this build — there is nothing on disk yet to observe it against. Left `open` deliberately (constitution §validator step 4a): this is the stage that can first observe it (WO-003's own validator, or a later `/regress` on WO-062 once WO-003 lands), not this one. Blocks WO-062's own `done` until then — expected and correct, not an oversight. — TST-025 (WO-003's validator, 2026-09-03): dispositioned `confirmed`, not merely because `src/middleware.ts` now exists but because its built content discharges the claim's actual words. `PUBLIC_PATHS` in `src/middleware.ts` lists `\"/api/scan\"` verbatim (an exact-segment match, not a prefix), and `middleware()`'s `isPublic()` check runs before `hasSession()` and short-circuits it — a request never reaches the session check when the path is on the allow-list, so 'no session is read on this route' holds for the method Next's matcher actually sees (path only, not verb). Reproduced directly: `middleware(new NextRequest(new URL('/api/scan', 'http://localhost'), { method: 'POST' }))` returns a non-redirect (`NextResponse.next()`) with no session cookie supplied — independently run, not taken from the implementer's report — and `grep -n 'session\\|cookie\\|auth' src/app/api/scan/route.ts` (WO-062's own route) returns nothing, confirming the route itself reads no session either. Mutation-tested: deleting `\"/api/scan\"` from `PUBLIC_PATHS` turns this exact request into a 307 redirect, breaking two independent tests in `tests/app/middleware.test.ts` (the allow-list enumeration bijection and the route's own dedicated test) — so the claim is discriminated, not merely plausible."
         }
       ],
       "supersedes": [],
