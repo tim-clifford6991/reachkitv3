@@ -2,55 +2,55 @@
   "coverage": {
     "satisfies": {
       "carrying": 44,
-      "total": 430
+      "total": 431
     },
     "covers": {
       "carrying": 32,
-      "total": 430
+      "total": 431
     },
     "implements": {
       "carrying": 257,
-      "total": 430
+      "total": 431
     },
     "decides-for": {
       "carrying": 30,
-      "total": 430
+      "total": 431
     },
     "about": {
       "carrying": 0,
-      "total": 430
+      "total": 431
     },
     "depends-on": {
       "carrying": 382,
-      "total": 430
+      "total": 431
     },
     "blocked-by": {
       "carrying": 4,
-      "total": 430
+      "total": 431
     },
     "cites-retired": {
       "carrying": 0,
-      "total": 430
+      "total": 431
     },
     "supersedes": {
       "carrying": 23,
-      "total": 430
+      "total": 431
     },
     "rests-on": {
       "carrying": 277,
-      "total": 430
+      "total": 431
     },
     "code": {
       "carrying": 63,
-      "total": 430
+      "total": 431
     },
     "exercises": {
       "carrying": 6,
-      "total": 430
+      "total": 431
     },
     "origin": {
       "carrying": 0,
-      "total": 430
+      "total": 431
     }
   },
   "nodes": {
@@ -4697,6 +4697,16 @@
       ],
       "file": "sdlc-factory/docs/work-orders/WO-005.md"
     },
+    "TST-003": {
+      "id": "TST-003",
+      "type": "validation",
+      "title": "WO-006 validation report",
+      "status": "pass",
+      "validates": [
+        "WO-006"
+      ],
+      "file": "sdlc-factory/docs/work-orders/WO-006.md"
+    },
     "WO-001": {
       "id": "WO-001",
       "type": "work-order",
@@ -4799,7 +4809,7 @@
       "id": "WO-006",
       "type": "work-order",
       "title": "constants.ts — every pinned number, grouped and frozen",
-      "status": "approved",
+      "status": "done",
       "implements": [
         "BP-005"
       ],
@@ -4810,11 +4820,11 @@
       "rests-on": [
         {
           "claim": "One value BP-005 decision 3 lists as deliberately undeclared stays undeclared here: the removal address REQ-002 criterion 1 requires the free report to name. It is a customer-visible string and the owner's under the decision-rights table; it is absent, not guessed (rule 1.2). Whether anything records receipt of a removal request is outstanding with it. The other four this row carried were ruled by the owner on 2026-08-31 (BP-005 decision 3, \"Discharged 2026-08-31 by owner ruling\"): the six band words and the three severity words landed in BP-019's `BAND_LABELS` and `SEVERITY` — not here, decision 2 stands — and `GOAL_VALUES.pages_published` landed here as 30.",
-          "disposition": "open"
+          "disposition": "confirmed"
         },
         {
           "claim": "`AI_READER_AGENTS` and `PLATFORM_DOMAINS` are populated from quoted source clauses — REQ-059 criterion 4 and `BUILD.md` §6.1 respectively — never from memory. `BUILD.md` §6.1's `PLATFORM_DOMAINS` row ends in an ellipsis (\"… (closed list)\"), so the list it states is not complete on its face; the implementer takes the ten names §6.1 does state and raises the incompleteness rather than inventing an eleventh.",
-          "disposition": "open"
+          "disposition": "confirmed"
         }
       ],
       "supersedes": [],
