@@ -1564,7 +1564,8 @@
         },
         {
           "claim": "Vercel presents the visitor's address in `x-forwarded-for`, so the network key BP-023 counts by is derivable at the edge without a platform-specific header this node invents",
-          "disposition": "open"
+          "disposition": "undischargeable",
+          "reason": "Same claim as WO-057's own row (BP-022 and BP-023 both carry it; 'it is spent here'). TST-021 (WO-057) confirmed/dispositioned undischargeable by first observation but did not persist to this row. TST-024 (WO-062) re-observes the same unchanged mechanism — route.ts calls the same networkKeyOf(request.headers.get('x-forwarded-for')) path — and persists it here. No test, in this WO or any other, can observe whether Vercel's edge actually populates the header correctly in production; only a live deployment could."
         }
       ],
       "supersedes": [],
@@ -6328,7 +6329,8 @@
       "rests-on": [
         {
           "claim": "`src/middleware.ts` lists every path in this node on its public allow-list, so no session is read on this route. The middleware is BP-001's; this repo carries no `src/` today",
-          "disposition": "open"
+          "disposition": "open",
+          "reason": "TST-024 (validator): independently confirmed no `src/middleware.ts` exists anywhere in this repo (`find` returns nothing). WO-003 (`status: approved`, depends-on WO-001/WO-002 only) is the sole owner of that path and its own step 1 derives `PUBLIC_PATHS` from BP-001's public route list, which already names `POST /api/scan` verbatim (BP-001 `## Public interface`, line 73). The claim is therefore genuinely dischargeable, just not by this build — there is nothing on disk yet to observe it against. Left `open` deliberately (constitution §validator step 4a): this is the stage that can first observe it (WO-003's own validator, or a later `/regress` on WO-062 once WO-003 lands), not this one. Blocks WO-062's own `done` until then — expected and correct, not an oversight."
         }
       ],
       "supersedes": [],
