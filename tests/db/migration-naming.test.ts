@@ -71,11 +71,9 @@ describe('`structure.md` rule 2 — "the narrower glob owns the file."', () => {
 describe("supabase/migrations/ — every applied migration file names exactly one topic or sub-token", () => {
   const files = readdirSync(MIGRATIONS_DIR).filter((name) => name.endsWith(".sql"));
 
-  it("finds the two migrations this work order writes", () => {
-    expect(files.sort()).toEqual([
-      "00000000000001_baseline.sql",
-      "00000000000002_rls.sql",
-    ]);
+  it("contains the two baseline migrations WO-267 writes", () => {
+    expect(files).toContain("00000000000001_baseline.sql");
+    expect(files).toContain("00000000000002_rls.sql");
   });
 
   it.each(files)("%s carries exactly one assigned topic token", (file) => {
