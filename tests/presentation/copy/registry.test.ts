@@ -196,10 +196,12 @@ describe("owner-owed and empty agree both ways", () => {
     expect(new Set(emptyKeys)).toEqual(new Set(OWNER_OWED));
   });
 
-  it("counts: 30 owner-owed, 13 filled, 43 total (rule 5.5 — the index states its own coverage)", () => {
-    expect(OWNER_OWED.length).toBe(30);
+  it("counts: 38 owner-owed, 13 filled, 51 total (rule 5.5 — the index states its own coverage)", () => {
+    // WO-070 adds report.ts's eight landing keys (headline, field label,
+    // submit label, five DomainProblem lines), all owner-owed: 30 + 8 = 38.
+    expect(OWNER_OWED.length).toBe(38);
     expect(Object.keys(COPY).length - OWNER_OWED.length).toBe(13);
-    expect(Object.keys(COPY).length).toBe(43);
+    expect(Object.keys(COPY).length).toBe(51);
   });
 });
 

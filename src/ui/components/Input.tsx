@@ -10,6 +10,20 @@
 // there is no call shape that marks a field invalid without also supplying
 // the sentence explaining why. The invalid value stays intact: this
 // component never clears `value` itself.
+//
+// `name` — optional, added by WO-070 (constitution rule 1.1: an internal,
+// additive, backward-compatible parameter; every existing caller keeps
+// omitting it and renders exactly as before, no native `name` attribute).
+// WO-070's own plan needed a plain HTML form's field to survive a
+// no-JavaScript submit — the native mechanism a browser uses to include a
+// field in `FormData`/`application/x-www-form-urlencoded` requires the
+// control's own `name` attribute, and nothing at the page level can supply
+// it after the fact once the control has rendered without one. Flagged
+// once here (rule 4.2): this component's contract (`components.md` §1,
+// BP-018 `## Public interface`) named no `name` prop, and the fix is this
+// one-line, optional addition rather than a bespoke input or a second
+// hidden control, which would have broken "exactly one input" (REQ-001 c1)
+// or the no-JS path outright.
 "use client";
 
 import type React from "react";
@@ -22,6 +36,10 @@ type InputBase = {
   value?: string;
   onChange?: (value: string) => void;
   disabled?: boolean;
+  /** Optional. The native `name` attribute — absent by default, exactly as
+   *  before this prop existed, so a plain HTML form submission can carry
+   *  this field. */
+  name?: string;
 };
 
 type InputValid = InputBase & { invalid?: false };
@@ -44,6 +62,7 @@ export function Input(p: InputProps): React.JSX.Element {
         className={["input", p.invalid ? "input-error" : ""].filter(Boolean).join(" ")}
         placeholder={p.placeholder}
         value={p.value}
+        name={p.name}
         disabled={p.disabled}
         aria-invalid={p.invalid === true}
         onChange={(e) => p.onChange?.(e.target.value)}
