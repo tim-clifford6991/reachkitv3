@@ -1,0 +1,83 @@
+<!doctype html>
+<!--
+  tests/ui/layout/fixtures/canary.html
+
+  BP-018 `## NFR budget`: "It ships one fixture route that overflows on
+  purpose and must fail … A green run in which the canary also passes is a
+  failed run." Navigated by `file://` (WO-269 `## Parameters chosen`), so it
+  declares `--t-floor` on its own `:root` rather than depending on
+  `src/ui/theme.css` (WO-029's file, not this order's).
+
+  Five deliberate defects, one per check plus one that must fail check 3
+  even if it were on the truncation allow-list:
+    1. `.wide-box`    — wider than any of the suite's five viewports.
+    2. `.escapee`     — a child escaping its parent's padding box.
+    3. `.clipped-name`— a clipped text-bearing box (a *name*, not a value).
+    4. `.clipped-value` — a clipped value in `--font-mono`: must fail even
+       allow-listed (ADR-093 decision 6 point 3).
+    5. `.below-floor` — text rendered under `--t-floor`.
+-->
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>WO-269 canary — overflows on purpose</title>
+    <style>
+      :root {
+        --t-floor: 11px;
+      }
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        width: 320px;
+      }
+      .wide-box {
+        width: 900px; /* wider than any width the suite renders — check 1 */
+        height: 20px;
+      }
+      .parent {
+        position: relative;
+        width: 100px;
+        height: 20px;
+        padding: 4px;
+      }
+      .escapee {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 300px; /* escapes the 100px parent's padding box — check 2 */
+        height: 10px;
+      }
+      .clipped-name {
+        width: 40px;
+        height: 16px;
+        overflow: hidden;
+        white-space: nowrap;
+        font-family: sans-serif;
+        font-size: 14px;
+      }
+      .clipped-value {
+        width: 30px;
+        height: 16px;
+        overflow: hidden;
+        white-space: nowrap;
+        font-family: "JetBrains Mono", monospace;
+        font-size: 14px;
+      }
+      .below-floor {
+        font-size: 8px; /* below the 11px --t-floor — check 4 */
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wide-box">A box wider than the viewport it is read at</div>
+    <div class="parent">
+      <div class="escapee">An element that escapes its parent's padding box</div>
+    </div>
+    <div class="clipped-name">A name clipped so nobody can read it in full</div>
+    <div class="clipped-value">12345678901234567890</div>
+    <div class="below-floor">Text rendered under the type floor</div>
+  </body>
+</html>
