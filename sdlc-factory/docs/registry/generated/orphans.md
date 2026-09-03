@@ -55,7 +55,7 @@
 - WO-055 (work-order, approved) — no TST section validates it. sdlc-factory/docs/work-orders/WO-055.md
 - WO-056 (work-order, done) — no TST section validates it. sdlc-factory/docs/work-orders/WO-056.md
 - WO-057 (work-order, done) — no TST section validates it. sdlc-factory/docs/work-orders/WO-057.md
-- WO-058 (work-order, approved) — no TST section validates it. sdlc-factory/docs/work-orders/WO-058.md
+- WO-058 (work-order, done) — no TST section validates it. sdlc-factory/docs/work-orders/WO-058.md
 - WO-059 (work-order, approved) — no TST section validates it. sdlc-factory/docs/work-orders/WO-059.md
 - WO-060 (work-order, approved) — no TST section validates it. sdlc-factory/docs/work-orders/WO-060.md
 - WO-061 (work-order, approved) — no TST section validates it. sdlc-factory/docs/work-orders/WO-061.md
