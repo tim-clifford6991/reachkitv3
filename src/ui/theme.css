@@ -1,0 +1,142 @@
+/* src/ui/theme.css
+ *
+ * BP-018 `## Module / boundary`: "src/ui/theme.css (the three-state
+ * theming)". Every value below is transcribed from `BUILD.md` §2.1,
+ * verbatim: "daisyUI 5 theme, expressed as CSS variables. These exact
+ * values — they are lifted from timclifford.dev so the products share a
+ * visual family." Nothing here is derived or rounded except the six
+ * dark `-bg`/`-line` pairs, each marked where it is defined below.
+ *
+ * Three-state theming, `BUILD.md` §2.1 verbatim: "Three-state theming:
+ * bare `:root` = light; `@media (prefers-color-scheme: dark)` guarded
+ * with `:root:not([data-theme="light"])`; `:root[data-theme="dark"]`
+ * for the explicit toggle. Never define a color only inside a dark
+ * block." Every token below therefore exists in the bare `:root`
+ * block; the two dark blocks only override tokens `:root` already
+ * declares (tests/ui/tokens.test.ts's mutation check).
+ */
+
+:root {
+  /* Surfaces and ink */
+  --bg: #f6f6f9;
+  --surface: #ffffff;
+  --sunk: #efeff4;
+  --line: #eaeaf1;
+  --ink: #191925;
+  --ink-2: #5e5e73;
+  --ink-3: #9695a8;
+
+  /* Accent */
+  --accent: #5b4be0;
+  --on-accent: #ffffff;
+  --accent-bg: #eeecfd;
+  --accent-line: #ddd8fa;
+
+  /* State — ok / warn / bad */
+  --ok: #1f8a6b;
+  --ok-bg: #e7f6f0;
+  --ok-line: #d2ede3;
+  --warn: #b8722a;
+  --warn-bg: #fff3e6;
+  --warn-line: #fbe1c6;
+  --bad: #c0432b;
+  --bad-bg: #fdece8;
+  --bad-line: #f8d5cd;
+
+  /* Series — the only two chart colours, plus the goal marker */
+  --chart-you: #5b4be0;
+  --chart-rival: #787790;
+  --chart-goal: #b8722a;
+
+  /* Radius, shadow, ring — `BUILD.md` §2.1 states these once, in
+   * `:root`, and repeats none of them in the dark block. */
+  --r-box: 14px;
+  --r-field: 9px;
+  --r-pill: 999px;
+  --shadow-card: 0 1px 3px rgb(24 24 48/.045);
+  --ring-accent: 0 0 0 3px rgb(91 75 224/.18);
+}
+
+/* Automatic dark — guarded so the explicit light toggle below always wins.
+ * `BUILD.md` §2.1 verbatim: "`@media (prefers-color-scheme: dark)` guarded
+ * with `:root:not([data-theme="light"])`." */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0e1116;
+    --surface: #161a21;
+    --sunk: #11151b;
+    --line: #242a34;
+    --ink: #dde3eb;
+    --ink-2: #8e99aa;
+    --ink-3: #69738a;
+
+    --accent: #9bb4ff;
+    --on-accent: #0e1116;
+    --accent-bg: rgb(155 180 255/.12);
+    --accent-line: rgb(155 180 255/.28);
+
+    --ok: #7bd8b0;
+    --warn: #e6b45a;
+    --bad: #f0907a;
+    /* `BUILD.md` §2.1, verbatim: "+ matching -bg/-line at 12%/28% alpha".
+     * DERIVED (rule 1.1) from --ok #7bd8b0 at 12%/28% alpha — not carried
+     * over from light and not invented. */
+    --ok-bg: rgb(123 216 176/.12);
+    --ok-line: rgb(123 216 176/.28);
+    /* `BUILD.md` §2.1, verbatim: "+ matching -bg/-line at 12%/28% alpha".
+     * DERIVED (rule 1.1) from --warn #e6b45a at 12%/28% alpha — not
+     * carried over from light and not invented. */
+    --warn-bg: rgb(230 180 90/.12);
+    --warn-line: rgb(230 180 90/.28);
+    /* `BUILD.md` §2.1, verbatim: "+ matching -bg/-line at 12%/28% alpha".
+     * DERIVED (rule 1.1) from --bad #f0907a at 12%/28% alpha — not
+     * carried over from light and not invented. */
+    --bad-bg: rgb(240 144 122/.12);
+    --bad-line: rgb(240 144 122/.28);
+
+    --chart-you: #5f7ff2;
+    --chart-rival: #5c6579;
+    --chart-goal: #e6b45a;
+  }
+}
+
+/* Explicit dark toggle. `BUILD.md` §2.1 verbatim: "`:root[data-theme="dark"]`
+ * for the explicit toggle." Same values as the guarded media query above —
+ * one dark palette, reached two ways. */
+:root[data-theme="dark"] {
+  --bg: #0e1116;
+  --surface: #161a21;
+  --sunk: #11151b;
+  --line: #242a34;
+  --ink: #dde3eb;
+  --ink-2: #8e99aa;
+  --ink-3: #69738a;
+
+  --accent: #9bb4ff;
+  --on-accent: #0e1116;
+  --accent-bg: rgb(155 180 255/.12);
+  --accent-line: rgb(155 180 255/.28);
+
+  --ok: #7bd8b0;
+  --warn: #e6b45a;
+  --bad: #f0907a;
+  /* `BUILD.md` §2.1, verbatim: "+ matching -bg/-line at 12%/28% alpha".
+   * DERIVED (rule 1.1) from --ok #7bd8b0 at 12%/28% alpha — not carried
+   * over from light and not invented. */
+  --ok-bg: rgb(123 216 176/.12);
+  --ok-line: rgb(123 216 176/.28);
+  /* `BUILD.md` §2.1, verbatim: "+ matching -bg/-line at 12%/28% alpha".
+   * DERIVED (rule 1.1) from --warn #e6b45a at 12%/28% alpha — not carried
+   * over from light and not invented. */
+  --warn-bg: rgb(230 180 90/.12);
+  --warn-line: rgb(230 180 90/.28);
+  /* `BUILD.md` §2.1, verbatim: "+ matching -bg/-line at 12%/28% alpha".
+   * DERIVED (rule 1.1) from --bad #f0907a at 12%/28% alpha — not carried
+   * over from light and not invented. */
+  --bad-bg: rgb(240 144 122/.12);
+  --bad-line: rgb(240 144 122/.28);
+
+  --chart-you: #5f7ff2;
+  --chart-rival: #5c6579;
+  --chart-goal: #e6b45a;
+}
