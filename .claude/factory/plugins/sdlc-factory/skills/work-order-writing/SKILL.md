@@ -107,22 +107,33 @@ too big — split it.
 The last section before the validation report — the checkpoint any agent
 resumes from (constitution rule 6.1: "a run that writes no log line did
 not happen"). Body text, not front-matter: it carries no edge the
-registry projects, only history read in order. Five line forms, newest
+registry projects, only history read in order. Seven line forms, newest
 last:
 
     - <YYYY-MM-DD> created — <agent>
     - <YYYY-MM-DD> started — <agent>
     - <YYYY-MM-DD> finished — <agent> — <one line>
     - <YYYY-MM-DD> failed — <agent> — <why> — next: <the step to resume at>
+    - <YYYY-MM-DD> preview — design-guardian — v<n> — <url>
     - <YYYY-MM-DD> opened — migration <version>
     - <YYYY-MM-DD> guard — <agent> wrote <file> outside §4's <zone>/ row — allowed under SDLC_FACTORY_GUARD=log
 
-The sixth is the guard's alone (0.12.0): in an unattended run the write
+The seventh is the guard's alone (0.12.0): in an unattended run the write
 gate records an out-of-row subagent write here instead of prompting, and
-the librarian audits the line on `/sync`. The fifth is migration-only: a `factory upgrade` backfill writes it when it
+the librarian audits the line on `/sync`. The sixth is migration-only: a `factory upgrade` backfill writes it when it
 adds the section to a work order (or the work-order template) that predates
 constitution rule 6.1, rather than fabricating a `created` line for a run
 that never happened.
+
+The fifth is the only line in this section a checker reads (0.13.0,
+constitution rule 7.3). The design-guardian writes one per publication of
+this WO's preview sheet — `v<n>` the artifact's version, `<url>` its
+page — so the section is the sheet's revision history and the last such
+line is the current page. A `ui: yes` work order that reaches `approved`
+or `done` with none of them is the `preview-without-url` finding (warn):
+it was built against a preview the owner cannot open. The URL lives here
+and nowhere else in the work order (rule 2.4) — the `Preview:` display
+bullet names the sheet file, not the page.
 
 The planner opens it with one `created` line when it cuts the WO. The
 implementer logs `started` on beginning and `finished`/`failed` on
@@ -170,7 +181,12 @@ parser reads none of them:
     - Branch: wo/WO-XXX-<slug>
     - Estimate: ≤1 day
     - Preview: sdlc-factory/docs/design/previews/WO-XXX.html
-    - Signed-off: <date>
+    - Signed-off: <date> — v<n>
 
-`ui: yes` obliges the preview pair: a `Preview:` path and a `Signed-off:`
-date. Keep both only when `ui: yes`; delete both otherwise.
+`ui: yes` obliges the preview pair: a `Preview:` path — the sheet file,
+which is the record — and a `Signed-off:` date naming the version the
+owner's word was given on. Keep both only when `ui: yes`; delete both
+otherwise. `Signed-off:` is written by the librarian alone, reading the
+owner's word back off the published page (`agents/librarian.md`, rule
+7.3); the planner leaves the bullet as the template has it and never
+dates it in advance.

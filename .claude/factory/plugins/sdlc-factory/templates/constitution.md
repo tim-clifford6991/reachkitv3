@@ -186,6 +186,9 @@ implementation, never an artifact's approval.)
 - No work order reaches `done` without a regression record — its latest
   validation section states what else was re-checked, not just the new
   work (`/regress`).
+- No `ui: yes` work order is implemented without a published preview — its
+  `## Log` carries the page's URL and version before an implementer opens
+  it (`preview-without-url`).
 - No `ui: yes` work order reaches `done` without a placement note — its
   latest validation section carries a `Placement:` line before the
   librarian sets it.
@@ -259,7 +262,7 @@ one verb — the table below, not a per-verb rule, is the ownership record.
 | planner | `work-orders/` | scope, sequence, file plans, stop conditions | a WO that cannot be bounded to a day, or a slice (rule 2.6) that cannot be cut below a day without failing the merge test |
 | implementer | `src/`, `tests/` | implementation within the plan | a plan that is wrong — say so |
 | validator | verdicts | pass / findings / reject | nothing; independence is the product |
-| librarian | `registry/`, statuses | whether a gate is met | nothing; it refuses |
+| librarian | `registry/`, statuses, sign-offs | whether a gate is met | nothing; it refuses |
 | design-guardian | `design/` | tokens, components, layout | customer-visible copy |
 | feedback-triage | `feedback/` | routing | defect vs preference |
 | reviewer | nothing | what is ambiguous, missing, conflicting, untestable | nothing; it only asks |
@@ -422,8 +425,19 @@ dependencies.
 - **7.2 Reuse before build.** Search the capability index and the codebase
   before any file plan. Duplicating an existing capability requires an ADR.
 - **7.3 UX preview gate.** A WO touching customer-visible surface needs a
-  signed preview first. UI uses named tokens and registered components only.
-  Long LLM-generated text in the UI is a defect.
+  signed preview first, and a preview is two things. The **sheet** is the
+  file in the corpus — `design/previews/WO-###.html` — and it is the
+  record: versioned with everything else, readable when the page is long
+  gone. The **page** is that same sheet published as an artifact, and it
+  is the owner's door: the design-guardian publishes it and logs
+  `preview — design-guardian — v<n> — <url>` in the work order's own
+  `## Log`, carrying the same URL and version into every component row the
+  preview registers. Sign-off is the owner's word **on that page** — a
+  comment addressed to Claude, or a ruling in the session that names it.
+  The librarian reads that word back and writes the `Signed-off:` line;
+  no other agent writes it, and a page nobody answered is not a sign-off.
+  UI uses named tokens and registered components only. Long LLM-generated
+  text in the UI is a defect.
 - **7.4 Vertical slices.** Approval and expansion proceed one journey at a
   time: approve a journey's requirements, expand them, build them, then
   take the next — everything else stays draft inventory, which blocks

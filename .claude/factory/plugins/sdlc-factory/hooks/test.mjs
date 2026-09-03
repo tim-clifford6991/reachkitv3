@@ -77,6 +77,7 @@ for (const [agent, file, label] of [
   ["planner", join(docs, "work-orders", "WO-001.md"), "the planner may write work-orders/"],
   ["validator", join(docs, "work-orders", "WO-001.md"), "so may the validator — the verdict gates `done`"],
   ["implementer", join(docs, "work-orders", "WO-001.md"), "so may the implementer — the `## Log` is its checkpoint"],
+  ["design-guardian", join(docs, "work-orders", "WO-001.md"), "so may the design-guardian — rule 7.3's preview line and its placement questions"],
 ]) {
   const r = run(GUARD, write(file, { agent_type: agent, agent_id: "sub-1" }));
   assert(label, r.decision === null, `got ${r.decision}`);

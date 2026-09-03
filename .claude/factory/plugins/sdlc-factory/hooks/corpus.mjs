@@ -62,9 +62,12 @@ export const OWNERS = {
   blueprints: ["architect"],
   decisions: ["architect"],
   // The planner authors a work order, the implementer appends its `## Log`,
-  // and the validator writes the verdict that gates `done` into it. All three
-  // are correct writers of the same file at different stages.
-  "work-orders": ["planner", "implementer", "validator"],
+  // and the validator writes the verdict that gates `done` into it. The
+  // design-guardian is the fourth: rule 7.3 has it log the published
+  // preview's URL and version there, and its UI-fit pass leaves
+  // `REVIEW(placement)` lines under the WO's own `## Open questions`. All
+  // four are correct writers of the same file at different stages.
+  "work-orders": ["planner", "implementer", "validator", "design-guardian"],
   feedback: ["feedback-triage"],
   design: ["design-guardian"],
   registry: [],

@@ -37,7 +37,9 @@ know which verb comes next; that is this command's job.
      is the one caller of `/validate` and `/regress` (constitution §4's
      routing map); `/implement` builds and stops;
    - a `ui: yes` work order with no `Signed-off:` line → `/design preview
-     WO-###`, and the preview lands in the checkpoint for sign-off;
+     WO-###`, whose published page lands in the checkpoint as a link for
+     sign-off; once the owner has answered — on the page or in the
+     session — the librarian reads it back and writes the line (rule 7.3);
    - a change to an existing artifact (§9's second class), or a commit
      under governed paths that names no work order (`untraced-change`) →
      `/sync`, the backward pass, before anything downstream moves;
@@ -50,7 +52,8 @@ know which verb comes next; that is this command's job.
      nothing an approved artifact or a defensible default answers;
    - approvals due — each in-review artifact, one line;
    - rulings due — each `/decide` item, one line per side;
-   - previews awaiting sign-off — paths, one line on what each shows;
+   - previews awaiting sign-off — the page URL and version, one line on
+     what each shows (the owner can answer in a comment there, or here);
    - the coverage line — `--check` errors/warns and `next`'s remaining
      stages, so comprehensiveness is visible, not asserted.
    The answers are owner decisions: apply them through the proper verbs

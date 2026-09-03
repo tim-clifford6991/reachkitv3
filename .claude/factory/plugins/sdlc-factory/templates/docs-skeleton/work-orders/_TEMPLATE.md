@@ -16,7 +16,7 @@ supersedes: []
 - Branch: wo/WO-XXX-<slug>
 - Estimate: ≤1 day
 - Preview: sdlc-factory/docs/design/previews/WO-XXX.html
-- Signed-off: <date>
+- Signed-off: <date> — v<n>
 
 > Front-matter carries status/ui/implements/depends-on/blocked-by/rests-on —
 > don't restate them here (0.8.0 moved `ui:` up from these bullets: it is
@@ -26,7 +26,11 @@ supersedes: []
 > `ellipsis-range` finding, never expanded. Keep `Preview:` and
 > `Signed-off:` only when `ui: yes`; delete both otherwise — these bullets,
 > like `Branch:` and `Estimate:`, are prose for humans; the parser reads
-> none of them.
+> none of them. `Preview:` names the sheet file, which is the record; the
+> published page's URL lives in the `## Log` below, where the checker
+> looks for it (rule 7.3). `Signed-off:` is the librarian's line alone,
+> written from the owner's word on that page, and it names the version
+> the word was given on.
 
 ## Goal
 <one sentence>
@@ -52,10 +56,13 @@ Consumes: … / Exposes: … (verbatim from BP)
 <how to revert safely>
 
 ## Log
-> The checkpoint any agent resumes from (constitution rule 6.1). Five
+> The checkpoint any agent resumes from (constitution rule 6.1). Six
 > line forms, newest last: `created — <agent>`, `started — <agent>`,
 > `finished — <agent> — <one line>`, `failed — <agent> — <why> — next:
-> <the step to resume at>`, and `opened — migration <version>` — the
+> <the step to resume at>`, `preview — design-guardian — v<n> — <url>`
+> (rule 7.3: one line per publication of this WO's preview sheet — the
+> only line here a checker reads, `preview-without-url`), and `opened —
+> migration <version>` — the
 > migration-only form a `factory upgrade` backfill uses when it adds this
 > section to a work order (or this template) that predates rule 6.1,
 > rather than fabricating a history of runs that never happened. A failed

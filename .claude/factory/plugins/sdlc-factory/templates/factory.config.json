@@ -109,6 +109,7 @@
       "done-without-commits": "error",
       "wave-off-record": "warn",
       "tst-without-regression": "warn",
+      "preview-without-url": "warn",
       "satisfies-superseded": "warn",
       "work-order-fanout": "warn",
       "corpus-volume": "warn",

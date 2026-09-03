@@ -15,14 +15,26 @@ Order of operations for any UI feature:
    states. A project that accumulates recurring screen shapes may keep its
    own `design/patterns.md`; the skeleton doesn't scaffold one until
    there's something to put in it.
-2. Design-guardian (or planner via design-guardian) produces a PREVIEW
-   ARTIFACT: single-file HTML or React prototype, mock data, registry
-   components only, tokens by name. Saved to
-   sdlc-factory/docs/design/previews/WO-XXX.html.
-3. User reviews the preview. Changes iterate on the preview, never on
-   production code. Sign-off recorded in the WO — and the design-guardian
-   flips the preview's registered rows in components.md from `proposed` to
-   `approved` in the same pass: a signed preview over a still-`proposed`
+2. Design-guardian (or planner via design-guardian) produces the PREVIEW
+   SHEET: single-file HTML prototype, mock data, registry components only,
+   tokens by name. Saved to
+   sdlc-factory/docs/design/previews/WO-XXX.html — the record, versioned
+   with the corpus.
+2a. The design-guardian PUBLISHES that file as an artifact and records the
+   page in two places: `- <date> preview — design-guardian — v<n> — <url>`
+   in the work order's `## Log`, and the `Preview` cell of every
+   components.md row the sheet registers. Same file path each revision, so
+   the page keeps its URL and takes the next version. The owner opens a
+   link, not a file on the machine that ran the agent — which is the whole
+   reason this step exists. `preview-without-url` (warn) reports a
+   `ui: yes` WO that reached `approved` or `done` with no such log line.
+3. Owner reviews the page and gives the word there — a comment addressed
+   to Claude, or a ruling in the session naming that URL. Changes iterate
+   on the sheet and republish as a new version, never on production code.
+   The LIBRARIAN reads the word back and writes the `Signed-off:` line
+   (`agents/librarian.md`); silence is not a sign-off. Once it stands, the
+   design-guardian flips that preview's rows in components.md from
+   `proposed` to `approved`: a signed preview over a still-`proposed`
    registry is the table lagging its own gate.
 4. Only then may the implementer write UI code — matching the approved
    preview. Deviation = validator REJECT.
