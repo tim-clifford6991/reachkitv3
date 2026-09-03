@@ -14,3 +14,4 @@
 | Wave | Goal | Work orders | Status |
 |---|---|---|---|
 | W1 | ReachKit boots: toolchain, pinned configuration, the default-deny database, and the design system's tokens, fonts and fifteen registered components stand, with the root document rendering on them, so the free scan's first screen can be cut next | WO-001 (Must), WO-005 (Must), WO-006 (Must), WO-267 (Must), WO-029 (Must), WO-030 (Must), WO-268 (Must), WO-002 (Should) | closed |
+| W2 | The landing page renders its one field and submit control, a typed domain is canonicalised and checked against the free path's admission order in a single claiming transaction, and POST /api/scan starts — or refuses — the scan and returns the address to navigate to, so JN-001 step 2's REQ-001 surface works end to end on the W1 substrate | WO-051 (Must), WO-041 (Must), WO-056 (Must), WO-057 (Must), WO-058 (Must), WO-062 (Must), WO-070 (Must) | open |
