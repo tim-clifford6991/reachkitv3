@@ -21,6 +21,8 @@ import { upgradeProject, doctrineVersion, corpusVersion } from "../src/upgrade.m
 import { emitRegistry, checkDrift, outputDir } from "../src/registry/index.mjs";
 import { computeNext, formatNext } from "../src/next.mjs";
 import { requireRoot, RootError } from "../src/root.mjs";
+import { pivotProject, PivotError } from "../src/pivot.mjs";
+import { vendorProject, VendorError } from "../src/vendor.mjs";
 import { relative } from "node:path";
 
 const USAGE = `factory-console — read-only console for an SDLC Factory corpus
@@ -36,6 +38,8 @@ const USAGE = `factory-console — read-only console for an SDLC Factory corpus
   factory-console projects            list them
   factory-console upgrade [path]      migrate one corpus to the installed doctrine
   factory-console upgrade --all       migrate every registered corpus
+  factory-console pivot [path] --decision ADR-###   archive derived artifacts, keep durable ones, relink (rule 7.5)
+  factory-console vendor [path]       copy this doctrine + console into <path>/.claude/factory (self-contained on any host)
   factory-console registry [path]         write docs/registry/generated/* (only command that writes)
   factory-console registry --check [path] diff generated output against disk; exit 1 on drift
 
@@ -45,7 +49,9 @@ const USAGE = `factory-console — read-only console for an SDLC Factory corpus
   --name N       label for register
   --dry-run      upgrade: show what would change, write nothing
   --allow-dirty  upgrade: proceed on a dirty working tree (not recommended)
-  --no-commit    upgrade: rewrite files but do not commit
+  --no-commit    upgrade, pivot: rewrite files but do not commit
+  --decision ADR-###   pivot: the accepted decision that decides-for the charter (required)
+  --slug NAME    pivot: the archive set's name (default: the decision's title)
 `;
 
 function parseArgs(argv) {
@@ -53,7 +59,7 @@ function parseArgs(argv) {
   const positional = [];
   for (let i = 0; i < argv.length; i++) {
     const a = argv[i];
-    if (a === "--port" || a === "--name") flags[a.slice(2)] = argv[++i];
+    if (a === "--port" || a === "--name" || a === "--decision" || a === "--slug") flags[a.slice(2)] = argv[++i];
     else if (a.startsWith("--")) flags[a.slice(2).replace(/-/g, "_")] = true;
     else positional.push(a);
   }
@@ -74,7 +80,7 @@ function die(msg, code = 2) {
 }
 
 const { flags, positional } = parseArgs(process.argv.slice(2));
-const command = ["register", "unregister", "projects", "upgrade", "registry", "impact", "next"].includes(positional[0]) ? positional.shift() : null;
+const command = ["register", "unregister", "projects", "upgrade", "registry", "impact", "next", "pivot", "vendor"].includes(positional[0]) ? positional.shift() : null;
 
 if (flags.help || flags.h) {
   console.log(USAGE);
@@ -135,6 +141,26 @@ try {
         console.error(`\n${failures} project${failures === 1 ? "" : "s"} still have error-severity findings.`);
         process.exit(1);
       }
+      break;
+    }
+    case "vendor": {
+      const root = rootFrom(positional);
+      const r = vendorProject(root, { dryRun: !!flags.dry_run });
+      for (const line of r.log) console.log(line);
+      break;
+    }
+    case "pivot": {
+      const root = rootFrom(positional);
+      const r = await pivotProject(root, {
+        decision: typeof flags.decision === "string" ? flags.decision : null,
+        slug: typeof flags.slug === "string" ? flags.slug : undefined,
+        dryRun: !!flags.dry_run,
+        commit: !flags.no_commit,
+      });
+      for (const line of r.log) console.log(line);
+      if (r.commit) console.log(`  committed ${r.commit}`);
+      console.log(r.report);
+      if (r.check.exitCode) process.exit(1);
       break;
     }
     case "next": {
@@ -251,5 +277,7 @@ try {
 } catch (e) {
   if (e instanceof ConfigError) die(`\n${e.message}\n`);
   if (e instanceof RootError) die(`\n${e.message}\n`);
+  if (e instanceof PivotError) die(`\npivot refused — ${e.message}\n`);
+  if (e instanceof VendorError) die(`\nvendor refused — ${e.message}\n`);
   die(`\n${e.message}\n`);
 }

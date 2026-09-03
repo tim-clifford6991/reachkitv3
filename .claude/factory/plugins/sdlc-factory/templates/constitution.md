@@ -60,15 +60,15 @@ a question.
 One job each, stated as the question it answers. **A sentence that does not
 answer that question belongs in another artifact.**
 
-| | Answers | Author | Must not contain |
-|---|---|---|---|
-| **REQ** | What must be true for a customer? | owner | argument, alternatives, vendor evidence, its own edit history |
-| **BP** | What shape must the system take? | derived | rationale for a choice — that is the ADR's |
-| **ADR** | Why this path, when another existed and reversal is expensive? | derived | restatement of the requirement |
-| **WO** | What is the bounded change, and how will we know it landed? | derived | re-derivation of the spec |
-| **TST** | Did it do what the WO said, and does the test discriminate? | derived | — |
-| **FB** | What did the built thing do to a person? | owner | triage reasoning beyond routing |
-| **JN** | What path does a person take through the product, and which promises does each step rest on? | owner-approved, analyst-drafted | code, implementation detail, restated requirement text |
+| | Answers | Author | Must not contain | Durability |
+|---|---|---|---|---|
+| **REQ** | What must be true for a customer? | owner | argument, alternatives, vendor evidence, its own edit history | durable |
+| **BP** | What shape must the system take? | derived | rationale for a choice — that is the ADR's | derived |
+| **ADR** | Why this path, when another existed and reversal is expensive? | derived | restatement of the requirement | durable |
+| **WO** | What is the bounded change, and how will we know it landed? | derived | re-derivation of the spec | derived |
+| **TST** | Did it do what the WO said, and does the test discriminate? | derived | — | derived (inside its WO) |
+| **FB** | What did the built thing do to a person? | owner | triage reasoning beyond routing | durable |
+| **JN** | What path does a person take through the product, and which promises does each step rest on? | owner-approved, analyst-drafted | code, implementation detail, restated requirement text | durable |
 
 **Rule 2.1 — requirements are sacred.** A REQ states behaviour and nothing
 else. Its changelog lives in `requirements/history/`, its answered questions
@@ -125,7 +125,11 @@ on a blueprint, decision or requirement is dispositioned by the validator
 of the first work order that implements it and observed the claim; the
 rest are dispositioned by the architect on its own read at wave close
 (rule 1.1), and only a row whose disposition changes what is promised
-reaches the owner. The budget is a ratio, not a cap: open rows per
+reaches the owner. A row a consolidation mints at merge (rule 2.6) is
+a parameter the planner chose: the planner dispositions it then and
+there (rule 1.1), never leaves it `open` for a validator that has not
+run; a row carried from a replaced order keeps the disposition it had.
+The budget is a ratio, not a cap: open rows per
 approved artifact is reported on every run, and past its threshold the
 corpus is generating claims faster than it discharges them. *Measured on
 the second live corpus: 405 open, 58 confirmed, 0 refuted — a loud index
@@ -202,6 +206,14 @@ reverting the status and naming the failed clause. Verification is **not**
 a precondition — requiring it would rebuild the queue this constitution
 removed.
 
+**Rule 3.2a — an unattended run records what it would have asked.** The
+write gate's question branch — a subagent writing outside its §4 row — is
+a prompt, and a prompt nobody answers stalls the run. Under
+`SDLC_FACTORY_GUARD=log` the write is allowed and the fact is written
+where the next agent resumes: the work order's own `## Log` (rule 6.1),
+or `registry/guard.md` for a file with no log. The librarian audits those
+lines on `/sync`; the main-session refusal never relaxes.
+
 **Rule 3.3 — refusal blocks only where something enforces it.** Check which
 of CI status checks, branch protection, or a project-wide pre-commit hook
 actually hold — a platform/plan decision, not an engineering one. Where
@@ -260,7 +272,8 @@ the loop or by an owner verb, never something the owner must remember. A
 skill is loaded by exactly one agent (the artifact's author) and cited by
 the others that write the same file; a system verb has exactly one caller.
 A verb with no caller, or a skill with no loader, is folded or deleted at
-the next rung. This table is the only place routing is stated: the router
+the next rung — 0.12.0 folded `/status` into `/factory`'s state report
+and `/blueprint` into `/expand-requirement --approved`. This table is the only place routing is stated: the router
 hook renders its `owner` rows every turn and restates nothing.
 
 **Typing a verb.** The plugin installs namespaced, and the form that
@@ -276,15 +289,15 @@ the prose name verbs bare. This paragraph is the one home for that rule.
 | Stage | Verb | Caller | Agent | Loads skill | Model |
 |---|---|---|---|---|---|
 | cockpit | `/factory` | owner | orchestrator (this session) | — | owner's |
-| intake | `/require` | owner | requirements-analyst | prd-writing · journey-writing · conflict-detection | fable |
+| intake | `/require` | owner | requirements-analyst | prd-writing · journey-writing · conflict-detection | opus |
 | intake | `/review` | `/require` · `/requirement-cleanup` (rule 3.4) | reviewer | review-rounds | opus |
-| cleanup | `/requirement-cleanup` | owner | requirements-analyst · architect (anchors) | cleanup-routing | fable |
-| cleanup | `/relink` | `/requirement-cleanup` | architect · planner | — | fable |
-| decision | `/decide` | owner | architect | — | fable |
-| expand | `/expand-requirement` | `/factory` | architect · planner | blueprint-writing | fable |
-| cut | `/workorder` (cut · consolidate) | `/factory` | planner | work-order-writing · wave-planning | fable |
+| cleanup | `/requirement-cleanup` | owner | requirements-analyst · architect (anchors) | cleanup-routing | opus |
+| cleanup | `/relink` | `/requirement-cleanup` | architect · planner | — | opus |
+| decision | `/decide` | owner | architect | — | opus |
+| expand | `/expand-requirement` | `/factory` | architect · planner | blueprint-writing | opus |
+| cut | `/workorder` (cut · consolidate) | `/factory` | planner | work-order-writing · wave-planning | opus |
 | preview | `/design` | `/factory` (a `ui: yes` WO with no signed preview) | design-guardian | design-system | sonnet |
-| wave | `/wave` | owner | planner (propose) · librarian (write · show · close) · architect (close: upstream rows) | — | fable · haiku |
+| wave | `/wave` | owner | planner (propose) · librarian (write · show · close) · architect (close: upstream rows) | — | opus · haiku |
 | build | `/implement` | `/factory` | implementer | — | sonnet |
 | verify | `/validate` | `/factory` | design-guardian (UI-fit) · validator | — | sonnet |
 | verify | `/regress` | `/factory` | validator | — | sonnet |
@@ -293,8 +306,6 @@ the prose name verbs bare. This paragraph is the one home for that rule.
 | state | `/console` | `/factory` (`next` · `--check`) | the binary | — | — |
 | install | `/factory-init` | owner, once, before a corpus exists | main session (scaffolding exemption) | — | owner's |
 | install | `/codebase-scan` | `/factory-init` (brownfield) | requirements-analyst · architect · design-guardian | (each its own) | per agent |
-| *fold 0.12.0* | `/status` | none — its content is `next` plus the checkpoint's coverage line | librarian | — | haiku |
-| *fold 0.12.0* | `/blueprint` | none — `/expand-requirement` step 2 is the same dispatch | architect | blueprint-writing | fable |
 
 **Rule 4.1 — delegate.** Route stage work to the matching agent; keep
 orchestrator context clean. Agents run in parallel only on disjoint
@@ -371,6 +382,19 @@ least one journey step, or states why it cannot be. The journey is the
 user's view of the system; a requirement on no journey is a promise nobody
 can walk to.
 
+**Rule 5.8 — two durability classes, declared in the grammar.** Every
+artifact type is `durable` (what the product promises and why, and what
+the built thing did to a person: REQ, JN, ADR, FB, the charter, evidence)
+or `derived` (what the current shape needs: BP, WO, the registry, the
+design system). The class is declared per type in `factory.config.json`
+and read by `factory-console pivot`; a type without one is refused there,
+never guessed. A durable artifact never carries a `blocked-by` or
+`rests-on` row whose only home is a derived one — the claim outlives the
+shape, so it is stated where it will survive. *Measured across the first
+product's life: three restarts, and the second corpus carried nothing
+from the first — 164,811 lines discarded and the product re-transcribed
+from BUILD.md by hand.*
+
 ## 6. Backward pass
 
 Any change to code, tests or feedback triggers a drift check upstream. Any
@@ -406,6 +430,18 @@ dependencies.
   nothing. A corpus-wide horizontal pass belongs to `/requirement-cleanup`
   alone. *Learned at 66 simultaneous drafts: every seam edit rippled
   through all of them, and nothing reached a blueprint.*
+- **7.5 A restart is a decision, not a directory.** A pivot runs only
+  through `factory-console pivot`, which refuses without an `accepted`
+  decision whose `decides-for` names the charter and states why the
+  shape is being discarded and what the next shape must keep. It
+  archives every derived artifact under `archive/<date>-<slug>/`, keeps
+  every durable one in place, rewrites each surviving artifact's edges
+  from an archived blueprint or work order to the requirements that node
+  reached, and leaves a `REVIEW(gap)` line wherever it could not
+  (`pivot-relink` keeps reporting those). `archive/` is written by that
+  command alone, from the shell — no agent owns it and no verb writes
+  there; the guard refuses everyone. The third restart cannot repeat the
+  first when the first's reason is a file the third must cite.
 
 ## 8. What does not change
 
