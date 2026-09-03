@@ -2,55 +2,55 @@
   "coverage": {
     "satisfies": {
       "carrying": 44,
-      "total": 436
+      "total": 438
     },
     "covers": {
       "carrying": 32,
-      "total": 436
+      "total": 438
     },
     "implements": {
-      "carrying": 260,
-      "total": 436
+      "carrying": 261,
+      "total": 438
     },
     "decides-for": {
       "carrying": 30,
-      "total": 436
+      "total": 438
     },
     "about": {
       "carrying": 0,
-      "total": 436
+      "total": 438
     },
     "depends-on": {
-      "carrying": 385,
-      "total": 436
+      "carrying": 386,
+      "total": 438
     },
     "blocked-by": {
       "carrying": 4,
-      "total": 436
+      "total": 438
     },
     "cites-retired": {
       "carrying": 0,
-      "total": 436
+      "total": 438
     },
     "supersedes": {
       "carrying": 23,
-      "total": 436
+      "total": 438
     },
     "rests-on": {
       "carrying": 281,
-      "total": 436
+      "total": 438
     },
     "code": {
       "carrying": 63,
-      "total": 436
+      "total": 438
     },
     "exercises": {
       "carrying": 6,
-      "total": 436
+      "total": 438
     },
     "origin": {
       "carrying": 0,
-      "total": 436
+      "total": 438
     }
   },
   "nodes": {
@@ -4736,6 +4736,16 @@
         "WO-267"
       ],
       "file": "sdlc-factory/docs/work-orders/WO-267.md"
+    },
+    "TST-006": {
+      "id": "TST-006",
+      "type": "validation",
+      "title": "WO-270 validation report",
+      "status": "pass",
+      "validates": [
+        "WO-270"
+      ],
+      "file": "sdlc-factory/docs/work-orders/WO-270.md"
     },
     "WO-001": {
       "id": "WO-001",
@@ -11232,7 +11242,7 @@
       "id": "WO-270",
       "type": "work-order",
       "title": "The repository's top-level set is asserted against structure.md rule 7 as amended — `.claude/` admitted",
-      "status": "approved",
+      "status": "done",
       "implements": [
         "BP-001"
       ],
@@ -11243,7 +11253,7 @@
       "rests-on": [
         {
           "claim": "`structure.md` rule 7 opens with \"A new top-level directory requires an ADR\" and, as amended by the librarian's backward pass (commit 1fdab38), admits `.claude/` by a registry edit rather than by an ADR. This order asserts the set exactly as the registry states it and takes that amendment as the authority on the set — the test's job is to agree with `structure.md`, not to rule on how `structure.md` was changed. If an ADR later records the admission, nothing here moves; if the admission is reversed, reversal is one entry removed from `allowed` and the comment above it.",
-          "disposition": "open"
+          "disposition": "confirmed"
         }
       ],
       "supersedes": [],
@@ -11316,6 +11326,22 @@
       ],
       "supersedes": [],
       "file": "sdlc-factory/docs/work-orders/WO-273.md"
+    },
+    "WO-274": {
+      "id": "WO-274",
+      "type": "work-order",
+      "title": "tests/db/migration-naming.test.ts's directory-enumeration case asserts membership, not an exact two-file snapshot",
+      "status": "approved",
+      "implements": [
+        "BP-002"
+      ],
+      "depends-on": [
+        "WO-267"
+      ],
+      "blocked-by": [],
+      "rests-on": [],
+      "supersedes": [],
+      "file": "sdlc-factory/docs/work-orders/WO-274.md"
     }
   }
 }
