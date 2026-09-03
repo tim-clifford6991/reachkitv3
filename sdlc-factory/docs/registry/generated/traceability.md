@@ -7,13 +7,13 @@
 - `satisfies` is projected from 44 of 63 blueprints — the rest are silent on it.
 - `implements` is projected from 262 of 262 work orders — the rest are silent on it.
 - `covers` is projected from 32 of 63 blueprints — the rest are silent on it.
-- `verdict` is projected from 13 of 16 validation nodes — the rest declare none and render `unknown`.
+- `verdict` is projected from 14 of 17 validation nodes — the rest declare none and render `unknown`.
 
 One row per chain leg reached from an approved requirement's `satisfies` edges — this is the DERIVATION chain (rule 5.4): `satisfies` means *this node was cut from that requirement* and it is the only gate-bearing edge walked here. `—` means the chain stops there — nothing downstream cites this node (yet, or ever; see orphans.md for which).
 
 | REQ | BP | WO | TST |
 |---|---|---|---|
-| REQ-001 | BP-022 | WO-051 | — |
+| REQ-001 | BP-022 | WO-051 | TST-017 (pass) |
 | REQ-001 | BP-022 | WO-061 | — |
 | REQ-001 | BP-022 | WO-062 | — |
 | REQ-001 | BP-022 | WO-063 | — |
@@ -21,7 +21,7 @@ One row per chain leg reached from an approved requirement's `satisfies` edges �
 | REQ-001 | BP-022 | WO-068 | — |
 | REQ-001 | BP-022 | WO-069 | — |
 | REQ-001 | BP-022 | WO-070 | — |
-| REQ-002 | BP-022 | WO-051 | — |
+| REQ-002 | BP-022 | WO-051 | TST-017 (pass) |
 | REQ-002 | BP-022 | WO-061 | — |
 | REQ-002 | BP-022 | WO-062 | — |
 | REQ-002 | BP-022 | WO-063 | — |
@@ -29,7 +29,7 @@ One row per chain leg reached from an approved requirement's `satisfies` edges �
 | REQ-002 | BP-022 | WO-068 | — |
 | REQ-002 | BP-022 | WO-069 | — |
 | REQ-002 | BP-022 | WO-070 | — |
-| REQ-003 | BP-023 | WO-051 | — |
+| REQ-003 | BP-023 | WO-051 | TST-017 (pass) |
 | REQ-003 | BP-023 | WO-056 | — |
 | REQ-003 | BP-023 | WO-057 | — |
 | REQ-003 | BP-023 | WO-058 | — |

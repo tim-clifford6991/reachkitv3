@@ -2,55 +2,55 @@
   "coverage": {
     "satisfies": {
       "carrying": 44,
-      "total": 450
+      "total": 451
     },
     "covers": {
       "carrying": 32,
-      "total": 450
+      "total": 451
     },
     "implements": {
       "carrying": 262,
-      "total": 450
+      "total": 451
     },
     "decides-for": {
       "carrying": 31,
-      "total": 450
+      "total": 451
     },
     "about": {
       "carrying": 0,
-      "total": 450
+      "total": 451
     },
     "depends-on": {
       "carrying": 387,
-      "total": 450
+      "total": 451
     },
     "blocked-by": {
       "carrying": 5,
-      "total": 450
+      "total": 451
     },
     "cites-retired": {
       "carrying": 0,
-      "total": 450
+      "total": 451
     },
     "supersedes": {
       "carrying": 23,
-      "total": 450
+      "total": 451
     },
     "rests-on": {
       "carrying": 283,
-      "total": 450
+      "total": 451
     },
     "code": {
       "carrying": 63,
-      "total": 450
+      "total": 451
     },
     "exercises": {
       "carrying": 6,
-      "total": 450
+      "total": 451
     },
     "origin": {
       "carrying": 0,
-      "total": 450
+      "total": 451
     }
   },
   "nodes": {
@@ -146,8 +146,8 @@
       "blocked-by": [],
       "rests-on": [
         {
-          "claim": "A maintained public-suffix list is available to the build (the ICANN/Mozilla PSL is the de facto one), so 'has a public suffix' is decidable without a network call at request time",
-          "disposition": "open"
+          "claim": "A maintained public-suffix list is available to the build (the ICANN/Mozilla PSL is the de facto one), so 'has a public suffix' is decidable without a network call at request time. **Dispositioned by WO-051's validator (TST-017), 2026-09-03, constitution rule 2.3b** — this decision's own row, first spent by WO-051 (its `domain.ts` is the sole consumer of the public-suffix table). Confirmed: `src/lib/scan/domain.ts` depends on `psl@1.15.0` (npm), which bundles the Mozilla/ICANN Public Suffix List into its own published package (`node_modules/psl/dist/*`) and exposes no network call anywhere in its `parse`/`get`/`isValid` surface — independently read from the installed package, not taken on the implementer's word. `domain.ts`'s module-scope smoke assertion (`pslParse(\"example.com\")` must report `listed: true`) runs on every import and the full suite (430/430, including 34/34 of this WO's own fixture file) passed, which is only possible if the table loaded. A dedicated test (`domain/parse · a well-formed domain that cannot resolve is accepted`) spies on `dns.lookup`, `dns.resolve` and `fetch` across a real parse and asserts none is called. The claim holds as stated.",
+          "disposition": "confirmed"
         }
       ],
       "supersedes": [],
@@ -4880,6 +4880,16 @@
       ],
       "file": "sdlc-factory/docs/work-orders/WO-002.md"
     },
+    "TST-017": {
+      "id": "TST-017",
+      "type": "validation",
+      "title": "WO-051 validation report",
+      "status": "pass",
+      "validates": [
+        "WO-051"
+      ],
+      "file": "sdlc-factory/docs/work-orders/WO-051.md"
+    },
     "WO-001": {
       "id": "WO-001",
       "type": "work-order",
@@ -5988,7 +5998,7 @@
       "id": "WO-051",
       "type": "work-order",
       "title": "The one canonical domain parser — parseDomain, CanonicalDomain, DomainProblem",
-      "status": "approved",
+      "status": "done",
       "implements": [
         "BP-022",
         "BP-023",
@@ -6001,11 +6011,11 @@
       "rests-on": [
         {
           "claim": "A maintained public-suffix list is available to the build (the ICANN/Mozilla PSL is the de facto one), so 'has a public suffix' is decidable without a network call at request time — ADR-020's own row, inherited because this WO is where it is first spent",
-          "disposition": "open"
+          "disposition": "confirmed"
         },
         {
           "claim": "The Next.js + TypeScript scaffold (package.json, tsconfig.json, next.config.ts) exists before this WO runs. It is BP-001's, not this node's — `structure.md` puts `next.config.ts` in BP-001's globs — and this repo carries none of it today",
-          "disposition": "open"
+          "disposition": "confirmed"
         }
       ],
       "supersedes": [],
