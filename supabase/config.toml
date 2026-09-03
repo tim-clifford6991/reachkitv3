@@ -1,0 +1,61 @@
+# supabase/config.toml
+#
+# BP-002 `## Module / boundary`: "supabase/ (config, baseline schema, RLS
+# policies)". `BUILD.md` §1: "DB + auth | Supabase (Postgres, RLS
+# default-deny, magic-link auth) | `dbAdmin` server-only".
+#
+# **Fact, not a claim (rule 1.2):** this file was hand-authored to the shape
+# `supabase init` produces — the Supabase CLI and Docker are both
+# unavailable on this build host (owner ruling, 2026-09-03), so `supabase
+# init` itself did not run here. Nothing below configures a secret; every
+# credential comes from `env` (BP-005, WO-005) at runtime, never from this
+# file. `tests/db/migration-naming.test.ts` asserts the auth shape below
+# against this file's own text — it is not validated by the CLI.
+project_id = "reachkit"
+
+[api]
+enabled = true
+port = 54321
+schemas = ["public", "graphql_public"]
+extra_search_path = ["public", "extensions"]
+max_rows = 1000
+
+[db]
+port = 54322
+# The applied schema in this build is exercised on native PostgreSQL 18
+# (owner ruling, 2026-09-03) rather than a Supabase-managed local image.
+major_version = 18
+
+[db.migrations]
+# `structure.md` rows for `supabase/**`: migrations live in
+# `supabase/migrations/`, one ordered directory, applied in filename order.
+path = "supabase/migrations"
+
+[studio]
+enabled = true
+port = 54323
+
+[auth]
+enabled = true
+site_url = "http://127.0.0.1:3000"
+additional_redirect_urls = ["http://127.0.0.1:3000"]
+jwt_expiry = 3600
+enable_refresh_token_rotation = true
+refresh_token_reuse_interval = 10
+# Provisioning happens only behind a completed Stripe payment (BP-032) —
+# there is no public self-serve sign-up form.
+enable_signup = false
+
+[auth.email]
+enable_signup = false
+# Magic-link (email OTP) sign-in only — `BUILD.md` §1: "Supabase (Postgres,
+# RLS default-deny, magic-link auth)". No confirmation step beyond the link
+# itself.
+enable_confirmations = false
+# Password sign-in is disabled: magic-link is the only credential this
+# product issues.
+enable_password_signin = false
+
+[auth.sms]
+enable_signup = false
+enable_confirmations = false

@@ -12,7 +12,13 @@ know which verb comes next; that is this command's job.
 1. **Classify** the input per constitution §9: new requirement · change
    to a named artifact · question · feedback on built software ·
    architectural constraint. Echo the classification in one line each.
-   No input? Skip to 2.
+   No input? Report the state first — this is what `/status` did until
+   0.12.0 folded it here: `factory-console next`'s headline verbatim,
+   then `--check`'s error/warn counts and the coverage lines its notices
+   carry (fan-out, volume, assumptions), then the open wave's work
+   orders by status and what blocks them (`registry/generated/blocked.md`
+   and `assumptions.md`, never re-derived by hand) — and the single most
+   valuable next action. Then continue at 2.
 2. **Consult the state**: run `factory-console next` from the project
    root (binary resolution per `commands/console.md`). Its headline plus
    the classification pick the segment.

@@ -8,7 +8,7 @@ description: Rules for maintaining the traceability registry linking REQ → BP 
 The registry is generated, never written (constitution rule 5.1). There is
 no hand-maintained traceability table to update — `registry/generated/traceability.md`
 is projected from every artifact's own front-matter, and the librarian
-regenerates it on /sync and /status.
+regenerates it on /sync and for /factory's state report.
 
 The console also reads a derived layer beneath the artifact graph: commit
 references and code anchors (rule 5.6). It resolves each commit's

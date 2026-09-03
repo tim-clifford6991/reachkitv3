@@ -15,6 +15,8 @@ import { fileURLToPath } from "node:url";
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 
+import { RULES as CHECK_RULES } from "./check/rules/index.mjs";
+
 export class ConfigError extends Error {}
 
 /** Where the shipped defaults live, relative to this file. There is exactly
@@ -73,20 +75,21 @@ const TOP_KEYS = new Set([
   "docsRoot", "grammar", "types", "externalIdPrefixes", "relations", "edges", "statuses", "fields",
   "metaFields", "knownKeys", "traceability", "structureMap", "charter",
   "schema", "code", "checks", "bodyCap", "rowCap", "charterCap", "typeCheck",
+  // 0.12.0 — where `factory-console pivot` archives derived artifacts, a
+  // directory under docsRoot the parser never walks (rule 7.5).
+  "archive",
 ]);
 const GRAMMARS = new Set(["head-block", "front-matter"]);
-const TYPE_KEYS = new Set(["id", "dir", "table", "label"]);
+// `durability` (0.12.0, rule 5.8): "durable" survives a pivot, "derived" is
+// archived by one. Optional on read — a head-block corpus predates it — and
+// required only by `factory-console pivot`, which refuses rather than guesses.
+const TYPE_KEYS = new Set(["id", "dir", "table", "label", "durability"]);
+const DURABILITY = new Set(["durable", "derived"]);
 const FIELD_KEYS = new Set(["key", "type", "true", "false", "tolerate"]);
 const SCHEMA_KINDS = new Set(["supabase", "prisma", "drizzle"]);
-const RULES = new Set([
-  "dangling-id", "registry-contradiction", "generated-drift", "status-off-grammar",
-  "field-vocabulary", "ellipsis-range", "orphan-requirement",
-  "done-without-validation", "silent-index", "tst-heading-off-grammar",
-  "edge-off-schema", "requirement-off-journey", "stale-blueprint", "untraced-change", "done-without-commits",
-  "wave-off-record", "tst-without-regression", "satisfies-superseded",
-  // 0.11.0 — altitude (docs/design/22-proposal-0.11.0-altitude.md).
-  "work-order-fanout", "corpus-volume", "assumption-budget", "open-assumption-on-done",
-]);
+// The rule set is the checker's own list (check/rules/index.mjs) — derived
+// from the rule files, never a third copy here (proposal 24, S2).
+const RULES = new Set(CHECK_RULES);
 // The four altitude thresholds (0.11.0), each with its shipped default in
 // templates/factory.config.json: a floor on work orders per approved
 // requirement (rule 2.6), a budget of live words per approved requirement
@@ -111,8 +114,12 @@ const EDGE_KEYS = new Set(["from", "to"]);
 // The graph's node kinds (the constitution's semantic types, front-matter
 // grammar) plus the not-yet-wired "journey". `"*"` means any of these;
 // `"same"` (to-side only) means "whatever the from-side resolved to".
+// `charter` (0.12.0) is the one non-artifact end an edge may name: a pivot
+// decision `decides-for` the charter (rule 7.5). No node is minted for it —
+// `factory-console pivot` verifies that edge from the decision's own
+// front-matter — so it is a contract entry, never a graph edge.
 const NODE_TYPES = new Set([
-  "requirement", "blueprint", "decision", "work-order", "validation", "feedback", "journey",
+  "requirement", "blueprint", "decision", "work-order", "validation", "feedback", "journey", "charter",
 ]);
 // The six per-type status vocabularies the front-matter grammar declares
 // (constitution rule 2.2b — "one status vocabulary per artifact type, and
@@ -149,6 +156,7 @@ function validate(c) {
       const at = `types[${t?.id ?? "?"}]`;
       if (!t || typeof t !== "object") { bad.push(`${at} must be an object`); continue; }
       for (const k of Object.keys(t)) if (!TYPE_KEYS.has(k)) bad.push(`${at}: unknown key "${k}"`);
+      if (t.durability !== undefined && !DURABILITY.has(t.durability)) bad.push(`${at}.durability must be "durable" or "derived"`);
       need(typeof t.id === "string" && /^[A-Z][A-Z0-9]*$/.test(t.id), `${at}: id must be an uppercase prefix`);
       need(typeof t.label === "string" && t.label, `${at}: label is required`);
       // The one structural rule the whole model turns on.
@@ -323,6 +331,9 @@ function validate(c) {
       need(c.checks.severity?.[rule] !== undefined, `checks.severity is missing rule "${rule}"`);
     }
   }
+
+  need(c.archive === undefined || c.archive === null || (typeof c.archive === "string" && /^[A-Za-z0-9_.-]+$/.test(c.archive)),
+    "archive must be a single directory name under docsRoot (or null)");
 
   for (const k of ["bodyCap", "rowCap", "charterCap"]) {
     need(c[k] === null || (Number.isInteger(c[k]) && c[k] > 0), `${k} must be null or a positive integer`);

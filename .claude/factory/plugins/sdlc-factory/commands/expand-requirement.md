@@ -20,7 +20,8 @@ After a requirement cleanup that superseded any requirements, run
 cuts a duplicate for behaviour the retired twin already covers.
 
 Scope ($ARGUMENTS): one REQ id, several REQ ids, or `--approved` for
-every requirement currently `status: approved`.
+every requirement currently `status: approved` — the pass `/blueprint`
+used to run until 0.12.0 folded it here; step 2 below is that dispatch.
 
 Per requirement in scope:
 
