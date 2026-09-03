@@ -8,7 +8,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint .",
-    "test": "vitest run --project node --project ui",
+    "test": "vitest run --project node --project ui --project db",
     "test:layout": "vitest run --project layout",
     "typecheck": "tsc --noEmit",
     "db:types": "supabase gen types typescript --local > src/lib/db/types.generated.ts"
