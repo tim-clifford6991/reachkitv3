@@ -1,0 +1,187 @@
+// tests/ui/layout/browser.ts
+//
+// BP-018 `## Module / boundary`: "Its *runner* (a real browser driver as a
+// dev dependency and a script) is BP-001's root toolchain, not this
+// module's." This is that runner: the `layout` vitest project's
+// `globalSetup`/teardown, plus `withPage()`, the one way any test file in
+// this project opens a page.
+//
+// `tests/setup.ts` throws on `fetch()`/`http.request()`/`https.request()`
+// in every project, `layout` included (WO-269 file plan: "Leave the
+// sequencer and setupFiles alone"). `chromium.launch()` never trips it —
+// WO-269 rests-on row 5: "Playwright's own transport to Chromium (a
+// child-process pipe, not `http.request`) does not trip that refusal."
+// `chromium.connect(wsEndpoint)`, the usual way to share one browser across
+// worker processes, is a WebSocket — which **does** trip it, confirmed
+// during this order's own build (`browserType.connect: tests/setup.ts: a
+// test attempted a real network call via http.request()`). So `withPage`
+// below launches its own Chromium per call rather than sharing one across
+// processes; `globalSetup`'s one launch-and-close is a preflight check only,
+// so the whole run fails before any test file runs when Chromium is
+// missing, rather than at the first test's own attempt.
+import { spawn, type ChildProcess } from "node:child_process";
+import { readFileSync, rmSync, writeFileSync } from "node:fs";
+import net from "node:net";
+import os from "node:os";
+import path from "node:path";
+import { chromium, type Page } from "playwright";
+import { enumerateRoutes } from "./routes";
+
+const ROOT = path.resolve(__dirname, "../../..");
+const STATE_FILE = path.join(os.tmpdir(), "wo-269-layout-browser-state.json");
+
+interface BrowserState {
+  baseURL: string | null;
+}
+
+/** ADR-093 decision 6, amended 2026-09-03: "the viewport carries a height …
+ *  480 CSS px tall." The promise this serves is REQ-099 criterion 1; the
+ *  height's own derivation is `registry/evidence/REQ-099.md`'s, not
+ *  restated here. This is this file's one named constant; no other literal
+ *  in `tests/ui/layout/**` names a viewport dimension. */
+export const VIEWPORT_HEIGHT_PX = 480;
+
+function getFreePort(): Promise<number> {
+  return new Promise((resolve, reject) => {
+    const srv = net.createServer();
+    srv.unref();
+    srv.on("error", reject);
+    srv.listen(0, () => {
+      const address = srv.address();
+      if (address && typeof address === "object") {
+        const port = address.port;
+        srv.close(() => resolve(port));
+      } else {
+        srv.close(() => reject(new Error("tests/ui/layout/browser.ts: could not allocate a free port")));
+      }
+    });
+  });
+}
+
+function waitForServer(url: string, timeoutMs: number): Promise<void> {
+  const deadline = Date.now() + timeoutMs;
+  return new Promise((resolve, reject) => {
+    const attempt = (): void => {
+      fetch(url)
+        .then(() => resolve())
+        .catch((err: unknown) => {
+          if (Date.now() > deadline) {
+            reject(
+              new Error(
+                `tests/ui/layout/browser.ts: the built app never became ready at ${url} (${String(err)})`
+              )
+            );
+          } else {
+            setTimeout(attempt, 200);
+          }
+        });
+    };
+    attempt();
+  });
+}
+
+function runToCompletion(bin: string, args: string[]): Promise<void> {
+  return new Promise((resolve, reject) => {
+    const child = spawn(bin, args, { cwd: ROOT, stdio: "inherit" });
+    child.on("exit", (code) =>
+      code === 0 ? resolve() : reject(new Error(`${bin} ${args.join(" ")} exited ${code}`))
+    );
+    child.on("error", reject);
+  });
+}
+
+function chromiumMissingError(err: unknown): Error | undefined {
+  const message = err instanceof Error ? err.message : String(err);
+  if (!message.includes("Executable doesn't exist")) return undefined;
+  return new Error(
+    "tests/ui/layout/browser.ts: no Chromium binary is installed for Playwright. " +
+      "Run `npx playwright install chromium` (add `--with-deps` if it then fails on a " +
+      "missing system library), then re-run `npm run test:layout`. This is a hard " +
+      "failure, never a skip — a skipped sweep reads exactly like a clean one.\n\n" +
+      message
+  );
+}
+
+let appProcess: ChildProcess | undefined;
+
+export default async function setup(): Promise<() => Promise<void>> {
+  // Preflight: launch-and-close once so a missing Chromium binary fails the
+  // whole run before any test file executes, not just the first one that
+  // happens to call `withPage`.
+  try {
+    const probe = await chromium.launch({ headless: true });
+    await probe.close();
+  } catch (err) {
+    const missing = chromiumMissingError(err);
+    if (missing) throw missing;
+    throw err;
+  }
+
+  const routes = enumerateRoutes(path.join(ROOT, "src/app"));
+  let baseURL: string | null = null;
+
+  if (routes.length > 0) {
+    const port = await getFreePort();
+    const nextBin = path.join(ROOT, "node_modules", ".bin", "next");
+    await runToCompletion(nextBin, ["build"]);
+    appProcess = spawn(nextBin, ["start", "-p", String(port)], { cwd: ROOT, stdio: "inherit" });
+    baseURL = `http://localhost:${port}`;
+    await waitForServer(baseURL, 30_000);
+  }
+
+  const state: BrowserState = { baseURL };
+  writeFileSync(STATE_FILE, JSON.stringify(state), "utf8");
+
+  return async function teardown(): Promise<void> {
+    if (appProcess) appProcess.kill();
+    rmSync(STATE_FILE, { force: true });
+  };
+}
+
+function readState(): BrowserState {
+  const raw = readFileSync(STATE_FILE, "utf8");
+  return JSON.parse(raw) as BrowserState;
+}
+
+/** The base URL of the built app, or `null` when the route sweep found
+ *  nothing to render (today: `src/app/` holds no route — WO-269 rests-on
+ *  row 5) and no server was started. */
+export function getBaseURL(): string | null {
+  return readState().baseURL;
+}
+
+/** Launches its own Chromium (never a shared connection — see this file's
+ *  header comment), opens a page in a fresh context sized at
+ *  `width` × `VIEWPORT_HEIGHT_PX`, runs `fn`, and tears everything down
+ *  again. `extraHTTPHeaders` carries a `(hosted)` route's `Host` header
+ *  (`routes.ts`'s `HOST_FIXTURES`), never used for anything else. On a
+ *  missing Chromium binary this fails the same way `globalSetup`'s
+ *  preflight does — never a skip. */
+export async function withPage<T>(
+  width: number,
+  fn: (page: Page) => Promise<T>,
+  options: { extraHTTPHeaders?: Record<string, string> } = {}
+): Promise<T> {
+  let browser;
+  try {
+    browser = await chromium.launch({ headless: true });
+  } catch (err) {
+    const missing = chromiumMissingError(err);
+    if (missing) throw missing;
+    throw err;
+  }
+  try {
+    const context = await browser.newContext({
+      viewport: { width, height: VIEWPORT_HEIGHT_PX },
+      extraHTTPHeaders: options.extraHTTPHeaders,
+    });
+    try {
+      const page = await context.newPage();
+      return await fn(page);
+    } finally {
+      await context.close();
+    }
+  } finally {
+    await browser.close();
+  }
+}

@@ -2,55 +2,55 @@
   "coverage": {
     "satisfies": {
       "carrying": 44,
-      "total": 434
+      "total": 440
     },
     "covers": {
       "carrying": 32,
-      "total": 434
+      "total": 440
     },
     "implements": {
-      "carrying": 260,
-      "total": 434
+      "carrying": 261,
+      "total": 440
     },
     "decides-for": {
       "carrying": 30,
-      "total": 434
+      "total": 440
     },
     "about": {
       "carrying": 0,
-      "total": 434
+      "total": 440
     },
     "depends-on": {
-      "carrying": 385,
-      "total": 434
+      "carrying": 386,
+      "total": 440
     },
     "blocked-by": {
       "carrying": 4,
-      "total": 434
+      "total": 440
     },
     "cites-retired": {
       "carrying": 0,
-      "total": 434
+      "total": 440
     },
     "supersedes": {
       "carrying": 23,
-      "total": 434
+      "total": 440
     },
     "rests-on": {
       "carrying": 281,
-      "total": 434
+      "total": 440
     },
     "code": {
       "carrying": 63,
-      "total": 434
+      "total": 440
     },
     "exercises": {
       "carrying": 6,
-      "total": 434
+      "total": 440
     },
     "origin": {
       "carrying": 0,
-      "total": 434
+      "total": 440
     }
   },
   "nodes": {
@@ -750,11 +750,11 @@
       "rests-on": [
         {
           "claim": "A layout engine is available wherever the conformance suite of Decision 6 runs — a real browser, not jsdom. In jsdom every box metric is 0, so `scrollWidth <= clientWidth` and every containment assertion in Decision 6 holds for every element on every page, and the suite reports a clean run over a corpus it never measured. No test runner exists on disk yet; the work order that first creates `tests/ui/layout/` is where this is discharged, and Decision 6 point 5's canary is what discharges it.",
-          "disposition": "open"
+          "disposition": "confirmed"
         },
         {
           "claim": "Nothing in this repository enforces a failing suite (rule 3.3). Checked 2026-09-02: no `.github/workflows`, no `.husky`, no `core.hooksPath`, no non-sample hook in `.git/hooks`. Until one exists a layout failure is recorded, not enforced — the same platform gap ADR-010 point 6 records for the presentation sweeps.",
-          "disposition": "open"
+          "disposition": "confirmed"
         },
         {
           "claim": "No approved requirement promises that the product works at every screen size. Checked 2026-09-02 over all of `requirements/`: the words mobile, responsive, breakpoint, screen size and phone appear in none of them, and the single narrow-viewport clause in the corpus is REQ-040 criterion 5, which promises only that the three destinations stay reachable. This ADR therefore derives its scope from an owner ruling and from `BUILD.md` §4, not from an approved promise — and the promise itself is owed (see Consequences, 'What the analyst owes').",
@@ -890,6 +890,14 @@
         {
           "claim": "Inngest (or Vercel cron plus a queue) delivers at-least-once with a durable retry and a per-function concurrency limit, so every job below is written idempotent rather than exactly-once",
           "disposition": "open"
+        },
+        {
+          "claim": "Drift assessment, 2026-09-03 (constitution §6; rule 2.2a — record the assessment, move nothing): the only code under this node's `code:` today is `src/jobs/.gitkeep`, placed by b172edf (`feat(WO-001): Next.js toolchain, build configuration and root config files`); `tests/jobs/` does not exist. WO-001's validation report puts that file in scope deliberately — File scope: `.gitkeep` under `src/app`, `src/jobs`, `src/lib`, `src/ui`, `supabase` — required by the WO's own test — and records its criterion-2 mutation as discriminating (Deleted `src/ui/.gitkeep` and the now-empty dir → failed). A placeholder contradicts nothing this node declares: the `## Public interface` union `type JobId` of exactly seven ids, the one-file-per-job layout under `## Module / boundary` and decision 4's single platform file are all still unwritten, and WO-016 (`approved`, `implements: [BP-003]`) is the order that writes them. The code and the blueprint are compatible and neither is the wrong source of truth. This row is discharged for that commit only; a later commit under these globs that names no work order implementing this node is a fresh drift, re-read against this node from scratch.",
+          "disposition": "confirmed"
+        },
+        {
+          "claim": "`tests/jobs/**` stays in `code:` as a forward declaration although the directory does not exist (rule 1.1, ruled 2026-09-03). Derivation: rule 5.6's `code: []` clause is for a node that governs no code, not for a glob whose directory is still empty; the blueprint-writing skill has container nodes anchor directories and this node is a container; WO-016's file plan names `tests/jobs/content-jobs.test.ts` as NEW; and 84 of the corpus's 86 blueprint test globs point at directories that do not exist yet, so dropping this one would make this node the single exception to a corpus-wide convention and would be reinstated the day WO-016 lands. Cost of reversing: one front-matter line — but the console derives file → blueprint from it, so its absence would be felt exactly when WO-016's tests arrive with no governing node. Re-observed by WO-016's validator when those tests exist.",
+          "disposition": "confirmed"
         }
       ],
       "supersedes": [],
@@ -4621,6 +4629,7 @@
       "depends-on": [
         "REQ-020",
         "REQ-021",
+        "REQ-024",
         "REQ-064",
         "REQ-070"
       ],
@@ -4631,7 +4640,7 @@
       ],
       "rests-on": [
         {
-          "claim": "Stripe's own surfaces, configured for this product, are a single destination from which a customer reaches all five things criterion 1 routes there. BP-060's `PORTAL_FEATURES` enables four keys covering all five — `payment_method_update` (the card), `customer_update` with `allowed_updates: ['address', 'tax_id', 'email']` (the billing address and the VAT number), `invoice_history` (the invoices) and `subscription_cancel` with `mode: 'at_period_end'` (cancelling). The `tax_id` capability is the one leg this corpus has not verified — REQ-076's own open row records it. If it is refuted, criterion 1 leaves REQ-076 criterion 9's promise, correcting the VAT number at any time without contacting anyone, with no surface anywhere in the product, and this requirement is rewritten rather than patched.",
+          "claim": "Stripe's own billing surface, configured for this product, reaches all five of the things criterion 1 routes there. Two of the five are unverified in this corpus and BP-060 carries each as an open `rests-on` row — the VAT number (REQ-076's own row, carried forward) and the billing address invoices and receipts are sent to. If either is refuted, the promise that leg carries — REQ-076 criterion 9 for the VAT number, REQ-076 criterion 2 for the address — has no surface anywhere in the product, and this requirement is rewritten rather than patched. The other three legs — the card, the invoices and cancelling — are BUILD.md §13's and §4.7's, and BP-060 raises no row for them.",
           "disposition": "open"
         }
       ],
@@ -4707,6 +4716,56 @@
         "WO-006"
       ],
       "file": "sdlc-factory/docs/work-orders/WO-006.md"
+    },
+    "TST-004": {
+      "id": "TST-004",
+      "type": "validation",
+      "title": "WO-267 validation report",
+      "status": "unknown",
+      "validates": [
+        "WO-267"
+      ],
+      "file": "sdlc-factory/docs/work-orders/WO-267.md"
+    },
+    "TST-005": {
+      "id": "TST-005",
+      "type": "validation",
+      "title": "WO-267 re-validation report (Deviation 1 fix)",
+      "status": "pass",
+      "validates": [
+        "WO-267"
+      ],
+      "file": "sdlc-factory/docs/work-orders/WO-267.md"
+    },
+    "TST-006": {
+      "id": "TST-006",
+      "type": "validation",
+      "title": "WO-270 validation report",
+      "status": "pass",
+      "validates": [
+        "WO-270"
+      ],
+      "file": "sdlc-factory/docs/work-orders/WO-270.md"
+    },
+    "TST-007": {
+      "id": "TST-007",
+      "type": "validation",
+      "title": "WO-269 validation report",
+      "status": "pass",
+      "validates": [
+        "WO-269"
+      ],
+      "file": "sdlc-factory/docs/work-orders/WO-269.md"
+    },
+    "TST-009": {
+      "id": "TST-009",
+      "type": "validation",
+      "title": "WO-274 validation report",
+      "status": "pass",
+      "validates": [
+        "WO-274"
+      ],
+      "file": "sdlc-factory/docs/work-orders/WO-274.md"
     },
     "WO-001": {
       "id": "WO-001",
@@ -11097,7 +11156,7 @@
       "id": "WO-267",
       "type": "work-order",
       "title": "The Supabase substrate — project config, baseline schema, RLS default-deny, and the two clients",
-      "status": "approved",
+      "status": "done",
       "implements": [
         "BP-002"
       ],
@@ -11109,15 +11168,15 @@
       "rests-on": [
         {
           "claim": "`fetches` is one of `BUILD.md` §10's nine but `structure.md` rule 3 makes `*_fetches*.sql` BP-007's topic, and BP-007's `## Data model delta` fully specifies the table including its unique key and its index. Derivation (rule 1.1): the baseline creates the eight tables no other node owns and BP-007's own migration (WO-021) creates `fetches`, so one table has one writer. Reversal cost: moving one `create table` between two migrations that both run once, before any data exists — cheap today, a data migration later, which is why it is recorded now.",
-          "disposition": "open"
+          "disposition": "confirmed"
         },
         {
           "claim": "`publications` carries no `verdict` column, `BUILD.md` §10's key-column list notwithstanding: BP-002's data-model delta states the exclusion and BP-051 decision 1 holds the reasoning. The baseline is written without it and BP-051's `page_verdicts` is the home of a page's standing.",
-          "disposition": "open"
+          "disposition": "confirmed"
         },
         {
           "claim": "`users.deleted_at` does not exist until BP-063's `*_users_erasure_*.sql` lands. The policy condition ADR-051 requires is therefore written here against a column this migration adds a nullable placeholder for, or the policies are re-issued by BP-063's migration. The implementer takes the first: the baseline gains no column, this policy migration adds `users.deleted_at timestamptz` as its own precondition, and BP-063 owns every rule about setting it.",
-          "disposition": "open"
+          "disposition": "confirmed"
         }
       ],
       "supersedes": [
@@ -11165,7 +11224,7 @@
       "id": "WO-269",
       "type": "work-order",
       "title": "The layout law, declared and checked — Surface with its required arms, the conformance suite at five widths, its canary, and the browser runner",
-      "status": "approved",
+      "status": "done",
       "implements": [
         "BP-001",
         "BP-018"
@@ -11177,23 +11236,23 @@
       "rests-on": [
         {
           "claim": "A real layout engine is what makes this suite measure anything (ADR-093 rests-on row 1, in this order's words): `vitest.config.ts` today routes every file under `tests/ui/**` to jsdom, where every box metric is 0 and every one of checks 1–4 holds on every element of every page. A layout suite dropped into `tests/ui/layout/` without the `layout` project split in this file plan passes vacuously. The canary fixture is what discharges this: the run in which the canary's checks 1–4 do not fail is the run that measured nothing.",
-          "disposition": "open"
+          "disposition": "confirmed"
         },
         {
           "claim": "Nothing in this repository enforces a failing suite (ADR-093 rests-on row 2; ADR-010 point 6). No `.github/workflows`, no hook, no branch protection, and `npm run test:layout` is not part of `npm test`. A layout failure is recorded in the run's output and nowhere else until a platform check exists (rule 3.3).",
-          "disposition": "open"
+          "disposition": "confirmed"
         },
         {
           "claim": "ADR-093 decision 1 fixes exactly two boundaries; `design/tokens.md` §2b (closed 2026-09-02 under rule 1.1) mints four — `--breakpoint-sm` 640, `-md` 768, `-lg` 1024, `-xl` 1280. This order maps the two boundaries from decision 1's own structural facts: `compact|medium` is where the sidebar returns (`--breakpoint-lg`) and `medium|wide` is where the day panel sits beside the grid (`--breakpoint-xl`), because those are the two facts decision 1's table uses to define the bands. `--breakpoint-sm` and `--breakpoint-md` are widths the suite does not probe; whether they are content-dimension steps in decision 1's sense or a fourth and fifth band is the architect's to rule, and reversing this mapping costs two entries in `BAND_MIN` and nothing else.",
-          "disposition": "open"
+          "disposition": "undischargeable"
         },
         {
           "claim": "`sdlc-factory/docs/design/components.md` carries no `Surface` row (grepped 2026-09-02: none). BP-018 decision 3 says `design/` owes it. WO-037's two-way registry test will name the gap until it lands; this order does not write under `design/`.",
-          "disposition": "open"
+          "disposition": "confirmed"
         },
         {
           "claim": "Today `src/app/` holds only `.gitkeep`, so the route sweep enumerates zero routes and only the canary exercises the browser. Three things are observed the first time a route exists (WO-002 and the first leaf): that the app boots for the suite under `tests/setup.ts`'s network refusal and WO-005's boot-time env validation; that Playwright's own transport to Chromium (a child-process pipe, not `http.request`) does not trip that refusal; and what an `(account)` route renders to the anonymous visitor the suite is — REQ-020 criterion 5's address prompt, which is the document measured until a session fixture exists.",
-          "disposition": "open"
+          "disposition": "undischargeable"
         }
       ],
       "supersedes": [],
@@ -11203,7 +11262,7 @@
       "id": "WO-270",
       "type": "work-order",
       "title": "The repository's top-level set is asserted against structure.md rule 7 as amended — `.claude/` admitted",
-      "status": "approved",
+      "status": "done",
       "implements": [
         "BP-001"
       ],
@@ -11214,7 +11273,7 @@
       "rests-on": [
         {
           "claim": "`structure.md` rule 7 opens with \"A new top-level directory requires an ADR\" and, as amended by the librarian's backward pass (commit 1fdab38), admits `.claude/` by a registry edit rather than by an ADR. This order asserts the set exactly as the registry states it and takes that amendment as the authority on the set — the test's job is to agree with `structure.md`, not to rule on how `structure.md` was changed. If an ADR later records the admission, nothing here moves; if the admission is reversed, reversal is one entry removed from `allowed` and the comment above it.",
-          "disposition": "open"
+          "disposition": "confirmed"
         }
       ],
       "supersedes": [],
@@ -11287,6 +11346,22 @@
       ],
       "supersedes": [],
       "file": "sdlc-factory/docs/work-orders/WO-273.md"
+    },
+    "WO-274": {
+      "id": "WO-274",
+      "type": "work-order",
+      "title": "tests/db/migration-naming.test.ts's directory-enumeration case asserts membership, not an exact two-file snapshot",
+      "status": "done",
+      "implements": [
+        "BP-002"
+      ],
+      "depends-on": [
+        "WO-267"
+      ],
+      "blocked-by": [],
+      "rests-on": [],
+      "supersedes": [],
+      "file": "sdlc-factory/docs/work-orders/WO-274.md"
     }
   }
 }

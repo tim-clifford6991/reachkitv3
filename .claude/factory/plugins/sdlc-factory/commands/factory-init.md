@@ -20,8 +20,9 @@ circumstances; that is the project's corpus and this command is not allowed
 to rewrite it. Only offer to refresh `sdlc-factory/CLAUDE.md` from
 `$CLAUDE_PROJECT_DIR/.claude/factory/plugins/sdlc-factory/templates/constitution.md`. Show me the diff first
 and ask before writing. If the corpus itself needs migrating for a newer
-doctrine version, that is `factory upgrade`, not this command — say so and
-stop. Then skip to step 5.
+doctrine version, that is `factory-console upgrade`, not this command — it
+migrates the corpus and, on a vendored project (step 4a), re-vendors
+`.claude/factory` in the same commit; say so and stop. Then skip to step 5.
 
 ## Step 2 — scaffold
 
@@ -78,6 +79,30 @@ does on install.** A plugin cannot write a project's `CLAUDE.md`; without
 this line the constitution is on disk but not in context, and every agent
 below it behaves like an ordinary assistant.
 
+## Step 4a — vendor the doctrine, so the project is self-contained
+
+Run, from the marketplace clone's console (binary resolution per
+`commands/console.md`):
+
+```bash
+factory-console vendor .
+```
+
+It copies this plugin and the console into `.claude/factory/`, links
+`.claude/{agents,commands,skills}` into the copy, wires both hooks into
+`.claude/settings.json`, disables the marketplace plugin for this project,
+and writes `.claude/factory/VENDORED.md` — the banner naming the doctrine
+version and source commit. From then on the project carries its own
+doctrine and console: it runs on any host with Node and no marketplace,
+and `factory-console upgrade` re-vendors the copy when it migrates the
+corpus. Never edit under `.claude/factory/` — a fix belongs in the central
+repository, then re-vendor (the banner says so). Commit `.claude/` with the
+scaffold; a vendored copy is part of the project, not a build product.
+
+If `factory-console` cannot be found on this host, say so and stop here:
+the project still works through the marketplace plugin until it can be
+vendored from a clone.
+
 ## Step 5 — charter and report
 
 On a fresh install, `sdlc-factory/docs/00-project.md` does not exist yet.
@@ -89,6 +114,8 @@ Report, briefly:
 - installed or upgraded, and what changed on disk
 - what `factory.config.json` says about the schema
 - whether `@sdlc-factory/CLAUDE.md` was already wired or was just added
+- whether the doctrine was vendored (the banner's version and commit), or
+  why not
 - the next command, in the form that resolves (constitution §4, "Typing a
   verb"): `/sdlc-factory:codebase-scan` for an existing codebase,
   `/sdlc-factory:require` for a new one, `/sdlc-factory:factory` to let the

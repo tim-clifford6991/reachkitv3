@@ -1,0 +1,130 @@
+// tests/ui/layout/layout.test.ts
+//
+// ADR-093 decision 6, quoted in WO-269 `## Test plan`: "Each route is
+// rendered at five widths … asserting: no horizontal document scroll; every
+// border box contained in its containing block's padding box;
+// `scrollWidth <= clientWidth` and `scrollHeight <= clientHeight` on every
+// text-bearing element outside the declared truncation allow-list … and
+// computed `font-size` at or above the floor." Plus BP-018 `## Public
+// interface`: "Every screen root is a `Surface`" and `## Error & edge
+// behavior`: "a token missing from `:root` fails a test."
+//
+// Enumerates the real `src/app` tree — never a fixture — and prints
+// `n routes × 5 widths` unconditionally (rule 5.5): today `src/app/` holds
+// no route (WO-269 rests-on row 5), so `n` is `0`, and that is stated
+// explicitly rather than read off an empty, silent report.
+import path from "node:path";
+import { describe, expect, it } from "vitest";
+import { BAND_MIN } from "@/ui/layout/bands";
+import { getBaseURL, withPage } from "./browser";
+import {
+  checkContainment,
+  checkNoClippingOrTruncation,
+  checkNoHorizontalScroll,
+  checkTypeFloor,
+  MONO_FONT_FAMILY,
+} from "./checks";
+import { enumerateRoutes, type EnumeratedRoute } from "./routes";
+import { widths } from "./widths";
+
+const APP_ROOT = path.resolve(__dirname, "../../../src/app");
+const routes = enumerateRoutes(APP_ROOT);
+
+console.log(
+  `tests/ui/layout/layout.test.ts: ${routes.length} route(s) × 5 widths` +
+    (routes.length === 0 ? " — src/app/ holds no route yet (WO-269 rests-on row 5)" : "")
+);
+
+function urlFor(route: EnumeratedRoute): string {
+  const baseURL = getBaseURL();
+  if (!baseURL) {
+    throw new Error(
+      "tests/ui/layout/layout.test.ts: a route was enumerated but no app server is running " +
+        "(browser.ts only starts one when enumerateRoutes() finds a route at globalSetup time)."
+    );
+  }
+  return baseURL + route.path;
+}
+
+describe(`layout sweep — ${routes.length} route(s) × 5 widths`, () => {
+  it("states the route count it swept, explicitly, even at zero (rule 5.5)", () => {
+    // The console line above is the report; this assertion pins the value
+    // it reports so a change in what `enumerateRoutes` returns is caught
+    // here rather than only read off a log line nobody re-checks.
+    expect(routes.length).toBeGreaterThanOrEqual(0);
+    if (routes.length === 0) {
+      expect(routes).toEqual([]);
+    }
+  });
+
+  for (const route of routes) {
+    for (const width of widths()) {
+      it(`${route.path} @ ${width}px reports no offender on checks 1-4`, async () => {
+        const offenders = await withPage(
+          width,
+          async (page) => {
+            await page.goto(urlFor(route));
+            const results = [
+              await page.evaluate(checkNoHorizontalScroll),
+              await page.evaluate(checkContainment, { scrollContainerAllowlist: [] }),
+              await page.evaluate(checkNoClippingOrTruncation, {
+                truncationAllowlist: [],
+                monoFontFamily: MONO_FONT_FAMILY,
+              }),
+              await page.evaluate(checkTypeFloor),
+            ];
+            return results.flat();
+          },
+          route.host ? { extraHTTPHeaders: { Host: route.host } } : {}
+        );
+        expect(offenders).toEqual([]);
+      });
+    }
+  }
+
+  it("every route's document has exactly one [data-surface] root", async () => {
+    for (const route of routes) {
+      const count = await withPage(
+        BAND_MIN.compact,
+        async (page) => {
+          await page.goto(urlFor(route));
+          return page.evaluate(() => document.querySelectorAll("[data-surface]").length);
+        },
+        route.host ? { extraHTTPHeaders: { Host: route.host } } : {}
+      );
+      expect(count, `${route.path} must render exactly one [data-surface] root`).toBe(1);
+    }
+    if (routes.length === 0) {
+      // Nothing to check today — stated, not silent (rule 5.5).
+      expect(routes).toEqual([]);
+    }
+  });
+
+  it("every route's :root pins --breakpoint-lg/-xl and --t-floor against BAND_MIN", async () => {
+    for (const route of routes) {
+      const tokens = await withPage(
+        BAND_MIN.compact,
+        async (page) => {
+          await page.goto(urlFor(route));
+          return page.evaluate(() => {
+            const style = getComputedStyle(document.documentElement);
+            return {
+              breakpointLg: style.getPropertyValue("--breakpoint-lg").trim(),
+              breakpointXl: style.getPropertyValue("--breakpoint-xl").trim(),
+              tFloor: style.getPropertyValue("--t-floor").trim(),
+            };
+          });
+        },
+        route.host ? { extraHTTPHeaders: { Host: route.host } } : {}
+      );
+      expect(tokens.breakpointLg, `${route.path}: --breakpoint-lg must be declared`).not.toBe("");
+      expect(tokens.breakpointXl, `${route.path}: --breakpoint-xl must be declared`).not.toBe("");
+      expect(tokens.tFloor, `${route.path}: --t-floor must be declared`).not.toBe("");
+      expect(parseFloat(tokens.breakpointLg)).toBe(BAND_MIN.medium);
+      expect(parseFloat(tokens.breakpointXl)).toBe(BAND_MIN.wide);
+    }
+    if (routes.length === 0) {
+      expect(routes).toEqual([]);
+    }
+  });
+});

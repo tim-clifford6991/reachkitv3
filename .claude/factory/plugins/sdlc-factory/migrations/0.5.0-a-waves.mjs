@@ -60,7 +60,8 @@
 import { readdirSync, readFileSync, existsSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
-import { splitFrontmatter } from "./lib/frontmatter.mjs";
+// The front-matter parser arrives as ctx.frontmatter (0.12.1) — one parser,
+// the console's, never a copy beside the migrations.
 
 export const version = "0.5.0";
 export const describe = () => "registry/waves.md exists, and every work order has a log";
@@ -96,6 +97,7 @@ function withLogAppended(body, dateStr) {
 }
 
 export async function migrate(ctx) {
+  const { splitFrontmatter } = ctx.frontmatter;
   // ── (a) registry/waves.md ────────────────────────────────────────────
   if (ctx.exists(WAVES_REL)) {
     ctx.log(`  ${WAVES_REL}: already present — left unchanged`);

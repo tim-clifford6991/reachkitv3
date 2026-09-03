@@ -41,7 +41,8 @@
 
 import { readdirSync } from "node:fs";
 import { join } from "node:path";
-import { serializeFrontmatter } from "./lib/frontmatter.mjs";
+// The front-matter parser arrives as ctx.frontmatter (0.12.1) — one parser,
+// the console's, never a copy beside the migrations.
 
 export const version = "0.2.0";
 export const describe = () => "front-matter is derived and prepended to every legacy head-block artifact";
@@ -168,6 +169,7 @@ function computeDependsOn(bullets, id) {
 }
 
 export async function migrate(ctx) {
+  const { serializeFrontmatter } = ctx.frontmatter;
   const known = knownBulletLabels(ctx.config);
   const fileTypes = ctx.config.types.filter((t) => t.dir);
 

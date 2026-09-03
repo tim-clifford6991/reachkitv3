@@ -1,7 +1,15 @@
 {
   "name": "sdlc-factory",
-  "description": "An AI-native software factory: requirements → blueprints → work orders → implementation → validation → feedback, with stage gates, traceability and a read-only knowledge-graph console.",
-  "version": "0.11.1",
-  "author": { "name": "Tim Clifford" },
-  "keywords": ["sdlc", "requirements", "traceability", "governance", "knowledge-graph"]
+  "description": "An AI-native software factory: requirements \u2192 blueprints \u2192 work orders \u2192 implementation \u2192 validation \u2192 feedback, with stage gates, traceability and a read-only knowledge-graph console.",
+  "version": "0.12.2",
+  "author": {
+    "name": "Tim Clifford"
+  },
+  "keywords": [
+    "sdlc",
+    "requirements",
+    "traceability",
+    "governance",
+    "knowledge-graph"
+  ]
 }

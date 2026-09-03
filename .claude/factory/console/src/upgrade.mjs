@@ -18,7 +18,9 @@ import { execFileSync } from "node:child_process";
 
 import { loadConfig } from "./config.mjs";
 import { extract } from "./extract/index.mjs";
+import { splitFrontmatter, serializeFrontmatter } from "./extract/frontmatter.mjs";
 import { check, formatReport } from "./check/index.mjs";
+import { isVendored, readBanner, sourceTree, vendorProject } from "./vendor.mjs";
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 
@@ -89,6 +91,29 @@ export async function upgradeProject(root, opts = {}) {
   const result = { root, from: current, to: target, applied: [], log, skipped: null, changed: [] };
 
   if (cmp(current, target) >= 0) {
+    // Even a corpus already at the target may carry a vendored copy behind
+    // this console's own sha (a fix rung with no migration) — refresh it.
+    if (isVendored(root)) {
+      const banner = readBanner(root);
+      const src = sourceTree();
+      const self = src.vendored && resolve(src.consoleRoot, "..") === resolve(root, ".claude", "factory");
+      if (!self && !(banner?.version === src.version && banner?.sha === src.sha)) {
+        const g0 = gitState(root);
+        if (g0.repo && (!g0.dirty || opts.allowDirty)) {
+          const r = vendorProject(root, { dryRun: !!opts.dryRun });
+          for (const line of r.log) log.push(line);
+          if (!opts.dryRun && opts.commit !== false && r.written) {
+            git(root, ["add", ".claude"]);
+            if (git(root, ["diff", "--cached", "--name-only"])) {
+              git(root, ["commit", "-m", `chore(doctrine): re-vendor .claude/factory ${r.prior?.version ?? "?"} → ${r.version}@${r.sha}`]);
+              result.commit = git(root, ["rev-parse", "--short", "HEAD"]);
+            }
+          }
+          result.skipped = `already at doctrine ${current}; vendored copy refreshed`;
+          return result;
+        }
+      }
+    }
     result.skipped = `already at doctrine ${current}`;
     return result;
   }
@@ -101,6 +126,27 @@ export async function upgradeProject(root, opts = {}) {
   if (g.dirty && !opts.allowDirty) {
     result.skipped = "working tree is dirty — commit or stash first, so the migration is the only thing in the diff";
     return result;
+  }
+
+  // A vendored project (0.12.0) carries its own copy of the doctrine under
+  // .claude/factory; the corpus migration below would otherwise leave that
+  // copy a version behind the corpus it reads. Re-vendor first — from this
+  // console's own tree, which is the newer one by construction when this
+  // runs from the central clone. Running from the project's own vendored
+  // copy cannot refresh itself and says so.
+  let revendored = null;
+  if (isVendored(root)) {
+    const banner = readBanner(root);
+    const src = sourceTree();
+    if (src.vendored && resolve(src.consoleRoot, "..") === resolve(root, ".claude", "factory")) {
+      log.push(`vendored copy ${banner?.version ?? "?"} left as it is — this console is that copy; re-vendor from the central clone`);
+    } else if (banner?.version === src.version && banner?.sha === src.sha) {
+      log.push(`vendored copy already ${src.version}@${src.sha}`);
+    } else {
+      const r = vendorProject(root, { dryRun: !!opts.dryRun });
+      for (const line of r.log) log.push(line);
+      revendored = r;
+    }
   }
 
   const { config } = loadConfig(root);
@@ -156,6 +202,9 @@ export async function upgradeProject(root, opts = {}) {
       }
     },
     log: (m) => log.push(m),
+    // 0.12.1 — the one front-matter parser, handed to migrations rather than
+    // copied beside them (proposal 24, S1).
+    frontmatter: { splitFrontmatter, serializeFrontmatter },
   };
 
   for (const m of migrations) {
@@ -200,6 +249,7 @@ export async function upgradeProject(root, opts = {}) {
 
   if (!opts.dryRun && opts.commit !== false) {
     const files = [...changed].map((rel) => join(config.docsRoot, rel)).concat([...rootChanged]);
+    if (revendored?.written) files.push(".claude");
     git(root, ["add", ...files, VERSION_FILE]);
     const staged = git(root, ["diff", "--cached", "--name-only"]);
     if (staged) {
@@ -207,6 +257,7 @@ export async function upgradeProject(root, opts = {}) {
         `chore(doctrine): migrate corpus to ${target}`,
         "",
         ...result.applied.map((v) => `  · ${v}`),
+        ...(revendored?.written ? [`  · re-vendored .claude/factory ${revendored.prior?.version ?? "?"} → ${revendored.version}@${revendored.sha}`] : []),
         "",
         `${changed.size + rootChanged.size} file${changed.size + rootChanged.size === 1 ? "" : "s"} rewritten. ` +
         `Conformance after: ${verdict.bySeverity.error} error, ${verdict.bySeverity.warn} warn.`,
