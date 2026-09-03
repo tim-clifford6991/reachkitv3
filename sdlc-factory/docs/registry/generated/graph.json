@@ -2,55 +2,55 @@
   "coverage": {
     "satisfies": {
       "carrying": 44,
-      "total": 427
+      "total": 430
     },
     "covers": {
       "carrying": 32,
-      "total": 427
+      "total": 430
     },
     "implements": {
-      "carrying": 255,
-      "total": 427
+      "carrying": 257,
+      "total": 430
     },
     "decides-for": {
       "carrying": 30,
-      "total": 427
+      "total": 430
     },
     "about": {
       "carrying": 0,
-      "total": 427
+      "total": 430
     },
     "depends-on": {
-      "carrying": 380,
-      "total": 427
+      "carrying": 382,
+      "total": 430
     },
     "blocked-by": {
       "carrying": 4,
-      "total": 427
+      "total": 430
     },
     "cites-retired": {
       "carrying": 0,
-      "total": 427
+      "total": 430
     },
     "supersedes": {
       "carrying": 23,
-      "total": 427
+      "total": 430
     },
     "rests-on": {
-      "carrying": 275,
-      "total": 427
+      "carrying": 277,
+      "total": 430
     },
     "code": {
       "carrying": 63,
-      "total": 427
+      "total": 430
     },
     "exercises": {
       "carrying": 6,
-      "total": 427
+      "total": 430
     },
     "origin": {
       "carrying": 0,
-      "total": 427
+      "total": 430
     }
   },
   "nodes": {
@@ -729,7 +729,7 @@
       "id": "ADR-093",
       "type": "decision",
       "title": "LANDMINE — content fits its box or the box changes: one layout law over three named bands, text is never shrunk to fit, and no type step below the floor may be minted",
-      "status": "proposed",
+      "status": "accepted",
       "decides-for": [
         "BP-001",
         "BP-004",
@@ -4648,7 +4648,8 @@
         "REQ-024",
         "REQ-076",
         "REQ-077",
-        "REQ-093"
+        "REQ-093",
+        "REQ-099"
       ],
       "blocked-by": [],
       "rests-on": [],
@@ -4685,6 +4686,16 @@
         "WO-001"
       ],
       "file": "sdlc-factory/docs/work-orders/WO-001.md"
+    },
+    "TST-002": {
+      "id": "TST-002",
+      "type": "validation",
+      "title": "WO-005 validation report",
+      "status": "pass",
+      "validates": [
+        "WO-005"
+      ],
+      "file": "sdlc-factory/docs/work-orders/WO-005.md"
     },
     "WO-001": {
       "id": "WO-001",
@@ -4772,7 +4783,7 @@
       "id": "WO-005",
       "type": "work-order",
       "title": "Environment bindings — env.ts, parsed and validated at boot",
-      "status": "approved",
+      "status": "done",
       "implements": [
         "BP-005"
       ],
@@ -7449,7 +7460,7 @@
     "WO-127": {
       "id": "WO-127",
       "type": "work-order",
-      "title": "requestMagicLink — three answers to one request, and no account-existence oracle",
+      "title": "requestMagicLink — three answers to one request, each in its own written line, and never an access check",
       "status": "approved",
       "implements": [
         "BP-032",
@@ -11088,6 +11099,65 @@
         "WO-032"
       ],
       "file": "sdlc-factory/docs/work-orders/WO-268.md"
+    },
+    "WO-269": {
+      "id": "WO-269",
+      "type": "work-order",
+      "title": "The layout law, declared and checked — Surface with its required arms, the conformance suite at five widths, its canary, and the browser runner",
+      "status": "approved",
+      "implements": [
+        "BP-001",
+        "BP-018"
+      ],
+      "depends-on": [
+        "WO-001"
+      ],
+      "blocked-by": [],
+      "rests-on": [
+        {
+          "claim": "A real layout engine is what makes this suite measure anything (ADR-093 rests-on row 1, in this order's words): `vitest.config.ts` today routes every file under `tests/ui/**` to jsdom, where every box metric is 0 and every one of checks 1–4 holds on every element of every page. A layout suite dropped into `tests/ui/layout/` without the `layout` project split in this file plan passes vacuously. The canary fixture is what discharges this: the run in which the canary's checks 1–4 do not fail is the run that measured nothing.",
+          "disposition": "open"
+        },
+        {
+          "claim": "Nothing in this repository enforces a failing suite (ADR-093 rests-on row 2; ADR-010 point 6). No `.github/workflows`, no hook, no branch protection, and `npm run test:layout` is not part of `npm test`. A layout failure is recorded in the run's output and nowhere else until a platform check exists (rule 3.3).",
+          "disposition": "open"
+        },
+        {
+          "claim": "ADR-093 decision 1 fixes exactly two boundaries; `design/tokens.md` §2b (closed 2026-09-02 under rule 1.1) mints four — `--breakpoint-sm` 640, `-md` 768, `-lg` 1024, `-xl` 1280. This order maps the two boundaries from decision 1's own structural facts: `compact|medium` is where the sidebar returns (`--breakpoint-lg`) and `medium|wide` is where the day panel sits beside the grid (`--breakpoint-xl`), because those are the two facts decision 1's table uses to define the bands. `--breakpoint-sm` and `--breakpoint-md` are widths the suite does not probe; whether they are content-dimension steps in decision 1's sense or a fourth and fifth band is the architect's to rule, and reversing this mapping costs two entries in `BAND_MIN` and nothing else.",
+          "disposition": "open"
+        },
+        {
+          "claim": "`sdlc-factory/docs/design/components.md` carries no `Surface` row (grepped 2026-09-02: none). BP-018 decision 3 says `design/` owes it. WO-037's two-way registry test will name the gap until it lands; this order does not write under `design/`.",
+          "disposition": "open"
+        },
+        {
+          "claim": "Today `src/app/` holds only `.gitkeep`, so the route sweep enumerates zero routes and only the canary exercises the browser. Three things are observed the first time a route exists (WO-002 and the first leaf): that the app boots for the suite under `tests/setup.ts`'s network refusal and WO-005's boot-time env validation; that Playwright's own transport to Chromium (a child-process pipe, not `http.request`) does not trip that refusal; and what an `(account)` route renders to the anonymous visitor the suite is — REQ-020 criterion 5's address prompt, which is the document measured until a session fixture exists.",
+          "disposition": "open"
+        }
+      ],
+      "supersedes": [],
+      "file": "sdlc-factory/docs/work-orders/WO-269.md"
+    },
+    "WO-270": {
+      "id": "WO-270",
+      "type": "work-order",
+      "title": "The repository's top-level set is asserted against structure.md rule 7 as amended — `.claude/` admitted",
+      "status": "approved",
+      "implements": [
+        "BP-001"
+      ],
+      "depends-on": [
+        "WO-001"
+      ],
+      "blocked-by": [],
+      "rests-on": [
+        {
+          "claim": "`structure.md` rule 7 opens with \"A new top-level directory requires an ADR\" and, as amended by the librarian's backward pass (commit 1fdab38), admits `.claude/` by a registry edit rather than by an ADR. This order asserts the set exactly as the registry states it and takes that amendment as the authority on the set — the test's job is to agree with `structure.md`, not to rule on how `structure.md` was changed. If an ADR later records the admission, nothing here moves; if the admission is reversed, reversal is one entry removed from `allowed` and the comment above it.",
+          "disposition": "open"
+        }
+      ],
+      "supersedes": [],
+      "file": "sdlc-factory/docs/work-orders/WO-270.md"
     }
   }
 }
