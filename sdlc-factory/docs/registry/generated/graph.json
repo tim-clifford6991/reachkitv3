@@ -5428,7 +5428,7 @@
       "blocked-by": [],
       "rests-on": [
         {
-          "claim": "This migration creates `fetches`, which `BUILD.md` §10 lists among its nine baseline tables. WO-009 deliberately leaves it out: `structure.md` rule 3 makes `*_fetches*.sql` BP-007's topic and BP-007's `## Data model delta` fully specifies the table, so one table has one writer. The derivation and its reversal cost are recorded on WO-009.",
+          "claim": "This migration creates `fetches`, which `BUILD.md` §10 lists among its nine baseline tables. WO-267 (`done`) deliberately leaves it out — its baseline migration's own header states the exclusion — because `structure.md` rule 3 makes `*_fetches*.sql` BP-007's topic and BP-007's `## Data model delta` fully specifies the table, so one table has one writer. The derivation and its reversal cost are recorded on WO-267's first `rests-on` row, which carries `disposition: confirmed`.",
           "disposition": "open"
         }
       ],
@@ -5451,8 +5451,8 @@
       "blocked-by": [],
       "rests-on": [
         {
-          "claim": "The `fetches` table this context writes to carries no unique constraint on `(source, cache_key, policy_version)` — BP-007 decision 3 (2026-09-03) dropped it, and the cache read is 'the newest row on that key inserted within `freshnessDays`, excluding a row whose payload is the vendor's own zero-result shape'. WO-021, which creates the table and is `approved` and unbuilt, still plans that constraint and predates the decision. If it ships as planned, the empty-payload re-buy this work order tests cannot insert its second row. Reported to the planner queue on 2026-09-03, not repaired here: `*_fetches*.sql`'s create-table statement is WO-021's file.",
-          "disposition": "open"
+          "claim": "The `fetches` table this context writes to carries no unique constraint on `(source, cache_key, policy_version)` — BP-007 decision 3 (2026-09-03) dropped it, and the cache read is 'the newest row on that key inserted within `freshnessDays`, excluding a row whose payload is the vendor's own zero-result shape'. WO-021, which creates the table and is `approved` and unbuilt, still plans that constraint and predates the decision. If it ships as planned, the empty-payload re-buy this work order tests cannot insert its second row. Reported to the planner queue on 2026-09-03, not repaired here: `*_fetches*.sql`'s create-table statement is WO-021's file. **Discharged 2026-09-03**: the planner re-planned WO-021 in the same pass — its file plan carries no unique constraint, and its test plan now asserts positively that two rows on one `(source, cache_key, policy_version)` triple both insert. The premise no longer holds.",
+          "disposition": "refuted"
         }
       ],
       "supersedes": [],
