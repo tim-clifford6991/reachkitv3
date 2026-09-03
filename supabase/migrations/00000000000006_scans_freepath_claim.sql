@@ -1,0 +1,52 @@
+-- supabase/migrations/00000000000006_scans_freepath_claim.sql
+--
+-- WO-058, under BP-023's own `code:` glob
+-- (`supabase/migrations/*_scans_freepath*.sql`) — a second file under a
+-- topic BP-023 already owns, not a new one; `src/lib/db/topics.ts`'s
+-- `scans_freepath` sub-token (owner BP-023) resolves this filename by
+-- containing the subsequence "scans", "freepath".
+--
+-- **Deviation flagged once (constitution rule 4.2), not fabricated
+-- around:** WO-058's own file plan names two files only —
+-- `src/lib/scan/admission.ts` and `tests/scan/free/admission-claim.test.ts`
+-- — no migration. BP-023's NFR budget nonetheless states
+-- "`claimFreeScanSlot` is one serialisable transaction; concurrent claims
+-- from one network resolve to one `running` row by the in-flight
+-- predicate, not by a lock the application holds", and WO-058 `## Steps` 3
+-- repeats it: "The in-flight bound is resolved by the `status = 'running'`
+-- predicate inside the same transaction — not by an application-held
+-- lock."
+--
+-- `claimFreeScanSlot` is reached only through `dbAdmin()`
+-- (`@supabase/supabase-js`, a PostgREST client — BP-002's own public
+-- interface, `src/lib/db/index.ts`). Every `.from(...)` call PostgREST
+-- receives is one HTTP request and one implicit transaction; there is no
+-- client-driven `BEGIN` / `SET TRANSACTION ISOLATION LEVEL SERIALIZABLE` /
+-- `COMMIT` spanning two separate `.from(...)` round trips through that
+-- client. A literal multi-statement serialisable transaction wrapping the
+-- six-step re-evaluation and the insert is reachable only through a
+-- stored procedure called via `.rpc()` or a raw `pg` connection —  both
+-- outside WO-058's file plan (a migration function body, or a new runtime
+-- dependency and connection string usage) and outside BP-023's module
+-- boundary (`src/lib/scan/admission.ts` alone).
+--
+-- This migration reaches the same outcome BP-023's NFR budget names by a
+-- constraint Postgres enforces atomically regardless of the calling
+-- transaction's isolation level, rather than by an isolation level this
+-- client cannot request: at most one `running` scan per network. Two
+-- concurrent `claimFreeScanSlot` calls for the same network can both pass
+-- the in-memory six-step re-evaluation, but only one insert against this
+-- index can ever succeed; the loser's insert is rejected by Postgres
+-- itself, not raced against in application code, and is treated as an
+-- `in_flight` refusal (`src/lib/scan/admission.ts`).
+--
+-- `network_hash` is `null` for every paid-tier row (BP-023 `## Data model
+-- delta`) and Postgres never treats two `null`s as equal for uniqueness
+-- purposes, so this index constrains only the free path's own rows —
+-- `where ... and network_hash is not null` is redundant with `status =
+-- 'running'` never being paid-tier's own value today, but is stated
+-- explicitly so the index's own definition does not depend on that
+-- staying true.
+create unique index idx_scans_one_running_per_network
+  on scans (network_hash)
+  where status = 'running' and network_hash is not null;
