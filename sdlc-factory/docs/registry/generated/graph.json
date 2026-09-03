@@ -37,7 +37,7 @@
       "total": 459
     },
     "rests-on": {
-      "carrying": 286,
+      "carrying": 287,
       "total": 459
     },
     "code": {
@@ -5449,7 +5449,12 @@
         "WO-267"
       ],
       "blocked-by": [],
-      "rests-on": [],
+      "rests-on": [
+        {
+          "claim": "The `fetches` table this context writes to carries no unique constraint on `(source, cache_key, policy_version)` — BP-007 decision 3 (2026-09-03) dropped it, and the cache read is 'the newest row on that key inserted within `freshnessDays`, excluding a row whose payload is the vendor's own zero-result shape'. WO-021, which creates the table and is `approved` and unbuilt, still plans that constraint and predates the decision. If it ships as planned, the empty-payload re-buy this work order tests cannot insert its second row. Reported to the planner queue on 2026-09-03, not repaired here: `*_fetches*.sql`'s create-table statement is WO-021's file.",
+          "disposition": "open"
+        }
+      ],
       "supersedes": [],
       "file": "sdlc-factory/docs/work-orders/WO-022.md"
     },
@@ -6868,6 +6873,10 @@
       "rests-on": [
         {
           "claim": "`SERP_LOCATION` is pinned in `src/lib/config/constants.ts` (BP-005) and BP-008 exposes no per-call locale parameter — BP-026's `## Error & edge behavior`: 'Every figure on the card comes from a call made at `SERP_LOCATION` (Google US / `en`). BP-008 exposes no per-call locale parameter, so criterion 8 cannot be broken by this node.' If BP-008 ships a locale parameter after all, criterion 8 stops being structurally held and this WO needs a runtime assertion instead.",
+          "disposition": "open"
+        },
+        {
+          "claim": "REQ-008 criterion 3, quoted verbatim in test-plan row 3, is the text the owner approves. REQ-008 stands `status: in-review` after its 2026-09-03 amendment (`requirements/history/REQ-008-2026-09-03-market-total-footnote-removed.md`), so the wording this work order inherits is the amended draft, not an approved criterion. If the owner's approval alters criterion 3, row 3's absence assertion is re-read; nothing else on the card changes, because no other criterion moved in that amendment.",
           "disposition": "open"
         }
       ],
