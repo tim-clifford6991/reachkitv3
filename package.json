@@ -8,7 +8,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint .",
-    "test": "vitest run",
+    "test": "vitest run --project node --project ui",
+    "test:layout": "vitest run --project layout",
     "typecheck": "tsc --noEmit",
     "db:types": "supabase gen types typescript --local > src/lib/db/types.generated.ts"
   },
@@ -38,6 +39,7 @@
     "eslint-config-next": "16.3.4",
     "typescript-eslint": "8.69.0",
     "supabase": "2.116.0",
+    "playwright": "1.62.1",
     "@types/node": "22.20.1",
     "@types/react": "19.2.18",
     "@types/react-dom": "19.2.5"

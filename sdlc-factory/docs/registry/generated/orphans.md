@@ -8,7 +8,7 @@
 
 - `satisfies` is projected from 44 of 63 blueprints — the rest are silent on it.
 - `covers` is projected from 32 of 63 blueprints — the rest are silent on it.
-- `implements` is projected from 260 of 260 work orders — the rest are silent on it.
+- `implements` is projected from 261 of 261 work orders — the rest are silent on it.
 - `decides-for` is projected from 30 of 30 decisions — the rest are silent on it.
 - `about` is projected from 0 of 0 feedback items — the rest are silent on it.
 - `origin` is explicitly declared by 0 of 63 blueprints — the rest default to `forward` (never to an exemption).
@@ -241,10 +241,10 @@
 - WO-250 (work-order, approved) — no TST section validates it. sdlc-factory/docs/work-orders/WO-250.md
 - WO-268 (work-order, approved) — no TST section validates it. sdlc-factory/docs/work-orders/WO-268.md
 - WO-269 (work-order, approved) — no TST section validates it. sdlc-factory/docs/work-orders/WO-269.md
-- WO-270 (work-order, approved) — no TST section validates it. sdlc-factory/docs/work-orders/WO-270.md
 - WO-271 (work-order, approved) — no TST section validates it. sdlc-factory/docs/work-orders/WO-271.md
 - WO-272 (work-order, approved) — no TST section validates it. sdlc-factory/docs/work-orders/WO-272.md
 - WO-273 (work-order, approved) — no TST section validates it. sdlc-factory/docs/work-orders/WO-273.md
+- WO-274 (work-order, approved) — no TST section validates it. sdlc-factory/docs/work-orders/WO-274.md
 
 ## Derived artifacts with no upstream
 

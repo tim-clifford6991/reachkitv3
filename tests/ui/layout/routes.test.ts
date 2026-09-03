@@ -1,0 +1,105 @@
+// tests/ui/layout/routes.test.ts
+//
+// WO-269 `## Test plan`, quoting BP-018 `## NFR budget` and ADR-093
+// decision 2: "`tests/ui/layout/**` enumerates routes from the App Router
+// tree and renders each at five widths — 320, the three bands, and each
+// boundary minus one pixel" and "**320 CSS px and above**." Exercises
+// `enumerateRoutes` and `widths()` against a fixture tree, never the real
+// `src/app` (which holds no route today).
+import { mkdtempSync, mkdirSync, rmSync, writeFileSync } from "node:fs";
+import os from "node:os";
+import path from "node:path";
+import { afterEach, describe, expect, it } from "vitest";
+import { BAND_MIN } from "@/ui/layout/bands";
+import { enumerateRoutes, MissingRouteFixtureError } from "./routes";
+import { widths } from "./widths";
+
+let tmpRoot: string | undefined;
+
+function makePage(...segments: string[]): string {
+  const dir = path.join(tmpRoot!, ...segments);
+  mkdirSync(dir, { recursive: true });
+  const file = path.join(dir, "page.tsx");
+  writeFileSync(file, "export default function Page() { return null; }\n");
+  return file;
+}
+
+afterEach(() => {
+  if (tmpRoot) rmSync(tmpRoot, { recursive: true, force: true });
+  tmpRoot = undefined;
+});
+
+describe("enumerateRoutes — a route group is stripped", () => {
+  it("(marketing)/about/page.tsx enumerates as /about", () => {
+    tmpRoot = mkdtempSync(path.join(os.tmpdir(), "wo-269-routes-"));
+    makePage("(marketing)", "about");
+
+    const routes = enumerateRoutes(tmpRoot);
+    expect(routes).toEqual([{ path: "/about" }]);
+  });
+});
+
+describe("enumerateRoutes — a dynamic segment with a fixture row resolves", () => {
+  it("blog/[slug]/page.tsx resolves to the fixture value", () => {
+    tmpRoot = mkdtempSync(path.join(os.tmpdir(), "wo-269-routes-"));
+    makePage("blog", "[slug]");
+
+    const routes = enumerateRoutes(tmpRoot, {
+      segmentFixtures: { "[slug]": "hello-world" },
+    });
+    expect(routes).toEqual([{ path: "/blog/hello-world" }]);
+  });
+});
+
+describe("enumerateRoutes — a dynamic segment with no fixture row fails, naming the route", () => {
+  it("things/[id]/page.tsx throws MissingRouteFixtureError naming the file", () => {
+    tmpRoot = mkdtempSync(path.join(os.tmpdir(), "wo-269-routes-"));
+    const file = makePage("things", "[id]");
+    const expectedName = path.relative(process.cwd(), file).split(path.sep).join("/");
+
+    expect(() => enumerateRoutes(tmpRoot!)).toThrow(MissingRouteFixtureError);
+    try {
+      enumerateRoutes(tmpRoot!);
+      expect.unreachable();
+    } catch (err) {
+      expect(err).toBeInstanceOf(MissingRouteFixtureError);
+      expect((err as Error).message).toContain(expectedName);
+    }
+  });
+});
+
+describe("enumerateRoutes — a (hosted) page carries its Host", () => {
+  it("(hosted)/page.tsx carries the Host fixture and strips the group from the URL", () => {
+    tmpRoot = mkdtempSync(path.join(os.tmpdir(), "wo-269-routes-"));
+    const file = makePage("(hosted)");
+    const key = path.relative(process.cwd(), file).split(path.sep).join("/");
+
+    const routes = enumerateRoutes(tmpRoot, {
+      hostFixtures: { [key]: "content.example.com" },
+    });
+    expect(routes).toEqual([{ path: "/", host: "content.example.com" }]);
+  });
+
+  it("fails naming the route when a (hosted) page has no Host fixture row", () => {
+    tmpRoot = mkdtempSync(path.join(os.tmpdir(), "wo-269-routes-"));
+    makePage("(hosted)");
+
+    expect(() => enumerateRoutes(tmpRoot!)).toThrow(MissingRouteFixtureError);
+  });
+});
+
+describe("widths() — ADR-093 decision 6's five widths", () => {
+  it("returns exactly [320, medium-1, medium, wide-1, wide]", () => {
+    expect(widths()).toEqual([
+      320,
+      BAND_MIN.medium - 1,
+      BAND_MIN.medium,
+      BAND_MIN.wide - 1,
+      BAND_MIN.wide,
+    ]);
+  });
+
+  it("BAND_MIN.compact is 320 (ADR-093 decision 2)", () => {
+    expect(BAND_MIN.compact).toBe(320);
+  });
+});
