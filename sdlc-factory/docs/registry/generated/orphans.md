@@ -15,7 +15,6 @@
 
 ## Approved artifacts with no downstream
 
-- WO-002 (work-order, approved) — no TST section validates it. sdlc-factory/docs/work-orders/WO-002.md
 - WO-003 (work-order, approved) — no TST section validates it. sdlc-factory/docs/work-orders/WO-003.md
 - WO-004 (work-order, approved) — no TST section validates it. sdlc-factory/docs/work-orders/WO-004.md
 - WO-007 (work-order, approved) — no TST section validates it. sdlc-factory/docs/work-orders/WO-007.md

@@ -2,55 +2,55 @@
   "coverage": {
     "satisfies": {
       "carrying": 44,
-      "total": 448
+      "total": 450
     },
     "covers": {
       "carrying": 32,
-      "total": 448
+      "total": 450
     },
     "implements": {
       "carrying": 262,
-      "total": 448
+      "total": 450
     },
     "decides-for": {
       "carrying": 31,
-      "total": 448
+      "total": 450
     },
     "about": {
       "carrying": 0,
-      "total": 448
+      "total": 450
     },
     "depends-on": {
       "carrying": 387,
-      "total": 448
+      "total": 450
     },
     "blocked-by": {
       "carrying": 5,
-      "total": 448
+      "total": 450
     },
     "cites-retired": {
       "carrying": 0,
-      "total": 448
+      "total": 450
     },
     "supersedes": {
       "carrying": 23,
-      "total": 448
+      "total": 450
     },
     "rests-on": {
       "carrying": 283,
-      "total": 448
+      "total": 450
     },
     "code": {
       "carrying": 63,
-      "total": 448
+      "total": 450
     },
     "exercises": {
       "carrying": 6,
-      "total": 448
+      "total": 450
     },
     "origin": {
       "carrying": 0,
-      "total": 448
+      "total": 450
     }
   },
   "nodes": {
@@ -4860,6 +4860,26 @@
       ],
       "file": "sdlc-factory/docs/work-orders/WO-268.md"
     },
+    "TST-015": {
+      "id": "TST-015",
+      "type": "validation",
+      "title": "WO-002 validation report",
+      "status": "unknown",
+      "validates": [
+        "WO-002"
+      ],
+      "file": "sdlc-factory/docs/work-orders/WO-002.md"
+    },
+    "TST-016": {
+      "id": "TST-016",
+      "type": "validation",
+      "title": "WO-002 re-validation report (`type.css` import test fix)",
+      "status": "pass",
+      "validates": [
+        "WO-002"
+      ],
+      "file": "sdlc-factory/docs/work-orders/WO-002.md"
+    },
     "WO-001": {
       "id": "WO-001",
       "type": "work-order",
@@ -4887,7 +4907,7 @@
       "id": "WO-002",
       "type": "work-order",
       "title": "Route-group skeleton, the root layout and font wiring",
-      "status": "approved",
+      "status": "done",
       "implements": [
         "BP-001"
       ],
@@ -4901,7 +4921,7 @@
       "rests-on": [
         {
           "claim": "`sdlc-factory/docs/design/tokens.md` and `components.md` are `draft`/empty. Rule 7.3's preview cannot be signed until the design-guardian has registered BP-018's tokens and components; this work order's `ui: yes` is what holds it until then.",
-          "disposition": "open"
+          "disposition": "refuted"
         }
       ],
       "supersedes": [],
