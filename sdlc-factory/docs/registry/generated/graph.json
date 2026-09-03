@@ -6143,7 +6143,7 @@
       "id": "WO-056",
       "type": "work-order",
       "title": "The free-path migration — network_hash, finished_at, from_incomplete_rescan, and the failed status",
-      "status": "approved",
+      "status": "done",
       "implements": [
         "BP-023",
         "REQ-003"
@@ -6155,11 +6155,11 @@
       "rests-on": [
         {
           "claim": "`scans` exists with `domain`, `tier`, `status(running/done/degraded)`, `created_at`, `is_current`, `supersedes_scan_id`, `correction_state` and `stopped_reason` before this migration runs. That table and those columns are BP-002's baseline and BP-012's; this repo carries no `supabase/` directory today",
-          "disposition": "open"
+          "disposition": "refuted"
         },
         {
           "claim": "The partial unique index `unique (domain) where is_current` is BP-012's and already exists, so a `failed` scan never becoming current holds by the index rather than by application logic",
-          "disposition": "open"
+          "disposition": "refuted"
         }
       ],
       "supersedes": [],
