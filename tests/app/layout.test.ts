@@ -60,6 +60,10 @@ describe("file plan — src/app/layout.tsx imports src/ui/theme.css and BP-018's
   it("imports fontVariables from src/ui/fonts", () => {
     expect(layoutSource()).toMatch(/import\s*\{\s*fontVariables\s*\}\s*from\s*["']@\/ui\/fonts["']/);
   });
+
+  it("imports src/ui/type.css — the file that binds fontVariables' declarations", () => {
+    expect(layoutSource()).toMatch(/import\s+["']@\/ui\/type\.css["']/);
+  });
 });
 
 describe('BP-018 decision 2 — "no component has a default string"', () => {
