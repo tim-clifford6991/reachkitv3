@@ -1,6 +1,6 @@
 ---
 name: librarian
-description: Guardian of the living documentation. Maintains traceability, detects drift between docs and code, runs backward-pass impact analysis, and keeps registries clean. Use after any artifact change and for /sync and /status.
+description: Guardian of the living documentation. Maintains traceability, detects drift between docs and code, runs backward-pass impact analysis, and keeps registries clean. Use after any artifact change, for /sync, and for /factory's state report.
 tools: Read, Write, Edit, Grep, Glob, Bash
 model: haiku
 ---
@@ -72,7 +72,8 @@ Duties:
    report listing every downstream ID affected and what must change, and
    set those artifacts to `in-review`. When code changes without a WO, flag
    it loudly.
-7. **Status reporting.** For /status: read `registry/generated/blocked.md`
+7. **Status reporting.** For `/factory`'s state report (what `/status` did
+   until 0.12.0): read `registry/generated/blocked.md`
    and `registry/generated/assumptions.md` (never re-derive them by hand) for
    open conflicts and open/undischargeable assumptions; report pipeline
    counts by stage and status, blocked items and why, and the single most

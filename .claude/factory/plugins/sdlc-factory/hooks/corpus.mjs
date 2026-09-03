@@ -31,6 +31,14 @@ export const ARTIFACT_DIRS = new Set([
  */
 export const CURATED_DIRS = new Set(["registry", "design"]);
 
+/**
+ * Written by `factory-console pivot` alone, from the shell — never by an
+ * agent, never by the main session (constitution rule 7.5, 0.12.0). Refused
+ * on creation and on edit, whoever asks: an archive is the record of a
+ * decision, and a record that can be edited after the fact is not one.
+ */
+export const ARCHIVE_DIRS = new Set(["archive"]);
+
 /** Never guarded, wherever they sit: scaffolding furniture, not corpus. */
 export const EXEMPT_FILES = new Set(["_TEMPLATE.md", ".gitkeep", "README.md", "00-project.md", "CLAUDE.md"]);
 
@@ -68,12 +76,13 @@ export const OWNERS = {
 export const VERBS = {
   requirements: "/require (new) · /relink or /requirement-cleanup (existing)",
   journeys: "/require",
-  blueprints: "/blueprint",
+  blueprints: "/expand-requirement (or /factory, which drives it)",
   decisions: "/decide",
   "work-orders": "/workorder · /implement · /validate",
   feedback: "/feedback",
   design: "/design",
-  registry: "/sync · /status · /wave",
+  registry: "/sync · /wave · /factory (its state report)",
+  archive: "factory-console pivot --decision ADR-### (from the shell; no verb writes here)",
 };
 
 /** Read `docsRoot` out of a project's config, tolerating anything unreadable
@@ -131,6 +140,9 @@ export function classify(rel) {
   const parts = rel.split(sep).filter(Boolean);
   const file = parts[parts.length - 1] || "";
   const zone = parts.length > 1 ? parts[0] : "";
+  // The archive is judged first: even a README.md or _TEMPLATE.md under it
+  // is the record a pivot wrote, never furniture (rule 7.5).
+  if (ARCHIVE_DIRS.has(zone)) return { kind: "archive", zone, file };
   if (EXEMPT_FILES.has(file)) return { kind: "exempt", zone, file };
   if (ARTIFACT_DIRS.has(zone)) return { kind: "artifact", zone, file };
   if (CURATED_DIRS.has(zone)) return { kind: "curated", zone, file };

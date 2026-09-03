@@ -17,6 +17,8 @@
     "check:fm": "node test/check-fm.mjs",
     "altitude:fm": "node test/altitude-fm.mjs",
     "root:guard": "node test/root-guard.mjs",
+    "pivot": "node test/pivot.mjs",
+    "vendor": "node test/vendor.mjs",
     "upgrade:fm": "node test/upgrade-fm.mjs",
     "registry:fm": "node test/registry-fm.mjs",
     "next:fm": "node test/next-fm.mjs",
@@ -34,6 +36,6 @@
     "cycle:view": "node test/cycle-view.mjs",
     "impact": "node test/impact.mjs",
     "projects": "node test/projects.mjs",
-    "test": "node test/gate-fm.mjs && node test/check-fm.mjs && node test/altitude-fm.mjs && node test/root-guard.mjs && node test/upgrade-fm.mjs && node test/registry-fm.mjs && node test/next-fm.mjs && node test/verdict.mjs && node test/gate.mjs && node test/render.mjs && node test/boot.mjs && node test/boot.mjs test/fixtures/front-matter && node test/doc-endpoint.mjs && node test/status-write.mjs && node test/peek-nav.mjs && node ../plugins/sdlc-factory/hooks/test.mjs && node test/config-code.mjs && node test/git-reader.mjs && node test/code-spine.mjs && node test/code-index.mjs && node test/edge-schema.mjs && node test/system-view.mjs && node test/cycle-view.mjs && node test/impact.mjs && node test/projects.mjs"
+    "test": "node test/run.mjs"
   }
 }

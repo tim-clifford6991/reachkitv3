@@ -62,7 +62,11 @@ on disk with `status: superseded` and one line naming their replacement
 implementer builds the repository skeleton from, in the order the plan
 states. The return carries: old ids → new id, criterion count before
 and after (equal), file-plan rows before and after (after ≤ before,
-never fewer files), line count before and after.
+never fewer files), line count before and after. A `rests-on` row
+carried from a replaced order keeps claim and disposition verbatim; a row
+the merged order mints is the planner's parameter (rule 1.1) and is
+written dispositioned — `confirmed`, `refuted`, or `undischargeable` —
+never `open` (`minted-open-assumption` reports one that is).
 
 ## Body
 
@@ -111,8 +115,11 @@ last:
     - <YYYY-MM-DD> finished — <agent> — <one line>
     - <YYYY-MM-DD> failed — <agent> — <why> — next: <the step to resume at>
     - <YYYY-MM-DD> opened — migration <version>
+    - <YYYY-MM-DD> guard — <agent> wrote <file> outside §4's <zone>/ row — allowed under SDLC_FACTORY_GUARD=log
 
-The fifth is migration-only: a `factory upgrade` backfill writes it when it
+The sixth is the guard's alone (0.12.0): in an unattended run the write
+gate records an out-of-row subagent write here instead of prompting, and
+the librarian audits the line on `/sync`. The fifth is migration-only: a `factory upgrade` backfill writes it when it
 adds the section to a work order (or the work-order template) that predates
 constitution rule 6.1, rather than fabricating a `created` line for a run
 that never happened.

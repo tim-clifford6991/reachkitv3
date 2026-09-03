@@ -21,7 +21,8 @@
 
 import { readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
-import { splitFrontmatter, serializeFrontmatter } from "./lib/frontmatter.mjs";
+// The front-matter parser arrives as ctx.frontmatter (0.12.1) — one parser,
+// the console's, never a copy beside the migrations.
 
 export const version = "0.2.0";
 export const describe = () => "rests-on's unconfirmed -> open, and a report of every other status word this doctrine does not harmonise";
@@ -41,6 +42,7 @@ function walk(dir) {
 }
 
 export async function migrate(ctx) {
+  const { splitFrontmatter, serializeFrontmatter } = ctx.frontmatter;
   let renamed = 0;
   const vocabViolations = [];
 

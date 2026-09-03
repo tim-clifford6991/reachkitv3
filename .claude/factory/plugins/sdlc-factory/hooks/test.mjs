@@ -12,7 +12,7 @@
 // docs root above it?), so a fixture of pure strings would test nothing.
 
 import { execFileSync } from "node:child_process";
-import { copyFileSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { copyFileSync, existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -27,7 +27,7 @@ const assert = (label, ok, detail) => checks.push({ label, ok, detail });
 // ---- a corpus that looks like a real one ----------------------------------
 const root = mkdtempSync(join(tmpdir(), "sdlc-hooks-"));
 const docs = join(root, "sdlc-factory", "docs");
-for (const d of ["requirements", "blueprints", "work-orders", "journeys", "registry", "design", "feedback", "decisions"]) {
+for (const d of ["requirements", "blueprints", "work-orders", "journeys", "registry", "design", "feedback", "decisions", "archive"]) {
   mkdirSync(join(docs, d), { recursive: true });
 }
 const REQ = join(docs, "requirements", "REQ-001.md");
@@ -87,6 +87,32 @@ for (const [agent, file, label] of [
     r.decision === "ask", String(r.decision));
 }
 
+// ---- 2b. log mode: unattended runs are recorded, never prompted ------------
+// SDLC_FACTORY_GUARD=log turns the `ask` branch into allow-and-record: a
+// work order gets the line in its own ## Log; a file with no ## Log is
+// recorded in registry/guard.md. The deny branch is untouched.
+{
+  const env = { ...process.env, SDLC_FACTORY_GUARD: "log" };
+  const runLog = (payload) => {
+    const out = execFileSync("node", [GUARD], { input: JSON.stringify(payload), encoding: "utf8", env });
+    return out.trim() ? JSON.parse(out).hookSpecificOutput?.permissionDecision ?? null : null;
+  };
+  const WO = join(docs, "work-orders", "WO-007.md");
+  writeFileSync(WO, "---\nid: WO-007\ntype: work-order\nstatus: approved\n---\n\n# WO-007\n\n## Goal\nx\n\n## Log\n- 2026-09-01 created — planner\n\n## Validation report (appended by validator)\n");
+  assert("log mode: an out-of-row agent write to a work order is ALLOWED", runLog(write(WO, { agent_type: "architect", agent_id: "sub-9" })) === null, "was not allowed");
+  const woText = readFileSync(WO, "utf8");
+  assert("...and recorded as one line at the end of its ## Log, in rule 6.1's grammar",
+    /## Log\n- 2026-09-01 created — planner\n- \d{4}-\d{2}-\d{2} guard — architect wrote work-orders\/WO-007\.md outside §4's work-orders\/ row — allowed under SDLC_FACTORY_GUARD=log\n\n## Validation report/.test(woText), woText.slice(-260));
+  assert("log mode: an out-of-row write to a file with no ## Log is ALLOWED", runLog(write(REQ, { agent_type: "implementer", agent_id: "sub-9" })) === null, "was not allowed");
+  const guardLog = join(docs, "registry", "guard.md");
+  assert("...and recorded in registry/guard.md, created with its banner", existsSync(guardLog) && /^# Guard log/.test(readFileSync(guardLog, "utf8")) && /implementer wrote requirements\/REQ-001\.md outside §4's requirements\/ row/.test(readFileSync(guardLog, "utf8")), "no record");
+  assert("log mode: an in-row agent write records nothing", (runLog(write(WO, { agent_type: "planner", agent_id: "sub-9" })), (readFileSync(WO, "utf8").match(/guard —/g) || []).length) === 1, "a second line appeared");
+  assert("log mode: the main session is still DENIED", runLog(write(REQ)) === "deny", "not denied");
+  const r = run(GUARD, write(REQ, { agent_type: "implementer", agent_id: "sub-2" }));
+  assert("default mode still asks, and the prompt names the unattended mode", r.decision === "ask" && /SDLC_FACTORY_GUARD=log/.test(r.raw), `${r.decision}`);
+  rmSync(guardLog, { force: true });
+}
+
 // ---- 3. scaffolding still works -------------------------------------------
 // /factory-init runs from the main session and writes the registry and design
 // stubs. If the guard denied those, initialising a project would be
@@ -101,6 +127,28 @@ for (const [agent, file, label] of [
   assert("_TEMPLATE.md is furniture, never guarded", r3.decision === null, String(r3.decision));
   const r4 = run(GUARD, write(join(docs, "00-project.md")));
   assert("00-project.md is furniture, never guarded", r4.decision === null, String(r4.decision));
+}
+
+// ---- 3b. the archive is written by nobody (rule 7.5, 0.12.0) ---------------
+// `factory-console pivot` writes it from the shell; a Write/Edit under
+// archive/ is denied whoever asks — creation and edit alike, agent or main
+// session — and the refusal names the command.
+{
+  mkdirSync(join(docs, "archive", "2026-09-03-streams", "blueprints"), { recursive: true });
+  const archived = join(docs, "archive", "2026-09-03-streams", "blueprints", "BP-001.md");
+  writeFileSync(archived, "---\nid: BP-001\n---\n");
+  const fresh = join(docs, "archive", "2026-09-03-streams", "README.md");
+  for (const [label, file, extra] of [
+    ["main session editing an archived artifact is DENIED", archived, {}],
+    ["main session CREATING a file under archive/ is DENIED (no scaffolding exemption)", fresh, {}],
+    ["the architect editing an archived blueprint is DENIED — not asked", archived, { agent_type: "architect", agent_id: "sub-3" }],
+    ["the librarian, universal elsewhere, is DENIED under archive/", archived, { agent_type: "librarian", agent_id: "sub-4" }],
+  ]) {
+    const r = run(GUARD, write(file, extra));
+    assert(label, r.decision === "deny", `${r.decision} :: ${r.raw.slice(0, 90)}`);
+  }
+  const r = run(GUARD, write(archived));
+  assert("...and the refusal names factory-console pivot", /factory-console pivot/.test(r.raw), r.raw.slice(0, 160));
 }
 
 // ---- 4. everything else on the machine is untouched ------------------------
@@ -153,7 +201,7 @@ for (const [label, payload] of [
   const OWNER_SURFACE = ["/factory", "/require", "/requirement-cleanup", "/decide", "/wave", "/feedback"];
   for (const v of OWNER_SURFACE) assert(`...the card names ${v} in the form that resolves`, r.ctx.includes(`\`/sdlc-factory:${v.slice(1)}\``), "missing");
   assert("...and never a bare owner verb as the thing to type", !/\| [a-z ]+ \| `\/[a-z-]+` \|/.test(r.ctx), "a bare verb in the Type this column");
-  for (const v of ["/implement", "/blueprint", "/validate", "/regress", "/workorder", "/status", "/expand-requirement", "/relink", "/sync", "/design"]) {
+  for (const v of ["/implement", "/validate", "/regress", "/workorder", "/expand-requirement", "/relink", "/sync", "/design", "/console"]) {
     assert(`...and never the internal ${v}`, !r.ctx.includes(`\`${v}\``), "internal verb on the card");
   }
   const mapText = readFileSync(join(HERE, "..", "templates", "constitution.md"), "utf8");

@@ -7,7 +7,22 @@ derives, drafts, and verifies everything else.
 
 ## Install
 
-There is no in-session `/plugin` command — installation and upgrades go
+**Natively, per project (0.12.0):** from a clone of this repository,
+
+```
+factory-console vendor <project>      # or /sdlc-factory:factory-init, which runs it as step 4a
+```
+
+copies the doctrine and the console into `<project>/.claude/factory/`,
+links `.claude/{agents,commands,skills}` into the copy, wires the hooks
+into `.claude/settings.json`, and writes `VENDORED.md`. The project is then
+self-contained on any host with Node — no marketplace, no plugin install —
+and `factory-console upgrade <project>` re-vendors the copy when it
+migrates the corpus. The copy is generated: never edit it; fix here and
+re-vendor.
+
+**Through the marketplace**, for a host that keeps the plugin globally —
+there is no in-session `/plugin` command; installation and upgrades go
 through the `claude plugin` CLI, outside any session:
 
 ```
@@ -18,7 +33,8 @@ claude plugin update sdlc-factory@timclifford
 
 `update` pulls the latest doctrine, but a session that already loaded the
 plugin keeps running the version it started with — restart the session (or
-the console, if it's running) to pick up the change.
+the console, if it's running) to pick up the change. A vendored project
+disables the marketplace plugin for itself, so the two never load twice.
 
 ## Owner verbs
 

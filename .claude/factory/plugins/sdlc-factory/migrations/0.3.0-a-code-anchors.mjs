@@ -29,7 +29,8 @@
 
 import { readdirSync } from "node:fs";
 import { join } from "node:path";
-import { splitFrontmatter, serializeFrontmatter } from "./lib/frontmatter.mjs";
+// The front-matter parser arrives as ctx.frontmatter (0.12.1) — one parser,
+// the console's, never a copy beside the migrations.
 
 export const version = "0.3.0";
 export const describe = () => "blueprints declare code: [] — governing nothing is said, not implied";
@@ -39,6 +40,7 @@ function walk(dir) {
 }
 
 export async function migrate(ctx) {
+  const { splitFrontmatter, serializeFrontmatter } = ctx.frontmatter;
   const bpType = ctx.config.types.find((t) => t.id === "BP" && t.dir);
   if (!bpType) {
     ctx.log(`  no "BP" type with a "dir" in factory.config.json — nothing to anchor`);

@@ -4,12 +4,12 @@
   "grammar": "front-matter",
 
   "types": [
-    { "id": "REQ", "dir": "requirements", "label": "Requirements" },
-    { "id": "BP",  "dir": "blueprints",   "label": "Blueprints" },
-    { "id": "WO",  "dir": "work-orders",  "label": "Work Orders" },
-    { "id": "ADR", "dir": "decisions",    "label": "Decisions" },
-    { "id": "FB",  "dir": "feedback",     "label": "Feedback" },
-    { "id": "JN",  "dir": "journeys",     "label": "Journeys" }
+    { "id": "REQ", "dir": "requirements", "label": "Requirements", "durability": "durable" },
+    { "id": "BP",  "dir": "blueprints",   "label": "Blueprints",   "durability": "derived" },
+    { "id": "WO",  "dir": "work-orders",  "label": "Work Orders",  "durability": "derived" },
+    { "id": "ADR", "dir": "decisions",    "label": "Decisions",    "durability": "durable" },
+    { "id": "FB",  "dir": "feedback",     "label": "Feedback",     "durability": "durable" },
+    { "id": "JN",  "dir": "journeys",     "label": "Journeys",     "durability": "durable" }
   ],
 
   "externalIdPrefixes": ["TST"],
@@ -31,7 +31,7 @@
     "satisfies":   { "from": ["blueprint"],  "to": ["requirement"] },
     "covers":      { "from": ["blueprint"],  "to": ["requirement"] },
     "implements":  { "from": ["work-order"], "to": ["blueprint", "requirement", "decision"] },
-    "decides-for": { "from": ["decision"],   "to": ["requirement", "blueprint", "work-order"] },
+    "decides-for": { "from": ["decision"],   "to": ["requirement", "blueprint", "work-order", "charter"] },
     "about":       { "from": ["feedback"],   "to": ["requirement", "blueprint", "work-order", "decision"] },
     "depends-on":  { "from": ["*"], "to": ["*"] },
     "blocked-by":  { "from": ["*"], "to": ["*"] },
@@ -78,6 +78,8 @@
   "structureMap": "registry/structure.md",
   "charter": "00-project.md",
 
+  "archive": "archive",
+
   "schema": null,
 
   "code": { "root": "." },
@@ -111,7 +113,9 @@
       "work-order-fanout": "warn",
       "corpus-volume": "warn",
       "assumption-budget": "warn",
-      "open-assumption-on-done": "error"
+      "open-assumption-on-done": "error",
+      "pivot-relink": "warn",
+      "minted-open-assumption": "warn"
     }
   },
 
