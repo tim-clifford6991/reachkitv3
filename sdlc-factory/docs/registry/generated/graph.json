@@ -2,55 +2,55 @@
   "coverage": {
     "satisfies": {
       "carrying": 44,
-      "total": 447
+      "total": 448
     },
     "covers": {
       "carrying": 32,
-      "total": 447
+      "total": 448
     },
     "implements": {
       "carrying": 262,
-      "total": 447
+      "total": 448
     },
     "decides-for": {
       "carrying": 31,
-      "total": 447
+      "total": 448
     },
     "about": {
       "carrying": 0,
-      "total": 447
+      "total": 448
     },
     "depends-on": {
       "carrying": 387,
-      "total": 447
+      "total": 448
     },
     "blocked-by": {
       "carrying": 5,
-      "total": 447
+      "total": 448
     },
     "cites-retired": {
       "carrying": 0,
-      "total": 447
+      "total": 448
     },
     "supersedes": {
       "carrying": 23,
-      "total": 447
+      "total": 448
     },
     "rests-on": {
       "carrying": 283,
-      "total": 447
+      "total": 448
     },
     "code": {
       "carrying": 63,
-      "total": 447
+      "total": 448
     },
     "exercises": {
       "carrying": 6,
-      "total": 447
+      "total": 448
     },
     "origin": {
       "carrying": 0,
-      "total": 447
+      "total": 448
     }
   },
   "nodes": {
@@ -4849,6 +4849,16 @@
         "WO-030"
       ],
       "file": "sdlc-factory/docs/work-orders/WO-030.md"
+    },
+    "TST-014": {
+      "id": "TST-014",
+      "type": "validation",
+      "title": "WO-268 validation report",
+      "status": "pass",
+      "validates": [
+        "WO-268"
+      ],
+      "file": "sdlc-factory/docs/work-orders/WO-268.md"
     },
     "WO-001": {
       "id": "WO-001",
@@ -11276,7 +11286,7 @@
       "id": "WO-268",
       "type": "work-order",
       "title": "The fifteen registered components — Btn, Card, Badge, Alert, Stat, Tabs, Table, Progress, Toggle, Steps, Join, Collapse, Input, Divider, Kbd — and the closed barrel",
-      "status": "approved",
+      "status": "done",
       "implements": [
         "BP-018"
       ],
@@ -11288,15 +11298,23 @@
       "rests-on": [
         {
           "claim": "**No approved requirement states the design system.** BP-018 carries `satisfies: []` and says so in its own status grounds. Acceptance below is quoted from BP-018 and `BUILD.md` §2.2 and §2.5; none is inherited from a requirement.",
-          "disposition": "open"
+          "disposition": "confirmed"
         },
         {
           "claim": "`sdlc-factory/docs/design/components.md` is an empty registry with no rows. BP-018 decision 1 makes entry in that file the precondition of export: \"a new component enters `sdlc-factory/docs/design/components.md` as `proposed` with its data contract and states before it can be exported.\" The eight components below must be registered there by the design-guardian — with the data contract and states this work order's preview shows — before this work order can be signed off. The planner may not write that file.",
-          "disposition": "open"
+          "disposition": "refuted"
         },
         {
           "claim": "The seven components below must be registered in `sdlc-factory/docs/design/components.md` — an empty table today — by the design-guardian before this work order can be signed off (BP-018 decision 1). The planner may not write that file.",
-          "disposition": "open"
+          "disposition": "refuted"
+        },
+        {
+          "claim": "**Stale as of implementation (flagged by the implementer, not dispositioned): the three rows above describe `components.md` as an empty registry with no rows.** It is not — the fifteen §1 rows are `status: approved` (owner signature on `design/previews/WO-268.html`, 2026-09-03). The validator should re-read all three against the current registry file, not this stale description.",
+          "disposition": "confirmed"
+        },
+        {
+          "claim": "**The `-content` gap flagged forward from WO-029 (its `## Log` TST-012 entry, 2026-09-03) is real, confirmed empirically, and not fixed by this work order.** `tailwind.config.ts` maps six BUILD.md §2.1 slots (`base-100/200/300/content`, `primary`, `success/warning/error`) but no paired daisyUI `-content` slot (`--color-primary-content`, `--color-success-content`, `--color-warning-content`, `--color-error-content`). Compiled real CSS through the repo's own `@tailwindcss/postcss` + `daisyui`/`daisyui/theme` (the WO-029 TST-012 method) and rendered it in a real Chromium page (Playwright, already a devDependency): `Btn`'s `primary` variant and `Badge`'s `primary`/`success`/`warning`/`error` variants all compute `color: rgb(25, 25, 37)` (`--ink`/`--color-base-content`) on their tinted backgrounds — the var() chain falls back through `--btn-fg`/`--badge-fg` to `--color-base-content` because `--color-primary-content` etc. are never declared anywhere in the compiled output, not `--on-accent` (`#ffffff`), which `theme.css` defines and the idiom's tokens.md reading implies is the intended foreground. This is dark ink on an accent/state-coloured background, not the designed on-accent pairing, on every one of the five `Btn`/`Badge` tone variants that use those two components' `primary`/`success`/`warning`/`error` classes. No token value is invented here (rule 7.1 — `design/` is the design-guardian's); the components are built per their registered daisyUI class contracts as specified. The fix is a `tailwind.config.ts` mapping addition (four `--color-*-content` slots), architect/design-guardian territory, out of this WO's file plan.",
+          "disposition": "confirmed"
         }
       ],
       "supersedes": [
