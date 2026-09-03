@@ -2,55 +2,55 @@
   "coverage": {
     "satisfies": {
       "carrying": 44,
-      "total": 442
+      "total": 444
     },
     "covers": {
       "carrying": 32,
-      "total": 442
+      "total": 444
     },
     "implements": {
-      "carrying": 261,
-      "total": 442
+      "carrying": 262,
+      "total": 444
     },
     "decides-for": {
       "carrying": 30,
-      "total": 442
+      "total": 444
     },
     "about": {
       "carrying": 0,
-      "total": 442
+      "total": 444
     },
     "depends-on": {
-      "carrying": 386,
-      "total": 442
+      "carrying": 387,
+      "total": 444
     },
     "blocked-by": {
       "carrying": 4,
-      "total": 442
+      "total": 444
     },
     "cites-retired": {
       "carrying": 0,
-      "total": 442
+      "total": 444
     },
     "supersedes": {
       "carrying": 23,
-      "total": 442
+      "total": 444
     },
     "rests-on": {
-      "carrying": 281,
-      "total": 442
+      "carrying": 282,
+      "total": 444
     },
     "code": {
       "carrying": 63,
-      "total": 442
+      "total": 444
     },
     "exercises": {
       "carrying": 6,
-      "total": 442
+      "total": 444
     },
     "origin": {
       "carrying": 0,
-      "total": 442
+      "total": 444
     }
   },
   "nodes": {
@@ -3040,7 +3040,7 @@
       "id": "JN-001",
       "type": "journey",
       "title": "A stranger scans their domain and leaves with a finished page",
-      "status": "in-review",
+      "status": "approved",
       "depends-on": [],
       "blocked-by": [],
       "rests-on": [],
@@ -3291,7 +3291,7 @@
       "id": "JN-004",
       "type": "journey",
       "title": "Changing your account, and leaving",
-      "status": "in-review",
+      "status": "approved",
       "depends-on": [
         "JN-002"
       ],
@@ -4370,7 +4370,7 @@
       "id": "REQ-074",
       "type": "requirement",
       "title": "A broken destination is a state the customer can fix, not an error loop",
-      "status": "in-review",
+      "status": "approved",
       "depends-on": [
         "REQ-043",
         "REQ-056",
@@ -4786,6 +4786,16 @@
         "WO-272"
       ],
       "file": "sdlc-factory/docs/work-orders/WO-272.md"
+    },
+    "TST-011": {
+      "id": "TST-011",
+      "type": "validation",
+      "title": "WO-275 validation report",
+      "status": "pass",
+      "validates": [
+        "WO-275"
+      ],
+      "file": "sdlc-factory/docs/work-orders/WO-275.md"
     },
     "WO-001": {
       "id": "WO-001",
@@ -11382,6 +11392,28 @@
       "rests-on": [],
       "supersedes": [],
       "file": "sdlc-factory/docs/work-orders/WO-274.md"
+    },
+    "WO-275": {
+      "id": "WO-275",
+      "type": "work-order",
+      "title": "npm test's default file parallelism races tests/db/**'s shared scratch database — scope the fileParallelism boundary to a dedicated vitest project",
+      "status": "done",
+      "implements": [
+        "BP-001"
+      ],
+      "depends-on": [
+        "WO-267"
+      ],
+      "blocked-by": [],
+      "rests-on": [
+        {
+          "claim": "vitest 4.1.11's per-project `test.fileParallelism: false` (a `ProjectConfig` field — `ProjectConfig = Omit<InlineConfig, NonProjectOptions | \"sequencer\" | \"deps\">`, and `fileParallelism` is not a member of the `NonProjectOptions` union that excludes root-only options — `node_modules/vitest/dist/chunks/reporters.d.DtoKVV2s.d.ts`) actually scopes serialization to the files of the one project it is set on, while files in the other three projects (`node`, `ui`, `layout`) keep scheduling concurrently with each other and with that project. Confirmed at the type level only; not yet observed at runtime.",
+          "disposition": "refuted",
+          "reason": "TST-011 §4 controlled probe: the db project runs as a sequential block after node/ui/layout fully drain, not concurrently interleaved with them. The first half of the claim (per-project serialization) is confirmed and sufficient for correctness; the 'and with that project' clause is wrong, a performance characteristic not a defect."
+        }
+      ],
+      "supersedes": [],
+      "file": "sdlc-factory/docs/work-orders/WO-275.md"
     }
   }
 }

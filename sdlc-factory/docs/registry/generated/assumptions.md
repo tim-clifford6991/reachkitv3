@@ -4,7 +4,7 @@
 
 # Assumptions
 
-`rests-on` is projected from 281 of 442 nodes — the rest are silent on it. This is rule 5.5's own example: a generated file whose source field is empty everywhere looks identical to a healthy one unless it says so.
+`rests-on` is projected from 282 of 444 nodes — the rest are silent on it. This is rule 5.5's own example: a generated file whose source field is empty everywhere looks identical to a healthy one unless it says so.
 
 Every `rests-on` entry across the graph, grouped by disposition. `claim` and `accepted-by` are projected verbatim from the artifact's own front-matter (stored data, not extracted prose); the argument for the disposition stays in the artifact's body.
 
@@ -434,7 +434,9 @@ Every `rests-on` entry across the graph, grouped by disposition. `claim` and `ac
 
 ## refuted
 
-None.
+| Artifact | Claim | Accepted by | See |
+|---|---|---|---|
+| WO-275 | vitest 4.1.11's per-project `test.fileParallelism: false` (a `ProjectConfig` field — `ProjectConfig = Omit<InlineConfig, NonProjectOptions | "sequencer" | "deps">`, and `fileParallelism` is not a member of the `NonProjectOptions` union that excludes root-only options — `node_modules/vitest/dist/chunks/reporters.d.DtoKVV2s.d.ts`) actually scopes serialization to the files of the one project it is set on, while files in the other three projects (`node`, `ui`, `layout`) keep scheduling concurrently with each other and with that project. Confirmed at the type level only; not yet observed at runtime. | undefined | sdlc-factory/docs/work-orders/WO-275.md |
 
 ## confirmed
 
