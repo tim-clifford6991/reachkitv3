@@ -1,4 +1,4 @@
-// src/lib/scan/admission.ts — BP-023 `## Public interface`, WO-057
+// src/lib/scan/admission.ts — BP-023 `## Public interface`, WO-057, WO-058
 //
 // `admitFreeScan` answers *may a free scan start* against the free path's
 // bounds, in BP-012's fixed order, without side effects and without
@@ -10,7 +10,30 @@
 //   removed → cooldown → switched off / daily ceiling → in-flight → hourly
 //
 // what each step reads and returns is BP-023's `## Error & edge behavior`
-// table.
+// table. `evaluateAdmission`, below, is that order extracted once (WO-058
+// `## Steps` step 2, rule 2.4): both `admitFreeScan` and `claimFreeScanSlot`
+// call it, so the order exists exactly once in this file.
+//
+// **`claimFreeScanSlot`'s transaction, and a deviation flagged once here
+// (constitution rule 4.2) — full reasoning in `supabase/migrations/
+// 00000000000006_scans_freepath_claim.sql`'s own header:** BP-023's NFR
+// budget calls `claimFreeScanSlot` "one serialisable transaction". Reached
+// only through `dbAdmin()` (`@supabase/supabase-js`, a PostgREST client), a
+// literal client-driven `BEGIN` / `SET TRANSACTION ISOLATION LEVEL
+// SERIALIZABLE` / `COMMIT` spanning the six-step re-evaluation and the
+// insert is not reachable from this module alone — each `.from(...)` call
+// is its own HTTP request and its own implicit transaction, and neither a
+// stored procedure (a migration function body) nor a raw `pg` connection is
+// in WO-058's file plan. `claimFreeScanSlot` instead re-evaluates the same
+// order and then attempts the insert; two concurrent claims for one
+// network can both pass the in-memory re-evaluation, but the migration
+// above's partial unique index — at most one `running` scan per network —
+// lets Postgres allow only one of the resulting inserts to succeed,
+// atomically and regardless of the calling transaction's isolation level.
+// The loser's insert is rejected by the database, not raced against in
+// application code, and is reported as an `in_flight` refusal below — the
+// same outcome the NFR budget names, reached by a constraint rather than
+// an isolation level this client cannot request.
 //
 // **Two schema gaps, each flagged once here (constitution rule 4.2), not
 // fabricated around:**
@@ -22,21 +45,22 @@
 //     `depends-on` does not name it). The generated `Database` type
 //     (`src/lib/db/types.generated.ts`, outside this WO's file plan)
 //     therefore carries no entry for it.
-//  2. `scans.network_hash` was added to the live schema by WO-056's
-//     migration (`supabase/migrations/00000000000005_scans_freepath.sql`),
-//     but `types.generated.ts` was not regenerated in that WO's own file
-//     plan, so the column is absent from the generated `Database` type
-//     too, even though the column itself exists.
+//  2. `scans.network_hash` and `scans.from_incomplete_rescan` were added to
+//     the live schema by WO-056's migration (`supabase/migrations/
+//     00000000000005_scans_freepath.sql`), but `types.generated.ts` was not
+//     regenerated in that WO's own file plan, so both columns are absent
+//     from the generated `Database` type too, even though they exist.
 //
 // Both gaps are worked around the same way: a minimal, locally declared
 // row shape and a narrow, explicitly cast query builder (`untyped`,
-// below) for exactly the two calls that touch them — `domain_blocks`
-// entirely, and `scans.network_hash` on the in-flight and hourly steps.
-// Every other query in this file is fully typed against the generated
-// `Database`. Neither gap is this WO's to close: `domain_blocks`'s
-// migration is WO-012's, and regenerating `types.generated.ts` is outside
-// this WO's file plan (touching it would be a WO-267-shaped change, not
-// an admission-order one).
+// below) for exactly the calls that touch them — `domain_blocks` entirely;
+// `scans.network_hash` on the in-flight and hourly reads and on
+// `claimFreeScanSlot`'s insert; `scans.from_incomplete_rescan` on that same
+// insert (WO-058). Every other query in this file is fully typed against
+// the generated `Database`. Neither gap is this WO's to close:
+// `domain_blocks`'s migration is WO-012's, and regenerating
+// `types.generated.ts` is outside this WO's file plan (touching it would
+// be a WO-267-shaped change, not an admission-order one).
 import { createHmac } from "node:crypto";
 import { isIP } from "node:net";
 import { env } from "@/lib/config/env";
@@ -139,16 +163,33 @@ interface QueryResult<T> {
   error: { message: string } | null;
 }
 
+/** PostgREST's own error shape carries `code` — the Postgres SQLSTATE
+ *  (`23505` for a unique-violation) — alongside `message`; the read-only
+ *  queries above never need it, `claimFreeScanSlot`'s insert does
+ *  (`isUniqueViolation`, below). */
+interface MutationError {
+  message: string;
+  code?: string;
+}
+
+interface SingleResult<T> {
+  data: T | null;
+  error: MutationError | null;
+}
+
 /** The subset of the PostgREST filter-builder chain this file calls,
  *  typed against a locally declared row shape rather than the generated
  *  `Database` (see the module header's two gaps). Thenable, matching the
- *  real client's own builder. */
+ *  real client's own builder. `insert` and `single` are WO-058's addition,
+ *  for `claimFreeScanSlot`'s write; every other member is WO-057's. */
 interface MinimalQueryBuilder<T> extends PromiseLike<QueryResult<T>> {
   select(columns: string): MinimalQueryBuilder<T>;
   eq(column: string, value: string): MinimalQueryBuilder<T>;
   gte(column: string, value: string): MinimalQueryBuilder<T>;
   order(column: string, opts: { ascending: boolean }): MinimalQueryBuilder<T>;
   limit(count: number): MinimalQueryBuilder<T>;
+  insert<R extends object>(row: R): MinimalQueryBuilder<T>;
+  single(): PromiseLike<SingleResult<T>>;
 }
 
 interface MinimalClient {
@@ -168,6 +209,20 @@ interface DomainBlockRow {
 interface ScanNetworkRow {
   id: string;
   domain: string;
+}
+
+/** The row `claimFreeScanSlot` inserts — BP-023 `## Data model delta`'s
+ *  three added columns plus the base columns every `scans` row carries. */
+interface FreeScanInsert {
+  domain: string;
+  tier: "free";
+  status: "running";
+  network_hash: string;
+  from_incomplete_rescan: boolean;
+}
+
+interface InsertedScanRow {
+  id: string;
 }
 
 // ── The six-step order — BP-012's, evaluated here ───────────────────────
@@ -284,14 +339,16 @@ function finish<T extends Admission>(
   return result;
 }
 
-/** Idempotent and free of side effects: BP-022 calls it on every render of a
- *  report address, and a render must never consume an allowance. */
-export async function admitFreeScan(a: {
-  domain: CanonicalDomain;
-  network: NetworkKey;
-}): Promise<Admission> {
-  const client = dbAdmin();
-
+/** The six-step order (WO-058 `## Steps` step 2, rule 2.4: stated once,
+ *  called by both `admitFreeScan` and `claimFreeScanSlot`). Returns the
+ *  `Admission` the order settles on and the step that produced it, for the
+ *  caller's own logging — this function does not log itself, so a caller
+ *  that discards the result without calling `finish` cannot double-log. */
+async function evaluateAdmission(
+  client: Client,
+  domain: CanonicalDomain,
+  network: NetworkKey
+): Promise<{ result: Admission; step: FreeStep }> {
   // Step 1 — removed. Outside the fail-open handler (WO-057 `## Steps`
   // step 4, BP-023 `## Error & edge behavior`): a `domain_blocks` read
   // that errors refuses rather than admits, because failing open there
@@ -299,11 +356,11 @@ export async function admitFreeScan(a: {
   // absolutely.
   let removed: boolean;
   try {
-    removed = await isRemoved(client, a.domain);
+    removed = await isRemoved(client, domain);
   } catch {
-    return finish({ refuse: "removed" }, "removed", a.network, a.domain);
+    return { result: { refuse: "removed" }, step: "removed" };
   }
-  if (removed) return finish({ refuse: "removed" }, "removed", a.network, a.domain);
+  if (removed) return { result: { refuse: "removed" }, step: "removed" };
 
   // Steps 2 to 6 — cooldown, switched off, daily, in-flight, hourly — are
   // wrapped in one fail-open handler: any read error here admits (REQ-003
@@ -311,26 +368,110 @@ export async function admitFreeScan(a: {
   // step the log line names).
   let step: FreeStep = "cooldown";
   try {
-    const cooldown = await checkCooldown(client, a.domain);
-    if (cooldown) return finish(cooldown, "cooldown", a.network, a.domain);
+    const cooldown = await checkCooldown(client, domain);
+    if (cooldown) return { result: cooldown, step: "cooldown" };
 
     step = "switched_off";
-    if (env.KILL_SWITCH) return finish({ refuse: "switched_off" }, "switched_off", a.network, a.domain);
+    if (env.KILL_SWITCH) return { result: { refuse: "switched_off" }, step: "switched_off" };
 
     step = "daily";
     const daily = await checkDaily(client);
-    if (daily) return finish(daily, "daily", a.network, a.domain);
+    if (daily) return { result: daily, step: "daily" };
 
     step = "in_flight";
-    const inFlight = await checkInFlight(client, a.network, a.domain);
-    if (inFlight) return finish(inFlight, "in_flight", a.network, a.domain);
+    const inFlight = await checkInFlight(client, network, domain);
+    if (inFlight) return { result: inFlight, step: "in_flight" };
 
     step = "hourly";
-    const hourly = await checkHourly(client, a.network);
-    if (hourly) return finish(hourly, "hourly", a.network, a.domain);
+    const hourly = await checkHourly(client, network);
+    if (hourly) return { result: hourly, step: "hourly" };
 
-    return finish({ admit: true }, "none", a.network, a.domain);
+    return { result: { admit: true }, step: "none" };
   } catch {
-    return finish({ admit: true }, step, a.network, a.domain);
+    return { result: { admit: true }, step };
   }
+}
+
+/** Idempotent and free of side effects: BP-022 calls it on every render of a
+ *  report address, and a render must never consume an allowance. */
+export async function admitFreeScan(a: {
+  domain: CanonicalDomain;
+  network: NetworkKey;
+}): Promise<Admission> {
+  const client = dbAdmin();
+  const { result, step } = await evaluateAdmission(client, a.domain, a.network);
+  return finish(result, step, a.network, a.domain);
+}
+
+/** `error.code === '23505'` — Postgres's unique-violation SQLSTATE. The
+ *  only error `insertRunningScan` treats as "lost the race" rather than
+ *  rethrowing; every other insert failure propagates (WO-058's own test
+ *  plan and BP-023 `## Error & edge behavior` name no other insert-failure
+ *  contract for `claimFreeScanSlot` to honour, unlike the counting reads'
+ *  explicit fail-open budget). */
+function isUniqueViolation(error: MutationError): boolean {
+  return error.code === "23505";
+}
+
+/** The insert `claimFreeScanSlot` guards with `idx_scans_one_running_per_
+ *  network` (`supabase/migrations/00000000000006_scans_freepath_claim.sql`).
+ *  Returns the new row's id, or `{ conflict: true }` when the database
+ *  itself refused a second `running` row for this network — the mutual
+ *  exclusion mechanism the module header describes. */
+async function insertRunningScan(
+  client: Client,
+  row: FreeScanInsert
+): Promise<{ id: string } | { conflict: true }> {
+  const { data, error } = await untyped(client)
+    .from<InsertedScanRow>("scans")
+    .insert(row)
+    .select("id")
+    .single();
+  if (error) {
+    if (isUniqueViolation(error)) return { conflict: true };
+    throw new Error(error.message);
+  }
+  if (!data) throw new Error("scans insert: no row returned");
+  return { id: data.id };
+}
+
+/** BP-023 decision 5: consumes. Re-evaluates the same six-step order
+ *  `admitFreeScan` checks, then inserts the `scans` row that *is* the
+ *  in-flight record — the module header explains how two concurrent
+ *  claims for one network can only ever resolve to one insert succeeding.
+ *  A refusal at either the re-evaluation or the insert produces no
+ *  `scans` row at all (BP-023, "produces no report of its own"). */
+export async function claimFreeScanSlot(a: {
+  domain: CanonicalDomain;
+  network: NetworkKey;
+  fromIncompleteRescan: boolean;
+}): Promise<{ claimed: true; scanId: string } | { claimed: false; refusal: Admission }> {
+  const client = dbAdmin();
+
+  const { result, step } = await evaluateAdmission(client, a.domain, a.network);
+  if ("refuse" in result) {
+    finish(result, step, a.network, a.domain);
+    return { claimed: false, refusal: result };
+  }
+
+  const inserted = await insertRunningScan(client, {
+    domain: a.domain,
+    tier: "free",
+    status: "running",
+    network_hash: a.network,
+    from_incomplete_rescan: a.fromIncompleteRescan,
+  });
+
+  if ("conflict" in inserted) {
+    // Lost the race the database itself decided: re-read the winner's row
+    // to report `sameDomain`/`runningScanId` exactly as `checkInFlight`
+    // would have, had it seen the row a moment earlier.
+    const lost = await checkInFlight(client, a.network, a.domain);
+    const refusal: Admission = lost ?? { refuse: "in_flight", sameDomain: false };
+    finish(refusal, "in_flight", a.network, a.domain);
+    return { claimed: false, refusal };
+  }
+
+  finish({ admit: true }, "none", a.network, a.domain);
+  return { claimed: true, scanId: inserted.id };
 }

@@ -385,11 +385,19 @@ describe(
         path.resolve(import.meta.dirname, "../../../src/lib/scan/admission.ts"),
         "utf8"
       );
-      // Source-level check: no write method appears anywhere in this
-      // read-only module (WO-057 adds no writer to any table).
-      for (const writeMethod of ["insert(", "upsert(", "delete("]) {
-        expect(source).not.toContain(writeMethod);
-      }
+      // Source-level check, narrowed by WO-058 (constitution rule 4.2,
+      // flagged in that WO's own report): WO-057's original assertion here
+      // was "no write method appears anywhere in this read-only module",
+      // true only because WO-057 added no writer to any table. WO-058 adds
+      // this module's first writer — `claimFreeScanSlot`'s insert — which
+      // targets `scans` only, never `domain_blocks`, so the check is now
+      // scoped to what this test's own title claims: `"domain_blocks"` is
+      // named exactly once in the file, inside `isRemoved`'s own read and
+      // nowhere else, so nothing else here — including that insert — can
+      // reach the table.
+      const domainBlocksMentions = [...source.matchAll(/"domain_blocks"/g)];
+      expect(domainBlocksMentions).toHaveLength(1);
+
       // `.update(` appears exactly once in this file — `node:crypto`'s
       // `Hmac.update()` inside `hashSeed`, not a database write. Asserted
       // by name rather than excluded from the scan, so a second, real
@@ -398,10 +406,11 @@ describe(
       expect(updateOccurrences).toHaveLength(1);
       expect(source).toMatch(/createHmac\([^)]*\)[\s\S]*?\.update\(/);
 
-      // Watch it fail first: the same predicate flags a fixture that does
-      // write, proving it discriminates rather than trivially passing.
-      const fixtureWithWrite = `${source}\nvoid dbAdmin().from("domain_blocks").insert({ domain: "x" });\n`;
-      expect(fixtureWithWrite).toContain("insert(");
+      // Watch it fail first: the same predicate flags a fixture that adds
+      // a second reference to the table, proving it discriminates rather
+      // than trivially passing.
+      const fixtureWithSecondMention = `${source}\nvoid dbAdmin().from("domain_blocks").insert({ domain: "x" });\n`;
+      expect([...fixtureWithSecondMention.matchAll(/"domain_blocks"/g)]).toHaveLength(2);
 
       // Call-level check: exercise several admission scenarios and assert
       // no write method was ever invoked on the mocked domain_blocks
