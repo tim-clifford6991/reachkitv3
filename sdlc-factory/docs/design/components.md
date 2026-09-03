@@ -38,23 +38,23 @@ that — no fallback, no placeholder, no sensible default.
 
 ## 1. daisyUI primitives (15) — BP-018
 
-| Component | Status | Data contract | States | Owning BP |
-|---|---|---|---|---|
-| `Btn` | approved | daisyUI `btn` (+`primary`/`ghost`/`sm`/`block`). `label` required. Also carries the copy-to-clipboard affordance — no separate copy component exists | default · disabled · in-flight (a submit that is disabled while posting) | BP-018 |
-| `Card` | approved | `card`/`card-body`/`card-title`. Title slot takes a **verdict node**, not a metric label — §2.5: the card leads with the answer | default · degraded (one written line in place of a missing section — never an empty card, never a spinner) | BP-018 |
-| `Badge` | approved | `badge` (+`primary`/`success`/`warning`/`error`/`ghost`), keyed by `Tone`. **Requires a text child** — a tone alone may never carry meaning | default | BP-018 |
-| `Alert` | approved | `alert`, four tones. `message` required; no default empty-state sentence | default. **An intended-empty state takes `neutral` or `ok`, never `bad`/`warn`** (§2.5: an empty queue is a success state) | BP-018 |
-| `Stat` | approved | `stats`/`stat`. Value renders through the mono numeral utility. One headline number per module; every value carries its delta or its goal, never bare | measured · measured-zero (prints `0`) · unmeasured (prints `—` plus one written line naming the reason) | BP-018 |
-| `Tabs` | approved | `tabs`, boxed + bordered. Every tab label required | default · selected | BP-018 |
-| `Table` | approved | `table` (+`zebra`), **always inside an `overflow-x-auto` wrap** — the wrap is part of the component, not the caller's job | rows · empty (caller-supplied written line) · **never a skeleton** | BP-018 |
-| `Progress` | approved | `progress`. **Determinate only** — a caller cannot request an indeterminate bar. This is also the three driver mini-bars of the report's header strip (§4.1); mini-bars are *not* a sixth chart | default | BP-018 |
-| `Toggle` | approved | `toggle`. Label required; no default on/off wording | on · off · disabled | BP-018 |
-| `Steps` | approved | `steps`. **Each step's label required** — this is what the scan's named stages render through, so an unlabelled step cannot exist (REQ-003 c1: never an unlabelled spinner) | pending · active · done | BP-018 |
-| `Join` | approved | `join`. Layout only | — | BP-018 |
-| `Collapse` | approved | `collapse`. Summary text required. Server-rendered body, not a lazy fetch (REQ-009 c6 is readable without JavaScript) | collapsed · expanded | BP-018 |
-| `Input` | approved | `input`. Placeholder **and** label required, never defaulted | default · invalid (one written line, value intact) · disabled | BP-018 |
-| `Divider` | approved | `divider`. Layout only | — | BP-018 |
-| `Kbd` | approved | `kbd`. Renders through the mono utility — a code-like string under §2.3. **Inline only**; it is not a code block (see §4) | — | BP-018 |
+| Component | Status | Data contract | States | Owning BP | Preview |
+| --- | --- | --- | --- | --- | --- |
+| `Btn` | approved | daisyUI `btn` (+`primary`/`ghost`/`sm`/`block`). `label` required. Also carries the copy-to-clipboard affordance — no separate copy component exists | default · disabled · in-flight (a submit that is disabled while posting) | BP-018 | — |
+| `Card` | approved | `card`/`card-body`/`card-title`. Title slot takes a **verdict node**, not a metric label — §2.5: the card leads with the answer | default · degraded (one written line in place of a missing section — never an empty card, never a spinner) | BP-018 | — |
+| `Badge` | approved | `badge` (+`primary`/`success`/`warning`/`error`/`ghost`), keyed by `Tone`. **Requires a text child** — a tone alone may never carry meaning | default | BP-018 | — |
+| `Alert` | approved | `alert`, four tones. `message` required; no default empty-state sentence | default. **An intended-empty state takes `neutral` or `ok`, never `bad`/`warn`** (§2.5: an empty queue is a success state) | BP-018 | — |
+| `Stat` | approved | `stats`/`stat`. Value renders through the mono numeral utility. One headline number per module; every value carries its delta or its goal, never bare | measured · measured-zero (prints `0`) · unmeasured (prints `—` plus one written line naming the reason) | BP-018 | — |
+| `Tabs` | approved | `tabs`, boxed + bordered. Every tab label required | default · selected | BP-018 | — |
+| `Table` | approved | `table` (+`zebra`), **always inside an `overflow-x-auto` wrap** — the wrap is part of the component, not the caller's job | rows · empty (caller-supplied written line) · **never a skeleton** | BP-018 | — |
+| `Progress` | approved | `progress`. **Determinate only** — a caller cannot request an indeterminate bar. This is also the three driver mini-bars of the report's header strip (§4.1); mini-bars are *not* a sixth chart | default | BP-018 | — |
+| `Toggle` | approved | `toggle`. Label required; no default on/off wording | on · off · disabled | BP-018 | — |
+| `Steps` | approved | `steps`. **Each step's label required** — this is what the scan's named stages render through, so an unlabelled step cannot exist (REQ-003 c1: never an unlabelled spinner) | pending · active · done | BP-018 | — |
+| `Join` | approved | `join`. Layout only | — | BP-018 | — |
+| `Collapse` | approved | `collapse`. Summary text required. Server-rendered body, not a lazy fetch (REQ-009 c6 is readable without JavaScript) | collapsed · expanded | BP-018 | — |
+| `Input` | approved | `input`. Placeholder **and** label required, never defaulted | default · invalid (one written line, value intact) · disabled | BP-018 | — |
+| `Divider` | approved | `divider`. Layout only | — | BP-018 | — |
+| `Kbd` | approved | `kbd`. Renders through the mono utility — a code-like string under §2.3. **Inline only**; it is not a code block (see §4) | — | BP-018 | — |
 
 ## 2. Custom surfaces (4) — BP-018
 
