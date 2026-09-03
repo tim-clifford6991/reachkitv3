@@ -4,7 +4,7 @@
 
 # Blocked
 
-`blocked-by` is projected from 4 of 438 nodes — the rest are silent on it.
+`blocked-by` is projected from 4 of 440 nodes — the rest are silent on it.
 
 Every open `blocked-by` edge. The reasoning for each is in the blocked artifact's own body — this file links to it rather than restating it (structure vs. judgement; see this generator's header comment).
 

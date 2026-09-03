@@ -2,55 +2,55 @@
   "coverage": {
     "satisfies": {
       "carrying": 44,
-      "total": 438
+      "total": 440
     },
     "covers": {
       "carrying": 32,
-      "total": 438
+      "total": 440
     },
     "implements": {
       "carrying": 261,
-      "total": 438
+      "total": 440
     },
     "decides-for": {
       "carrying": 30,
-      "total": 438
+      "total": 440
     },
     "about": {
       "carrying": 0,
-      "total": 438
+      "total": 440
     },
     "depends-on": {
       "carrying": 386,
-      "total": 438
+      "total": 440
     },
     "blocked-by": {
       "carrying": 4,
-      "total": 438
+      "total": 440
     },
     "cites-retired": {
       "carrying": 0,
-      "total": 438
+      "total": 440
     },
     "supersedes": {
       "carrying": 23,
-      "total": 438
+      "total": 440
     },
     "rests-on": {
       "carrying": 281,
-      "total": 438
+      "total": 440
     },
     "code": {
       "carrying": 63,
-      "total": 438
+      "total": 440
     },
     "exercises": {
       "carrying": 6,
-      "total": 438
+      "total": 440
     },
     "origin": {
       "carrying": 0,
-      "total": 438
+      "total": 440
     }
   },
   "nodes": {
@@ -750,11 +750,11 @@
       "rests-on": [
         {
           "claim": "A layout engine is available wherever the conformance suite of Decision 6 runs — a real browser, not jsdom. In jsdom every box metric is 0, so `scrollWidth <= clientWidth` and every containment assertion in Decision 6 holds for every element on every page, and the suite reports a clean run over a corpus it never measured. No test runner exists on disk yet; the work order that first creates `tests/ui/layout/` is where this is discharged, and Decision 6 point 5's canary is what discharges it.",
-          "disposition": "open"
+          "disposition": "confirmed"
         },
         {
           "claim": "Nothing in this repository enforces a failing suite (rule 3.3). Checked 2026-09-02: no `.github/workflows`, no `.husky`, no `core.hooksPath`, no non-sample hook in `.git/hooks`. Until one exists a layout failure is recorded, not enforced — the same platform gap ADR-010 point 6 records for the presentation sweeps.",
-          "disposition": "open"
+          "disposition": "confirmed"
         },
         {
           "claim": "No approved requirement promises that the product works at every screen size. Checked 2026-09-02 over all of `requirements/`: the words mobile, responsive, breakpoint, screen size and phone appear in none of them, and the single narrow-viewport clause in the corpus is REQ-040 criterion 5, which promises only that the three destinations stay reachable. This ADR therefore derives its scope from an owner ruling and from `BUILD.md` §4, not from an approved promise — and the promise itself is owed (see Consequences, 'What the analyst owes').",
@@ -4746,6 +4746,26 @@
         "WO-270"
       ],
       "file": "sdlc-factory/docs/work-orders/WO-270.md"
+    },
+    "TST-007": {
+      "id": "TST-007",
+      "type": "validation",
+      "title": "WO-269 validation report",
+      "status": "pass",
+      "validates": [
+        "WO-269"
+      ],
+      "file": "sdlc-factory/docs/work-orders/WO-269.md"
+    },
+    "TST-009": {
+      "id": "TST-009",
+      "type": "validation",
+      "title": "WO-274 validation report",
+      "status": "pass",
+      "validates": [
+        "WO-274"
+      ],
+      "file": "sdlc-factory/docs/work-orders/WO-274.md"
     },
     "WO-001": {
       "id": "WO-001",
@@ -11204,7 +11224,7 @@
       "id": "WO-269",
       "type": "work-order",
       "title": "The layout law, declared and checked — Surface with its required arms, the conformance suite at five widths, its canary, and the browser runner",
-      "status": "approved",
+      "status": "done",
       "implements": [
         "BP-001",
         "BP-018"
@@ -11216,23 +11236,23 @@
       "rests-on": [
         {
           "claim": "A real layout engine is what makes this suite measure anything (ADR-093 rests-on row 1, in this order's words): `vitest.config.ts` today routes every file under `tests/ui/**` to jsdom, where every box metric is 0 and every one of checks 1–4 holds on every element of every page. A layout suite dropped into `tests/ui/layout/` without the `layout` project split in this file plan passes vacuously. The canary fixture is what discharges this: the run in which the canary's checks 1–4 do not fail is the run that measured nothing.",
-          "disposition": "open"
+          "disposition": "confirmed"
         },
         {
           "claim": "Nothing in this repository enforces a failing suite (ADR-093 rests-on row 2; ADR-010 point 6). No `.github/workflows`, no hook, no branch protection, and `npm run test:layout` is not part of `npm test`. A layout failure is recorded in the run's output and nowhere else until a platform check exists (rule 3.3).",
-          "disposition": "open"
+          "disposition": "confirmed"
         },
         {
           "claim": "ADR-093 decision 1 fixes exactly two boundaries; `design/tokens.md` §2b (closed 2026-09-02 under rule 1.1) mints four — `--breakpoint-sm` 640, `-md` 768, `-lg` 1024, `-xl` 1280. This order maps the two boundaries from decision 1's own structural facts: `compact|medium` is where the sidebar returns (`--breakpoint-lg`) and `medium|wide` is where the day panel sits beside the grid (`--breakpoint-xl`), because those are the two facts decision 1's table uses to define the bands. `--breakpoint-sm` and `--breakpoint-md` are widths the suite does not probe; whether they are content-dimension steps in decision 1's sense or a fourth and fifth band is the architect's to rule, and reversing this mapping costs two entries in `BAND_MIN` and nothing else.",
-          "disposition": "open"
+          "disposition": "undischargeable"
         },
         {
           "claim": "`sdlc-factory/docs/design/components.md` carries no `Surface` row (grepped 2026-09-02: none). BP-018 decision 3 says `design/` owes it. WO-037's two-way registry test will name the gap until it lands; this order does not write under `design/`.",
-          "disposition": "open"
+          "disposition": "confirmed"
         },
         {
           "claim": "Today `src/app/` holds only `.gitkeep`, so the route sweep enumerates zero routes and only the canary exercises the browser. Three things are observed the first time a route exists (WO-002 and the first leaf): that the app boots for the suite under `tests/setup.ts`'s network refusal and WO-005's boot-time env validation; that Playwright's own transport to Chromium (a child-process pipe, not `http.request`) does not trip that refusal; and what an `(account)` route renders to the anonymous visitor the suite is — REQ-020 criterion 5's address prompt, which is the document measured until a session fixture exists.",
-          "disposition": "open"
+          "disposition": "undischargeable"
         }
       ],
       "supersedes": [],
@@ -11331,7 +11351,7 @@
       "id": "WO-274",
       "type": "work-order",
       "title": "tests/db/migration-naming.test.ts's directory-enumeration case asserts membership, not an exact two-file snapshot",
-      "status": "approved",
+      "status": "done",
       "implements": [
         "BP-002"
       ],
