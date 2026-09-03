@@ -2,55 +2,55 @@
   "coverage": {
     "satisfies": {
       "carrying": 44,
-      "total": 453
+      "total": 458
     },
     "covers": {
       "carrying": 32,
-      "total": 453
+      "total": 458
     },
     "implements": {
       "carrying": 262,
-      "total": 453
+      "total": 458
     },
     "decides-for": {
       "carrying": 31,
-      "total": 453
+      "total": 458
     },
     "about": {
       "carrying": 0,
-      "total": 453
+      "total": 458
     },
     "depends-on": {
       "carrying": 387,
-      "total": 453
+      "total": 458
     },
     "blocked-by": {
       "carrying": 5,
-      "total": 453
+      "total": 458
     },
     "cites-retired": {
       "carrying": 0,
-      "total": 453
+      "total": 458
     },
     "supersedes": {
       "carrying": 23,
-      "total": 453
+      "total": 458
     },
     "rests-on": {
       "carrying": 283,
-      "total": 453
+      "total": 458
     },
     "code": {
       "carrying": 63,
-      "total": 453
+      "total": 458
     },
     "exercises": {
       "carrying": 6,
-      "total": 453
+      "total": 458
     },
     "origin": {
       "carrying": 0,
-      "total": 453
+      "total": 458
     }
   },
   "nodes": {
@@ -4914,6 +4914,56 @@
         "WO-041"
       ],
       "file": "sdlc-factory/docs/work-orders/WO-041.md"
+    },
+    "TST-020": {
+      "id": "TST-020",
+      "type": "validation",
+      "title": "WO-056 validation report",
+      "status": "pass",
+      "validates": [
+        "WO-056"
+      ],
+      "file": "sdlc-factory/docs/work-orders/WO-056.md"
+    },
+    "TST-021": {
+      "id": "TST-021",
+      "type": "validation",
+      "title": "WO-057 validation report",
+      "status": "pass",
+      "validates": [
+        "WO-057"
+      ],
+      "file": "sdlc-factory/docs/work-orders/WO-057.md"
+    },
+    "TST-022": {
+      "id": "TST-022",
+      "type": "validation",
+      "title": "WO-058 validation report",
+      "status": "unknown",
+      "validates": [
+        "WO-058"
+      ],
+      "file": "sdlc-factory/docs/work-orders/WO-058.md"
+    },
+    "TST-023": {
+      "id": "TST-023",
+      "type": "validation",
+      "title": "WO-058 re-validation report (test-isolation collision resolved)",
+      "status": "pass",
+      "validates": [
+        "WO-058"
+      ],
+      "file": "sdlc-factory/docs/work-orders/WO-058.md"
+    },
+    "TST-024": {
+      "id": "TST-024",
+      "type": "validation",
+      "title": "WO-062 validation report",
+      "status": "pass",
+      "validates": [
+        "WO-062"
+      ],
+      "file": "sdlc-factory/docs/work-orders/WO-062.md"
     },
     "WO-001": {
       "id": "WO-001",

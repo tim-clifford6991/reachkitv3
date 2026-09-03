@@ -4,7 +4,7 @@
 
 # Assumptions
 
-`rests-on` is projected from 283 of 453 nodes — the rest are silent on it. This is rule 5.5's own example: a generated file whose source field is empty everywhere looks identical to a healthy one unless it says so.
+`rests-on` is projected from 283 of 458 nodes — the rest are silent on it. This is rule 5.5's own example: a generated file whose source field is empty everywhere looks identical to a healthy one unless it says so.
 
 Every `rests-on` entry across the graph, grouped by disposition. `claim` and `accepted-by` are projected verbatim from the artifact's own front-matter (stored data, not extracted prose); the argument for the disposition stays in the artifact's body.
 
