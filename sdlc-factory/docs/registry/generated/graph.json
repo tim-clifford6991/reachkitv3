@@ -2,55 +2,55 @@
   "coverage": {
     "satisfies": {
       "carrying": 44,
-      "total": 431
+      "total": 433
     },
     "covers": {
       "carrying": 32,
-      "total": 431
+      "total": 433
     },
     "implements": {
-      "carrying": 257,
-      "total": 431
+      "carrying": 259,
+      "total": 433
     },
     "decides-for": {
       "carrying": 30,
-      "total": 431
+      "total": 433
     },
     "about": {
       "carrying": 0,
-      "total": 431
+      "total": 433
     },
     "depends-on": {
-      "carrying": 382,
-      "total": 431
+      "carrying": 384,
+      "total": 433
     },
     "blocked-by": {
       "carrying": 4,
-      "total": 431
+      "total": 433
     },
     "cites-retired": {
       "carrying": 0,
-      "total": 431
+      "total": 433
     },
     "supersedes": {
       "carrying": 23,
-      "total": 431
+      "total": 433
     },
     "rests-on": {
-      "carrying": 277,
-      "total": 431
+      "carrying": 278,
+      "total": 433
     },
     "code": {
       "carrying": 63,
-      "total": 431
+      "total": 433
     },
     "exercises": {
       "carrying": 6,
-      "total": 431
+      "total": 433
     },
     "origin": {
       "carrying": 0,
-      "total": 431
+      "total": 433
     }
   },
   "nodes": {
@@ -6362,6 +6362,7 @@
       "title": "deriveProfile — the nano profile call and the Measured<Profile> it returns",
       "status": "approved",
       "implements": [
+        "BP-011",
         "BP-025",
         "REQ-006"
       ],
@@ -6386,6 +6387,7 @@
       "title": "deriveMarketSet — the measured market set from keywordSuggestions",
       "status": "approved",
       "implements": [
+        "BP-011",
         "BP-025",
         "REQ-006"
       ],
@@ -6410,6 +6412,7 @@
       "title": "The one intent classifier: classifyIntent, intentWeight, passesRelevanceGuard, stemKey",
       "status": "approved",
       "implements": [
+        "BP-011",
         "BP-025",
         "REQ-006"
       ],
@@ -6433,6 +6436,7 @@
       "title": "selectTwelve — the deterministic selection, its floor, its collapse and its composition constraints",
       "status": "approved",
       "implements": [
+        "BP-011",
         "BP-025",
         "REQ-006"
       ],
@@ -6457,6 +6461,7 @@
       "title": "phraseQuestions — the second nano call, and the template fallback that never drops a question",
       "status": "approved",
       "implements": [
+        "BP-011",
         "BP-025",
         "REQ-006"
       ],
@@ -6527,6 +6532,7 @@
       "title": "deriveRivals — the §6.6 partition, the score, and a total tie-break",
       "status": "approved",
       "implements": [
+        "BP-011",
         "BP-026",
         "REQ-008"
       ],
@@ -6574,6 +6580,7 @@
       "title": "checkCoherence and coherenceThreshold — a three-valued verdict against a rescaling threshold",
       "status": "approved",
       "implements": [
+        "BP-011",
         "BP-028",
         "REQ-094"
       ],
@@ -6736,6 +6743,7 @@
       "title": "sizeRivals and dueForResizing — one entry per rival, a date on every band, and two unsized states",
       "status": "approved",
       "implements": [
+        "BP-011",
         "BP-052",
         "REQ-096"
       ],
@@ -6964,6 +6972,7 @@
       "title": "The register of nine mail kinds as a typed constant",
       "status": "approved",
       "implements": [
+        "BP-016",
         "BP-053",
         "REQ-064"
       ],
@@ -7003,6 +7012,7 @@
       "title": "sendEmail() — the seam, and the one store each kind's stoppability chooses",
       "status": "approved",
       "implements": [
+        "BP-016",
         "BP-053",
         "REQ-064"
       ],
@@ -7135,6 +7145,7 @@
       "title": "Address-wide suppression and the opt-out token",
       "status": "approved",
       "implements": [
+        "BP-016",
         "BP-029",
         "REQ-010"
       ],
@@ -7172,6 +7183,7 @@
       "title": "scheduleSequence and advanceSequences — sweep, then release, then send",
       "status": "approved",
       "implements": [
+        "BP-016",
         "BP-029",
         "REQ-010"
       ],
@@ -7245,7 +7257,8 @@
         "REQ-022"
       ],
       "depends-on": [
-        "WO-006"
+        "WO-006",
+        "WO-271"
       ],
       "blocked-by": [],
       "rests-on": [
@@ -7267,6 +7280,7 @@
       "title": "createCheckoutSession and CHECKOUT_PARAMS — what checkout asks, and nothing else",
       "status": "approved",
       "implements": [
+        "BP-017",
         "BP-030",
         "REQ-020",
         "REQ-021",
@@ -7420,6 +7434,7 @@
       "title": "handleStripeWebhook and STRIPE_EVENTS — signature is the whole of the trust boundary",
       "status": "approved",
       "implements": [
+        "BP-017",
         "BP-032",
         "REQ-024"
       ],
@@ -7442,6 +7457,7 @@
       "title": "provisionFromPayment — one account, one site, one running subscription, two idempotency keys",
       "status": "approved",
       "implements": [
+        "BP-017",
         "BP-032",
         "REQ-024"
       ],
@@ -7473,6 +7489,7 @@
       "title": "requestMagicLink — three answers to one request, each in its own written line, and never an access check",
       "status": "approved",
       "implements": [
+        "BP-017",
         "BP-032",
         "REQ-020",
         "REQ-024"
@@ -7550,6 +7567,7 @@
       "title": "hasActiveAccess — the paid-through date alone (ADR-050)",
       "status": "approved",
       "implements": [
+        "BP-017",
         "BP-060",
         "REQ-076"
       ],
@@ -7568,6 +7586,7 @@
       "title": "billingSummary, portalLink and PORTAL_FEATURES — the portal is the only surface for four things",
       "status": "approved",
       "implements": [
+        "BP-017",
         "BP-060",
         "REQ-022",
         "REQ-076"
@@ -7681,6 +7700,7 @@
       "title": "The account card and the email change — the new address proves itself before the old one stops working",
       "status": "approved",
       "implements": [
+        "BP-017",
         "BP-061",
         "REQ-077"
       ],
@@ -7719,6 +7739,7 @@
       "title": "exportEverything — complete or nothing, and never a check on whether they still pay",
       "status": "approved",
       "implements": [
+        "BP-017",
         "BP-062",
         "REQ-076",
         "REQ-078"
@@ -7776,6 +7797,7 @@
       "title": "confirmDangerAction — unpublish everything, and publishing stays off",
       "status": "draft",
       "implements": [
+        "BP-017",
         "BP-063",
         "REQ-079"
       ],
@@ -7802,6 +7824,7 @@
       "title": "deleteAccount — signed out, subscription ended, tombstone stamped, and one mail about what is still live",
       "status": "approved",
       "implements": [
+        "BP-017",
         "BP-063",
         "REQ-079"
       ],
@@ -9025,6 +9048,7 @@
       "title": "The drafts core migration and the closed hard-rule vocabulary",
       "status": "approved",
       "implements": [
+        "BP-014",
         "BP-042",
         "REQ-050",
         "REQ-055"
@@ -9126,6 +9150,7 @@
       "title": "Similarity and the near-duplicate rule",
       "status": "approved",
       "implements": [
+        "BP-014",
         "BP-042",
         "REQ-050"
       ],
@@ -9149,6 +9174,7 @@
       "title": "runHardRules: the battery, and the cause a rejected day may carry",
       "status": "approved",
       "implements": [
+        "BP-014",
         "BP-042",
         "REQ-050",
         "REQ-053"
@@ -9235,6 +9261,7 @@
       "title": "generateDraft: one page per opportunity, gated by the battery",
       "status": "approved",
       "implements": [
+        "BP-014",
         "BP-042",
         "REQ-050",
         "REQ-055"
@@ -9272,6 +9299,7 @@
       "title": "The claims migration, the list hash, and claimCheck",
       "status": "approved",
       "implements": [
+        "BP-014",
         "BP-043",
         "REQ-053"
       ],
@@ -9464,6 +9492,7 @@
       "implements": [
         "ADR-084",
         "ADR-085",
+        "BP-015",
         "BP-045",
         "REQ-056",
         "REQ-062"
@@ -9491,6 +9520,7 @@
       "title": "The transition table — ten states, fifteen edges, two terminal, eight named guards, as frozen data",
       "status": "approved",
       "implements": [
+        "BP-015",
         "BP-045",
         "REQ-056"
       ],
@@ -9528,6 +9558,7 @@
       "title": "transition() — the only mover of state, with named guards and an append-only record",
       "status": "approved",
       "implements": [
+        "BP-015",
         "BP-045",
         "REQ-056"
       ],
@@ -9634,6 +9665,7 @@
       "status": "approved",
       "implements": [
         "ADR-084",
+        "BP-015",
         "BP-045",
         "REQ-056",
         "REQ-062"
@@ -9679,6 +9711,7 @@
       "title": "becomesPublishable() — REQ-057 criterion 2's four conjuncts, in exactly one place",
       "status": "approved",
       "implements": [
+        "BP-015",
         "BP-046",
         "REQ-057"
       ],
@@ -9709,6 +9742,7 @@
       "implements": [
         "ADR-084",
         "ADR-086",
+        "BP-015",
         "BP-046",
         "REQ-057",
         "REQ-060"
@@ -10104,6 +10138,7 @@
       "implements": [
         "ADR-084",
         "ADR-085",
+        "BP-015",
         "BP-049",
         "REQ-062"
       ],
@@ -11168,6 +11203,48 @@
       ],
       "supersedes": [],
       "file": "sdlc-factory/docs/work-orders/WO-270.md"
+    },
+    "WO-271": {
+      "id": "WO-271",
+      "type": "work-order",
+      "title": "The three price pins — declared in constants.ts, asserted against REQ-022 in the pins test",
+      "status": "approved",
+      "implements": [
+        "BP-005"
+      ],
+      "depends-on": [
+        "WO-006",
+        "WO-007"
+      ],
+      "blocked-by": [],
+      "rests-on": [],
+      "supersedes": [],
+      "file": "sdlc-factory/docs/work-orders/WO-271.md"
+    },
+    "WO-272": {
+      "id": "WO-272",
+      "type": "work-order",
+      "title": "users.notify and sites.timezone — the two component-level columns of BP-017's delta that no leaf sub-token claims, migrated and asserted",
+      "status": "approved",
+      "implements": [
+        "BP-017"
+      ],
+      "depends-on": [
+        "WO-267"
+      ],
+      "blocked-by": [],
+      "rests-on": [
+        {
+          "claim": "WO-267's `topicOf()` resolves a `users`- or `sites`-topic migration whose remaining name segments match no registered sub-token to the topic's owner, BP-017, rather than refusing it. WO-267's naming test states the rule as 'exactly one assigned topic token or one sub-token of an assigned topic; a name carrying none, or two, fails', and this order's two file names each carry one topic token and no sub-token. Derivation (rule 1.1): structure.md rule 3a says a component-level column needs no sub-token ('the sub-token list is open and grows with the leaves'), so no new token is minted here. Reversal cost: a file rename before any data exists, or two rows in rule 3a's list — either is cheap; observable by this order's validator against WO-267's applied test.",
+          "disposition": "open"
+        },
+        {
+          "claim": "`sites.timezone` is nullable because the `sites` row exists from provisioning (WO-126) and the zone arrives only at first sign-in (REQ-073 criterion 1: 'the time zone is the one their browser reported at first sign-in'), and REQ-073 forbids a zone the customer did not state; in the interval between, nothing that reads the column runs — WO-211's ceiling check and WO-218's settings read both follow sign-in and setup. WO-211 and WO-218 rest on the column being 'present and non-null for every site'; this order narrows that to every site past first sign-in, and reports that no order in the corpus yet writes the browser's zone at first sign-in. Reversal cost: `set not null` after a backfill — cheap before customers exist.",
+          "disposition": "open"
+        }
+      ],
+      "supersedes": [],
+      "file": "sdlc-factory/docs/work-orders/WO-272.md"
     }
   }
 }

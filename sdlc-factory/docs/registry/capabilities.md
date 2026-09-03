@@ -92,8 +92,9 @@ absent row reads as nothing-to-report. The denominators, as of 2026-09-01:
 | Re-reading one already-measured page's text, without a second whole-domain measurement | `src/lib/measure/text.ts` | BP-010 | `readMeasuredText()` | BP-013, BP-014 |
 | The three shown score factors, the score and its band | `src/lib/measure/` | BP-024 (four measured quantities are BP-010's `Drivers`) | `factorsOf()` · `presenceOf()` · `computeScore()` · `bandOf()` | BP-012, BP-022 |
 | The measured / measured-zero / unmeasured trichotomy | `src/lib/measure/` | BP-010 | `Measured<T>` | every producer and every surface |
-| Business profile in buyer vocabulary | `src/lib/market/` | BP-011 | `deriveProfile()` | BP-012 |
-| The measured market set | `src/lib/market/` | BP-011 | `deriveMarketSet()` | BP-012 |
+| Business profile in buyer vocabulary | `src/lib/market/questions/` | BP-025 (seam declared by BP-011) | `deriveProfile()` | BP-012 |
+| The measured market set | `src/lib/market/questions/` | BP-025 (seam declared by BP-011) | `deriveMarketSet()` | BP-012 |
+| The two component-level customer columns, `users.notify` and `sites.timezone` | `supabase/migrations/*_users_notify_*.sql`, `*_sites_timezone_*.sql` | BP-017 | `users.notify jsonb` · `sites.timezone text` | BP-059 (WO-107), BP-057 (WO-218/219), BP-045 (WO-211) |
 | Deterministic selection of the twelve searches, and the one intent classifier | `src/lib/market/questions/` | BP-025 (seam declared by BP-011) | `selectTwelve()` · `classifyIntent()` · `intentWeight()` | BP-012, BP-040 |
 | Question wording (model touches words, never selection) | `src/lib/market/questions/` | BP-025 (seam declared by BP-011 — both declare the signature identically) | `phraseQuestions()` | BP-012 |
 | Market coherence verdict, three-valued | `src/lib/market/coherence/` | BP-028 (seam declared by BP-011) | `checkCoherence()` | BP-012 |

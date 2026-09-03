@@ -8,18 +8,13 @@
 
 - `satisfies` is projected from 44 of 63 blueprints — the rest are silent on it.
 - `covers` is projected from 32 of 63 blueprints — the rest are silent on it.
-- `implements` is projected from 257 of 257 work orders — the rest are silent on it.
+- `implements` is projected from 259 of 259 work orders — the rest are silent on it.
 - `decides-for` is projected from 30 of 30 decisions — the rest are silent on it.
 - `about` is projected from 0 of 0 feedback items — the rest are silent on it.
 - `origin` is explicitly declared by 0 of 63 blueprints — the rest default to `forward` (never to an exemption).
 
 ## Approved artifacts with no downstream
 
-- BP-011 (blueprint, approved) — no work order's `implements` names it. sdlc-factory/docs/blueprints/BP-011.md
-- BP-014 (blueprint, approved) — no work order's `implements` names it. sdlc-factory/docs/blueprints/BP-014.md
-- BP-015 (blueprint, approved) — no work order's `implements` names it. sdlc-factory/docs/blueprints/BP-015.md
-- BP-016 (blueprint, approved) — no work order's `implements` names it. sdlc-factory/docs/blueprints/BP-016.md
-- BP-017 (blueprint, approved) — no work order's `implements` names it. sdlc-factory/docs/blueprints/BP-017.md
 - WO-002 (work-order, approved) — no TST section validates it. sdlc-factory/docs/work-orders/WO-002.md
 - WO-003 (work-order, approved) — no TST section validates it. sdlc-factory/docs/work-orders/WO-003.md
 - WO-004 (work-order, approved) — no TST section validates it. sdlc-factory/docs/work-orders/WO-004.md
@@ -248,6 +243,8 @@
 - WO-268 (work-order, approved) — no TST section validates it. sdlc-factory/docs/work-orders/WO-268.md
 - WO-269 (work-order, approved) — no TST section validates it. sdlc-factory/docs/work-orders/WO-269.md
 - WO-270 (work-order, approved) — no TST section validates it. sdlc-factory/docs/work-orders/WO-270.md
+- WO-271 (work-order, approved) — no TST section validates it. sdlc-factory/docs/work-orders/WO-271.md
+- WO-272 (work-order, approved) — no TST section validates it. sdlc-factory/docs/work-orders/WO-272.md
 
 ## Derived artifacts with no upstream
 
