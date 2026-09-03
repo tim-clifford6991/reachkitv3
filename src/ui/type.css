@@ -1,0 +1,56 @@
+/* src/ui/type.css
+ *
+ * `BUILD.md` §2.3, verbatim: "Headings: Jakarta 700–800, tight
+ * letter-spacing (−0.02em), text-wrap:balance. Body 15px/1.55. Every
+ * numeral, date, URL, search query and code-like string is JetBrains Mono
+ * with tabular-nums. Uppercase 10.5–11px eyebrows for section labels."
+ * `tokens.md` §4 quotes the same clause at the same values — nothing here
+ * disagrees with the registry.
+ *
+ * `--font-ui` / `--font-mono` are bound in `.rk-fonts` — the class name
+ * `fonts.ts` exports as `fontVariables` — not assumed from WO-029's
+ * `theme.css`. The two files meet only at the root layout (WO-002), which
+ * puts both classes on <html>.
+ */
+
+.rk-fonts {
+  --font-ui: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+}
+
+/* Heading weight is a single value within BUILD.md's stated 700-800 range
+ * (an internal parameter, rule 1.1 — reversal cost: one line, no h1..h6
+ * differentiation is asked for by this WO's test plan). */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-ui);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+}
+
+body {
+  font-family: var(--font-ui);
+  font-size: 15px;
+  line-height: 1.55;
+}
+
+/* Uppercase 10.5-11px eyebrows for section labels. 11px is a value inside
+ * BUILD.md's stated range (an internal parameter, rule 1.1 — reversal
+ * cost: one line); it is also the value tokens.md's own card-idiom
+ * instance draws. */
+.eyebrow {
+  font-family: var(--font-ui);
+  text-transform: uppercase;
+  font-size: 11px;
+}
+
+/* BP-018 error behaviour: "Every numeral, date, URL, search query and
+ * code-like string renders in JetBrains Mono with tabular-nums; a numeral
+ * in the UI font is a defect." `.num` is the *only* rule in this file that
+ * sets `font-variant-numeric` or references `var(--font-mono)` — the one
+ * mechanism the numeral rule is enforced through, so a component cannot
+ * half-apply it. */
+.num {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
