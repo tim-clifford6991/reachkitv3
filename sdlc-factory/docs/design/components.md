@@ -8,7 +8,7 @@
 
 **Status vocabulary.** `proposed` → `approved`. A row goes to `approved` when a
 preview carrying that component is signed off, and not before (design-system
-skill, step 3). **Every row below is `proposed`.** Four previews now exist
+skill, step 3). **Every row below is `proposed`.** Six previews now exist
 (§5) and none is signed, and a drawn preview is not a signed one — a row flips
 on a signature, not on a drawing. The owner ruling four token values on
 2026-09-02 (`tokens.md` §2) moved no row here either: ruling a value and
@@ -115,26 +115,66 @@ None may be used until approved.
 
 ## 5. Preview state
 
-**Thirty-five** work orders carry `ui: yes` — counted from the front-matter key
+**Thirty-six** work orders carry `ui: yes` — counted from the front-matter key
 itself, which is the field rule 7.3 is matched on. (The count read
-*thirty-three* until the two foundation sheets were drawn; it was never
-recounted after the corpus grew. Corrected here.) Each needs a signed preview
-before implementation (rule 7.3, step 2–3).
+*thirty-three* until the two foundation sheets were drawn, then *thirty-five*;
+it was never recounted after WO-268's 2026-09-02 consolidation, which added
+one `ui: yes` row to the corpus — WO-268 itself — without removing the field
+from either superseded predecessor, WO-031 or WO-032 (`supersedes` retires a
+work order's status, not its front-matter). Recounted here: 36.) Each needs a
+signed preview before implementation (rule 7.3, step 2–3).
 
-Four sheets are drawn and **all four are unsigned**. The first two are
-foundation sheets — every later preview is read against them, so they were
-drawn first. The surface and chart sheets could not be drawn until the spacing
-and heading scales were ruled, because a surface is mostly spacing; that ruling
-landed 2026-09-02 and they followed.
+**Six** sheets are drawn and **all six are unsigned**. (The count read *four*
+until two more were drawn on 2026-09-02, after this section was last written:
+`WO-002.html`, which WO-002 carries alone, and `WO-268.html`, which draws all
+fifteen §1 primitives at their registered contract for WO-268 — the
+2026-09-02 consolidation of WO-031 and WO-032. Corrected here.) The first two
+are foundation sheets — every later preview is read against them, so they
+were drawn first. The surface and chart sheets could not be drawn until the
+spacing and heading scales were ruled, because a surface is mostly spacing;
+that ruling landed 2026-09-02 and they followed. `WO-268.html` also follows
+that ruling — its own §0b reads `--breakpoint-lg`/`--breakpoint-xl` off
+`tokens.md` §2b — so it stands with the surface and chart sheets on that
+count, not with the two foundation sheets. `WO-002.html` needed no ruling to
+wait on: it draws no surface and no chart, only the route-group container and
+two already-registered components (`Badge`, `Divider`).
 
 | Preview | Carries | What a signature does |
 |---|---|---|
 | `previews/WO-029.html` | WO-029 **and** WO-030 | Releases both work orders and makes the sheet the specimen every later preview is read against. **Flips no row in this file** — it registers no component. Its four open values are already ruled and no longer wait on it |
-| `previews/WO-031.html` | WO-031 **and** WO-032 | Flips **all fifteen** §1 primitive rows from `proposed` to `approved`, and releases both work orders |
+| `previews/WO-031.html` | WO-031 **and** WO-032 | Flips **all fifteen** §1 primitive rows from `proposed` to `approved`, and releases both work orders. **Superseded in this operative role by `previews/WO-268.html`** (ruling below) — WO-031 and WO-032 are themselves `status: superseded`, so a signature here would release two work orders nothing downstream implements. The sheet is not deleted or redrawn and stands unchanged in the record below (§5, "two are now wrong on screen") |
 | `previews/WO-033.html` | WO-033 **and** WO-034 | Flips **all four** §2 custom-surface rows; makes the three layout tokens law in `tokens.md`; closes §4 gaps 1 and 7, which are this sheet's own subject; and rules on the two proposals §8 of that sheet raises |
 | `previews/WO-035.html` | WO-035 **and** WO-036 | Flips **all five** §3 chart rows; closes §4 gap 6 or refuses it. Adds no sixth chart form — the inventory stays closed at five |
+| `previews/WO-002.html` | WO-002 | Releases WO-002 (the route-group skeleton, root layout, font wiring) to implementation. **Flips no row in this file** — it registers no component; `Badge` and `Divider` are already-registered §1 rows this sheet consumes, not defines |
+| `previews/WO-268.html` | WO-268 (`supersedes: [WO-031, WO-032]`) | Flips **all fifteen** §1 primitive rows from `proposed` to `approved`, and releases WO-268. Flips no widening (§7.2), no new row (`ActionPanel`, §7.1), no custom surface and no chart form; rules on no ADR-093 decision and mints no breakpoint token — all stand exactly as this sheet found them, cited and unmoved (its own sign-off text, verbatim). **Becomes the operative preview of record for the fifteen §1 primitives** in place of `previews/WO-031.html` (ruling below) |
 
-**A fifth artifact now exists and is not a fifth sheet.** `previews/app/` is a
+**Ruling: `WO-268.html` extends `previews/WO-031.html`; it does not merely
+re-point to it.** WO-268's own body posed the two live options: "`design/previews/WO-031.html`
+is the sheet the design-guardian drew for the first eight of these
+components. It stands as the preview of record for this order until the
+guardian re-points or extends it." `WO-268.html` now exists, and its own
+header settles which: "This sheet is a fresh drawing, not a repoint of
+`previews/WO-031.html`." A repoint would have left `WO-268.html` undrawn and
+simply renamed `WO-031.html` as WO-268's sheet in its `Preview:` bullet — that
+is not available here regardless, since `work-orders/` is not this agent's to
+edit, but it would also be the wrong call on the merits: `WO-031.html` drew
+only the first eight primitives, at WO-031's contract, with no closed-barrel
+statement and no band-system read (§0b) — it cannot stand for WO-268's own
+scope (all fifteen, the barrel, and the ADR-093 reading) without the second
+sheet's coverage. `WO-268.html` is that coverage: the same eight, redrawn at
+the identical registered contract, plus the seven `WO-032.html` never drew (no
+such file exists), plus the barrel and the band system. That is the extend
+case — nothing in WO-031's contract is contradicted, only completed — so
+`previews/WO-268.html` is now the sheet a signature acts on for WO-268's
+fifteen rows. `previews/WO-031.html` is not edited, redrawn or deleted (design
+sheets are drawings of record, never repainted) and keeps its place in the
+2026-09-02 staleness assessment below exactly as before; it simply no longer
+holds WO-268's own signature.
+
+**A seventh artifact now exists and is not a seventh sheet.** (Read *fifth*
+until the two sheets above were added to this section; the count is anchored
+to how many sheets precede it, so it moves with them. Corrected here.)
+`previews/app/` is a
 runnable Next.js preview app on the exact stack `00-project.md` fixes — App
 Router, TypeScript, Tailwind 4 + daisyUI 5, `@fontsource` faces, lucide-react,
 mock data only. It carries the same four specimens as live code (`/tokens`,
@@ -146,7 +186,8 @@ should *replace* the HTML sheet as the medium rule 7.3 is satisfied by on this
 project is an owner ruling via `/decide`; until one lands, both stand and
 neither supersedes the other.
 
-**A sixth artifact now exists and flips nothing either.** `previews/app/`'s
+**An eighth artifact now exists and flips nothing either.** (Read *sixth*
+before the correction above; renumbered for the same reason.) `previews/app/`'s
 `/variants` routes (2026-09-02) render the overview and the report through
 seven independently-settable token axes — `tokens.md` §8. It registers no
 component, uses only the rows above, and adds no state to any of them: a
@@ -155,7 +196,8 @@ same shape §4 gap 8's narrow-viewport proposals take. Two of its positions
 spend tokens the registry does not hold (`--r-edge`, `--shadow-lift`) and both
 carry a `proposed` mark wherever they appear. **No row here moved.**
 
-**A seventh artifact now exists and flips nothing either.** `previews/app/`'s
+**A ninth artifact now exists and flips nothing either.** (Read *seventh*
+before the correction above; renumbered for the same reason.) `previews/app/`'s
 `/idiom` routes (2026-09-02) draw the card idiom the owner approved on three
 screens — the overview as Take A, the sign-in screen `BUILD.md` §4 never
 described, and the landing page. Every rule is scoped under `.ci`, so the four
