@@ -1,0 +1,151 @@
+// tests/config/constants.test.ts
+//
+// WO-006 test plan — structural tests only, criteria quoted from BP-005 (its
+// `## Test plan` header note: BP-005 carries `satisfies: []`, so this work
+// order claims no `implements:` edge to a requirement and cites BP-005's
+// stated behaviour rather than inheriting a requirement's criteria). The
+// value-against-quoted-source assertions are WO-007's `tests/pins.test.ts`
+// and are not duplicated here.
+import { readFileSync } from "node:fs";
+import path from "node:path";
+import { describe, expect, it } from "vitest";
+import * as constants from "../../src/lib/config/constants.ts";
+
+const CONSTANTS_PATH = path.resolve(__dirname, "../../src/lib/config/constants.ts");
+const SOURCE = readFileSync(CONSTANTS_PATH, "utf8");
+
+function isPlainObject(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
+/**
+ * Every string reachable from an exported value, walked recursively through
+ * plain objects and arrays (both keys and values). A JSDoc/line comment does
+ * not survive `import()` — this only ever sees runtime values, never prose,
+ * so a source quotation kept in a comment (BP-005's own `SCORE_BAND_BOUNDS`
+ * block, transcribed verbatim per WO-006 step 5) cannot trip it.
+ */
+function collectStrings(value: unknown, out: Set<string>): void {
+  if (typeof value === "string") {
+    out.add(value);
+    return;
+  }
+  if (Array.isArray(value)) {
+    for (const item of value) collectStrings(item, out);
+    return;
+  }
+  if (isPlainObject(value)) {
+    for (const [key, v] of Object.entries(value)) {
+      out.add(key);
+      collectStrings(v, out);
+    }
+  }
+}
+
+const allExports = Object.entries(constants as Record<string, unknown>);
+
+describe('BP-005 error behaviour — "Every constant is `as const` and frozen; nothing mutates a pin at runtime"', () => {
+  it("the module exports at least one group", () => {
+    expect(allExports.length).toBeGreaterThan(0);
+  });
+
+  it.each(allExports)("%s is frozen (Object.isFrozen)", (_name, value) => {
+    expect(Object.isFrozen(value)).toBe(true);
+  });
+
+  const objectExports = allExports.filter(([, v]) => typeof v === "object" && v !== null);
+
+  it.each(objectExports)("writing to %s throws in strict mode", (_name, value) => {
+    const target = value as Record<string, unknown>;
+    const key = Array.isArray(target) ? "0" : (Object.keys(target)[0] ?? "__probe__");
+    expect(() => {
+      (target as Record<string, unknown>)[key] = "mutated";
+    }).toThrow();
+  });
+});
+
+describe('BP-005 module boundary — "Imported by every other module; imports nothing."', () => {
+  it("declares no import statement", () => {
+    expect(SOURCE).not.toMatch(/^\s*import\s/m);
+  });
+});
+
+describe('BP-005 decision 3 — "Not declared, deliberately: the removal address REQ-002 criterion 1 requires the report to name"', () => {
+  it("exports no key naming a removal address", () => {
+    const names = Object.keys(constants as Record<string, unknown>);
+    expect(names.some((n) => /removal/i.test(n))).toBe(false);
+  });
+
+  it("carries no email-address-shaped literal anywhere in the file", () => {
+    expect(SOURCE).not.toMatch(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/);
+  });
+});
+
+describe("BP-005 decision 2, and decision 3's discharge — no band, rival-size, severity or score-band word", () => {
+  const strings = new Set<string>();
+  for (const value of Object.values(constants as Record<string, unknown>)) {
+    collectStrings(value, strings);
+  }
+
+  // BP-019 BAND_LABELS.winnability (REQ-047 c10), transcribed as the words
+  // ruled 2026-08-31, never as the lowercase keys this file itself uses.
+  const winnability = ["Winnable", "Reach", "Not yet"];
+  // BP-019 BAND_LABELS.rivalSize (REQ-096 c2, c9).
+  const rivalSize = ["Similar size", "Larger", "Much larger"];
+  // BP-019 SEVERITY (REQ-009 c8).
+  const severity = ["Minor", "Worth fixing", "Critical"];
+  // BP-019 SCORE_BANDS (REQ-004 c1) — the four words `SCORE_BAND_BOUNDS`
+  // deliberately holds no copy of (BP-005 decision 1 / this file's header).
+  const scoreBands = ["Invisible", "Hard to find", "Findable", "Dominant"];
+
+  it.each([...winnability, ...rivalSize, ...severity, ...scoreBands])(
+    'no exported value or key equals the word "%s"',
+    (word) => {
+      expect(strings.has(word)).toBe(false);
+    }
+  );
+});
+
+describe("BP-005 `SCORE_BAND_BOUNDS` (added 2026-08-31) — boundaries only", () => {
+  it("has exactly the four keys invisible, hard-to-find, findable, dominant", () => {
+    expect(Object.keys(constants.SCORE_BAND_BOUNDS).sort()).toEqual(
+      ["dominant", "findable", "hard-to-find", "invisible"].sort()
+    );
+  });
+
+  it("every value is a number, and none is a string", () => {
+    for (const value of Object.values(constants.SCORE_BAND_BOUNDS)) {
+      expect(typeof value).toBe("number");
+      expect(typeof value).not.toBe("string");
+    }
+  });
+});
+
+describe("BP-005 `GOAL_VALUES` — \"It is no longer optional, and BP-038 renders that tile's goal like the other three.\"", () => {
+  it("pages_published === 30", () => {
+    expect(constants.GOAL_VALUES.pages_published).toBe(30);
+  });
+
+  it("the field is present, not optional", () => {
+    expect(Object.prototype.hasOwnProperty.call(constants.GOAL_VALUES, "pages_published")).toBe(true);
+    expect(constants.GOAL_VALUES.pages_published).not.toBeUndefined();
+  });
+});
+
+describe('BP-005 `GOAL_VALUES` note — "this file stays free of `CopyKey` and keeps importing nothing"', () => {
+  it("declares no identifier named CopyKey (comments may discuss it in prose; code may not use it)", () => {
+    // BP-005's own source comment says, verbatim, "this file stays free of
+    // `CopyKey`" — a mention *in prose* of the type this file must not use.
+    // Stripping comments before the check is what makes the criterion ("no
+    // identifier named CopyKey appears") distinct from "the word CopyKey
+    // never appears", which BP-005's own transcribed comment would fail.
+    const withoutComments = SOURCE.replace(/\/\*[\s\S]*?\*\//g, "").replace(/\/\/.*$/gm, "");
+    expect(withoutComments).not.toMatch(/\bCopyKey\b/);
+  });
+});
+
+describe('BP-005 `AI_READER_AGENTS` — "An empty list fails the pins test."', () => {
+  it("is non-empty", () => {
+    expect(constants.AI_READER_AGENTS.length).toBeGreaterThan(0);
+  });
+});
