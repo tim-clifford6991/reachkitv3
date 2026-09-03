@@ -6169,7 +6169,7 @@
       "id": "WO-057",
       "type": "work-order",
       "title": "admitFreeScan — the six-step order, the network key, and the fail-open limiter",
-      "status": "approved",
+      "status": "done",
       "implements": [
         "BP-023",
         "REQ-002",
@@ -6185,15 +6185,15 @@
       "rests-on": [
         {
           "claim": "`x-forwarded-for`'s first entry is the visitor's address on the deployment platform, so the network key is derivable without trusting a client-supplied header. BP-022 and BP-023 both carry this row; it is spent here",
-          "disposition": "open"
+          "disposition": "undischargeable"
         },
         {
           "claim": "Counting by network address means several founders behind one office or mobile network share one hourly allowance and one in-flight slot. Inherited from REQ-003's own row",
-          "disposition": "open"
+          "disposition": "confirmed"
         },
         {
           "claim": "BP-005 gains `FREE_RESCAN_WINDOW_D: 7`, `FAILURE_COOLDOWN_H: 24`, `DAILY_WINDOW_H: 24` and `HOURLY_WINDOW_H: 1`, and `env` binds `IP_HASH_SALT` and `KILL_SWITCH` (`BUILD.md` §15). Pins and bindings are BP-005's by `structure.md` rule 5; this WO imports them and declares none",
-          "disposition": "open"
+          "disposition": "confirmed"
         }
       ],
       "supersedes": [],
