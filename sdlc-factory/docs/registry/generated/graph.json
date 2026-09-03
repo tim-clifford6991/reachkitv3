@@ -2,55 +2,55 @@
   "coverage": {
     "satisfies": {
       "carrying": 44,
-      "total": 434
+      "total": 436
     },
     "covers": {
       "carrying": 32,
-      "total": 434
+      "total": 436
     },
     "implements": {
       "carrying": 260,
-      "total": 434
+      "total": 436
     },
     "decides-for": {
       "carrying": 30,
-      "total": 434
+      "total": 436
     },
     "about": {
       "carrying": 0,
-      "total": 434
+      "total": 436
     },
     "depends-on": {
       "carrying": 385,
-      "total": 434
+      "total": 436
     },
     "blocked-by": {
       "carrying": 4,
-      "total": 434
+      "total": 436
     },
     "cites-retired": {
       "carrying": 0,
-      "total": 434
+      "total": 436
     },
     "supersedes": {
       "carrying": 23,
-      "total": 434
+      "total": 436
     },
     "rests-on": {
       "carrying": 281,
-      "total": 434
+      "total": 436
     },
     "code": {
       "carrying": 63,
-      "total": 434
+      "total": 436
     },
     "exercises": {
       "carrying": 6,
-      "total": 434
+      "total": 436
     },
     "origin": {
       "carrying": 0,
-      "total": 434
+      "total": 436
     }
   },
   "nodes": {
@@ -890,6 +890,14 @@
         {
           "claim": "Inngest (or Vercel cron plus a queue) delivers at-least-once with a durable retry and a per-function concurrency limit, so every job below is written idempotent rather than exactly-once",
           "disposition": "open"
+        },
+        {
+          "claim": "Drift assessment, 2026-09-03 (constitution §6; rule 2.2a — record the assessment, move nothing): the only code under this node's `code:` today is `src/jobs/.gitkeep`, placed by b172edf (`feat(WO-001): Next.js toolchain, build configuration and root config files`); `tests/jobs/` does not exist. WO-001's validation report puts that file in scope deliberately — File scope: `.gitkeep` under `src/app`, `src/jobs`, `src/lib`, `src/ui`, `supabase` — required by the WO's own test — and records its criterion-2 mutation as discriminating (Deleted `src/ui/.gitkeep` and the now-empty dir → failed). A placeholder contradicts nothing this node declares: the `## Public interface` union `type JobId` of exactly seven ids, the one-file-per-job layout under `## Module / boundary` and decision 4's single platform file are all still unwritten, and WO-016 (`approved`, `implements: [BP-003]`) is the order that writes them. The code and the blueprint are compatible and neither is the wrong source of truth. This row is discharged for that commit only; a later commit under these globs that names no work order implementing this node is a fresh drift, re-read against this node from scratch.",
+          "disposition": "confirmed"
+        },
+        {
+          "claim": "`tests/jobs/**` stays in `code:` as a forward declaration although the directory does not exist (rule 1.1, ruled 2026-09-03). Derivation: rule 5.6's `code: []` clause is for a node that governs no code, not for a glob whose directory is still empty; the blueprint-writing skill has container nodes anchor directories and this node is a container; WO-016's file plan names `tests/jobs/content-jobs.test.ts` as NEW; and 84 of the corpus's 86 blueprint test globs point at directories that do not exist yet, so dropping this one would make this node the single exception to a corpus-wide convention and would be reinstated the day WO-016 lands. Cost of reversing: one front-matter line — but the console derives file → blueprint from it, so its absence would be felt exactly when WO-016's tests arrive with no governing node. Re-observed by WO-016's validator when those tests exist.",
+          "disposition": "confirmed"
         }
       ],
       "supersedes": [],
@@ -4621,6 +4629,7 @@
       "depends-on": [
         "REQ-020",
         "REQ-021",
+        "REQ-024",
         "REQ-064",
         "REQ-070"
       ],
@@ -4631,7 +4640,7 @@
       ],
       "rests-on": [
         {
-          "claim": "Stripe's own surfaces, configured for this product, are a single destination from which a customer reaches all five things criterion 1 routes there. BP-060's `PORTAL_FEATURES` enables four keys covering all five — `payment_method_update` (the card), `customer_update` with `allowed_updates: ['address', 'tax_id', 'email']` (the billing address and the VAT number), `invoice_history` (the invoices) and `subscription_cancel` with `mode: 'at_period_end'` (cancelling). The `tax_id` capability is the one leg this corpus has not verified — REQ-076's own open row records it. If it is refuted, criterion 1 leaves REQ-076 criterion 9's promise, correcting the VAT number at any time without contacting anyone, with no surface anywhere in the product, and this requirement is rewritten rather than patched.",
+          "claim": "Stripe's own billing surface, configured for this product, reaches all five of the things criterion 1 routes there. Two of the five are unverified in this corpus and BP-060 carries each as an open `rests-on` row — the VAT number (REQ-076's own row, carried forward) and the billing address invoices and receipts are sent to. If either is refuted, the promise that leg carries — REQ-076 criterion 9 for the VAT number, REQ-076 criterion 2 for the address — has no surface anywhere in the product, and this requirement is rewritten rather than patched. The other three legs — the card, the invoices and cancelling — are BUILD.md §13's and §4.7's, and BP-060 raises no row for them.",
           "disposition": "open"
         }
       ],
@@ -4707,6 +4716,26 @@
         "WO-006"
       ],
       "file": "sdlc-factory/docs/work-orders/WO-006.md"
+    },
+    "TST-004": {
+      "id": "TST-004",
+      "type": "validation",
+      "title": "WO-267 validation report",
+      "status": "unknown",
+      "validates": [
+        "WO-267"
+      ],
+      "file": "sdlc-factory/docs/work-orders/WO-267.md"
+    },
+    "TST-005": {
+      "id": "TST-005",
+      "type": "validation",
+      "title": "WO-267 re-validation report (Deviation 1 fix)",
+      "status": "pass",
+      "validates": [
+        "WO-267"
+      ],
+      "file": "sdlc-factory/docs/work-orders/WO-267.md"
     },
     "WO-001": {
       "id": "WO-001",
@@ -11097,7 +11126,7 @@
       "id": "WO-267",
       "type": "work-order",
       "title": "The Supabase substrate — project config, baseline schema, RLS default-deny, and the two clients",
-      "status": "approved",
+      "status": "done",
       "implements": [
         "BP-002"
       ],
@@ -11109,15 +11138,15 @@
       "rests-on": [
         {
           "claim": "`fetches` is one of `BUILD.md` §10's nine but `structure.md` rule 3 makes `*_fetches*.sql` BP-007's topic, and BP-007's `## Data model delta` fully specifies the table including its unique key and its index. Derivation (rule 1.1): the baseline creates the eight tables no other node owns and BP-007's own migration (WO-021) creates `fetches`, so one table has one writer. Reversal cost: moving one `create table` between two migrations that both run once, before any data exists — cheap today, a data migration later, which is why it is recorded now.",
-          "disposition": "open"
+          "disposition": "confirmed"
         },
         {
           "claim": "`publications` carries no `verdict` column, `BUILD.md` §10's key-column list notwithstanding: BP-002's data-model delta states the exclusion and BP-051 decision 1 holds the reasoning. The baseline is written without it and BP-051's `page_verdicts` is the home of a page's standing.",
-          "disposition": "open"
+          "disposition": "confirmed"
         },
         {
           "claim": "`users.deleted_at` does not exist until BP-063's `*_users_erasure_*.sql` lands. The policy condition ADR-051 requires is therefore written here against a column this migration adds a nullable placeholder for, or the policies are re-issued by BP-063's migration. The implementer takes the first: the baseline gains no column, this policy migration adds `users.deleted_at timestamptz` as its own precondition, and BP-063 owns every rule about setting it.",
-          "disposition": "open"
+          "disposition": "confirmed"
         }
       ],
       "supersedes": [
