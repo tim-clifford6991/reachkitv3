@@ -31,7 +31,17 @@ export default defineConfig({
     projects: [
       {
         extends: true,
-        test: { name: "node", environment: "node", exclude: ["tests/ui/**", "node_modules/**"] },
+        test: {
+          name: "node",
+          environment: "node",
+          exclude: [
+            "tests/ui/**",
+            "node_modules/**",
+            "tests/db/baseline.test.ts",
+            "tests/db/rls.test.ts",
+            "tests/db/clients.test.ts",
+          ],
+        },
       },
       {
         extends: true,
@@ -49,6 +59,19 @@ export default defineConfig({
           environment: "node",
           include: ["tests/ui/layout/**/*.test.ts"],
           globalSetup: ["tests/ui/layout/browser.ts"],
+        },
+      },
+      {
+        extends: true,
+        test: {
+          name: "db",
+          environment: "node",
+          include: [
+            "tests/db/baseline.test.ts",
+            "tests/db/rls.test.ts",
+            "tests/db/clients.test.ts",
+          ],
+          fileParallelism: false,
         },
       },
     ],
