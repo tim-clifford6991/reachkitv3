@@ -25,7 +25,7 @@
       "total": 458
     },
     "blocked-by": {
-      "carrying": 5,
+      "carrying": 6,
       "total": 458
     },
     "cites-retired": {
@@ -8757,7 +8757,9 @@
         "WO-258",
         "WO-259"
       ],
-      "blocked-by": [],
+      "blocked-by": [
+        "REQ-043"
+      ],
       "rests-on": [
         {
           "claim": "The three winnability band words are owner-owed and this panel renders them through BP-019's BAND_LABELS registry, never with a literal (ADR-001). Discharged 2026-08-31 by owner ruling — Winnable, Reach, Not yet, under band.winnability.{winnable,reach,notYet}",

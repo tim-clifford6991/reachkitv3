@@ -4,7 +4,7 @@
 
 # Blocked
 
-`blocked-by` is projected from 5 of 458 nodes — the rest are silent on it.
+`blocked-by` is projected from 6 of 458 nodes — the rest are silent on it.
 
 Every open `blocked-by` edge. The reasoning for each is in the blocked artifact's own body — this file links to it rather than restating it (structure vs. judgement; see this generator's header comment).
 
@@ -14,4 +14,5 @@ Every open `blocked-by` edge. The reasoning for each is in the blocked artifact'
 | REQ-099 (requirement) | REQ-001 | sdlc-factory/docs/requirements/REQ-099.md |
 | WO-160 (work-order) | REQ-041 | sdlc-factory/docs/work-orders/WO-160.md |
 | WO-166 (work-order) | REQ-043, BP-039 | sdlc-factory/docs/work-orders/WO-166.md |
+| WO-168 (work-order) | REQ-043 | sdlc-factory/docs/work-orders/WO-168.md |
 | WO-259 (work-order) | BP-039, BP-045 | sdlc-factory/docs/work-orders/WO-259.md |
