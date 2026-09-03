@@ -13,17 +13,22 @@
 // by source, the same convention `tests/app/scan-address/api-scan.test.ts`
 // uses for `route.ts`'s own wiring it cannot execute end to end either.
 //
-// **`copy()` is mocked to `(key) => key`** for every rendering test below:
-// all eight of this WO's own copy keys (`src/lib/presentation/copy/keys/
-// report.ts`, WO-070's Modify row) are owner-owed and empty until the
-// owner supplies them (constitution §1), so the *real* `copy()` throws on
-// every one of them (WO-041's representation, applied here the same way
-// WO-249 applied it to `renderMeasured`). Mocking lets these suites see
-// the rendered *tree* — control count, value survival, which key a line
-// resolves from — without waiting on wording that is not this WO's to
-// invent. The real, unmocked throw is proved once, directly against
-// `copy.ts`, in its own describe block below (mirroring WO-249's "asserts
-// the key reached, never the sentence").
+// **`copy()` is mocked to `(key) => key`** for every rendering test below,
+// regardless: mocking lets these suites see the rendered *tree* — control
+// count, value survival, which key a line resolves from — without
+// depending on the owner's own wording either way.
+//
+// Of this WO's eight copy keys (`src/lib/presentation/copy/keys/report.ts`,
+// WO-070's Modify row), three — `landing.headline`, `landing.field.label`,
+// `landing.submit.label` — were filled 2026-09-03 by the owner's ruling
+// (WO-070 `## Log`) and no longer throw against the real registry. The
+// five `landing.problem.*` lines remain owner-owed and empty (constitution
+// §1), so the *real* `copy()` still throws on every one of them (WO-041's
+// representation, applied here the same way WO-249 applied it to
+// `renderMeasured`). Both the throw, over the five still-empty keys, and
+// the pass-through, over the three the owner has supplied, are proved
+// once, directly against `copy.ts`, in the describe block below (mirroring
+// WO-249's "asserts the key reached, never the sentence").
 import { readFileSync } from "node:fs";
 import path from "node:path";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
@@ -331,21 +336,28 @@ describe('REQ-093 c1 (BP-022: "This node contains no string literal a person rea
   });
 });
 
-describe("WO-070 `## rests-on` — the eight landing keys are owner-owed until the owner writes them", () => {
-  it("landing/copy · every landing key throws, naming itself, against the real (unmocked) registry", async () => {
+describe("WO-070 `## rests-on` — five landing keys remain owner-owed; three the owner has now written", () => {
+  it("landing/copy · the five still-empty problem keys throw, naming themselves, against the real (unmocked) registry", async () => {
     vi.resetModules();
     vi.doUnmock("@/lib/presentation/copy");
     const { copy: realCopy } = await import("@/lib/presentation/copy/copy.ts");
 
-    const keys = [
-      "landing.headline",
-      "landing.field.label",
-      "landing.submit.label",
-      ...DOMAIN_PROBLEMS.map((p) => `landing.problem.${p.replace(/_/g, "-")}`),
-    ];
-    expect(keys).toHaveLength(8);
+    const keys = DOMAIN_PROBLEMS.map((p) => `landing.problem.${p.replace(/_/g, "-")}`);
+    expect(keys).toHaveLength(5);
     for (const key of keys) {
       expect(() => realCopy(key as never)).toThrow(new RegExp(key.replace(/[.-]/g, "\\$&")));
     }
+  });
+
+  it("landing/copy · the three owner-supplied keys no longer throw and return the owner's exact strings", async () => {
+    vi.resetModules();
+    vi.doUnmock("@/lib/presentation/copy");
+    const { copy: realCopy } = await import("@/lib/presentation/copy/copy.ts");
+
+    expect(realCopy("landing.headline" as never)).toBe(
+      "See what AI tells buyers about your market — and write your way in."
+    );
+    expect(realCopy("landing.field.label" as never)).toBe("Your website");
+    expect(realCopy("landing.submit.label" as never)).toBe("Scan my site");
   });
 });

@@ -14,11 +14,16 @@
 // everything that decides what loads there" (BP-022 `## Responsibility`)
 // — one node, one partition file, so the landing headline, field label,
 // submit label and the five `DomainProblem` lines (`src/lib/scan/domain.ts`,
-// WO-051) sit beside the one key this surface already owned. All seven are
-// **owner-owed and empty**, exactly on WO-041's terms: `copy()` throws
-// naming the key until the owner supplies the sentence (constitution §1 —
-// customer-visible strings are the owner's, and WO-070's own file plan
-// renders keys, never wording it invents). No `law` tag: none of
+// WO-051) sit beside the one key this surface already owned.
+//
+// 2026-09-03: the owner ruled on the headline, field label and submit
+// label (WO-070 `## Log`, "landing copy approved"; strings per `BUILD.md`
+// §3) — those three are filled verbatim, byte for byte, and no longer
+// owner-owed. The five `DomainProblem` lines remain **owner-owed and
+// empty**, exactly on WO-041's terms: `copy()` throws naming the key
+// until the owner supplies the sentence (constitution §1 — customer-visible
+// strings are the owner's, and WO-070's own file plan renders keys, never
+// wording it invents). No `law` tag on any of the eight: none of
 // `CopyMeta.law`'s four cross-cutting arms names this surface.
 import type { CopyPartition } from "../registry.ts";
 
@@ -27,9 +32,12 @@ export const REPORT_COPY = Object.freeze({
     "",
     { law: "no-presence-yet", slots: {}, fixedBy: "REQ-010 c1" },
   ],
-  "landing.headline": ["", { slots: {}, fixedBy: "REQ-001 c1" }],
-  "landing.field.label": ["", { slots: {}, fixedBy: "REQ-001 c1" }],
-  "landing.submit.label": ["", { slots: {}, fixedBy: "REQ-001 c1" }],
+  "landing.headline": [
+    "See what AI tells buyers about your market — and write your way in.",
+    { slots: {}, fixedBy: "REQ-001 c1" },
+  ],
+  "landing.field.label": ["Your website", { slots: {}, fixedBy: "REQ-001 c1" }],
+  "landing.submit.label": ["Scan my site", { slots: {}, fixedBy: "REQ-001 c1" }],
   "landing.problem.empty": ["", { slots: {}, fixedBy: "REQ-001 c3" }],
   "landing.problem.not-a-hostname": ["", { slots: {}, fixedBy: "REQ-001 c3" }],
   "landing.problem.ip-literal": ["", { slots: {}, fixedBy: "REQ-001 c3" }],

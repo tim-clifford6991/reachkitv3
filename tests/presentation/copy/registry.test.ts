@@ -111,10 +111,10 @@ describe("REQ-093 c5 — the registry renders with every model unavailable", () 
   it("every non-owner-owed key returns its literal through copy(), with zero import path to a language model", () => {
     const nonOwnerOwed = (Object.keys(COPY) as CopyKey[]).filter((key) => !OWNER_OWED.includes(key));
 
-    // Count assertion (rule 5.5): today only the thirteen band/severity/
-    // score words are filled; this is the first time this assertion has
-    // anything to render.
-    expect(nonOwnerOwed.length).toBe(13);
+    // Count assertion (rule 5.5): the thirteen band/severity/score words,
+    // plus WO-070's three owner-ruled landing keys (headline, field label,
+    // submit label — ruled 2026-09-03, WO-070 `## Log`): 13 + 3 = 16.
+    expect(nonOwnerOwed.length).toBe(16);
 
     for (const key of nonOwnerOwed) {
       expect(copy(key)).toBe(COPY[key]);
@@ -196,11 +196,14 @@ describe("owner-owed and empty agree both ways", () => {
     expect(new Set(emptyKeys)).toEqual(new Set(OWNER_OWED));
   });
 
-  it("counts: 38 owner-owed, 13 filled, 51 total (rule 5.5 — the index states its own coverage)", () => {
-    // WO-070 adds report.ts's eight landing keys (headline, field label,
+  it("counts: 35 owner-owed, 16 filled, 51 total (rule 5.5 — the index states its own coverage)", () => {
+    // WO-070 added report.ts's eight landing keys (headline, field label,
     // submit label, five DomainProblem lines), all owner-owed: 30 + 8 = 38.
-    expect(OWNER_OWED.length).toBe(38);
-    expect(Object.keys(COPY).length - OWNER_OWED.length).toBe(13);
+    // 2026-09-03: the owner ruled on three of them (headline, field label,
+    // submit label — WO-070 `## Log`), so 38 - 3 = 35 remain owner-owed and
+    // 13 + 3 = 16 are filled; the total is unchanged at 51.
+    expect(OWNER_OWED.length).toBe(35);
+    expect(Object.keys(COPY).length - OWNER_OWED.length).toBe(16);
     expect(Object.keys(COPY).length).toBe(51);
   });
 });
