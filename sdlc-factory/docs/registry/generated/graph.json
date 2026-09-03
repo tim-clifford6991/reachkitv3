@@ -5455,7 +5455,7 @@
       "id": "WO-030",
       "type": "work-order",
       "title": "Fonts, the type scale and the numeral rule",
-      "status": "approved",
+      "status": "done",
       "implements": [
         "BP-018"
       ],
