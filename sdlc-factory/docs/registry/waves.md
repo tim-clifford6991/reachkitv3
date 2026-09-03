@@ -13,4 +13,4 @@
 
 | Wave | Goal | Work orders | Status |
 |---|---|---|---|
-| W1 | ReachKit boots: toolchain, pinned configuration, the default-deny database, and the design system's tokens, fonts and fifteen registered components stand, with the root document rendering on them, so the free scan's first screen can be cut next | WO-001 (Must), WO-005 (Must), WO-006 (Must), WO-267 (Must), WO-029 (Must), WO-030 (Must), WO-268 (Must), WO-002 (Should) | open |
+| W1 | ReachKit boots: toolchain, pinned configuration, the default-deny database, and the design system's tokens, fonts and fifteen registered components stand, with the root document rendering on them, so the free scan's first screen can be cut next | WO-001 (Must), WO-005 (Must), WO-006 (Must), WO-267 (Must), WO-029 (Must), WO-030 (Must), WO-268 (Must), WO-002 (Should) | closed |
