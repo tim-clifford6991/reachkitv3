@@ -2,55 +2,55 @@
   "coverage": {
     "satisfies": {
       "carrying": 44,
-      "total": 451
+      "total": 453
     },
     "covers": {
       "carrying": 32,
-      "total": 451
+      "total": 453
     },
     "implements": {
       "carrying": 262,
-      "total": 451
+      "total": 453
     },
     "decides-for": {
       "carrying": 31,
-      "total": 451
+      "total": 453
     },
     "about": {
       "carrying": 0,
-      "total": 451
+      "total": 453
     },
     "depends-on": {
       "carrying": 387,
-      "total": 451
+      "total": 453
     },
     "blocked-by": {
       "carrying": 5,
-      "total": 451
+      "total": 453
     },
     "cites-retired": {
       "carrying": 0,
-      "total": 451
+      "total": 453
     },
     "supersedes": {
       "carrying": 23,
-      "total": 451
+      "total": 453
     },
     "rests-on": {
       "carrying": 283,
-      "total": 451
+      "total": 453
     },
     "code": {
       "carrying": 63,
-      "total": 451
+      "total": 453
     },
     "exercises": {
       "carrying": 6,
-      "total": 451
+      "total": 453
     },
     "origin": {
       "carrying": 0,
-      "total": 451
+      "total": 453
     }
   },
   "nodes": {
@@ -4890,6 +4890,26 @@
       ],
       "file": "sdlc-factory/docs/work-orders/WO-051.md"
     },
+    "TST-018": {
+      "id": "TST-018",
+      "type": "validation",
+      "title": "WO-041 validation report",
+      "status": "unknown",
+      "validates": [
+        "WO-041"
+      ],
+      "file": "sdlc-factory/docs/work-orders/WO-041.md"
+    },
+    "TST-019": {
+      "id": "TST-019",
+      "type": "validation",
+      "title": "WO-041 re-validation report",
+      "status": "pass",
+      "validates": [
+        "WO-041"
+      ],
+      "file": "sdlc-factory/docs/work-orders/WO-041.md"
+    },
     "WO-001": {
       "id": "WO-001",
       "type": "work-order",
@@ -5699,7 +5719,7 @@
       "id": "WO-041",
       "type": "work-order",
       "title": "The copy registry: COPY, COPY_META and copy() — the closed set of written strings",
-      "status": "approved",
+      "status": "done",
       "implements": [
         "BP-020",
         "REQ-093"
@@ -5711,7 +5731,7 @@
       "rests-on": [
         {
           "claim": "No source tree, package manifest, tsconfig or test runner exists on disk at cut time (verified 2026-08-31: the repo root holds only BUILD.md, DATA-COSTS.md, REQUIREMENTS-CONSOLIDATION.md, factory.config.json, CLAUDE.md and sdlc-factory/). Every path in this file plan is NEW and its placement is provisional against a repo with no code. The TypeScript project, its path resolution and the `*.test.ts` runner are established by work orders outside WO-041..WO-050; this WO creates none of them and adds no repo-root file.",
-          "disposition": "open"
+          "disposition": "confirmed"
         },
         {
           "claim": "Nine values in COPY were owner-owed at cut time and no agent could fill them (BP-020 rests-on row 1: the three winnability band words, the three rival-size band words, REQ-009 criterion 8's three severity words). **Discharged 2026-08-31**: the owner ruled all nine and BP-019 decision 6 records them verbatim, so this WO transcribes them from that approved entry into `keys/bands.ts` rather than seeding them empty. Every other seeded key remains owner-owed and empty, and the machinery below is what makes an unfilled key a loud failure instead of a blank.",

@@ -7,7 +7,7 @@
 - `satisfies` is projected from 44 of 63 blueprints — the rest are silent on it.
 - `implements` is projected from 262 of 262 work orders — the rest are silent on it.
 - `covers` is projected from 32 of 63 blueprints — the rest are silent on it.
-- `verdict` is projected from 14 of 17 validation nodes — the rest declare none and render `unknown`.
+- `verdict` is projected from 15 of 19 validation nodes — the rest declare none and render `unknown`.
 
 One row per chain leg reached from an approved requirement's `satisfies` edges — this is the DERIVATION chain (rule 5.4): `satisfies` means *this node was cut from that requirement* and it is the only gate-bearing edge walked here. `—` means the chain stops there — nothing downstream cites this node (yet, or ever; see orphans.md for which).
 
@@ -244,7 +244,8 @@ One row per chain leg reached from an approved requirement's `satisfies` edges �
 | REQ-092 | BP-054 | WO-048 | — |
 | REQ-092 | BP-054 | WO-049 | — |
 | REQ-092 | BP-054 | WO-050 | — |
-| REQ-093 | BP-020 | WO-041 | — |
+| REQ-093 | BP-020 | WO-041 | TST-018 (unknown) |
+| REQ-093 | BP-020 | WO-041 | TST-019 (pass) |
 | REQ-093 | BP-020 | WO-042 | — |
 | REQ-093 | BP-020 | WO-043 | — |
 | REQ-093 | BP-020 | WO-044 | — |
