@@ -2,55 +2,55 @@
   "coverage": {
     "satisfies": {
       "carrying": 44,
-      "total": 445
+      "total": 447
     },
     "covers": {
       "carrying": 32,
-      "total": 445
+      "total": 447
     },
     "implements": {
       "carrying": 262,
-      "total": 445
+      "total": 447
     },
     "decides-for": {
       "carrying": 31,
-      "total": 445
+      "total": 447
     },
     "about": {
       "carrying": 0,
-      "total": 445
+      "total": 447
     },
     "depends-on": {
       "carrying": 387,
-      "total": 445
+      "total": 447
     },
     "blocked-by": {
       "carrying": 5,
-      "total": 445
+      "total": 447
     },
     "cites-retired": {
       "carrying": 0,
-      "total": 445
+      "total": 447
     },
     "supersedes": {
       "carrying": 23,
-      "total": 445
+      "total": 447
     },
     "rests-on": {
       "carrying": 283,
-      "total": 445
+      "total": 447
     },
     "code": {
       "carrying": 63,
-      "total": 445
+      "total": 447
     },
     "exercises": {
       "carrying": 6,
-      "total": 445
+      "total": 447
     },
     "origin": {
       "carrying": 0,
-      "total": 445
+      "total": 447
     }
   },
   "nodes": {
@@ -4830,6 +4830,26 @@
       ],
       "file": "sdlc-factory/docs/work-orders/WO-275.md"
     },
+    "TST-012": {
+      "id": "TST-012",
+      "type": "validation",
+      "title": "WO-029 validation report",
+      "status": "pass",
+      "validates": [
+        "WO-029"
+      ],
+      "file": "sdlc-factory/docs/work-orders/WO-029.md"
+    },
+    "TST-013": {
+      "id": "TST-013",
+      "type": "validation",
+      "title": "WO-030 validation report",
+      "status": "pass",
+      "validates": [
+        "WO-030"
+      ],
+      "file": "sdlc-factory/docs/work-orders/WO-030.md"
+    },
     "WO-001": {
       "id": "WO-001",
       "type": "work-order",
@@ -5406,7 +5426,7 @@
       "id": "WO-029",
       "type": "work-order",
       "title": "Theme tokens — the three-state theming and the daisyUI slot mapping",
-      "status": "approved",
+      "status": "done",
       "implements": [
         "BP-018"
       ],
@@ -5417,15 +5437,15 @@
       "rests-on": [
         {
           "claim": "**No approved requirement states the design system.** BP-018 carries `satisfies: []` and says so in its own status grounds: \"no approved requirement states the design system, which is why `satisfies` is empty and the M1 work orders hang off this node directly.\" Every acceptance criterion below is therefore quoted from BP-018 and `BUILD.md` §2.1; none is inherited from a requirement, and none was invented to fill the gap. Reported with this block's return.",
-          "disposition": "open"
+          "disposition": "confirmed"
         },
         {
           "claim": "`sdlc-factory/docs/design/tokens.md` is `Status: draft` with an empty table and states in its own body that all UI work orders are blocked while it is. The token VALUES are not missing from the corpus — `BUILD.md` §2.1 states them exactly — so this work order transcribes them from there. What is missing is the design-guardian's registration of them in `tokens.md`, which rule 7.3's preview sign-off depends on. `ui: yes` is what holds this work order until that lands.",
-          "disposition": "open"
+          "disposition": "refuted"
         },
         {
           "claim": "`BUILD.md` §2.1's dark block states `--ok`, `--warn`, `--bad` and adds `/* + matching -bg/-line at 12%/28% alpha */`. The six dark `-bg`/`-line` values are therefore DERIVED at those two alphas from the three stated hues (rule 1.1), not invented and not carried over from light. Each derived value carries a comment quoting that clause. Reversal: six CSS lines.",
-          "disposition": "open"
+          "disposition": "confirmed"
         }
       ],
       "supersedes": [],
@@ -5446,11 +5466,11 @@
       "rests-on": [
         {
           "claim": "**No approved requirement states the design system.** BP-018 carries `satisfies: []` and says so in its own status grounds. Every acceptance criterion below is quoted from BP-018 and `BUILD.md` §2.3; none is inherited from a requirement.",
-          "disposition": "open"
+          "disposition": "confirmed"
         },
         {
           "claim": "`sdlc-factory/docs/design/tokens.md` is `Status: draft` and empty; rule 7.3's preview sign-off waits on the design-guardian registering the type scale alongside the colour tokens. `ui: yes` holds this work order until then.",
-          "disposition": "open"
+          "disposition": "refuted"
         }
       ],
       "supersedes": [],
