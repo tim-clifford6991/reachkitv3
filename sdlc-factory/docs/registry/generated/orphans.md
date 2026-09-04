@@ -8,7 +8,7 @@
 
 - `satisfies` is projected from 44 of 63 blueprints — the rest are silent on it.
 - `covers` is projected from 32 of 63 blueprints — the rest are silent on it.
-- `implements` is projected from 262 of 262 work orders — the rest are silent on it.
+- `implements` is projected from 269 of 269 work orders — the rest are silent on it.
 - `decides-for` is projected from 31 of 31 decisions — the rest are silent on it.
 - `about` is projected from 0 of 0 feedback items — the rest are silent on it.
 - `origin` is explicitly declared by 0 of 63 blueprints — the rest default to `forward` (never to an exemption).
@@ -29,8 +29,6 @@
 - WO-018 (work-order, approved) — no TST section validates it. sdlc-factory/docs/work-orders/WO-018.md
 - WO-019 (work-order, approved) — no TST section validates it. sdlc-factory/docs/work-orders/WO-019.md
 - WO-020 (work-order, approved) — no TST section validates it. sdlc-factory/docs/work-orders/WO-020.md
-- WO-021 (work-order, approved) — no TST section validates it. sdlc-factory/docs/work-orders/WO-021.md
-- WO-022 (work-order, approved) — no TST section validates it. sdlc-factory/docs/work-orders/WO-022.md
 - WO-023 (work-order, approved) — no TST section validates it. sdlc-factory/docs/work-orders/WO-023.md
 - WO-024 (work-order, approved) — no TST section validates it. sdlc-factory/docs/work-orders/WO-024.md
 - WO-025 (work-order, approved) — no TST section validates it. sdlc-factory/docs/work-orders/WO-025.md
@@ -42,28 +40,15 @@
 - WO-035 (work-order, approved) — no TST section validates it. sdlc-factory/docs/work-orders/WO-035.md
 - WO-036 (work-order, approved) — no TST section validates it. sdlc-factory/docs/work-orders/WO-036.md
 - WO-037 (work-order, approved) — no TST section validates it. sdlc-factory/docs/work-orders/WO-037.md
-- WO-042 (work-order, approved) — no TST section validates it. sdlc-factory/docs/work-orders/WO-042.md
-- WO-043 (work-order, approved) — no TST section validates it. sdlc-factory/docs/work-orders/WO-043.md
-- WO-044 (work-order, approved) — no TST section validates it. sdlc-factory/docs/work-orders/WO-044.md
 - WO-045 (work-order, approved) — no TST section validates it. sdlc-factory/docs/work-orders/WO-045.md
 - WO-046 (work-order, approved) — no TST section validates it. sdlc-factory/docs/work-orders/WO-046.md
 - WO-047 (work-order, approved) — no TST section validates it. sdlc-factory/docs/work-orders/WO-047.md
 - WO-048 (work-order, approved) — no TST section validates it. sdlc-factory/docs/work-orders/WO-048.md
 - WO-049 (work-order, approved) — no TST section validates it. sdlc-factory/docs/work-orders/WO-049.md
 - WO-050 (work-order, approved) — no TST section validates it. sdlc-factory/docs/work-orders/WO-050.md
-- WO-052 (work-order, approved) — no TST section validates it. sdlc-factory/docs/work-orders/WO-052.md
-- WO-053 (work-order, approved) — no TST section validates it. sdlc-factory/docs/work-orders/WO-053.md
-- WO-054 (work-order, approved) — no TST section validates it. sdlc-factory/docs/work-orders/WO-054.md
-- WO-055 (work-order, approved) — no TST section validates it. sdlc-factory/docs/work-orders/WO-055.md
-- WO-059 (work-order, approved) — no TST section validates it. sdlc-factory/docs/work-orders/WO-059.md
-- WO-060 (work-order, approved) — no TST section validates it. sdlc-factory/docs/work-orders/WO-060.md
-- WO-061 (work-order, approved) — no TST section validates it. sdlc-factory/docs/work-orders/WO-061.md
-- WO-063 (work-order, approved) — no TST section validates it. sdlc-factory/docs/work-orders/WO-063.md
 - WO-064 (work-order, approved) — no TST section validates it. sdlc-factory/docs/work-orders/WO-064.md
 - WO-065 (work-order, approved) — no TST section validates it. sdlc-factory/docs/work-orders/WO-065.md
 - WO-066 (work-order, approved) — no TST section validates it. sdlc-factory/docs/work-orders/WO-066.md
-- WO-068 (work-order, approved) — no TST section validates it. sdlc-factory/docs/work-orders/WO-068.md
-- WO-069 (work-order, approved) — no TST section validates it. sdlc-factory/docs/work-orders/WO-069.md
 - WO-071 (work-order, approved) — no TST section validates it. sdlc-factory/docs/work-orders/WO-071.md
 - WO-072 (work-order, approved) — no TST section validates it. sdlc-factory/docs/work-orders/WO-072.md
 - WO-073 (work-order, approved) — no TST section validates it. sdlc-factory/docs/work-orders/WO-073.md
@@ -228,11 +213,16 @@
 - WO-244 (work-order, approved) — no TST section validates it. sdlc-factory/docs/work-orders/WO-244.md
 - WO-245 (work-order, approved) — no TST section validates it. sdlc-factory/docs/work-orders/WO-245.md
 - WO-246 (work-order, approved) — no TST section validates it. sdlc-factory/docs/work-orders/WO-246.md
-- WO-248 (work-order, approved) — no TST section validates it. sdlc-factory/docs/work-orders/WO-248.md
-- WO-249 (work-order, approved) — no TST section validates it. sdlc-factory/docs/work-orders/WO-249.md
 - WO-250 (work-order, approved) — no TST section validates it. sdlc-factory/docs/work-orders/WO-250.md
 - WO-271 (work-order, approved) — no TST section validates it. sdlc-factory/docs/work-orders/WO-271.md
 - WO-273 (work-order, approved) — no TST section validates it. sdlc-factory/docs/work-orders/WO-273.md
+- WO-276 (work-order, approved) — no TST section validates it. sdlc-factory/docs/work-orders/WO-276.md
+- WO-277 (work-order, approved) — no TST section validates it. sdlc-factory/docs/work-orders/WO-277.md
+- WO-278 (work-order, approved) — no TST section validates it. sdlc-factory/docs/work-orders/WO-278.md
+- WO-279 (work-order, approved) — no TST section validates it. sdlc-factory/docs/work-orders/WO-279.md
+- WO-280 (work-order, approved) — no TST section validates it. sdlc-factory/docs/work-orders/WO-280.md
+- WO-281 (work-order, approved) — no TST section validates it. sdlc-factory/docs/work-orders/WO-281.md
+- WO-282 (work-order, approved) — no TST section validates it. sdlc-factory/docs/work-orders/WO-282.md
 
 ## Derived artifacts with no upstream
 

@@ -2,55 +2,55 @@
   "coverage": {
     "satisfies": {
       "carrying": 44,
-      "total": 460
+      "total": 467
     },
     "covers": {
       "carrying": 32,
-      "total": 460
+      "total": 467
     },
     "implements": {
-      "carrying": 262,
-      "total": 460
+      "carrying": 269,
+      "total": 467
     },
     "decides-for": {
       "carrying": 31,
-      "total": 460
+      "total": 467
     },
     "about": {
       "carrying": 0,
-      "total": 460
+      "total": 467
     },
     "depends-on": {
-      "carrying": 387,
-      "total": 460
+      "carrying": 394,
+      "total": 467
     },
     "blocked-by": {
       "carrying": 6,
-      "total": 460
+      "total": 467
     },
     "cites-retired": {
       "carrying": 0,
-      "total": 460
+      "total": 467
     },
     "supersedes": {
-      "carrying": 23,
-      "total": 460
+      "carrying": 30,
+      "total": 467
     },
     "rests-on": {
-      "carrying": 287,
-      "total": 460
+      "carrying": 294,
+      "total": 467
     },
     "code": {
       "carrying": 63,
-      "total": 460
+      "total": 467
     },
     "exercises": {
       "carrying": 6,
-      "total": 460
+      "total": 467
     },
     "origin": {
       "carrying": 0,
-      "total": 460
+      "total": 467
     }
   },
   "nodes": {
@@ -5150,7 +5150,7 @@
       "depends-on": [
         "WO-005",
         "WO-006",
-        "WO-248"
+        "WO-278"
       ],
       "blocked-by": [],
       "rests-on": [
@@ -5428,7 +5428,7 @@
       "id": "WO-021",
       "type": "work-order",
       "title": "fetches — ledger, cache and raw store in one table",
-      "status": "approved",
+      "status": "superseded",
       "implements": [
         "BP-007"
       ],
@@ -5449,7 +5449,7 @@
       "id": "WO-022",
       "type": "work-order",
       "title": "The cost context — cache-first, ledger-always, cap-degrades",
-      "status": "approved",
+      "status": "superseded",
       "implements": [
         "BP-007"
       ],
@@ -5478,7 +5478,7 @@
       ],
       "depends-on": [
         "WO-006",
-        "WO-022"
+        "WO-276"
       ],
       "blocked-by": [],
       "rests-on": [
@@ -5538,7 +5538,7 @@
         "BP-009"
       ],
       "depends-on": [
-        "WO-022"
+        "WO-276"
       ],
       "blocked-by": [],
       "rests-on": [
@@ -5856,7 +5856,7 @@
       "id": "WO-042",
       "type": "work-order",
       "title": "explain(): a number reaches a sentence only as a Measured<T>, carrying its scan date",
-      "status": "approved",
+      "status": "superseded",
       "implements": [
         "BP-020",
         "REQ-093"
@@ -5885,7 +5885,7 @@
       "id": "WO-043",
       "type": "work-order",
       "title": "Generated text: GeneratedText, PageIdentity, renderGenerated and renderQuestion",
-      "status": "approved",
+      "status": "superseded",
       "implements": [
         "BP-020",
         "REQ-093"
@@ -5912,7 +5912,7 @@
       "id": "WO-044",
       "type": "work-order",
       "title": "The string-literal sweep and the generated-text flow gate over the surface globs",
-      "status": "approved",
+      "status": "superseded",
       "implements": [
         "BP-020",
         "REQ-093"
@@ -6103,9 +6103,9 @@
         "REQ-092"
       ],
       "depends-on": [
-        "WO-044",
         "WO-047",
-        "WO-049"
+        "WO-049",
+        "WO-279"
       ],
       "blocked-by": [],
       "rests-on": [
@@ -6156,7 +6156,7 @@
       "id": "WO-052",
       "type": "work-order",
       "title": "Measured<T> — the three arms, the only constructors, and the total combinators",
-      "status": "approved",
+      "status": "superseded",
       "implements": [
         "BP-024",
         "REQ-004"
@@ -6178,7 +6178,7 @@
       "id": "WO-053",
       "type": "work-order",
       "title": "The partition — classify, FEEDS, and sectionOutcome",
-      "status": "approved",
+      "status": "superseded",
       "implements": [
         "BP-024",
         "REQ-004"
@@ -6195,7 +6195,7 @@
       "id": "WO-054",
       "type": "work-order",
       "title": "The score and its band — factorsOf, presenceOf, computeScore, bandOf",
-      "status": "approved",
+      "status": "superseded",
       "implements": [
         "BP-024",
         "REQ-004"
@@ -6219,7 +6219,7 @@
       "id": "WO-055",
       "type": "work-order",
       "title": "verdictOf — the value the top of the report is made of — and the scans.score check constraint",
-      "status": "approved",
+      "status": "superseded",
       "implements": [
         "BP-024",
         "REQ-004"
@@ -6333,7 +6333,7 @@
       "id": "WO-059",
       "type": "work-order",
       "title": "ceilings.ts — the 90-second deadline, the spend ceiling, and the one bounded Ending (ADR-021)",
-      "status": "approved",
+      "status": "superseded",
       "implements": [
         "BP-023",
         "REQ-003",
@@ -6365,7 +6365,7 @@
       "id": "WO-060",
       "type": "work-order",
       "title": "stages.ts — the six named stages, the heartbeat, and exactly one ending on the stream",
-      "status": "approved",
+      "status": "superseded",
       "implements": [
         "BP-023",
         "REQ-003"
@@ -6390,7 +6390,7 @@
       "id": "WO-061",
       "type": "work-order",
       "title": "resolveAddress and canonicalRedirect — the closed address union, the eight-row order, the one control",
-      "status": "approved",
+      "status": "superseded",
       "implements": [
         "BP-022",
         "REQ-001",
@@ -6446,7 +6446,7 @@
       "id": "WO-063",
       "type": "work-order",
       "title": "GET /api/scan/{scanId}/progress — the SSE transport over the stage stream",
-      "status": "approved",
+      "status": "superseded",
       "implements": [
         "BP-022",
         "REQ-003"
@@ -6476,10 +6476,9 @@
       "depends-on": [
         "WO-006",
         "WO-041",
-        "WO-052",
-        "WO-055",
         "WO-065",
-        "WO-248"
+        "WO-277",
+        "WO-278"
       ],
       "blocked-by": [],
       "rests-on": [
@@ -6530,9 +6529,8 @@
         "WO-041",
         "WO-064",
         "WO-065",
-        "WO-248",
-        "WO-249",
-        "WO-268"
+        "WO-268",
+        "WO-278"
       ],
       "blocked-by": [],
       "rests-on": [
@@ -6552,7 +6550,7 @@
       "id": "WO-067",
       "type": "work-order",
       "title": "Removal — the removed-address line, and the removal address named on every report",
-      "status": "draft",
+      "status": "superseded",
       "implements": [
         "BP-022",
         "REQ-002"
@@ -6579,7 +6577,7 @@
       "id": "WO-068",
       "type": "work-order",
       "title": "The report arm — the verdict strip, the one notice, the one control, and the module order",
-      "status": "approved",
+      "status": "superseded",
       "implements": [
         "BP-022",
         "BP-024",
@@ -6618,7 +6616,7 @@
       "id": "WO-069",
       "type": "work-order",
       "title": "GET /scan/{domain} — the route, the total view switch, noindex, and the 308",
-      "status": "approved",
+      "status": "superseded",
       "implements": [
         "BP-022",
         "REQ-001",
@@ -6682,9 +6680,9 @@
         "REQ-006"
       ],
       "depends-on": [
-        "WO-022",
         "WO-026",
-        "WO-052"
+        "WO-276",
+        "WO-277"
       ],
       "blocked-by": [],
       "rests-on": [
@@ -6707,9 +6705,9 @@
         "REQ-006"
       ],
       "depends-on": [
-        "WO-022",
         "WO-024",
-        "WO-071"
+        "WO-071",
+        "WO-276"
       ],
       "blocked-by": [],
       "rests-on": [
@@ -6781,10 +6779,10 @@
         "REQ-006"
       ],
       "depends-on": [
-        "WO-022",
         "WO-026",
         "WO-027",
-        "WO-074"
+        "WO-074",
+        "WO-276"
       ],
       "blocked-by": [],
       "rests-on": [
@@ -7009,12 +7007,12 @@
       ],
       "depends-on": [
         "WO-006",
-        "WO-022",
         "WO-023",
         "WO-024",
         "WO-077",
         "WO-084",
-        "WO-267"
+        "WO-267",
+        "WO-276"
       ],
       "blocked-by": [],
       "rests-on": [
@@ -7068,9 +7066,9 @@
       ],
       "depends-on": [
         "WO-006",
-        "WO-022",
         "WO-024",
-        "WO-086"
+        "WO-086",
+        "WO-276"
       ],
       "blocked-by": [],
       "rests-on": [
@@ -7226,8 +7224,8 @@
       "depends-on": [
         "WO-029",
         "WO-041",
-        "WO-043",
-        "WO-249"
+        "WO-278",
+        "WO-279"
       ],
       "blocked-by": [],
       "rests-on": [
@@ -7250,9 +7248,9 @@
       ],
       "depends-on": [
         "WO-041",
-        "WO-043",
         "WO-101",
-        "WO-249"
+        "WO-278",
+        "WO-279"
       ],
       "blocked-by": [],
       "rests-on": [],
@@ -8491,7 +8489,7 @@
         "WO-156",
         "WO-174",
         "WO-177",
-        "WO-249"
+        "WO-278"
       ],
       "blocked-by": [],
       "rests-on": [
@@ -8539,8 +8537,8 @@
         "WO-035",
         "WO-041",
         "WO-158",
-        "WO-249",
-        "WO-268"
+        "WO-268",
+        "WO-278"
       ],
       "blocked-by": [],
       "rests-on": [
@@ -8566,7 +8564,7 @@
         "WO-036",
         "WO-041",
         "WO-156",
-        "WO-249"
+        "WO-278"
       ],
       "blocked-by": [
         "REQ-041"
@@ -8593,7 +8591,7 @@
         "WO-006",
         "WO-041",
         "WO-156",
-        "WO-249"
+        "WO-278"
       ],
       "blocked-by": [],
       "rests-on": [
@@ -8727,10 +8725,9 @@
         "WO-165",
         "WO-182",
         "WO-207",
-        "WO-248",
-        "WO-249",
         "WO-258",
-        "WO-259"
+        "WO-259",
+        "WO-278"
       ],
       "blocked-by": [
         "BP-039",
@@ -8790,10 +8787,9 @@
         "WO-049",
         "WO-166",
         "WO-167",
-        "WO-248",
-        "WO-249",
         "WO-258",
-        "WO-259"
+        "WO-259",
+        "WO-278"
       ],
       "blocked-by": [
         "REQ-043"
@@ -8818,10 +8814,10 @@
       ],
       "depends-on": [
         "WO-041",
-        "WO-043",
         "WO-200",
         "WO-215",
-        "WO-267"
+        "WO-267",
+        "WO-279"
       ],
       "blocked-by": [],
       "rests-on": [
@@ -8881,10 +8877,10 @@
       ],
       "depends-on": [
         "WO-041",
-        "WO-043",
         "WO-169",
         "WO-206",
-        "WO-207"
+        "WO-207",
+        "WO-279"
       ],
       "blocked-by": [],
       "rests-on": [
@@ -9095,8 +9091,8 @@
         "REQ-047"
       ],
       "depends-on": [
-        "WO-052",
-        "WO-267"
+        "WO-267",
+        "WO-277"
       ],
       "blocked-by": [],
       "rests-on": [
@@ -9123,8 +9119,8 @@
       ],
       "depends-on": [
         "WO-006",
-        "WO-052",
-        "WO-181"
+        "WO-181",
+        "WO-277"
       ],
       "blocked-by": [],
       "rests-on": [
@@ -9151,11 +9147,11 @@
       ],
       "depends-on": [
         "WO-006",
-        "WO-052",
         "WO-071",
         "WO-073",
         "WO-181",
-        "WO-182"
+        "WO-182",
+        "WO-277"
       ],
       "blocked-by": [],
       "rests-on": [
@@ -9241,13 +9237,13 @@
       ],
       "depends-on": [
         "WO-006",
-        "WO-022",
         "WO-026",
         "WO-181",
         "WO-182",
         "WO-184",
         "WO-185",
-        "WO-267"
+        "WO-267",
+        "WO-276"
       ],
       "blocked-by": [],
       "rests-on": [
@@ -9324,11 +9320,11 @@
       ],
       "depends-on": [
         "WO-006",
-        "WO-022",
         "WO-131",
         "WO-181",
         "WO-186",
-        "WO-188"
+        "WO-188",
+        "WO-276"
       ],
       "blocked-by": [],
       "rests-on": [
@@ -9605,12 +9601,12 @@
       ],
       "depends-on": [
         "WO-006",
-        "WO-052",
         "WO-191",
         "WO-196",
         "WO-197",
         "WO-198",
-        "WO-202"
+        "WO-202",
+        "WO-277"
       ],
       "blocked-by": [],
       "rests-on": [
@@ -9641,11 +9637,11 @@
         "REQ-053"
       ],
       "depends-on": [
-        "WO-022",
         "WO-026",
-        "WO-052",
         "WO-191",
-        "WO-267"
+        "WO-267",
+        "WO-276",
+        "WO-277"
       ],
       "blocked-by": [],
       "rests-on": [
@@ -10843,7 +10839,7 @@
       "id": "WO-248",
       "type": "work-order",
       "title": "The band-label registry: BAND_LABELS, SCORE_BANDS and SEVERITY — handles to CopyKeys, no word written here",
-      "status": "approved",
+      "status": "superseded",
       "implements": [
         "BP-019",
         "REQ-004",
@@ -10877,7 +10873,7 @@
       "id": "WO-249",
       "type": "work-order",
       "title": "renderMeasured(): the trichotomy rendered, with the two collapses unrepresentable rather than tested for",
-      "status": "approved",
+      "status": "superseded",
       "implements": [
         "BP-019",
         "REQ-004"
@@ -10916,12 +10912,10 @@
       "depends-on": [
         "WO-001",
         "WO-041",
-        "WO-042",
-        "WO-043",
         "WO-045",
         "WO-049",
-        "WO-248",
-        "WO-249"
+        "WO-278",
+        "WO-279"
       ],
       "blocked-by": [],
       "rests-on": [
@@ -10982,8 +10976,8 @@
       "depends-on": [
         "WO-001",
         "WO-006",
-        "WO-052",
-        "WO-251"
+        "WO-251",
+        "WO-277"
       ],
       "blocked-by": [],
       "rests-on": [
@@ -11016,12 +11010,11 @@
         "WO-006",
         "WO-018",
         "WO-020",
-        "WO-021",
-        "WO-022",
         "WO-024",
-        "WO-052",
         "WO-251",
-        "WO-252"
+        "WO-252",
+        "WO-276",
+        "WO-277"
       ],
       "blocked-by": [],
       "rests-on": [
@@ -11045,7 +11038,7 @@
       "id": "WO-254",
       "type": "work-order",
       "title": "StoredReport and readCurrentReport — the blob's declared shape, the current-report pointer, and the partial unique index that makes two of them unrepresentable",
-      "status": "draft",
+      "status": "superseded",
       "implements": [
         "BP-012"
       ],
@@ -11086,8 +11079,8 @@
       ],
       "depends-on": [
         "WO-001",
-        "WO-052",
-        "WO-254"
+        "WO-277",
+        "WO-280"
       ],
       "blocked-by": [],
       "rests-on": [
@@ -11114,13 +11107,9 @@
       "depends-on": [
         "WO-001",
         "WO-006",
-        "WO-022",
         "WO-025",
         "WO-051",
-        "WO-055",
         "WO-058",
-        "WO-059",
-        "WO-060",
         "WO-071",
         "WO-072",
         "WO-074",
@@ -11131,7 +11120,10 @@
         "WO-087",
         "WO-186",
         "WO-253",
-        "WO-255"
+        "WO-255",
+        "WO-276",
+        "WO-277",
+        "WO-281"
       ],
       "blocked-by": [],
       "rests-on": [
@@ -11655,6 +11647,348 @@
       ],
       "supersedes": [],
       "file": "sdlc-factory/docs/work-orders/WO-275.md"
+    },
+    "WO-276": {
+      "id": "WO-276",
+      "type": "work-order",
+      "title": "The fetch ledger and the cost context — one insert-only row, cache-first, cap-degrades",
+      "status": "approved",
+      "implements": [
+        "BP-007",
+        "REQ-003"
+      ],
+      "depends-on": [
+        "WO-006",
+        "WO-267"
+      ],
+      "blocked-by": [],
+      "rests-on": [
+        {
+          "claim": "This migration creates `fetches`, which `BUILD.md` §10 lists among its nine baseline tables. WO-267 (`done`) deliberately leaves it out — its baseline migration's own header states the exclusion — because `structure.md` rule 3 makes `*_fetches*.sql` BP-007's topic and BP-007's `## Data model delta` fully specifies the table, so one table has one writer. The derivation and its reversal cost are recorded on WO-267's first `rests-on` row, which carries `disposition: confirmed`.",
+          "disposition": "open"
+        },
+        {
+          "claim": "The `fetches` table this context writes to carries no unique constraint on `(source, cache_key, policy_version)` — BP-007 decision 3 (2026-09-03) dropped it, and the cache read is 'the newest row on that key inserted within `freshnessDays`, excluding a row whose payload is the vendor's own zero-result shape'. WO-021, which creates the table and is `approved` and unbuilt, still plans that constraint and predates the decision. If it ships as planned, the empty-payload re-buy this work order tests cannot insert its second row. Reported to the planner queue on 2026-09-03, not repaired here: `*_fetches*.sql`'s create-table statement is WO-021's file. **Discharged 2026-09-03**: the planner re-planned WO-021 in the same pass — its file plan carries no unique constraint, and its test plan now asserts positively that two rows on one `(source, cache_key, policy_version)` triple both insert. The premise no longer holds.",
+          "disposition": "refuted"
+        }
+      ],
+      "supersedes": [
+        "WO-021",
+        "WO-022"
+      ],
+      "file": "sdlc-factory/docs/work-orders/WO-276.md"
+    },
+    "WO-277": {
+      "id": "WO-277",
+      "type": "work-order",
+      "title": "The verdict — the three-armed measurement, the partition, the score and its band, and the one Verdict the report is made of",
+      "status": "approved",
+      "implements": [
+        "BP-024",
+        "REQ-004"
+      ],
+      "depends-on": [
+        "WO-001",
+        "WO-006",
+        "WO-018",
+        "WO-051"
+      ],
+      "blocked-by": [],
+      "rests-on": [
+        {
+          "claim": "The Next.js + TypeScript scaffold (package.json, tsconfig.json) exists before this WO runs, with `strict` and exhaustiveness checking on. It is BP-001's and BP-005's, not this node's; this repo carries none of it today",
+          "disposition": "open"
+        },
+        {
+          "claim": "BP-005 gains the four score-band boundaries of `BUILD.md` §5 — 0–24, 25–49, 50–74, 75–100 — as a pin under a name BP-005 chooses. **Discharged 2026-08-31**: BP-005 declares `SCORE_BAND_BOUNDS: { invisible: 0; 'hard-to-find': 25; findable: 50; dominant: 75 }`, named so as not to collide with BP-019's `SCORE_BANDS` copy map, and BP-024's `bandOf` comment now names it. This WO imports that pin and does not create it",
+          "disposition": "confirmed"
+        },
+        {
+          "claim": "The closed list of AI reader user-agents the `blockedReaders` count is computed over is pinned once in BP-005 as `AI_READER_AGENTS` (ADR-022, amended by ADR-090, which cites REQ-059 criterion 4 for the membership). This WO reads the pin and populates nothing; a build with the list empty fails BP-005's own pins test",
+          "disposition": "open"
+        },
+        {
+          "claim": "`scans` exists with `domain`, `report jsonb`, `score numeric null`, `drivers jsonb` and the `unique (domain) where is_current` partial index before this migration runs. That table is BP-002's baseline and BP-012's; this repo carries no `supabase/` directory today",
+          "disposition": "open"
+        },
+        {
+          "claim": "`RobotsPolicy` has a shape. **Discharged 2026-08-31**: BP-006 declares it — `ok`, `origin`, `readAt`, `disallowsAll`, `disallowedAgents`, `sitemaps`, `absent` — and WO-018 ships the declaration in `src/lib/egress/types.ts`. This WO imports that type and reads `disallowedAgents` and `absent`; it declares no local reader interface",
+          "disposition": "confirmed"
+        }
+      ],
+      "supersedes": [
+        "WO-052",
+        "WO-053",
+        "WO-054",
+        "WO-055"
+      ],
+      "file": "sdlc-factory/docs/work-orders/WO-277.md"
+    },
+    "WO-278": {
+      "id": "WO-278",
+      "type": "work-order",
+      "title": "The presentation boundary for a measured value — handles become terms, values become a dash or a number, and a number reaches a sentence only with its scan date",
+      "status": "approved",
+      "implements": [
+        "BP-019",
+        "BP-020",
+        "REQ-004",
+        "REQ-009",
+        "REQ-047",
+        "REQ-093",
+        "REQ-096"
+      ],
+      "depends-on": [
+        "WO-001",
+        "WO-041",
+        "WO-277"
+      ],
+      "blocked-by": [],
+      "rests-on": [
+        {
+          "claim": "No source tree, package manifest, tsconfig or test runner exists on disk at cut time (verified 2026-08-31: the repo root holds only BUILD.md, DATA-COSTS.md, REQUIREMENTS-CONSOLIDATION.md, factory.config.json, CLAUDE.md and sdlc-factory/). Every path in this file plan is NEW and its placement is provisional against a repo with no code. The TypeScript project, its path resolution and the `*.test.ts` runner are established by other work orders; this WO creates none of them and adds no repo-root file.",
+          "disposition": "open"
+        },
+        {
+          "claim": "The thirteen strings these three maps resolve to are written by WO-041 into `src/lib/presentation/copy/keys/bands.ts` and are not owner-owed there (WO-041 Steps 5: 'None of the thirteen is in `OWNER_OWED`: they have values, so `copy()` returns them'). This WO declares keys only and asserts each resolves; if any of the thirteen is missing or empty when this WO runs, the failure is WO-041's and the implementer says so rather than seeding a string here (constitution rule 4.2).",
+          "disposition": "open"
+        },
+        {
+          "claim": "The handle sets are the engines' and are fixed elsewhere: `winnable | reach | not-yet` is BP-040's `Winnability`, `near | middle | far` is BP-011's rival-size handle set, `invisible | hard-to-find | findable | dominant` is BP-010's `BandHandle`, and `low | mid | high` is BP-027's `Severity`. This WO restates each union in the map's own type because the map must be total over it; a handle set that changes at its owning node without changing here is a compile error at the `Record<>`, which is the intended coupling.",
+          "disposition": "open"
+        },
+        {
+          "claim": "No source tree, package manifest, tsconfig or test runner exists on disk at cut time (verified 2026-08-31). Every path in this file plan is NEW except the one Modify row, and its placement is provisional against a repo with no code. This WO creates no repo-root file.",
+          "disposition": "open"
+        },
+        {
+          "claim": "The whole argument of this WO rests on TypeScript's discriminated-union narrowing being on: `strict`, `strictNullChecks` and no `any` on the `Measured<T>` import path. Without them the `unmeasured` arm does not lose its `value` field on narrowing and the central guarantee below degrades from a compile error to a convention. The tsconfig is BP-001's and does not exist today; the implementer stops and says so if `strict` is off (constitution rule 4.2).",
+          "disposition": "open"
+        },
+        {
+          "claim": "The two sentences REQ-004 criteria 6 and 9 require — the line naming what could not be determined, and the line stating the scan stopped early — are customer-visible strings and therefore the owner's (constitution §1). They stand **owner-owed**: this WO seeds two empty keys for them so callers have a key to pass, and `copy()` throws naming the key rather than rendering a blank (WO-041's chosen representation). Until the owner writes them, `renderMeasured` is complete in mechanism and throws loudly on the unmeasured arm; every test below asserts the key reached, never the sentence.",
+          "disposition": "open"
+        },
+        {
+          "claim": "No source tree, package manifest, tsconfig or test runner exists on disk at cut time (verified 2026-08-31). Every path in this file plan is NEW and its placement is provisional against a repo with no code.",
+          "disposition": "open"
+        },
+        {
+          "claim": "BP-010's `Measured<T>` and BP-019's `renderMeasured()` are consumed here by import and are created by work orders outside WO-041..WO-050. This WO cannot be implemented before both symbols exist at their owning nodes' public entry points; the implementer stops and says so if they do not (constitution rule 4.2).",
+          "disposition": "open"
+        },
+        {
+          "claim": "BP-019's `## Public interface` does not yet transcribe a symbol for the one written line REQ-004 criterion 2 requires, which BP-024 decision 6 (2026-09-03) assigns to BP-019. This work order names it `LIMITING_LINES` in `src/lib/presentation/bands.ts` under rule 1.1 (see `## Decision taken under rule 1.1`) and the architect folds the symbol into BP-019 at wave close. Nothing about what is promised turns on the name. **Confirmed 2026-09-04 by direct read**: `blueprints/BP-019.md` `## Public interface` declares `CopyKey`, `copy`, `renderMeasured`, `emptyStateLine`, `generatedLabel`, `WorkStop`/`stoppedWorkStatement`, `BAND_LABELS`, `SCORE_BANDS` and `SEVERITY`, and no symbol for criterion 2's line; `grep -rn 'limitingFactorOf\\|LimitingFactor' blueprints/ decisions/` returns BP-024 only. The gap is real and the name chosen here is the disposition, not a pending question",
+          "disposition": "confirmed"
+        }
+      ],
+      "supersedes": [
+        "WO-042",
+        "WO-248",
+        "WO-249"
+      ],
+      "file": "sdlc-factory/docs/work-orders/WO-278.md"
+    },
+    "WO-279": {
+      "id": "WO-279",
+      "type": "work-order",
+      "title": "Generated text, the question and its search, and the surface sweep that proves nothing else gets through",
+      "status": "approved",
+      "implements": [
+        "BP-020",
+        "REQ-093"
+      ],
+      "depends-on": [
+        "WO-001",
+        "WO-041"
+      ],
+      "blocked-by": [],
+      "rests-on": [
+        {
+          "claim": "No source tree, package manifest, tsconfig or test runner exists on disk at cut time (verified 2026-08-31). Every path in this file plan is NEW and its placement is provisional against a repo with no code.",
+          "disposition": "open"
+        },
+        {
+          "claim": "Model-produced text reaches a surface only through the seven stored columns `GeneratedColumn` names (BP-020 rests-on row 3). A model string reaching a surface from any other column is outside this module's sink and is invisible to it; WO-044's flow gate is scoped to the same seven and inherits the same limit.",
+          "disposition": "open"
+        },
+        {
+          "claim": "No source tree, package manifest, tsconfig or test runner exists on disk at cut time (verified 2026-08-31), so the four governed globs match zero files on the day this suite lands and it would pass vacuously. This WO therefore ships a synthetic fixture surface tree carrying known violations, so the sweep discriminates from the first run rather than from the first screen.",
+          "disposition": "open"
+        },
+        {
+          "claim": "Every surface the product renders or sends is reachable from `src/app/**`, `src/app/(hosted)/**`, `src/lib/mail/**` and `src/ui/**` (ADR-010 rests-on; BP-020 rests-on row 2). A surface rendered from a path outside those globs is invisible to this suite.",
+          "disposition": "open"
+        },
+        {
+          "claim": "This suite is recorded, not enforced (constitution rule 3.3, ADR-010 point 6): no CI configuration, no branch protection and no pre-commit hook exists in this repository at cut time. A failing sweep blocks no merge until a platform decision creates one. This WO creates no such configuration.",
+          "disposition": "open"
+        }
+      ],
+      "supersedes": [
+        "WO-043",
+        "WO-044"
+      ],
+      "file": "sdlc-factory/docs/work-orders/WO-279.md"
+    },
+    "WO-280": {
+      "id": "WO-280",
+      "type": "work-order",
+      "title": "The stored report and the address that resolves to it — one current row, the closed address union, the eight-row order, the one control",
+      "status": "approved",
+      "implements": [
+        "BP-012",
+        "BP-022",
+        "REQ-001",
+        "REQ-002",
+        "REQ-003"
+      ],
+      "depends-on": [
+        "WO-001",
+        "WO-006",
+        "WO-051",
+        "WO-057",
+        "WO-267",
+        "WO-277"
+      ],
+      "blocked-by": [],
+      "rests-on": [
+        {
+          "claim": "No source tree, package manifest, tsconfig or test runner exists on disk at cut time (verified 2026-08-31 — this repository carries no `src/` and no `supabase/`). Every path in this file plan is NEW and its placement is provisional against a repo with no code.",
+          "disposition": "open"
+        },
+        {
+          "claim": "Three blueprints describe the blob's `market` section differently and this work order follows BP-012. BP-012 declares `market: Measured<SuggestionRow[]>`; BP-025's `## Data model delta` declares `report.market = { profile, suggestions, totalVolume }`; BP-056's `## Data model delta` reads `report.market.category`, which is a field of BP-025's `Profile` and reachable under neither of the other two shapes. BP-012 is followed because its decision 3 is the corpus's only declaration of the type and states the ownership ground — \"This node owns it because it assembles the blob and is its only writer\" — and because rule 2.4 makes the other two the second and third copies, not the home. The consequence is that **the blob carries no `Profile`**, which is the fact WO-183's stop condition turns on; that stop condition is carried forward unchanged (see `## Interfaces`). Resolving the three-way disagreement is the architect's, on BP-012, BP-025 and BP-056; it is reported with this block's return.",
+          "disposition": "open"
+        },
+        {
+          "claim": "BP-011's `## Data model delta` says it \"Writes the `questions`, `market`, `rivals` and **`coherence`** sections of `scans.report jsonb`\", and `StoredReport` has no `coherence` field — it carries `correctionState: CorrectionState` (BP-028's value domain) and nothing holding a `CoherenceVerdict`. Following BP-012 verbatim means a coherence verdict has nowhere in the blob to live. Reported rather than fixed: widening `StoredReport` is BP-012's author's, not this work order's.",
+          "disposition": "open"
+        },
+        {
+          "claim": "`OnPageFacts` is declared by WO-251 and by no blueprint; `SerpResult` is declared by WO-023 in `src/lib/vendors/dataforseo/types.ts` and by no blueprint, though BP-012's `StoredReport` attributes it to BP-026 in a comment. Both are imported by this file at the path its author ships it at. If either ships under a different name, this is a `blocked-by` on that work order added at that moment.",
+          "disposition": "open"
+        },
+        {
+          "claim": "BP-012's `readCurrentReport(domain): Promise<StoredReport | null>` exists before this WO runs, and `StoredReport` carries the fields the control table reads. **Discharged 2026-08-31**: BP-012 decision 3 declares `StoredReport`, and the three fields this table reads are on it by name — `measuredAt`, `complete` and `fromIncompleteRescan`. This WO imports the type and defines no local reader interface; the remaining assumption is only that BP-012's module exists before this one runs, which `depends-on` does not express because the type is another node's",
+          "disposition": "confirmed"
+        },
+        {
+          "claim": "BP-005 pins `FREE_RESCAN_WINDOW_D: 7` and `FAILURE_COOLDOWN_H: 24`. `structure.md` rule 5 puts every number in `constants.ts`; this WO imports them and declares none",
+          "disposition": "open"
+        }
+      ],
+      "supersedes": [
+        "WO-061",
+        "WO-254"
+      ],
+      "file": "sdlc-factory/docs/work-orders/WO-280.md"
+    },
+    "WO-281": {
+      "id": "WO-281",
+      "type": "work-order",
+      "title": "The bounded scan and its progress stream — two ceilings, one Ending, six named stages, and the wire they reach a visitor on",
+      "status": "approved",
+      "implements": [
+        "BP-022",
+        "BP-023",
+        "REQ-003",
+        "REQ-004"
+      ],
+      "depends-on": [
+        "WO-006",
+        "WO-056",
+        "WO-267",
+        "WO-276"
+      ],
+      "blocked-by": [],
+      "rests-on": [
+        {
+          "claim": "The free battery — own fetches plus 12 live SERP calls plus the suggestion call — completes within 60 s at the p95 of vendor response time; `BUILD.md` §16 milestone 3 is the first measurement of this chain. Inherited from REQ-003's own row",
+          "disposition": "open"
+        },
+        {
+          "claim": "BP-007's `withCostContext` / `CostContext.capHit()` exists and is bound to `CAPS.FREE_C` (12¢) before this WO runs. The cost seam is BP-007's; this repo carries no `src/lib/costs/` today",
+          "disposition": "open"
+        },
+        {
+          "claim": "BP-005 pins `TIMING.reportTargetS: 60`, `TIMING.reportCeilingS: 90` and `CAPS.FREE_C: 12`. `structure.md` rule 5 puts every number in `constants.ts`; this WO imports them and declares none",
+          "disposition": "open"
+        },
+        {
+          "claim": "BP-005 pins `TIMING.progressHeartbeatS: 30`. `structure.md` rule 5 puts every number in `constants.ts`; this WO imports it and declares none",
+          "disposition": "open"
+        },
+        {
+          "claim": "The deployment platform does not buffer or terminate a server-sent-events response inside `TIMING.progressHeartbeatS`, so a heartbeat every 30 s keeps the connection open for the 90 s a scan may last. This is a platform property, not a code one, and `BUILD.md` §16 milestone 3 is the first run that tests it",
+          "disposition": "open"
+        }
+      ],
+      "supersedes": [
+        "WO-059",
+        "WO-060",
+        "WO-063"
+      ],
+      "file": "sdlc-factory/docs/work-orders/WO-281.md"
+    },
+    "WO-282": {
+      "id": "WO-282",
+      "type": "work-order",
+      "title": "The report screen — the route, the total view switch, the verdict strip, the one notice, the one control, and the removal address",
+      "status": "approved",
+      "implements": [
+        "BP-022",
+        "BP-024",
+        "REQ-001",
+        "REQ-002",
+        "REQ-003",
+        "REQ-004"
+      ],
+      "depends-on": [
+        "WO-041",
+        "WO-268",
+        "WO-277",
+        "WO-278",
+        "WO-280",
+        "WO-281"
+      ],
+      "blocked-by": [],
+      "rests-on": [
+        {
+          "claim": "The address a report names for a removal request is an owner-written string. BP-019's copy registry holds it under one key and this node renders it. **No value for it exists anywhere in the corpus** — it is owner-owed and outstanding. This WO creates the reference and the test; it writes no address, and `env.OWNER_EMAILS` (`BUILD.md` §15) is a deployment binding for owner accounts, not a published removal address, so substituting it would invent a customer fact (rule 1.2)",
+          "disposition": "open"
+        },
+        {
+          "claim": "A person, not the product, writes the `domain_blocks` row that removes a report, and does so inside REQ-002 criterion 2's five working days. BP-005 pins `RETENTION_D.removalSlaWorkingDays: 5`; no code in this WO enforces the window, because no code can — the operation is manual, and ADR-002 carries the same claim for the operation as a whole",
+          "disposition": "open"
+        },
+        {
+          "claim": "No blueprint's `code:` glob covers the report's header-strip markup. **Discharged 2026-08-31**: BP-024's `## Module / boundary` now states it — 'The header strip itself is a registered component (BP-018) composed by BP-022's shell and written through BP-019's `renderMeasured`; no sentence and no band word is written here' — which is exactly what this WO does, in BP-022's `_address/` glob. BP-022's own boundary states the other half: 'this node owns the shell that decides whether a body renders at all, and the order the modules sit in (`BUILD.md` §4.1)'. No file here sits outside a declared glob",
+          "disposition": "confirmed"
+        },
+        {
+          "claim": "The four band words reach a screen only through BP-019's `SCORE_BANDS`, and the one line naming the limiting factor through BP-019's `LIMITING_LINES` (WO-278). Both are BP-019/BP-020's; this WO renders keys and writes no word. **Confirmed 2026-08-31**: BP-019 declares `SCORE_BANDS` over the four handles with REQ-004 criterion 1's own words — 'transcribed, never chosen' — and WO-041 carries the four strings in `keys/bands.ts`, so the keys resolve",
+          "disposition": "confirmed"
+        },
+        {
+          "claim": "The AI-answers card, the Google-presence card, the free-page card and the pricing card are sibling nodes' modules. This WO renders them as named slots and supplies none of them, so the report is composable before those nodes ship",
+          "disposition": "open"
+        },
+        {
+          "claim": "`src/middleware.ts` puts `/scan/{domain}` and `/api/scan/**` on BP-001's public allow-list, so no session is read on any path in this node. The middleware is BP-001's; this repo carries no `src/` today",
+          "disposition": "open"
+        },
+        {
+          "claim": "No sitemap the product publishes names a report address. The sitemaps are BP-004/BP-047's (`src/app/(hosted)/**`); this WO asserts the absence from this side and cannot enforce it from inside BP-022",
+          "disposition": "open"
+        }
+      ],
+      "supersedes": [
+        "WO-067",
+        "WO-068",
+        "WO-069"
+      ],
+      "file": "sdlc-factory/docs/work-orders/WO-282.md"
     }
   }
 }

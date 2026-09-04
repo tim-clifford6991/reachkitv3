@@ -5,7 +5,7 @@
 # Traceability — REQ → BP → WO → TST
 
 - `satisfies` is projected from 44 of 63 blueprints — the rest are silent on it.
-- `implements` is projected from 262 of 262 work orders — the rest are silent on it.
+- `implements` is projected from 269 of 269 work orders — the rest are silent on it.
 - `covers` is projected from 32 of 63 blueprints — the rest are silent on it.
 - `verdict` is projected from 21 of 26 validation nodes — the rest declare none and render `unknown`.
 
@@ -21,6 +21,9 @@ One row per chain leg reached from an approved requirement's `satisfies` edges �
 | REQ-001 | BP-022 | WO-068 | — |
 | REQ-001 | BP-022 | WO-069 | — |
 | REQ-001 | BP-022 | WO-070 | TST-026 (pass) |
+| REQ-001 | BP-022 | WO-280 | — |
+| REQ-001 | BP-022 | WO-281 | — |
+| REQ-001 | BP-022 | WO-282 | — |
 | REQ-002 | BP-022 | WO-051 | TST-017 (pass) |
 | REQ-002 | BP-022 | WO-061 | — |
 | REQ-002 | BP-022 | WO-062 | TST-024 (pass) |
@@ -29,6 +32,9 @@ One row per chain leg reached from an approved requirement's `satisfies` edges �
 | REQ-002 | BP-022 | WO-068 | — |
 | REQ-002 | BP-022 | WO-069 | — |
 | REQ-002 | BP-022 | WO-070 | TST-026 (pass) |
+| REQ-002 | BP-022 | WO-280 | — |
+| REQ-002 | BP-022 | WO-281 | — |
+| REQ-002 | BP-022 | WO-282 | — |
 | REQ-003 | BP-023 | WO-051 | TST-017 (pass) |
 | REQ-003 | BP-023 | WO-056 | TST-020 (pass) |
 | REQ-003 | BP-023 | WO-057 | TST-021 (pass) |
@@ -36,11 +42,14 @@ One row per chain leg reached from an approved requirement's `satisfies` edges �
 | REQ-003 | BP-023 | WO-058 | TST-023 (pass) |
 | REQ-003 | BP-023 | WO-059 | — |
 | REQ-003 | BP-023 | WO-060 | — |
+| REQ-003 | BP-023 | WO-281 | — |
 | REQ-004 | BP-024 | WO-052 | — |
 | REQ-004 | BP-024 | WO-053 | — |
 | REQ-004 | BP-024 | WO-054 | — |
 | REQ-004 | BP-024 | WO-055 | — |
 | REQ-004 | BP-024 | WO-068 | — |
+| REQ-004 | BP-024 | WO-277 | — |
+| REQ-004 | BP-024 | WO-282 | — |
 | REQ-005 | — | — | — |
 | REQ-006 | BP-025 | WO-071 | — |
 | REQ-006 | BP-025 | WO-072 | — |
@@ -250,6 +259,8 @@ One row per chain leg reached from an approved requirement's `satisfies` edges �
 | REQ-093 | BP-020 | WO-042 | — |
 | REQ-093 | BP-020 | WO-043 | — |
 | REQ-093 | BP-020 | WO-044 | — |
+| REQ-093 | BP-020 | WO-278 | — |
+| REQ-093 | BP-020 | WO-279 | — |
 | REQ-094 | BP-028 | WO-080 | — |
 | REQ-094 | BP-028 | WO-081 | — |
 | REQ-094 | BP-028 | WO-082 | — |
