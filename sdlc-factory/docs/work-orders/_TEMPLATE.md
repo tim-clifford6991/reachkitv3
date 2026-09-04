@@ -4,6 +4,7 @@ type: work-order
 title: "<title>"
 status: draft
 ui: no
+risk: normal
 implements: []
 depends-on: []
 blocked-by: []
@@ -21,7 +22,11 @@ supersedes: []
 > Front-matter carries status/ui/implements/depends-on/blocked-by/rests-on —
 > don't restate them here (0.8.0 moved `ui:` up from these bullets: it is
 > the one machine-checked meta field, and only front-matter is parsed).
-> `ui:` takes exactly `yes` or `no`, nothing else. Enumerate every ID in an
+> `ui:` takes exactly `yes` or `no`, nothing else. `risk:` takes exactly
+> `high` or `normal` and absent means `normal` — the planner sets `high`
+> only when this order touches a seam the charter names (§8), and a
+> high-risk order cannot reach `done` without a `Mutation:` line in the
+> validation section covering it. Enumerate every ID in an
 > edge field; an ellipsis (`BP-001 … BP-096`) is refused and reported as an
 > `ellipsis-range` finding, never expanded. Keep `Preview:` and
 > `Signed-off:` only when `ui: yes`; delete both otherwise — these bullets,
