@@ -36,6 +36,25 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npx playwright install --with-deps chromium
+      - name: schema-valid fixture environment (src/lib/config/env.ts parses at build; no vendor is reached)
+        run: |
+          {
+            echo "SUPABASE_URL=http://127.0.0.1:3001"
+            echo "SUPABASE_ANON_KEY=ci-fixture"
+            echo "SUPABASE_SERVICE_ROLE_KEY=ci-fixture"
+            echo "STRIPE_SECRET_KEY=sk_test_fixture"
+            echo "STRIPE_WEBHOOK_SECRET=whsec_fixture"
+            echo "STRIPE_PRICE_ID=price_fixture"
+            echo "RESEND_API_KEY=re_fixture"
+            echo "DATAFORSEO_LOGIN=fixture"
+            echo "DATAFORSEO_PASSWORD=fixture"
+            echo "ANTHROPIC_API_KEY=sk-ant-fixture"
+            echo "IP_HASH_SALT=fixture"
+            echo "KILL_SWITCH=false"
+            echo "OWNER_EMAILS=owner@example.com"
+            echo "NEXT_PUBLIC_APP_URL=http://127.0.0.1:3000"
+            echo "HOSTED_EDGE_CNAME_TARGET=content.example.com"
+          } >> "$GITHUB_ENV"
       - run: npm run test:layout
 
   db:
