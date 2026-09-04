@@ -9,7 +9,7 @@
 - `satisfies` is projected from 44 of 63 blueprints — the rest are silent on it.
 - `covers` is projected from 32 of 63 blueprints — the rest are silent on it.
 - `implements` is projected from 274 of 274 work orders — the rest are silent on it.
-- `decides-for` is projected from 32 of 32 decisions — the rest are silent on it.
+- `decides-for` is projected from 33 of 33 decisions — the rest are silent on it.
 - `about` is projected from 0 of 0 feedback items — the rest are silent on it.
 - `origin` is explicitly declared by 0 of 63 blueprints — the rest default to `forward` (never to an exemption).
 

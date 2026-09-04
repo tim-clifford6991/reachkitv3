@@ -2,55 +2,55 @@
   "coverage": {
     "satisfies": {
       "carrying": 44,
-      "total": 485
+      "total": 486
     },
     "covers": {
       "carrying": 32,
-      "total": 485
+      "total": 486
     },
     "implements": {
       "carrying": 274,
-      "total": 485
+      "total": 486
     },
     "decides-for": {
-      "carrying": 32,
-      "total": 485
+      "carrying": 33,
+      "total": 486
     },
     "about": {
       "carrying": 0,
-      "total": 485
+      "total": 486
     },
     "depends-on": {
       "carrying": 400,
-      "total": 485
+      "total": 486
     },
     "blocked-by": {
-      "carrying": 7,
-      "total": 485
+      "carrying": 8,
+      "total": 486
     },
     "cites-retired": {
       "carrying": 0,
-      "total": 485
+      "total": 486
     },
     "supersedes": {
       "carrying": 30,
-      "total": 485
+      "total": 486
     },
     "rests-on": {
       "carrying": 298,
-      "total": 485
+      "total": 486
     },
     "code": {
       "carrying": 63,
-      "total": 485
+      "total": 486
     },
     "exercises": {
       "carrying": 6,
-      "total": 485
+      "total": 486
     },
     "origin": {
       "carrying": 0,
-      "total": 485
+      "total": 486
     }
   },
   "nodes": {
@@ -86,7 +86,8 @@
       "rests-on": [
         {
           "claim": "Manual handling of removal requests at the published address can meet REQ-002 criterion 2's five-working-day promise at v1 volumes; there is no automation behind it and no queue the product exposes",
-          "disposition": "open"
+          "disposition": "undischargeable",
+          "reason": "Architect's wave-close read, 2026-09-04 (rule 2.3b). The claim is that a manual, human process meets a five-working-day deadline 'at v1 volumes' — volumes that do not exist, through a process no artifact in this corpus describes and no test can exercise. There is nothing here to discharge it with, and there never will be: the observation lives in operations, not in the factory. The decision's shape is unaffected — REQ-002 criterion 2's promise stands and the absence of automation behind it is exactly what this row exists to keep visible."
         }
       ],
       "supersedes": [],
@@ -310,7 +311,8 @@
       "rests-on": [
         {
           "claim": "Supabase RLS policies can be written so that every request-scoped read through `db()` excludes rows belonging to a user with a non-null `deleted_at`, including reads that join through `sites`, `drafts` and `publications`, without each caller adding a predicate",
-          "disposition": "open"
+          "disposition": "confirmed",
+          "reason": "Architect's wave-close read, 2026-09-04 (rule 2.3b), discharged against the migration on disk. `supabase/migrations/00000000000002_rls.sql` writes the policy set the row assumed possible: fourteen policies across `users`, `sites`, `scans`, `opportunities`, `drafts` and `publications`, with nineteen `deleted_at is null` conditions among them, and the joining reads carry it themselves — `sites_select_own` uses `exists (select 1 from users u where u.id = sites.user_id and u.deleted_at is null)`, and `scans`, `opportunities`, `drafts` and `publications` reach it through `select s.id from sites s join users u on u.id = s.user_id`. No caller adds a predicate; the exclusion is in the policy, as the decision required. The file's own header states the rule the row asserted was writable: 'A policy that lacks the `deleted_at is null` condition is a CI failure'."
         }
       ],
       "supersedes": [],
@@ -331,11 +333,13 @@
       "rests-on": [
         {
           "claim": "A Stripe Price created with `tax_behavior: 'inclusive'` continues to charge the same gross amount if automatic tax is later enabled on the account, deriving the tax from within the amount rather than adding to it",
-          "disposition": "open"
+          "disposition": "open",
+          "reason": "Left open deliberately, 2026-09-04 (rule 2.3b): the interaction between an inclusive `tax_behavior` and automatic tax is settled by enabling automatic tax on a test account and reading one invoice. Dischargeable, not yet attempted — and it bears on the gross amount a customer is charged, so it is deliberately not assumed."
         },
         {
           "claim": "A Stripe Price's `tax_behavior` cannot be changed after creation, so a price created `exclusive` must be replaced and every existing subscription migrated to correct it",
-          "disposition": "open"
+          "disposition": "open",
+          "reason": "Left open deliberately, 2026-09-04 (rule 2.3b): whether a Price's `tax_behavior` is immutable is settled by one API call against test mode. Cheaply dischargeable, not yet attempted. This is the row whose refutation would make the decision cheap to reverse and whose confirmation is the whole reason the decision was written now rather than later."
         }
       ],
       "supersedes": [],
@@ -395,7 +399,8 @@
       "rests-on": [
         {
           "claim": "BP-015's node implementing REQ-056 c2 leaves `needs_attention -> generating` reachable only from a customer action, and no scheduler, retry or job holds a reference to that edge.",
-          "disposition": "open"
+          "disposition": "confirmed",
+          "reason": "Architect's wave-close read, 2026-09-04 (rule 2.3b), discharged against BP-015's and BP-003's approved interfaces. BP-015's `## Error & edge behavior` states the guard in the decision's own terms: \"`needs_attention → generating` is guarded to a draft that never entered review and only when the customer starts it — so REQ-053's bound on automatic regeneration cannot be raised by a state move\". And no scheduler holds that edge: BP-003's `JobId` union is exactly seven ids and none of them regenerates a `needs_attention` draft — retry runs *into* `needs_attention` ('at most three times, then `needs_attention`'), never out of it. The edge is reachable only from a customer action, which is what the decision rests on."
         }
       ],
       "supersedes": [],
@@ -416,7 +421,8 @@
       "rests-on": [
         {
           "claim": "The node cut from REQ-065 exposes, per site and week, whether that week was not measured at all (c3) or measured only in part (c4), and which measurements the partial week holds. BP-051 distinguishes `no_week` from `not_measured` from that distinction alone.",
-          "disposition": "open"
+          "disposition": "undischargeable",
+          "reason": "Architect's wave-close read, 2026-09-04 (rule 2.3b). This decision is superseded by ADR-072, which carries this row forward verbatim and where it is dispositioned `confirmed` in this same pass. No pass over a retired decision discharges a row on it."
         }
       ],
       "supersedes": [],
@@ -438,11 +444,13 @@
       "rests-on": [
         {
           "claim": "The node cut from REQ-065 exposes, per site and week, whether that week was not measured at all (c3) or measured only in part (c4), and which measurements the partial week holds. BP-051 distinguishes `no_week` from `not_measured` from that distinction alone. Carried forward unchanged from ADR-071.",
-          "disposition": "open"
+          "disposition": "confirmed",
+          "reason": "Architect's wave-close read, 2026-09-04 (rule 2.3b), discharged against BP-051 — the node cut from REQ-065 — which exposes exactly the distinction this decision rests on. Its `WeekStanding` union declares `{ kind: 'not_measured' }` ('c5, second half — transient, no row') and `{ kind: 'no_week' }` ('c5, first half — the week was not measured at all') as separate arms, and `WeekMeasurements` carries the discriminator: 'null where the week was not measured at all — `WeekStanding.no_week`'. Its error behaviour spells out both cases and its decision 2 states the four standings are four shapes with `not_measured` carrying no row. The distinction is available per site and per week, from that node alone, which is all the decision asked for."
         },
         {
           "claim": "Nothing in the product ever fetches a published page's address after the 24-hour check, so no later observation can contradict a `page_not_found` cause. REQ-062's and REQ-063's non-goals both state it and REQ-065 criterion 1's weekly re-measurement visits no page; this is what makes Decision 5's terminality safe rather than merely stated. It is an assumption about every future node under BP-015 and BP-012, not only about the two that exist.",
-          "disposition": "open"
+          "disposition": "undischargeable",
+          "reason": "Architect's wave-close read, 2026-09-04 (rule 2.3b). The row states its own scope and with it its own impossibility: 'It is an assumption about every future node under BP-015 and BP-012, not only about the two that exist.' A universal over nodes not yet cut cannot be discharged by any pass — the two that exist can be checked (and ADR-085 row 2's confirmation in this same pass does check them), but the quantifier reaches further than any observation can. What holds it is not an observation but a written prohibition: REQ-062's and REQ-063's non-goals both forbid a second fetch of a published page's address, and that is what a future node would have to violate."
         }
       ],
       "supersedes": [
@@ -468,7 +476,8 @@
       "rests-on": [
         {
           "claim": "A post created by us in a customer's WordPress carries a marker we can find again on a later request, so a retry whose first outcome was never recorded finds the existing post instead of creating a second one. The mechanism is BP-048's; that one exists at all is assumed here.",
-          "disposition": "open"
+          "disposition": "undischargeable",
+          "reason": "Architect's wave-close read, 2026-09-04 (rule 2.3b). The row names its own home: 'The mechanism is BP-048's; that one exists at all is assumed here.' BP-048 row 2 is the live claim and is left `open` there, dischargeable by one round trip against one install (rule 2.4). No observation at this decision settles it independently."
         }
       ],
       "supersedes": [],
@@ -490,11 +499,13 @@
       "rests-on": [
         {
           "claim": "The WordPress REST API lets an application-password user with `edit_posts` set an existing post's status back to `draft` on a post that user's own credential created, without any other field of that post changing. BP-048's `rests-on` already assumes the write path for creation and for the SEO fields; that the same path can set status back is assumed here and is not verified in this corpus.",
-          "disposition": "open"
+          "disposition": "undischargeable",
+          "reason": "Architect's wave-close read, 2026-09-04 (rule 2.3b). This decision is superseded by ADR-082 and thence by ADR-084, which carries this row forward as its row 3 and is where it is dispositioned. No pass over a retired decision discharges a row on it."
         },
         {
           "claim": "A publication row records whether ReachKit itself made the page live at that destination, so the two populations this ruling separates are decidable from stored data and never from a re-read of the customer's site. `publications.live_url` is null for every WordPress delivery today (BP-048's data-model delta), so the discriminator cannot be `live_url` and BP-045 must carry an explicit one — see Decision 2.",
-          "disposition": "open"
+          "disposition": "undischargeable",
+          "reason": "Architect's wave-close read, 2026-09-04 (rule 2.3b). Superseded by ADR-082 and thence by ADR-084, which carries this row forward as its row 5 — on a changed footing, and dispositioned `confirmed` there in this same pass. No pass over a retired decision discharges a row on it."
         }
       ],
       "supersedes": [],
@@ -516,15 +527,18 @@
       "rests-on": [
         {
           "claim": "The WordPress REST API lets an application-password user with `edit_posts` set an existing post's status back to `draft` on a post that user's own credential created, without any other field of that post changing. Carried forward unchanged from ADR-081; BP-048's `rests-on` already assumes the write path for creation and for the SEO fields, and that the same path can set status back is assumed here and is not verified in this corpus.",
-          "disposition": "open"
+          "disposition": "undischargeable",
+          "reason": "Architect's wave-close read, 2026-09-04 (rule 2.3b). This decision is superseded by ADR-084, which carries this row forward verbatim as its row 3 and is where it is dispositioned. No pass over a retired decision discharges a row on it."
         },
         {
           "claim": "A publication row records whether ReachKit itself made the page live at that destination, so the two populations this ruling separates are decidable from stored data and never from a re-read of the customer's site. Carried forward unchanged from ADR-081. `publications.live_url` is null for every WordPress delivery (BP-048's data-model delta), so the discriminator cannot be `live_url` and BP-045 carries an explicit one.",
-          "disposition": "open"
+          "disposition": "undischargeable",
+          "reason": "Architect's wave-close read, 2026-09-04 (rule 2.3b). Superseded by ADR-084, which carries this row forward as its row 5 and where it is dispositioned `confirmed` in this same pass. No pass over a retired decision discharges a row on it."
         },
         {
           "claim": "A WordPress REST request can tell 'the post is no longer there' (a 404 for a post id we hold) apart from 'the site could not be reached' (DNS failure, connection reset, timeout, 5xx) reliably enough to choose between the `already_gone` and `unreachable` arms. The two arms carry different promises to the customer — nothing is theirs to remove, versus the post may still be live — so a mapping that collapses them would make one of REQ-056 criterion 16's outcomes unreachable. BP-048's `errors.ts` is where the mapping lives; nothing in this corpus verifies that a misconfigured host cannot answer 404 for an unreachable site.",
-          "disposition": "open"
+          "disposition": "undischargeable",
+          "reason": "Architect's wave-close read, 2026-09-04 (rule 2.3b). Superseded by ADR-084, which carries this row forward as its row 4 and where it is dispositioned in this same pass. No pass over a retired decision discharges a row on it."
         }
       ],
       "supersedes": [
@@ -548,15 +562,18 @@
       "rests-on": [
         {
           "claim": "Every WordPress site a customer can connect lets ReachKit give the posts it creates there something the customer can list posts by in their own WordPress admin and can tell from posts they wrote themselves, under the application password they gave. Inherited verbatim in substance from REQ-060's own `rests-on` row, which the requirements-analyst raised and could not discharge. Which attribute that is, and whether every install and every credential permits one, is unverified in this corpus.",
-          "disposition": "open"
+          "disposition": "undischargeable",
+          "reason": "Architect's wave-close read, 2026-09-04 (rule 2.3b). The row says what it is: 'Inherited verbatim in substance from REQ-060's own `rests-on` row, which the requirements-analyst raised and could not discharge.' REQ-060 row 1 is the home (rule 2.4) and is dispositioned undischargeable there, being universal over every connectable install. This decision's own shape — two marks, never one — was chosen precisely so that a refutation changes the mechanism and not the shape."
         },
         {
           "claim": "An application-password user holding `edit_posts` — the capability BP-048 already assumes for creating a post and writing its SEO fields — can also assign a tag term to the post it is creating, and can cause that term to exist if it does not. WordPress's default role map is what this rests on and nothing in this corpus verifies it; if it is refuted, the stamp needs a capability BP-048 does not assume and this decision's mechanism changes while its shape (two marks, never one) does not.",
-          "disposition": "open"
+          "disposition": "open",
+          "reason": "Left open deliberately, 2026-09-04 (rule 2.3b): whether an `edit_posts` user can assign a tag term and create it if absent is WordPress's default role map, settled by one call against one install. Cheaply dischargeable, not yet attempted — and this is the home of the claim BP-048 row 4 copies, so it is where the answer lands. The row already names what changes if it is refuted (the mechanism, not the shape)."
         },
         {
           "claim": "A term assigned to a post at creation is visible to the customer in their own wp-admin post list, and filterable there, without a plugin. This is what makes the stamp answer REQ-060 criterion 6 at all; unverified here.",
-          "disposition": "open"
+          "disposition": "open",
+          "reason": "Left open deliberately, 2026-09-04 (rule 2.3b): whether a term assigned at creation is visible and filterable in the customer's own wp-admin post list without a plugin is settled by looking at one install. Cheaply dischargeable, not yet attempted — and it is what makes the stamp answer REQ-060 criterion 6 at all, so it is deliberately not assumed."
         }
       ],
       "supersedes": [],
@@ -586,23 +603,28 @@
       "rests-on": [
         {
           "claim": "The WordPress REST API lets an application-password user create a post with `status: 'publish'` in a single request and returns that post's public permalink in the same response, so a delivery is live at a known address with no second call. Nothing in this repository has spoken to a WordPress install (`00-project.md`, 'Greenfield. No source code on disk yet'), so this is assumed and not verified here.",
-          "disposition": "open"
+          "disposition": "open",
+          "reason": "Left open deliberately, 2026-09-04 (rule 2.3b): whether a single publish request returns the permalink in the same response is settled by one call against one install. Cheaply dischargeable, not yet attempted. This is the home of the claim BP-048 row 5 copies. (The row's parenthetical citing 00-project.md's 'Greenfield. No source code on disk yet' is stale — `src/`, `tests/`, `package.json` and `supabase/migrations/` all exist now — but the substantive claim is about WordPress, not about this repository, so the staleness does not settle it.)"
         },
         {
           "claim": "An application-password user that holds `edit_posts` but not `publish_posts` — WordPress's Contributor role in the default map — can still create a post, and WordPress silently holds it at `draft` or `pending` rather than honouring `status: 'publish'` or refusing the request. This is the whole ground for Decision 3; if it is refuted and such a request is refused outright, Decision 3's probe becomes belt-and-braces rather than the only thing standing between the owner's ruling and a silently drafted post, and its shape does not change.",
-          "disposition": "open"
+          "disposition": "open",
+          "reason": "Left open deliberately, 2026-09-04 (rule 2.3b): whether a Contributor-capability user's `status: 'publish'` is silently held at draft rather than refused is settled by one call against one install. Cheaply dischargeable, not yet attempted. This is the home of the claims BP-048 row 6 and ADR-086 row 1 copy, and the whole ground for decision 3's probe; the row already states that a refutation changes the probe's necessity, not its shape."
         },
         {
           "claim": "The WordPress REST API lets an application-password user with `edit_posts` set an existing post's status back to `draft` on a post that user's own credential created, without any other field of that post changing. Carried forward unchanged from ADR-082, which carried it from ADR-081. Unverified in this corpus.",
-          "disposition": "open"
+          "disposition": "open",
+          "reason": "Left open deliberately, 2026-09-04 (rule 2.3b): whether the same write path can set an existing post's status back to `draft` without touching another field is settled by one call against one install. Cheaply dischargeable, not yet attempted. ADR-081 and ADR-082, which raised it first, are both superseded, so this row is now the live home."
         },
         {
           "claim": "A WordPress REST request can tell 'the post is no longer there' (a 404 for a post id we hold) apart from 'the site could not be reached' (DNS failure, connection reset, timeout, 5xx) reliably enough to choose between ADR-082's `already_gone` and `unreachable` arms. Carried forward unchanged from ADR-082; BP-048's `errors.ts` is where the mapping lives and nothing in this corpus verifies that a misconfigured host cannot answer 404 for an unreachable site.",
-          "disposition": "open"
+          "disposition": "undischargeable",
+          "reason": "Architect's wave-close read, 2026-09-04 (rule 2.3b). The undecidable part is quantified over misconfigured hosts the product neither controls nor can enumerate: the row's own statement of the risk is 'nothing in this corpus verifies that a misconfigured host **cannot** answer 404 for an unreachable site', and no number of hosts that behave correctly establishes that none behaves incorrectly. ADR-081 and ADR-082 are superseded, so this is the live home and BP-048's, BP-049 row 1's and ADR-085 row 1's copies are dispositioned to match. The consequence is carried in the decision's body, where it belongs: the two arms make different promises to the customer, so `errors.ts` maps conservatively rather than collapsing them."
         },
         {
           "claim": "A publication row records whether ReachKit itself made the page live at that destination, so ADR-082's two unpublish populations stay decidable from stored data and never from a re-read of the customer's site. Carried forward from ADR-082 and now standing on a *different* footing: `publications.live_url` is no longer null for WordPress rows, so the wrong derivation `live_url != null` now over-classifies where it used to under-classify. Decision 4.",
-          "disposition": "open"
+          "disposition": "confirmed",
+          "reason": "Architect's wave-close read, 2026-09-04 (rule 2.3b), discharged against BP-045's approved data-model delta, which ships the explicit discriminator this row requires and records this decision as its authority: `made_live_by_us boolean not null default false` — 'ADR-082, **retained unchanged by ADR-084 Decision 4** and still written from `DeliveryResult.madeLive` and from nothing else'. It is stored data written at delivery, never a re-read of the customer's site, so the two unpublish populations stay decidable exactly as the decision requires. BP-045 also carries the warning this row's changed footing demands: `live_url` is now non-null for every WordPress row, so substituting `live_url != null` 'has changed sign rather than stopped being wrong' and would write into a post ReachKit never made live."
         }
       ],
       "supersedes": [
@@ -627,11 +649,13 @@
       "rests-on": [
         {
           "claim": "A page-address fetch can tell an unambiguous 404 or 410 from every other answer reliably enough to choose between `page_not_found` and `could_not_confirm`. This is ADR-084's fourth `rests-on` row, raised there for a WordPress post-id fetch through `BP-048`'s `errors.ts`, and it is now load-bearing for `BP-049`'s fetch of the page's own public address as well — a different call, against a different host, with the same failure mode. Nothing in this repository has fetched a customer's page (`00-project.md`, 'Greenfield. No source code on disk yet'); a misconfigured host that answers 404 for a site that is in fact unreachable would put a page in the wrong arm, and the arms have opposite consequences (Decision 4).",
-          "disposition": "open"
+          "disposition": "undischargeable",
+          "reason": "Architect's wave-close read, 2026-09-04 (rule 2.3b). The row names its own origin: \"This is ADR-084's fourth `rests-on` row\", extended here to a different call against a different host. ADR-084 row 4 is the home (rule 2.4) and is dispositioned undischargeable there, being quantified over misconfigured hosts the product cannot enumerate. This decision's own consequence — the arms have opposite consequences, so the mapping is conservative — stands in its body and needs no disposition to hold."
         },
         {
           "claim": "REQ-062 criterion 4's `page_not_found` and REQ-063 criterion 6's `page_not_found` cause are the same event recorded once — BP-049 writes it and BP-051 reads it — so the corpus never derives 'no page was found' twice from two fetches. True by construction here because there is only ever one fetch; it stops being true the moment anything else looks at a published page's address, which REQ-062's and REQ-063's non-goals both forbid.",
-          "disposition": "open"
+          "disposition": "confirmed",
+          "reason": "Architect's wave-close read, 2026-09-04 (rule 2.3b), discharged against the corpus as it stands. BP-049 is the only node in the corpus that fetches a published page's address, and BP-051 reads the cause rather than re-deriving it — BP-051's own row 1, `confirmed` in this same pass, establishes that this node is the single home of a page's verdict and that no node under BP-015 writes a second copy. So `page_not_found` is recorded once and read twice, never derived twice from two fetches, which is the row's claim. The row's own caveat about the future is not this row's to carry: ADR-072 row 2 holds the universal version and is dispositioned undischargeable there."
         }
       ],
       "supersedes": [],
@@ -655,7 +679,8 @@
       "rests-on": [
         {
           "claim": "An application-password user that holds `edit_posts` but not `publish_posts` can be told apart from one that can publish, over the REST API, without creating a post — the probe ADR-084 Decision 3 names as `canPublish(cfg)`. Carried forward from ADR-084's second `rests-on` row, on which this file's whole occasion depends. Nothing in this repository has spoken to a WordPress install (`00-project.md`, 'Greenfield. No source code on disk yet').",
-          "disposition": "open"
+          "disposition": "undischargeable",
+          "reason": "Architect's wave-close read, 2026-09-04 (rule 2.3b). The row says what it is: \"Carried forward from ADR-084's second `rests-on` row, on which this file's whole occasion depends.\" ADR-084 row 2 is the home (rule 2.4) and is left `open` there, dischargeable by one call against one install. No observation at this decision settles it independently."
         },
         {
           "claim": "REQ-074 gains a criterion for the destinations list in this occasion. REQ-060 criterion 7 fixes what the customer must and must not be told and narrowed its own non-goal to REQ-074 criterion 1 accordingly, leaving REQ-074 covering only the expired-credential occasion. Until that criterion exists, BP-058 renders this occasion from REQ-060 criterion 7 alone — which is enough to build and not enough to be the destinations list's own promise (rule 5.7). Raised by the requirements-analyst in `requirements/history/REQ-056-057-060-2026-09-01-adr-084-review-round-two-folded.md`; nobody held REQ-074 that pass and this file does not edit requirements. **Discharged 2026-09-02: REQ-074 criterion 8 exists (`requirements/history/REQ-074-2026-09-01-cannot-publish-criterion-and-jn-004-step.md`) and states the promise for any destination, not for WordPress alone. It ratifies this file's Decisions 1, 2 and 3 clause for clause — the `failing` state, the connection-is-live line, the three prohibitions and the action that leads to a different account — and adds one limb this file did not fix: a re-entry of the stored credential leaves the destination not reading as working. BP-058 renders that limb with no new branch and records how (its `## Error & edge behavior`). This row is discharged, not amended: no Decision in this file changes and its `status: accepted` stands (rule 2.2b).**",
@@ -710,7 +735,8 @@
       "rests-on": [
         {
           "claim": "The console's file -> blueprint derivation (rule 5.6) resolves a file that matches several nodes' `code:` globs to the node with the most specific match, or reports it under each. Where it reports the file under each without ranking, this decision still fixes which node is answerable, and the overlap is a reporting artefact rather than an unowned or doubly-owned file.",
-          "disposition": "open"
+          "disposition": "confirmed",
+          "reason": "Architect's wave-close read, 2026-09-04 (rule 2.3b), discharged by running the console rather than reasoning about it. `factory-console impact src/lib/presentation/copy/index.ts` reports that file under four blueprints — BP-001, BP-019, BP-020 and BP-022 — with no ranking between them, which is the second arm of the row's disjunction ('or reports it under each'). A single-match control (`factory-console impact tailwind.config.ts` → BP-018 alone) shows the reporting is per-glob and not a fallback. The row's second clause is what it exists for and it holds: the console reports, this decision decides, and a file appearing under several nodes is a reporting artefact — the narrower glob still owns the file — not an unowned or doubly-owned one."
         }
       ],
       "supersedes": [],
@@ -735,7 +761,8 @@
       "rests-on": [
         {
           "claim": "A lint rule can be expressed over import specifiers that resolve inside `src/lib/publish/`, so the directory partial order in Decision 3 is machine-checkable rather than review-checkable. `structure.md` rule 6 already asserts the module-level version of this ('a cycle between `src/lib/` modules is a build failure'), and BP-001 decision 2 already places a cross-module lint invariant in the root toolchain. No such rule exists yet in a repository with no code; the work order that first creates `src/lib/publish/types.ts` is where it lands.",
-          "disposition": "open"
+          "disposition": "confirmed",
+          "reason": "Architect's wave-close read, 2026-09-04 (rule 2.3b). The capability the row asserts is no longer hypothetical — the premise 'no such rule exists yet in a repository with no code' is stale, and the rule class is demonstrably working. `tests/app/lint-rules.test.ts` exercises exactly this shape over import specifiers, including a directory-scoped instance of the same partial order this decision needs (\"BP-062 decision 1 — `src/lib/account/export/**` may not import `src/lib/account/billing/**`\") and a symbol-scoped one for ADR-050, alongside `structure.md` rule 6's module-level version. What remains is not an assumption but an implementation: the `src/lib/publish/` instance lands with the work order that first creates `src/lib/publish/types.ts`, which is what the row already says."
         }
       ],
       "supersedes": [],
@@ -799,11 +826,29 @@
         },
         {
           "claim": "DataForSEO's documented refund of the load_async_ai_overview surcharge actually lands, so settling a flagged SERP to the base price where the ai_overview element is absent or carries asynchronous_ai_overview: false does not under-count real vendor spend (decision 3a). Nothing in this corpus can observe it: the refund goes to the account balance and never to the response. Discharged by reconciling one week of ledgered free-path spend against the DataForSEO account statement once live traffic exists. If refuted the exposure is bounded: <=0.2c per flagged SERP, <=2.4c per scan, <=1.5c of real overspend per corrected report (~$3/day at 200 corrected free scans).",
-          "disposition": "open"
+          "disposition": "undischargeable",
+          "reason": "Architect's wave-close read, 2026-09-04 (rule 2.3b). The row states its own impossibility: 'Nothing in this corpus can observe it: the refund goes to the account balance and never to the response', and its discharge is 'reconciling one week of ledgered free-path spend against the DataForSEO account statement once live traffic exists' — an operations reconciliation, not a factory pass. It is kept rather than cleared because the row already bounds the exposure if it is refuted (≤0.2c per flagged SERP, ≤2.4c per scan, ≤1.5c per corrected report, ~$3/day at 200 corrected free scans), which is what makes the decision safe to hold while the row can never close."
         }
       ],
       "supersedes": [],
       "file": "sdlc-factory/docs/decisions/ADR-094.md"
+    },
+    "ADR-095": {
+      "id": "ADR-095",
+      "type": "decision",
+      "title": "The report blob's market section is the leaf's shape, and coherence has a member",
+      "status": "accepted",
+      "decides-for": [
+        "BP-011",
+        "BP-012",
+        "BP-025",
+        "BP-056"
+      ],
+      "depends-on": [],
+      "blocked-by": [],
+      "rests-on": [],
+      "supersedes": [],
+      "file": "sdlc-factory/docs/decisions/ADR-095.md"
     },
     "BP-001": {
       "id": "BP-001",
@@ -934,7 +979,8 @@
       "rests-on": [
         {
           "claim": "Inngest (or Vercel cron plus a queue) delivers at-least-once with a durable retry and a per-function concurrency limit, so every job below is written idempotent rather than exactly-once",
-          "disposition": "open"
+          "disposition": "open",
+          "reason": "Left open deliberately, 2026-09-04 (rule 2.3b): at-least-once delivery, durable retry and a per-function concurrency limit are properties of a platform this corpus has not yet deployed to, settled by the first job that runs there. Dischargeable, not yet discharged — and the design already assumes the weaker guarantee (every job written idempotent), so a refutation costs nothing."
         },
         {
           "claim": "Drift assessment, 2026-09-03 (constitution §6; rule 2.2a — record the assessment, move nothing): the only code under this node's `code:` today is `src/jobs/.gitkeep`, placed by b172edf (`feat(WO-001): Next.js toolchain, build configuration and root config files`); `tests/jobs/` does not exist. WO-001's validation report puts that file in scope deliberately — File scope: `.gitkeep` under `src/app`, `src/jobs`, `src/lib`, `src/ui`, `supabase` — required by the WO's own test — and records its criterion-2 mutation as discriminating (Deleted `src/ui/.gitkeep` and the now-empty dir → failed). A placeholder contradicts nothing this node declares: the `## Public interface` union `type JobId` of exactly seven ids, the one-file-per-job layout under `## Module / boundary` and decision 4's single platform file are all still unwritten, and WO-016 (`approved`, `implements: [BP-003]`) is the order that writes them. The code and the blueprint are compatible and neither is the wrong source of truth. This row is discharged for that commit only; a later commit under these globs that names no work order implementing this node is a fresh drift, re-read against this node from scratch.",
@@ -974,7 +1020,8 @@
       "rests-on": [
         {
           "claim": "A single Vercel deployment can accept wildcard `content.{customer-domain}` CNAMEs and route by Host header without a per-customer deployment or certificate step the customer must take",
-          "disposition": "open"
+          "disposition": "open",
+          "reason": "Left open deliberately, 2026-09-04 (rule 2.3b): whether one Vercel deployment accepts wildcard `content.` CNAMEs and routes by Host header is settled by one deployment, not by traffic over time and not by a read of the corpus. Dischargeable, not yet discharged."
         },
         {
           "claim": "Drift assessment, 2026-09-03 (constitution §6; rule 2.2a — record the assessment, move nothing). The console flagged this node stale after one commit under its `code:` globs since `695c58d`: `a5f1562` (WO-002), which writes `src/app/(public)/layout.tsx`, `src/app/(account)/layout.tsx`, the root `src/app/layout.tsx`, and `src/app/(hosted)/.gitkeep` — a placeholder, not `layout.tsx`. WO-002's own validation report addresses the placeholder directly ('Deviation 3 — `src/app/(hosted)/.gitkeep`. Confirmed both in-scope and convention-matching … BP-001's module boundary explicitly excludes `(hosted)/layout.tsx` from this WO (BP-047's)') and `route-groups.test.ts` asserts the directory carries nothing else. This node's own text already says its leaf, BP-047, anchors `layout.tsx`, `resolve-host.ts`, `[slug]/**`, `robots.ts` and `sitemap.ts`, and WO-229/WO-230/WO-231 (`approved`, `implements: [BP-047]`) are the orders that write them — none has landed. A placeholder contradicts nothing this node declares: the container/leaf split, the Public interface's four routes and the read-only boundary are all still unwritten inside `(hosted)`. The code and the blueprint are compatible and neither is the wrong source of truth. This row is discharged for that commit only; a later commit under these globs that names no work order implementing this node or BP-047 is a fresh drift, re-read from scratch.",
@@ -1025,7 +1072,8 @@
       "rests-on": [
         {
           "claim": "The Vercel project `reachkit` holds, by name, every binding this node's boot schema requires after decision 6 — in particular `SUPABASE_SERVICE_ROLE_KEY` rather than `SUPABASE_SERVICE_ROLE`, and `ANTHROPIC_API_KEY`, which serves the nano tier too when `NANO_API_KEY` is unset. This is a claim about names, never about values: the project's environment variables are write-only (decision 6's standing fact), so a row asserting any binding's *value* could never be discharged by reading it, and none is raised. Discharged by the first deployment that boots — a name the project does not hold is exactly the boot failure this node's `## Error & edge behavior` already specifies, so the deploy either settles the row or names the missing binding.",
-          "disposition": "open"
+          "disposition": "open",
+          "reason": "Left open deliberately, 2026-09-04 (rule 2.3b). The row names its own discharge point and it has not been reached: 'the first deployment that boots' either settles it or names the missing binding, because a name the project does not hold is the boot failure this node's error behaviour already specifies. Note what the row is careful about and why it is not undischargeable: it claims only that the bindings exist *by name*, never their values — the values are write-only, so a row about them could never be discharged and none is raised."
         }
       ],
       "supersedes": [],
@@ -1109,7 +1157,8 @@
       "rests-on": [
         {
           "claim": "Labs `ranked_keywords` on a root domain returns rows for pages served on the `content.` subdomain; if it does not, hosted pages' wins are invisible to the growth chart and the client must query with subdomain inclusion or track the subdomain as a second target (BUILD §16 milestone 2 is the first measurement)",
-          "disposition": "open"
+          "disposition": "open",
+          "reason": "Left open deliberately, 2026-09-04 (rule 2.3b): whether Labs `ranked_keywords` on a root domain returns rows for a `content.` subdomain is settled by one live call. Cheaply dischargeable, not yet attempted. This node is where that first call is made; REQ-041 row 1 is the requirement-side statement of the same question and the row already names both fallbacks if it goes the other way."
         },
         {
           "claim": "DataForSEO refunds the `load_async_ai_overview` surcharge to the account balance after the fact and never adjusts the amount this client observes at call time (ADR-094). Since ADR-094 decision 3a this node reserves the surcharge-inclusive price and settles from the response by the vendor's documented rule, so the claim this row rests on is now the refund itself landing — ADR-094's own second `rests-on` row carries it and names the reconciliation; this row states the call-time observation only",
@@ -1377,7 +1426,8 @@
       "rests-on": [
         {
           "claim": "Six of ADR-040's nine template directories — `magic-link`, `draft-ready`, `published`, `weekly`, `setup-reminder`, `account` — have no leaf `code:` glob, so `src/lib/mail/templates/<kind>/**` resolves to **this node** by the module anchor (structure.md rule 2). That is the arrangement ADR-040 Alternative 3 rejected, and this node is carrying it by default rather than by decision. It is not fixed here: ADR-040 point 2 assigns each directory to the node owning that kind's occasions, and for five of the six that node is a leaf of another component (BP-046, BP-049, BP-051/BP-050, BP-061, BP-033), so applying it literally would create five new instances of structure.md rule 2b where the corpus has one — restructuring with no file on disk (rule 2.2a). `account`'s occasions span REQ-024, REQ-074, REQ-076, REQ-077 and REQ-079, so ADR-040's own rule names five owners and picks none. Assessed 2026-09-02 by the architect; the trigger to resolve it is the first template file, and the resolution is an ADR amending ADR-040 point 2. Nothing is blocked: no file exists and no work order writes one.",
-          "disposition": "open"
+          "disposition": "confirmed",
+          "reason": "Architect's wave-close read, 2026-09-04 (rule 2.3b). The structural claim is confirmed against the corpus as it stands: the only leaf `code:` globs anywhere under `src/lib/mail/templates/` are BP-029's three — `first-page/**`, `first-page-unavailable/**`, `nurture/**` — so the remaining six of ADR-040's nine directories carry no leaf glob and do resolve to this node by the module anchor (structure.md rule 2). What the row records beyond that is not an assumption but an assessment, and it stands unchanged: the arrangement is carried by default, the trigger to resolve it is the first template file, and the resolution is an ADR amending ADR-040 point 2. `src/lib/mail/` still does not exist on disk (`tests/presentation/copy/surface-tree.ts` reports it as a governed glob reaching zero files), so nothing is blocked."
         }
       ],
       "supersedes": [],
@@ -1417,11 +1467,13 @@
       "rests-on": [
         {
           "claim": "Stripe's customer portal can be configured so the customer adds or corrects a tax ID (VAT number) themselves; BUILD.md §13 names the portal only for card and cancellation and puts the VAT field at Checkout, so this is asserted from outside the corpus (REQ-076's own rests-on row)",
-          "disposition": "open"
+          "disposition": "undischargeable",
+          "reason": "Architect's wave-close read, 2026-09-04 (rule 2.3b). This is REQ-076 row 1 restated — the row names it — and rule 2.4 puts the claim's home there, where it is still `open` and dischargeable by reading the Stripe portal configuration. No observation at this node settles it; a second live row only makes the assumption index louder without making it truer (rule 5.5)."
         },
         {
           "claim": "Stripe Checkout collects and stores the billing-address country on every purchase with no extra configuration (REQ-022's rests-on row)",
-          "disposition": "open"
+          "disposition": "undischargeable",
+          "reason": "Architect's wave-close read, 2026-09-04 (rule 2.3b). This is REQ-022 row 1 restated — the row names it — and the claim's home is there, still `open` (rule 2.4). No observation at this node settles it."
         }
       ],
       "supersedes": [],
@@ -1533,7 +1585,8 @@
         },
         {
           "claim": "Until the brand of Decisions 7 / ADR-012 lands in src/lib/presentation/generated/text.ts, GeneratedText is a plain structural interface and this node's central guarantee — that model text reaches a surface only through fromStored and renderGenerated — is a convention a careful author can violate by accident. TST-028 reproduced it concretely from a file outside the module: an object literal of the right shape, no cast, no second constructor, rendered through renderGenerated indistinguishably from stored model text. This is the live claim; it is dischargeable and a follow-up work order on this node discharges it (see ADR-012 Consequences). WO-279 carries no copy of it — the type is this node's declared interface, so the claim's home is here (rule 2.4).",
-          "disposition": "open"
+          "disposition": "open",
+          "reason": "Left open deliberately, 2026-09-04 (rule 2.3b), and re-verified on disk: `src/lib/presentation/generated/text.ts` still declares `export interface GeneratedText { readonly source: 'model'; readonly text: string }` with no brand, and its own module header records the gap TST-028 reproduced. The row is live, true today, and dischargeable — the follow-up work order ADR-012's Consequences names closes it. Exactly the row 2.3a describes as the default and majority state, and the wrong one to clear to move a number."
         },
         {
           "claim": "Even with the brand, fromStored(column, value) cannot verify that value was in fact read from column: an author who calls the sanctioned constructor with hand-typed text mints a conforming GeneratedText. No compile-time check in a single-program type system can close this, and no test-time sweep can either — the call is well-formed by construction. The residual defence is that fromStored is called only in the data-access path, which the flow gate sweeps, and that its column argument is a closed union of seven literals naming real storage.",
@@ -1567,15 +1620,18 @@
       "rests-on": [
         {
           "claim": "Every place a value or a module can sit is reachable from the App Router tree under src/app/**, src/app/(hosted)/** and the mail templates under src/lib/mail/**, so PLACES can be made total over the rendered surface by enumeration rather than by memory. A place rendered only inside a client-only modal that no route renders is invisible to that enumeration.",
-          "disposition": "open"
+          "disposition": "undischargeable",
+          "reason": "Architect's wave-close read, 2026-09-04 (rule 2.3b), on the same footing this node's sibling row already carries on BP-020 ('every string a surface renders can be reached from a repo-relative path glob over the four globs' — dispositioned undischargeable 2026-09-04). It is a universal claim over files that do not yet exist, and the row states its own uncoverable counterexample: a place rendered inside a client-only modal that no route renders is invisible to the enumeration and would stay invisible to any number of further passes. What can be shown has been shown — `tests/presentation/copy/surface-tree.ts` walks the governed globs and reports per-glob counts, so a surface added inside them is caught; one added outside them never will be."
         },
         {
           "claim": "One canonical cold-start fixture — a domain with no measured ranking and no AI citation of its own — can drive every engine end to end without a vendor call, because BP-007's cache seam and BP-008's closed endpoint list can both be stubbed at the module boundary. Without that, REQ-091 criterion 1 is only assertable against live vendors.",
-          "disposition": "open"
+          "disposition": "open",
+          "reason": "Left open deliberately, 2026-09-04 (rule 2.3b): the fixture does not exist, and building it is exactly the observation that settles the claim. Dischargeable by the work order that cuts it; not something a read of the corpus can close."
         },
         {
           "claim": "Each place whose wording a sibling requirement already fixes (REQ-041 c3, REQ-043 c3/c4/c5, REQ-065 c3/c4, REQ-010 c1) contributes exactly one CopyKey and no place gains a second account. REQ-091's own non-goal makes this a design obligation on this node; nothing in the corpus proves the set of such places is closed.",
-          "disposition": "open"
+          "disposition": "undischargeable",
+          "reason": "Architect's wave-close read, 2026-09-04 (rule 2.3b). The row states its own impossibility: 'nothing in the corpus proves the set of such places is closed'. Totality over an open set of future places is not provable by any pass; what is enforceable is the design obligation the row names, and that lives in this node's body, not in a row waiting forever for an observation."
         }
       ],
       "supersedes": [],
@@ -1611,11 +1667,13 @@
       "rests-on": [
         {
           "claim": "The address a report names for a removal request is an owner-written string; BP-019's copy registry holds it under one key and this node renders it. No value for it exists in the corpus yet",
-          "disposition": "open"
+          "disposition": "open",
+          "reason": "Left open deliberately, 2026-09-04 (rule 2.3b). The removal address is a customer-visible string and therefore the owner's (§1), not a parameter this system may derive. It is dischargeable the moment the owner writes it into BP-019's registry — one sentence, not a build — so `undischargeable` would be wrong. Escalated as owner-owed rather than closed."
         },
         {
           "claim": "A person, not the product, writes the `domain_blocks` row that removes a report, and does so inside REQ-002 criterion 2's five working days; ADR-002 carries the same claim for the operation as a whole",
-          "disposition": "open"
+          "disposition": "undischargeable",
+          "reason": "Architect's wave-close read, 2026-09-04 (rule 2.3b). The row names ADR-002 as carrying the same claim for the operation as a whole, so ADR-002 row 1 is the home (rule 2.4) and that row is itself undischargeable — a claim about a human process meeting a deadline at volumes that do not exist yet. No observation at this node settles it."
         },
         {
           "claim": "Vercel presents the visitor's address in `x-forwarded-for`, so the network key BP-023 counts by is derivable at the edge without a platform-specific header this node invents",
@@ -1655,7 +1713,8 @@
       "rests-on": [
         {
           "claim": "The free battery — own fetches plus 12 live SERP calls plus the suggestion call — completes within 60 s at the p95 of vendor response time; `BUILD.md` §16 milestone 3 is the first measurement of this chain. Inherited from REQ-003's own row, restated here only because this node holds the deadline that acts on it",
-          "disposition": "open"
+          "disposition": "undischargeable",
+          "reason": "Architect's wave-close read, 2026-09-04 (rule 2.3b). The row says what it is: REQ-003 row 1 inherited, 'restated here only because this node holds the deadline that acts on it'. The home is REQ-003 (rule 2.4) and it is dispositioned undischargeable there — a p95 over live vendor latency has no observation available to this factory. The deadline this node holds is unaffected."
         },
         {
           "claim": "Counting by network address means several founders behind one office or mobile network share one hourly allowance and one in-flight slot. Inherited from REQ-003",
@@ -1836,7 +1895,8 @@
       "rests-on": [
         {
           "claim": "A corrected free report ordinarily fits inside CAPS.FREE_C 12c: the pair is 11.1c + 0.2c per SERP on which Google served an asynchronous AI Overview (ADR-094 decisions 5 and 3a), so it fits whenever at most four of the twelve did, and cache hits on the scan widen that. Two facts underneath it are unmeasured and only live traffic can settle them: how often Google serves an asynchronous overview on these twelve queries (the vendor says only that it does so 'frequently'), and BP-008's 30-day cache hit rate on the SERPs and suggestions call. If both run against us the correction truncates part-way through its SERP fan-out and REQ-094 criterion 7's partial result is the ordinary outcome for corrected reports. Raised 2026-09-03 with decision 4's amendment; restated the same day after decision 3a.",
-          "disposition": "open"
+          "disposition": "undischargeable",
+          "reason": "Architect's wave-close read, 2026-09-04 (rule 2.3b). The row states its own impossibility in its own words: 'Two facts underneath it are unmeasured and only live traffic can settle them' — how often Google serves an asynchronous AI Overview on these twelve queries, and BP-008's 30-day cache hit rate. Both are frequencies over real traffic, not properties of anything this factory builds. Recorded rather than cleared: if both run against us, REQ-094 criterion 7's partial result becomes the ordinary outcome for corrected reports, which is a customer-visible consequence — reported to the owner at this wave close as a risk carried, not as a question asked."
         }
       ],
       "supersedes": [],
@@ -1873,11 +1933,13 @@
       "rests-on": [
         {
           "claim": "A free report's stored blob is immutable for the scan it belongs to, so the offer a visitor saw when they submitted is the offer the giveaway is written from; only a newer current scan for the same domain can change what is on offer between render and submit",
-          "disposition": "open"
+          "disposition": "confirmed",
+          "reason": "Architect's wave-close read, 2026-09-04 (rule 2.3b), discharged against the schema on disk. `supabase/migrations/20260904110000_scans_current.sql` creates `unique (domain) where is_current`, and quotes BP-012 decision 1 for why: 'a partial unique index, not application logic'. BP-012's `StoredReport` is written by that node alone ('this node assembles it and is the only writer') and a market correction is a new scan carrying `correctionOf`, never a mutation of the corrected one. So a stored blob is immutable for its scan, and the only thing that can change what is on offer between render and submit is a newer current scan for the same domain — which is exactly the row's claim, now enforced in the database rather than assumed."
         },
         {
           "claim": "Resend reports a hard bounce or a permanent rejection distinguishably from a transient failure, so criterion 8's 24-hour retry window is spent on retriable failures rather than on an address that will never accept mail",
-          "disposition": "open"
+          "disposition": "open",
+          "reason": "Left open deliberately, 2026-09-04 (rule 2.3b): Resend's bounce classification is settled by the first send that bounces in test mode, and no work order has sent one. Dischargeable, not yet discharged."
         }
       ],
       "supersedes": [],
@@ -1914,19 +1976,23 @@
       "rests-on": [
         {
           "claim": "Stripe Checkout collects and stores the billing-address country on every purchase with `billing_address_collection: 'required'` and no further configuration (REQ-022's own rests-on row; BUILD.md §13 'collect the buyer's country (Stripe does automatically)')",
-          "disposition": "open"
+          "disposition": "undischargeable",
+          "reason": "Architect's wave-close read, 2026-09-04 (rule 2.3b). This is REQ-022 row 1 restated — the row names it — and rule 2.4 puts the home there, still `open`. No observation at this node settles it independently."
         },
         {
           "claim": "Stripe's `tax_id_collection` never blocks or delays completion of a Checkout Session on the basis of a tax ID's registry status, so REQ-022 criterion 7's 'no check stands between them and their purchase' holds with the field enabled",
-          "disposition": "open"
+          "disposition": "open",
+          "reason": "Left open deliberately, 2026-09-04 (rule 2.3b): one Checkout Session with `tax_id_collection` enabled settles it. Dischargeable, not yet discharged."
         },
         {
           "claim": "A Stripe account can be configured so that no presentment-currency conversion (Adaptive Pricing or equivalent) is applied to a EUR price for a buyer outside the euro area, which REQ-022 criterion 4 requires",
-          "disposition": "open"
+          "disposition": "open",
+          "reason": "Left open deliberately, 2026-09-04 (rule 2.3b), and flagged. This is the one Stripe row whose refutation would change a number a customer reads: REQ-022 criterion 4 requires that a buyer outside the euro area is charged the EUR price, and Adaptive Pricing would silently present a converted one. It is dischargeable by reading the account's pricing settings, so it is not undischargeable; it is not confirmed because nothing has read them. Reported at this wave close as promise-bearing-if-refuted."
         },
         {
           "claim": "A tax ID collected by `tax_id_collection` at Checkout is stored against the Stripe customer created by that session, and is rendered on every invoice Stripe issues for that customer thereafter — not only on the first. REQ-022 criterion 6's second half is 'what they enter appears on their billing record and their invoices', plural and ongoing, and this node writes the number once at checkout and never again. Three adjacent rows on this node and BP-060 cover the collection, the portal's edit path and the billing address; none covered this, and it is the half the criterion is actually about",
-          "disposition": "open"
+          "disposition": "open",
+          "reason": "Left open deliberately, 2026-09-04 (rule 2.3b): whether Stripe renders a checkout-collected tax ID on every later invoice is settled by one subscription cycle in test mode. Dischargeable, not yet discharged, and the half of REQ-022 criterion 6 it carries ('their invoices', plural and ongoing) is why it was raised."
         }
       ],
       "supersedes": [],
@@ -1957,7 +2023,8 @@
       "rests-on": [
         {
           "claim": "A site address given at setup is enough to run the onboarding deep pass with no prior free scan (REQ-021's own rests-on row)",
-          "disposition": "open"
+          "disposition": "undischargeable",
+          "reason": "Architect's wave-close read, 2026-09-04 (rule 2.3b). This is REQ-021 row 1 restated — the row names it — and the home is there (rule 2.4), where it is dispositioned `confirmed` in this same pass against BP-011's cold-start interface. No observation at this node settles it independently; the answer is REQ-021's."
         }
       ],
       "supersedes": [],
@@ -1992,7 +2059,8 @@
       "rests-on": [
         {
           "claim": "Stripe delivers `checkout.session.completed` for a completed subscription Checkout Session at least once, and a session that never completed produces no such event — so the signature-verified webhook is a sufficient as well as a necessary provisioning trigger (BUILD.md §13, 'Webhook (signature-verified, the only provisioning path)')",
-          "disposition": "open"
+          "disposition": "open",
+          "reason": "Left open deliberately, 2026-09-04 (rule 2.3b): Stripe's delivery guarantee for `checkout.session.completed` is settled by the first webhook received in test mode, not by a read of the corpus. Dischargeable, not yet discharged."
         }
       ],
       "supersedes": [],
@@ -2024,7 +2092,8 @@
       "rests-on": [
         {
           "claim": "A founder reaching /setup always has an open account behind their payment (REQ-024 criterion 6), so the screen never has to render for a payment with no user row",
-          "disposition": "open"
+          "disposition": "open",
+          "reason": "Left open deliberately, 2026-09-04 (rule 2.3b), and I record why I did not close it. The row cites REQ-024 criterion 6, but that criterion is a *repair* clause — 'given a payment that completed against which no account opened, when 24 hours have passed, then an account is open against that payment' — which grants a window in which a payment has no account, rather than the guarantee this row reads out of it. Whether /setup is reachable inside that window is a question about BP-032's and BP-061's entry paths that I did not trace in this pass. Closing it either way on a half-read would be exactly the hand-waving 2.3a warns produces a correct-looking index."
         }
       ],
       "supersedes": [],
@@ -2059,7 +2128,8 @@
       "rests-on": [
         {
           "claim": "`competitors_domain` returns a measured-empty set, not an error, for a domain with no ranked presence — the setup card's only rival source when no report backs the account. If it errors instead, the card shows `seeking → none_found` on a failure it cannot distinguish from a true empty, and the two must be split. `BUILD.md` §16 milestone 2 is the first point at which it can be measured.",
-          "disposition": "open"
+          "disposition": "open",
+          "reason": "Left open deliberately, 2026-09-04 (rule 2.3b): whether `competitors_domain` answers measured-empty or errors for a domain with no ranked presence is settled by one live call. Cheaply dischargeable, not yet attempted — and the row already names the design consequence if it errors."
         }
       ],
       "supersedes": [],
@@ -2120,7 +2190,8 @@
       "rests-on": [
         {
           "claim": "The onboarding deep pass completes fast enough that a founder will wait on a progress screen rather than leave (inherited from REQ-029; nothing in the corpus measures it, and the ten-minute release is the design that makes the claim non-load-bearing)",
-          "disposition": "open"
+          "disposition": "undischargeable",
+          "reason": "Architect's wave-close read, 2026-09-04 (rule 2.3b). Inherited from REQ-029 — the row says so — and the home is there (rule 2.4), dispositioned undischargeable in this same pass: nothing this factory builds observes whether a founder waits. This node's own parenthetical already records the design that makes the claim non-load-bearing here."
         }
       ],
       "supersedes": [],
@@ -2196,15 +2267,18 @@
       "rests-on": [
         {
           "claim": "Ranking data for the customer's root domain includes rows for pages served on the hosted content. subdomain, so pages ReachKit publishes register as the customer's own wins on the growth chart (inherited from REQ-041)",
-          "disposition": "open"
+          "disposition": "undischargeable",
+          "reason": "Architect's wave-close read, 2026-09-04 (rule 2.3b). Inherited from REQ-041 row 1 — the row says so — and the home is there, still `open` and dischargeable by one live vendor call (rule 2.4). No observation at this node settles it independently."
         },
         {
           "claim": "Ten ranked searches is the point below which a rival-to-customer ratio misleads more than it informs (inherited from REQ-041; BUILD.md 6.6 pins the threshold, nothing measures it)",
-          "disposition": "open"
+          "disposition": "undischargeable",
+          "reason": "Architect's wave-close read, 2026-09-04 (rule 2.3b). Inherited from REQ-041 row 2 — the row says so — and the home is there, dispositioned undischargeable in this same pass: what a ratio 'misleads' a reader into is not observable here. The threshold BUILD.md 6.6 pins stands unchanged."
         },
         {
           "claim": "The last n weeks' `report.answers` (BP-025's per-question AI-citation cells) are readable from the same weekly `scans` rows this node's NFR budget already reads as 'the last 12 weekly report headers', so windowing the ai_answers headline (decision 5) needs no wider read than that budget already declares. If 'headers' excludes the answers blob, the read must widen and the NFR budget line needs updating.",
-          "disposition": "open"
+          "disposition": "confirmed",
+          "reason": "Architect's wave-close read, 2026-09-04 (rule 2.3b), discharged against BP-012's declared interface. There is no narrower read than the one this node's NFR budget already declares: `scans.report` is a single `jsonb` column holding one `StoredReport`, and `answers: AiAnswersCard` is a member of it, so a read that returns 'the last 12 weekly report headers' returns the answers blob with them — a header read that excluded a member of the same value would have to be a second, projecting query, and BP-012 declares none. The NFR budget line needs no widening."
         }
       ],
       "supersedes": [],
@@ -2246,7 +2320,8 @@
         },
         {
           "claim": "For every post ReachKit delivered to a customer's WordPress, an address inside that WordPress that opens that post for whoever is signed in there can be formed **from what ReachKit recorded at delivery** — the site's base URL and the post id. Carried from REQ-043's own `rests-on` row, which the 2026-09-01 fold corrected: the assumption is not about the application password the customer gave, which is not the credential the signed-in customer arrives with. Where none can be formed for a post, criterion 12's second way cannot be offered and the detail says so in its place.",
-          "disposition": "open"
+          "disposition": "undischargeable",
+          "reason": "Architect's wave-close read, 2026-09-04 (rule 2.3b). Carried from REQ-043's own row — the row says so — and the home is there (rule 2.4), dispositioned undischargeable in this same pass because the decidable part is universally quantified over every WordPress install a customer may connect. This node's own statement of what happens where no address can be formed stands and needs no disposition to hold."
         }
       ],
       "supersedes": [],
@@ -2278,11 +2353,13 @@
       "rests-on": [
         {
           "claim": "BP-008's `rankedKeywords()` reports a domain's total ranked count, not merely the number of rows it fetched. Where it reports only rows fetched, a count equal to the row cap is a floor and not a count, and this node treats it as `unmeasured` for criterion 9's bar rather than as a value at the cap.",
-          "disposition": "open"
+          "disposition": "open",
+          "reason": "Left open deliberately, 2026-09-04 (rule 2.3b): whether `rankedKeywords()` reports a total or only the rows it fetched is a question about one vendor response, settled by one call. Cheaply dischargeable, not yet attempted; the row already names the safe reading (`unmeasured` at the cap) if it goes the other way."
         },
         {
           "claim": "BP-011 exports the deterministic intent classifier behind `selectTwelve()` (`BUILD.md` §6.7 step 3's `intentWeight`) as a callable, so the ranking formula's intent term is the same classification the twelve searches were selected by rather than a second copy of it (rule 2.4).",
-          "disposition": "open"
+          "disposition": "confirmed",
+          "reason": "Architect's wave-close read, 2026-09-04 (rule 2.3b), discharged against BP-011's approved `## Public interface`, which declares exactly what this row assumes and gives the same reason: `export function classifyIntent(keyword: string, p: Profile): Intent | 'own_brand'` and `export function intentWeight(keyword: string, p: Profile): number`, documented as \"`BUILD.md` §6.7 step 3's intent classifier, exported because it is also the `intent` term in BP-040's ranking formula. One classification in the product, not two (rule 2.4)\". The callable exists as a declared interface; the ranking formula's intent term reads it rather than re-deriving it."
         },
         {
           "claim": "The three words a customer reads for `winnable | reach | not-yet` are owner-owed and were not written when this node was cut. Discharged 2026-08-31: the owner ruled Winnable, Reach and Not yet; they are in BP-019's `BAND_LABELS` (ADR-001) and surfaces can render a band. The rendered third term is `Not yet`, without the hyphen the internal handle carries — see BP-019 decision 6.",
@@ -2323,11 +2400,13 @@
       "rests-on": [
         {
           "claim": "The onboarding deep pass, on the pinned battery, can yield 30 qualifying unused opportunities for a customer who ranks for nothing. No yield has been measured; `BUILD.md` §16 milestone 6 is the first point at which it can be. Carried from REQ-047's parent requirement REQ-095 because this node is where the target 30 is spent and where a systematic shortfall would first be visible in `pursueDepth`'s stop reason.",
-          "disposition": "open"
+          "disposition": "undischargeable",
+          "reason": "Architect's wave-close read, 2026-09-04 (rule 2.3b). Carried from REQ-095 — the row says so — and the home is there (rule 2.4), dispositioned undischargeable in this same pass: a yield over a real customer population is settled by watching real supply, not by any pass this factory runs. What this node adds is where a systematic shortfall would first be visible (`pursueDepth`'s stop reason), and that observability stands whatever the yield turns out to be."
         },
         {
           "claim": "The three written lines criteria 3, 5 and 6 require are owner-owed and not yet written. This node emits `SupplyNotice` handles; until BP-019's copy registry holds the strings, no surface can render the telling REQ-095 promises.",
-          "disposition": "open"
+          "disposition": "open",
+          "reason": "Left open deliberately, 2026-09-04 (rule 2.3b): the three lines are customer-visible strings and therefore the owner's (§1), not a parameter this system may derive. Dischargeable the moment they are written into BP-019's registry, so `undischargeable` would be wrong. Escalated as owner-owed rather than closed."
         }
       ],
       "supersedes": [],
@@ -2366,11 +2445,13 @@
         },
         {
           "claim": "BP-010 stores, or can re-read from `fetches`, the rendered text of every page it measured for a site, so REQ-050 c9's comparison set ('every page on the customer's own site the product has published or measured') is available without a fresh fetch of the customer's site at generation time.",
-          "disposition": "open"
+          "disposition": "open",
+          "reason": "Left open deliberately, 2026-09-04 (rule 2.3b). `supabase/migrations/20260903080000_fetches.sql` gives `fetches` a `payload jsonb` indexed for cache reads, which makes the *storage* half plausible, but whether BP-010 in fact puts a measured page's rendered text there — rather than a parsed derivative — is a statement about BP-010's write path that I did not trace in this pass. Not closed on a plausible-looking half."
         },
         {
           "claim": "The private-figure register (REQ-050 c3) is buildable from the stored report blob and the site's opportunities alone — every ranking position, search volume, visibility and answer count the product holds for a site is in one of those two places.",
-          "disposition": "open"
+          "disposition": "open",
+          "reason": "Left open deliberately, 2026-09-04 (rule 2.3b). Closing it means enumerating every ranking position, search volume, visibility and answer count the product holds for a site and showing each sits in the report blob or in an opportunity — a real, finite check against `StoredReport` and the opportunities schema, and one this pass did not run. Dischargeable, not discharged; not closed by assertion."
         }
       ],
       "supersedes": [],
@@ -2404,11 +2485,13 @@
       "rests-on": [
         {
           "claim": "BP-015's `becomesPublishable()` consults this node's `claimRecheckOutstanding()` before every hand-off — veto expiry, customer approval, publish time, automatic retry and customer-started retry alike. REQ-053 c5's promise that no approval, schedule or retry can put a page carrying a forbidden claim on the customer's site is enforced at that one call site and nowhere else; nothing in this node can compel it.",
-          "disposition": "open"
+          "disposition": "confirmed",
+          "reason": "Architect's wave-close read, 2026-09-04 (rule 2.3b), discharged against BP-015's approved `## Public interface`, which declares the call site this row assumes and in the same terms: \"`claim_recheck` is BP-043's `claimRecheckOutstanding(draftId)`, called from inside this function and from nowhere else. REQ-053 criterion 5's promise — that no approval, schedule or retry puts a page carrying a forbidden claim on the customer's site — is enforced at this one call site, and nothing inside BP-043 can compel it. Removing the call passes every test BP-043 owns.\" `becomesPublishable` is the single gate on the edge into `publishing`, so every hand-off — veto expiry, approval, publish time, automatic and customer-started retry — passes through it. The row's own last clause (nothing in this node can compel it) is confirmed too, and is why BP-015's docblock carries the warning."
         },
         {
           "claim": "The settings write path that records a change to `sites.do_not_claim` calls `sweepOutstandingRechecks()` for that site. Correctness does not rest on this — the hash guard holds without it — only timeliness does.",
-          "disposition": "open"
+          "disposition": "open",
+          "reason": "Left open deliberately, 2026-09-04 (rule 2.3b): the settings write path that records a change to `sites.do_not_claim` is not yet specified to call `sweepOutstandingRechecks()` anywhere I traced, and the row itself says only timeliness rests on it. Dischargeable by the work order that writes that path; left standing so it is caught there rather than assumed here."
         }
       ],
       "supersedes": [],
@@ -2471,7 +2554,8 @@
       "rests-on": [
         {
           "claim": "Postgres row-level locking on the `sites` row plus a unique index on `(draft_id, destination_id)` is sufficient serialisation for the publish claim; no advisory lock or external mutex is needed because at most one publish per site per calendar day is ever due",
-          "disposition": "open"
+          "disposition": "open",
+          "reason": "Left open deliberately, 2026-09-04 (rule 2.3b): sufficiency of row-level locking plus the unique index is settled by a concurrency test against the real schema, which no work order has written. Dischargeable, not yet discharged."
         }
       ],
       "supersedes": [],
@@ -2537,11 +2621,14 @@
         "BP-045",
         "BP-058"
       ],
-      "blocked-by": [],
+      "blocked-by": [
+        "BP-014"
+      ],
       "rests-on": [
         {
           "claim": "A published page's question-and-answer section is available structurally on the draft row (`drafts.meta.faq`, written by BP-014 at generation) rather than only as prose inside `body_md`, so `FAQPage` markup is emitted from data and never from a render-time parse of markdown",
-          "disposition": "open"
+          "disposition": "refuted",
+          "reason": "Architect's wave-close read, 2026-09-04 (rule 2.3b). The first half holds — `drafts.meta jsonb` is in BUILD.md §10's column list and BP-014's `## Data model delta` adopts §10's `drafts` verbatim. The second half is false of the corpus: **BP-014 writes nothing into `meta.faq`.** The string `faq` does not occur anywhere in BP-014 — not in its public interface, not in its data-model delta, not in its decisions — and BP-014's only stated addition to the row is `grounded_fact jsonb`. The three occurrences of `drafts.meta.faq` in the whole corpus are all in this node (this row, the `## Error & edge behavior` line and decision 2), so this node is reading a field no node commits to writing. That is a gap, not a contradiction, and it is recorded as a `blocked-by` on BP-014 with the reasoning in this node's body (rule 2.3) rather than resolved silently: whether the question-and-answer section becomes a structured field on the draft row is BP-014's to decide, because BP-014 owns generation. Nothing is broken today — no work order writes either side."
         }
       ],
       "supersedes": [],
@@ -2577,27 +2664,33 @@
       "rests-on": [
         {
           "claim": "A WordPress site with Yoast or RankMath installed exposes, over the REST API to an application-password user with `edit_posts`, a writable path for that plugin's SEO title and description on a post — whether by registered post meta, by a plugin-supplied namespace under `/wp-json/`, or not at all. Which of those holds, and under which plugin versions, is unverified in this corpus.",
-          "disposition": "open"
+          "disposition": "undischargeable",
+          "reason": "Architect's wave-close read, 2026-09-04 (rule 2.3b). As written the claim is a disjunction that includes its own negation — 'whether by registered post meta, by a plugin-supplied namespace under /wp-json/, or **not at all**' — so no observation can refute it and confirming it says nothing. The decidable question underneath ('which of those holds, and under which plugin versions') is universally quantified over plugin versions and installs the product neither controls nor can enumerate. The design consequence belongs in this node's error behaviour, where a site exposing no writable path is handled, not in a row waiting for an observation that cannot arrive."
         },
         {
           "claim": "A post created by us carries a marker we can find again on a later request — post meta written at creation and readable back by the same application-password user — so a retry whose first outcome was never recorded finds the existing post instead of creating a second one",
-          "disposition": "open"
+          "disposition": "open",
+          "reason": "Left open deliberately, 2026-09-04 (rule 2.3b): whether post meta written at creation reads back to the same application-password user is settled by one round trip against one install, and this is the row ADR-080's idempotency rests on — a wrong answer means a second post in a customer's site. Cheaply dischargeable, deliberately not assumed."
         },
         {
           "claim": "Every WordPress site a customer can connect lets ReachKit give the posts it creates there something the customer can list posts by in their own wp-admin and can tell from posts they wrote themselves, under the application password they gave. Raised by the requirements-analyst on REQ-060 and carried here undischarged: this repository has never spoken to a WordPress install and there is nothing in it to discharge it with. Where an install permits none, REQ-060 criterion 6 cannot be met there and REQ-079 criterion 6's mail has no place to name — which is REQ-060's own stated consequence (ADR-083 Decision 4).",
-          "disposition": "open"
+          "disposition": "undischargeable",
+          "reason": "Architect's wave-close read, 2026-09-04 (rule 2.3b). Two grounds, either sufficient. (1) Rule 2.4: the row says it was 'raised by the requirements-analyst on REQ-060 and carried here undischarged', so REQ-060 row 1 is the home. (2) The claim is universal over every connectable install. The row's own stated consequence (REQ-060 criterion 6 unmet there, REQ-079 criterion 6's mail with no place to name) is the design answer and needs no disposition to hold."
         },
         {
           "claim": "An application-password user holding `edit_posts` can assign a `post_tag` term to the post it is creating, and can cause that term to exist if it does not. WordPress's default role map is what ADR-083 Decision 1 rests on in choosing a tag over a category; nothing in this corpus verifies it.",
-          "disposition": "open"
+          "disposition": "undischargeable",
+          "reason": "Architect's wave-close read, 2026-09-04 (rule 2.3b). The row names its own home: 'WordPress's default role map is what ADR-083 Decision 1 rests on in choosing a tag over a category'. ADR-083 row 2 is the live claim and is left `open` there, dischargeable against one install (rule 2.4). No observation at this node settles it independently."
         },
         {
           "claim": "The WordPress REST API lets an application-password user create a post with `status: 'publish'` in a single request and returns that post's public permalink in the same response, so a delivery is live at a known address with no second call. ADR-084's first `rests-on` row, carried here because this node is where the call is made. Unverified in this corpus.",
-          "disposition": "open"
+          "disposition": "undischargeable",
+          "reason": "Architect's wave-close read, 2026-09-04 (rule 2.3b). The row says what it is: \"ADR-084's first `rests-on` row, carried here because this node is where the call is made\". ADR-084 row 1 is the home and is left `open` there, dischargeable against one install (rule 2.4)."
         },
         {
           "claim": "An application-password user that holds `edit_posts` but not `publish_posts` can still create a post, and WordPress silently holds it at `draft` or `pending` rather than honouring `status: 'publish'` or refusing the request. ADR-084's second `rests-on` row, and the whole ground for `canPublish`. If it is refuted and such a request is refused outright, the probe becomes belt-and-braces rather than the only thing standing between the owner's ruling and a silently drafted post, and its shape does not change.",
-          "disposition": "open"
+          "disposition": "undischargeable",
+          "reason": "Architect's wave-close read, 2026-09-04 (rule 2.3b). The row says what it is: \"ADR-084's second `rests-on` row, and the whole ground for `canPublish`\". ADR-084 row 2 is the home and is left `open` there (rule 2.4). The row's own consequence — that the probe becomes belt-and-braces rather than the only guard, with no change of shape — stands either way."
         }
       ],
       "supersedes": [],
@@ -2631,11 +2724,13 @@
       "rests-on": [
         {
           "claim": "A fetch of a page's own public address can tell an unambiguous 404 or 410 from every other answer reliably enough to choose between REQ-062 criterion 4's second and third outcomes. This is ADR-084's fourth `rests-on` row, raised there for a WordPress post-id fetch, and it is load-bearing here for a different call against a different host (ADR-085). A misconfigured host answering 404 for a site that is in fact unreachable puts a page in the arm that stops its verdicts forever (ADR-072).",
-          "disposition": "open"
+          "disposition": "undischargeable",
+          "reason": "Architect's wave-close read, 2026-09-04 (rule 2.3b). The row says what it is: \"ADR-084's fourth `rests-on` row, raised there for a WordPress post-id fetch, and it is load-bearing here for a different call against a different host (ADR-085)\". ADR-084 row 4 is the home and is dispositioned undischargeable there, because it is quantified over misconfigured hosts the product neither controls nor can enumerate. The consequence this node names — a page put in the arm that stops its verdicts forever (ADR-072) — is a design risk carried in the body, not a row awaiting an observation."
         },
         {
           "claim": "A page served by a customer's CMS carries its own identity in server-rendered markup — a canonical link or `og:url` resolving to the fetched address, or failing both a `<title>` matching the published title — even where its body is withheld behind client JavaScript. This is what lets `could_not_confirm` (\"what came back was not the page ReachKit published\") be decided separately from `aiReadable: false` (a page whose body a script-less reader cannot see). Nothing in this corpus has fetched a customer's page; if it is refuted for some CMS, a JavaScript-gated page reads as not-confirmed instead of as failing the one check that exists to catch it.",
-          "disposition": "open"
+          "disposition": "undischargeable",
+          "reason": "Architect's wave-close read, 2026-09-04 (rule 2.3b). Universally quantified over CMSes the product does not control: 'a page served by a customer's CMS carries its own identity in server-rendered markup ... even where its body is withheld behind client JavaScript'. Confirming it for one CMS proves nothing about the next, and the row already states its own failure mode ('if it is refuted for some CMS, a JavaScript-gated page reads as not-confirmed'). That failure mode is the design answer and is what belongs in the body."
         }
       ],
       "supersedes": [],
@@ -2698,7 +2793,8 @@
       "rests-on": [
         {
           "claim": "No node under BP-015 writes `publications.verdict` (BUILD.md §10). This node is the single home of a page's verdict and keeps a row per page per week; a column holding one latest verdict would be the second copy and could not answer REQ-063 c6's 'the date of the last verdict it did receive'.",
-          "disposition": "open"
+          "disposition": "confirmed",
+          "reason": "Architect's wave-close read, 2026-09-04 (rule 2.3b), discharged against the schema on disk and the node tree. `supabase/migrations/00000000000001_baseline.sql` enumerates the `publications` columns and states in the same breath '**no `verdict` column**' — so the second copy the row exists to prevent is unrepresentable, not merely unwritten. And none of BP-015's seven children (BP-035, BP-045, BP-046, BP-048, BP-049, BP-057, BP-058) names `publications.verdict` anywhere: the only occurrence of the string in the corpus is in this node. This node is therefore the single home of a page's verdict, keeping a row per page per week, which is what lets REQ-063 criterion 6's 'the date of the last verdict it did receive' be answered at all."
         },
         {
           "claim": "BP-015's `DestinationAdapter` exposes whether a destination serves the page publicly. REQ-063 c1's population is pages published to such a destination. Discharged 2026-08-31: `servesPublicly` is declared on the adapter in BP-015's interface and in BP-045's `types.ts`, where the shape actually lives; it was missing from the second and has been added. **Re-read 2026-09-01 (ADR-084): the field is now `true` at both destinations, so the population includes every WordPress page — the seam held and no rule here changed. The clause that used to end this row, 'a WordPress delivery the customer must publish themselves is outside it', is refuted, and the non-goal it cited has been deleted from REQ-063.**",
@@ -2706,15 +2802,18 @@
         },
         {
           "claim": "The four verdict words and the one written line criterion 6 requires are owner-owed and not yet written. This node emits handles; until BP-019's copy registry holds the strings, no surface and no mail can render a verdict.",
-          "disposition": "open"
+          "disposition": "open",
+          "reason": "Left open deliberately, 2026-09-04 (rule 2.3b): the four verdict words and the written line are customer-visible strings and therefore the owner's (§1). Dischargeable the moment they are written into BP-019's registry, so `undischargeable` would be wrong. Escalated as owner-owed rather than closed."
         },
         {
           "claim": "An `unblock` acceptance whose `Barrier` is absent from `WeekMeasurements.gatesCleared` has **no declared `NotJudgeableCause`**. `evaluateAcceptance` produces two causes and both are read from the other two maps (`positions`, `namesCustomer`); WO-204's file plan asserts exactly those two, and its own test row expects an absent barrier to be \"undecided rather than failing\" — undecided as what is not stated anywhere. Two readings are open and neither is derivable from REQ-063 or REQ-047 as they stand: it is a partly measured week (`not_measured`, no row, REQ-065 c4) or it is a sixth cause. Raised 2026-09-02 by the architect against this node's own interface; not decided here, because the choice changes which pages carry a permanent `not_judgeable` row and that is REQ-063 c6's promise, not a parameter. Nothing is blocked: no work order writes the `gate_cleared` branch yet.",
-          "disposition": "open"
+          "disposition": "open",
+          "reason": "Left open deliberately, 2026-09-04 (rule 2.3b), and **escalated to the owner unresolved**. The row is correct that the choice is not mine: whether an `unblock` acceptance whose `Barrier` is absent from `WeekMeasurements.gatesCleared` is a partly measured week (no row) or a sixth `NotJudgeableCause` decides which pages carry a permanent `not_judgeable` row, and that is REQ-063 criterion 6's promise about what a customer is told — a customer-visible verdict, the owner's under §1, not a parameter I may derive under rule 1.1. Neither reading is derivable from REQ-063 or REQ-047 as they stand. Still nothing blocked: no work order writes the `gate_cleared` branch."
         },
         {
           "claim": "A page's acceptance test typed as the `named_on` (AI-answer) form of REQ-047 criterion 6 is evaluated from one week's single measurement, the same per-prompt sampling noise `RESEARCH-ai-answer-stability.md` §4 measures for the free AI-answers card and for Overview's `ai_answers` headline (owner ruling 2026-09-03, BP-038 decision 5, ADR-094). That ruling was scoped to the card and to Overview's headline and was not extended to a page's own weekly verdict, so a `working`/`not_working` verdict resting on a `named_on` test carries the same noise unmitigated. Not decided here: whether a `named_on` test should smooth over a window like BP-038's, and that choice belongs to REQ-047/REQ-063, not to a silent change in this node's arithmetic.",
-          "disposition": "open"
+          "disposition": "open",
+          "reason": "Left open deliberately, 2026-09-04 (rule 2.3b), and **escalated to the owner unresolved**. Whether a `named_on` acceptance test should be smoothed over a window (as BP-038 decision 5 does for the free card and Overview's headline, on the owner's 2026-09-03 ruling) or left on one week's single measurement changes which pages a customer is told are `working` or `not_working`. That is a customer-visible verdict (§1) and the ruling that exists was scoped to the card and the headline, not extended here; extending it silently would be a change to what the product promises made inside this node's arithmetic. Carried as a live risk, not resolved."
         }
       ],
       "supersedes": [],
@@ -2746,7 +2845,8 @@
       "rests-on": [
         {
           "claim": "A rival's total count of searches it appears in is readable beside the 100 rows `rankedKeywords` fetches for it, so a band can be cut at 500 from a 100-row call. Origin: REQ-096's own open row. If refuted, `RivalSize.rankedCount` caps at 100, the `far` band becomes unreachable, and REQ-041's how-far-ahead ratio is refuted with it — the fix is shared with that requirement, not owned here.",
-          "disposition": "open"
+          "disposition": "undischargeable",
+          "reason": "Architect's wave-close read, 2026-09-04 (rule 2.3b). The row names its own origin: 'REQ-096's own open row'. That is the home (rule 2.4) and it is left `open` there, dischargeable by one live call. The coupling this node records — that a refutation caps `RivalSize.rankedCount` at 100, makes the `far` band unreachable and takes REQ-041's ratio with it — is why the fix is shared with that requirement and not owned here."
         },
         {
           "claim": "The three customer-facing words for `near`, `middle` and `far` are the owner's and did not exist when this node was cut (REQ-096 criterion 9, ADR-001). This node emits handles only. Discharged 2026-08-31: the owner ruled `near` → Similar size, `middle` → Larger, `far` → Much larger; they are recorded in BP-019's `BAND_LABELS` and are disjoint from the winnability three, which BP-019 decision 6 checked before recording them.",
@@ -2783,7 +2883,8 @@
       "rests-on": [
         {
           "claim": "Resend accepts one request carrying both an HTML body and a plain-text alternative, so criterion 5's guarantee is a property of the request this node builds rather than of a second send",
-          "disposition": "open"
+          "disposition": "open",
+          "reason": "Left open deliberately, 2026-09-04 (rule 2.3b): whether Resend accepts an HTML body and a plain-text alternative in one request is settled by reading its API or by one send. Cheaply dischargeable, not yet attempted."
         }
       ],
       "supersedes": [],
@@ -2819,15 +2920,18 @@
       "rests-on": [
         {
           "claim": "The three stop facts REQ-092 names — a spend cap reached, the kill switch engaged, a step that failed — are each readable per site and per day from records the corpus already provides: BP-007's cap-hit ledger over `fetches`, BP-003's `killSwitchEngaged()`, and BP-012's `status: 'degraded' | 'failed'` on a scan. If any of the three cannot be read that way, a stop is unobservable and REQ-092 criterion 3 cannot be met without a new migration topic, which `structure.md` rule 3's closed topic list does not admit.",
-          "disposition": "open"
+          "disposition": "confirmed",
+          "reason": "Architect's wave-close read, 2026-09-04 (rule 2.3b), discharged against the corpus and the schema on disk. All three stop facts have named readers and each is per site and per day. (1) The spend cap: `supabase/migrations/20260903080000_fetches.sql` ships `fetches` with `scan_id`, `cost_cents`, `reserved_cents` and `created_at`, indexed on `scan_id` for 'the ledger read: every row a scan ledgered, for its own roll-up' — and `scan_id` references `scans`, which carries the site and the date, so a cap hit is readable per site per day without a new topic. `src/lib/costs/ledger.ts` is the reader, on disk. (2) The kill switch: BP-003's `## Public interface` declares `export function killSwitchEngaged(): boolean`. (3) A failed step: BP-012's `StoredReport` carries `stoppedReason: 'complete' | 'time_ceiling' | 'spend_ceiling' | 'failed'` and the scan row carries the same. No new migration topic is needed, so `structure.md` rule 3's closed topic list is not strained — which is what the row was raised to check."
         },
         {
           "claim": "The date the work is expected to resume is derivable without an owner ruling: a spend cap resumes at the start of the next cap window, a failed step at the next run of its job, and an engaged kill switch promises no time at all. Nothing in the corpus states the cap window's reset, so the first of the three rests on a fact BP-007 must expose.",
-          "disposition": "open"
+          "disposition": "open",
+          "reason": "Left open deliberately, 2026-09-04 (rule 2.3b). Two of the three resume dates are derivable as the row says, but the first is not: nothing in the corpus states the cap window's reset, and BP-007 has not exposed it. The row's own conclusion is that it 'rests on a fact BP-007 must expose', and that fact still does not exist. Closing it would mean minting the cap window's reset myself and calling it a discharge — and REQ-092's resume date is a date a customer reads, so its derivation is not a free parameter."
         },
         {
           "claim": "Pages prepared before a stop survive it because they are rows BP-015's state machine owns, and a stop writes no state transition. REQ-092 criterion 5 is therefore a property of BP-015's transition table rather than of this node; this node asserts it and does not implement it.",
-          "disposition": "open"
+          "disposition": "confirmed",
+          "reason": "Architect's wave-close read, 2026-09-04 (rule 2.3b), discharged against BP-015's approved interface. `TRANSITIONS` is declared as data — 'Exactly fifteen edges. Any other move is refused with the state unchanged' — and `transition(draftId, to, by, reason)` is the only mover, taking an `Actor`. No cap hit, kill switch or failed step is an actor in that table: BP-015's own error behaviour has publishing switched off *withhold* the retry and hold the page, 'becoming due again on resume', which is the row's claim stated from the other side. A stop therefore writes no state transition and prepared rows survive it. The row's second clause is confirmed with it: this is a property of BP-015's transition table, asserted here and implemented there."
         }
       ],
       "supersedes": [],
@@ -2946,11 +3050,13 @@
       "rests-on": [
         {
           "claim": "The moment a customer last signed in is readable through BP-017 (Supabase auth's own `last_sign_in_at`), so REQ-074 criterion 6's condition — the customer has not signed in since the destination broke — can be evaluated without minting a column on BP-017's `users` topic",
-          "disposition": "open"
+          "disposition": "refuted",
+          "reason": "Architect's wave-close read, 2026-09-04 (rule 2.3b). **The premise is false: this product has no Supabase Auth identity to read `last_sign_in_at` from.** BP-002's own `rests-on` row, already `refuted` on four grounds, establishes it — `supabase/migrations/00000000000001_baseline.sql` declares `users.id uuid primary key default gen_random_uuid()`, self-generated and never `references auth.users(id)`, with no migration or trigger linking the two tables; BP-032 provisions by inserting straight into `users` through `dbAdmin()` and mints no `auth.users` row; and BP-061 specifies a fully custom sign-in (`auth_links`, `issueLink`/`redeemLink`, its own `SessionCookie`) that never calls GoTrue. There is no `auth.users` row for this product's users, so there is no `auth.users.last_sign_in_at`. What survives is the *requirement*: REQ-074 criterion 6's condition — the customer has not signed in since the destination broke — is still answerable, but from BP-061's own redemption record rather than from Supabase, and BP-017's `users` topic still needs no new column if BP-061 exposes the moment. Recorded as a finding for BP-058's and BP-061's next pass, not patched here; nothing is blocked, since no work order writes either side."
         },
         {
           "claim": "`draft/generate` is invoked once per active site per day even on a day where supply is exhausted and no draft is written, so the once-per-breakage mail of criterion 6 has a daily occasion without a seventh job id",
-          "disposition": "open"
+          "disposition": "confirmed",
+          "reason": "Architect's wave-close read, 2026-09-04 (rule 2.3b), discharged against BP-003's declared interface. `draft/generate` is one of exactly seven `JobId` members and is declared 'daily, evening, per site, in the site's time zone' — a time trigger, unconditional on supply — and BP-003's responsibility states each job is 'a trigger, a bounded loop and one call into the engine', so the invocation happens whether or not the engine writes a draft. The once-per-breakage mail of criterion 6 therefore has a daily occasion inside an existing job id, and no seventh (eighth) id is needed."
         },
         {
           "claim": "REQ-074 gains a criterion for the destinations list in the `failing`-because-cannot-publish state. REQ-060 criterion 7 fixes what the customer must and must not be told there and narrowed its own non-goal to REQ-074 criterion 1 accordingly, so REQ-074 today covers only the expired-credential occasion. Until that criterion exists this node renders the occasion from REQ-060 criterion 7 alone — enough to build, and not enough for the destinations list to own the promise (rule 5.7). Raised by the requirements-analyst on 2026-09-01; nobody held REQ-074 that pass and the architect does not edit requirements. **Discharged 2026-09-02: REQ-074 criterion 8 exists and carries it, stated for any destination rather than for WordPress alone (`requirements/history/REQ-074-2026-09-01-cannot-publish-criterion-and-jn-004-step.md`). This node's own ancestor now owns the promise its destinations list renders, so rule 5.7 is satisfied for the occasion. Criterion 8 ratifies every clause this node already carried — the `failing` state, the connection-is-live line, the three prohibitions, the action to a different account — and adds one that was not specified anywhere: a re-entry of the stored credential leaves the destination not reading as working, publishes nothing, and tells the customer the account still cannot publish. That clause is now stated under *Error & edge behavior*.**",
@@ -3024,15 +3130,18 @@
       "rests-on": [
         {
           "claim": "Stripe's customer portal can be configured so that a customer adds or corrects the tax ID (VAT number) on their own billing record there. BUILD.md §13 names the portal only for card and cancellation and puts the VAT ID field at Checkout; criterion 2 rests on it (REQ-076's own rests-on row, carried forward unchanged)",
-          "disposition": "open"
+          "disposition": "undischargeable",
+          "reason": "Architect's wave-close read, 2026-09-04 (rule 2.3b). The row says what it is: REQ-076's own row, 'carried forward unchanged'. The home is REQ-076 row 1 (rule 2.4), still `open` there and dischargeable by reading the Stripe portal configuration."
         },
         {
           "claim": "Stripe's customer portal can be configured to change the billing address invoices and receipts are sent to, which REQ-076 criterion 2 and REQ-077 criterion 1 together make the only surface offering it",
-          "disposition": "open"
+          "disposition": "open",
+          "reason": "Left open deliberately, 2026-09-04 (rule 2.3b): whether the Stripe portal can be configured to change the invoice address is settled by reading the portal configuration, and nothing has. Dischargeable, not yet discharged — and this is one of the two legs REQ-097's roll-up row defers to, so it is where that question actually lands."
         },
         {
           "claim": "Cancelling a Stripe subscription with `cancel_at_period_end` leaves `current_period_end` unchanged, so `paid_through` needs no separate arithmetic (REQ-076 criterion 3's 'the exact date their access ends')",
-          "disposition": "open"
+          "disposition": "open",
+          "reason": "Left open deliberately, 2026-09-04 (rule 2.3b): Stripe's `cancel_at_period_end` semantics are settled by one cancellation in test mode. Dischargeable, not yet discharged, and the date it produces is the date REQ-076 criterion 3 promises a customer, so it is deliberately not assumed."
         }
       ],
       "supersedes": [],
@@ -3063,7 +3172,8 @@
       "rests-on": [
         {
           "claim": "Supabase's magic-link auth can be driven so that the one-time token is delivered through BP-016's `sendEmail()` shell rather than Supabase's own mailer, which REQ-064's one-shell rule and BUILD.md §12 require of every mail the product sends",
-          "disposition": "open"
+          "disposition": "refuted",
+          "reason": "Architect's wave-close read, 2026-09-04 (rule 2.3b). **This node does not drive Supabase's magic-link auth at all**, so the premise is false rather than unobserved. Its own approved `## Public interface` specifies a wholly custom mechanism: `issueLink({ userId, to, purpose })` mints a single-use token, `redeemLink(token)` spends it and returns this node's own `SessionCookie`, `currentSession()` and `signOut()` are this node's, and its `## Data model delta` creates `auth_links` (`token_hash text primary key`, `user_id`, `purpose`) as a new table. Nothing calls GoTrue's `signInWithOtp` and no Supabase-issued token exists to route through a mailer. BP-002's already-`refuted` row reached the same conclusion from the other side and explicitly left this row for this node to disposition. REQ-064's one-shell rule is met **more** directly than the row assumed — the token is this node's and the mail goes through `sendEmail()` by construction, with no vendor mailer to divert — so nothing this node promises changes. The row's premise is retired; the body's specification is what stands."
         }
       ],
       "supersedes": [],
@@ -3121,7 +3231,8 @@
       "rests-on": [
         {
           "claim": "The grounding passages REQ-050 criterion 1 keeps unchanged are stored in `drafts.grounded_fact` and nowhere else, so purging that column is the whole of what REQ-079 criterion 7 requires of them",
-          "disposition": "open"
+          "disposition": "confirmed",
+          "reason": "Architect's wave-close read, 2026-09-04 (rule 2.3b), discharged against BP-014's approved decision 2, which is the only place the passage is written and says so: 'store the passage in `drafts.grounded_fact`, and treat that copy as customer page content for erasure (REQ-079 criterion 7 names it)' — with the alternative of storing a URL and re-fetching explicitly rejected, so no second copy and no re-derivation exists. BP-014's `## Data model delta` adds exactly one column for it. Purging that column is therefore the whole of what REQ-079 criterion 7 requires of grounding passages."
         }
       ],
       "supersedes": [],
@@ -3603,7 +3714,8 @@
       "rests-on": [
         {
           "claim": "The free battery — own fetches plus 12 live SERP calls plus the suggestion call — completes within 60 s at the p95 of vendor response time. BUILD §16 milestone 3 is the first measurement of this chain, and is therefore also the point at which tightening the promise below 60 s is reconsidered — see `registry/evidence/REQ-003.md`, 'Why not 10 seconds (owner considered and ruled, 2026-08-31)'",
-          "disposition": "open"
+          "disposition": "undischargeable",
+          "reason": "Architect's wave-close read, 2026-09-04 (rule 2.3b). A p95 over the vendors' own live latency distribution is not observable by any pass this factory can run: no artifact read, no build and no test sees it, and the row's own discharge point — BUILD.md §16 milestone 3 — is a live-operations measurement, not a factory observation. Same footing as BP-022's already-undischargeable Vercel-header row ('only a live deployment could'). Nothing about the promise changes: REQ-003's 60 s deadline stands exactly as written, and `registry/evidence/REQ-003.md` still records why it is not tightened. If milestone 3 measures a p95 past 60 s that is a defect against this requirement, raised as feedback, not a disposition of this row."
         },
         {
           "claim": "Visitors are counted by network address, so several founders behind one shared network share one hourly allowance and one in-flight slot",
@@ -3771,7 +3883,8 @@
       "rests-on": [
         {
           "claim": "Visitors are counted by network address, so several founders behind one shared network share one hourly allowance and one in-flight slot",
-          "disposition": "open"
+          "disposition": "undischargeable",
+          "reason": "Architect's wave-close read, 2026-09-04 (rule 2.3b). This requirement is superseded by REQ-003; no pass over a retired artifact can discharge a row on it, and nineteen passes proving that are nineteen wasted passes (2.3b). The live claim about counting visitors by network address is carried by BP-023, which owns `networkKeyOf`, and by BP-022's own x-forwarded-for row — dispositioned there, not here."
         },
         {
           "claim": "A free visitor has no account and therefore no stated timezone, so every time this requirement tells a visitor is an elapsed duration, never a clock time",
@@ -3810,7 +3923,8 @@
       "rests-on": [
         {
           "claim": "A site address given at setup is enough to run the onboarding deep pass with no prior free scan",
-          "disposition": "open"
+          "disposition": "confirmed",
+          "reason": "Architect's wave-close read, 2026-09-04 (rule 2.3b), discharged from the corpus's own approved design rather than left for a vendor. BP-011's `## Public interface` takes the site address alone — `deriveProfile(c, { home, pricing? })` — and seeds `deriveMarketSet` from that profile; its `## Error & edge behavior` states 'Cold start is the default path, not a branch. Profile is derived from the homepage's own text, never from rankings ... Output is identical at 0 and at 10,000 ranked searches'. No step of the deep-pass chain takes a prior scan as an input. The address is therefore enough, by construction of the engine the requirement is cut against."
         }
       ],
       "supersedes": [
@@ -3830,7 +3944,8 @@
       "rests-on": [
         {
           "claim": "Stripe Checkout collects and stores the billing-address country on every purchase without extra configuration (BUILD §13)",
-          "disposition": "open"
+          "disposition": "open",
+          "reason": "Left open deliberately, 2026-09-04 (rule 2.3b): a single Checkout Session against Stripe test mode settles it, and no work order has opened one yet. Dischargeable, not yet discharged — 2.3a's default and majority state. Note the nuance BP-030 records: BP-030 reaches the same behaviour with `billing_address_collection: 'required'`, so 'without extra configuration' may be true of the country and false of the flag; the first implementation reports which."
         }
       ],
       "supersedes": [
@@ -3851,11 +3966,13 @@
       "rests-on": [
         {
           "claim": "Stripe Checkout collects and stores the billing-address country on every purchase without extra configuration (BUILD §13)",
-          "disposition": "open"
+          "disposition": "undischargeable",
+          "reason": "Architect's wave-close read, 2026-09-04 (rule 2.3b). This requirement is superseded by REQ-022, which carries the same claim as its own row 1 and is where it is dispositioned. No pass over a retired artifact discharges a row on it."
         },
         {
           "claim": "Stripe's customer portal can add or correct a customer's tax ID after checkout. No in-corpus source establishes it: BUILD.md §13 states only 'VAT ID field on' at Checkout and 'Portal for card/cancel'. Criterion 4's correction route was placed there by owner ruling (2026-08-29) from knowledge outside the corpus; the vendor behaviour itself is unverified (rule 1.2).",
-          "disposition": "open"
+          "disposition": "undischargeable",
+          "reason": "Architect's wave-close read, 2026-09-04 (rule 2.3b). This requirement is superseded by REQ-022; the live home of the Stripe-portal tax-ID claim is REQ-076 row 1, still `open`, with BP-017 and BP-060 carrying its copies. No pass over a retired artifact discharges a row on it."
         }
       ],
       "supersedes": [],
@@ -3944,7 +4061,8 @@
       "rests-on": [
         {
           "claim": "The onboarding deep pass completes fast enough that a founder will wait on a progress screen rather than leave",
-          "disposition": "open"
+          "disposition": "undischargeable",
+          "reason": "Architect's wave-close read, 2026-09-04 (rule 2.3b). The claim is about what a founder will do — wait rather than leave — and nothing this factory builds, tests or measures observes a person's patience. It is not merely unmeasured; there is no observation available to it. BP-036 already records the design that makes it non-load-bearing: the ten-minute release means the product does not need the founder to wait. The promise is unchanged either way."
         }
       ],
       "supersedes": [],
@@ -3982,11 +4100,13 @@
       "rests-on": [
         {
           "claim": "Ranking data for the customer's root domain includes rows for pages served on the hosted `content.` subdomain, so pages ReachKit publishes register as the customer's own wins on the growth chart.",
-          "disposition": "open"
+          "disposition": "open",
+          "reason": "Left open deliberately, 2026-09-04 (rule 2.3b): one live `ranked_keywords` call against a root domain with a `content.` subdomain settles it outright. Cheaply dischargeable, not yet attempted. BP-008 carries the engine-side copy and is where the first call will be made."
         },
         {
           "claim": "Ten ranked searches is the point below which a rival-to-customer ratio misleads more than it informs, so the ratio module stays locked until the customer reaches it.",
-          "disposition": "open"
+          "disposition": "undischargeable",
+          "reason": "Architect's wave-close read, 2026-09-04 (rule 2.3b). 'The point below which a ratio misleads more than it informs' is a claim about what a reader takes from a number; no build, test or vendor call observes it. The threshold itself is a parameter this system owns (rule 1.1) and stands unchanged — the disposition records that the perception behind it will never be verified here, not that the number is wrong."
         }
       ],
       "supersedes": [
@@ -4004,7 +4124,8 @@
       "rests-on": [
         {
           "claim": "Ten ranked searches is the point below which a rival-to-customer ratio misleads more than it informs, so the ratio module stays locked until the customer reaches it.",
-          "disposition": "open"
+          "disposition": "undischargeable",
+          "reason": "Architect's wave-close read, 2026-09-04 (rule 2.3b). Superseded by REQ-041, which carries this claim as its own row 2 and is where it is dispositioned. No pass over a retired artifact discharges a row on it."
         }
       ],
       "supersedes": [],
@@ -4029,7 +4150,8 @@
         },
         {
           "claim": "For every post ReachKit delivered to a customer's WordPress, ReachKit can form, from what it recorded at delivery, an address inside that WordPress that opens that post for whoever is signed in there. Whether every install permits one is unverified in this corpus — REQ-060 carries the parallel assumption for finding those posts in bulk. Where none can be formed for a post, criterion 12's second way through cannot be offered and the detail says so in its place.",
-          "disposition": "open"
+          "disposition": "undischargeable",
+          "reason": "Architect's wave-close read, 2026-09-04 (rule 2.3b). The decidable part of the claim is universally quantified over every WordPress install a customer may connect — a population this product neither controls nor can enumerate — so no observation closes it; observing one install proves nothing about the next. The row already states its own consequence where an install permits none, so nothing downstream waits on a disposition. BP-039 row 2 is the design-side copy and is dispositioned to match."
         }
       ],
       "supersedes": [
@@ -4098,11 +4220,13 @@
       "rests-on": [
         {
           "claim": "A top-10 containing a domain that ranks for no more than the greater of 500 searches and five times the customer's own count marks a target a small site can realistically win, and leaves a non-empty winnable set for a customer at zero.",
-          "disposition": "open"
+          "disposition": "open",
+          "reason": "Left open deliberately, 2026-09-04 (rule 2.3b). Compound: the first clause ('marks a target a small site can realistically win') is a perception claim and is not dischargeable, but the second — that the expression leaves a non-empty winnable set for a customer at zero — is arithmetic over a fixture and is dischargeable by the first test of `pursueDepth`'s banding. A row with a live dischargeable half is not closed on the strength of its dead half."
         },
         {
           "claim": "A domain ranking for no more than the greater of 100 searches and twice the customer's own count reads to the customer as a site roughly their own size, which is what the word Winnable promises them. The floor is 100 rather than 500 because at 500 this expression and criterion 9's are equal for every customer ranking below 250 searches, so every queued target banded Winnable and the Reach band was unreachable for the cold-start founder.",
-          "disposition": "open"
+          "disposition": "undischargeable",
+          "reason": "Architect's wave-close read, 2026-09-04 (rule 2.3b). The load-bearing claim — 'reads to the customer as a site roughly their own size' — is about a reader's impression and has no observation available to it. The row's second half (why the floor is 100 rather than 500) is arithmetic already proven in the row's own text and needs no pass. The floor stands; only the perception behind it is unverifiable."
         }
       ],
       "supersedes": [
@@ -4136,11 +4260,13 @@
       "rests-on": [
         {
           "claim": "A top-10 containing a domain that ranks for no more than the greater of 500 searches and five times the customer's own count marks a target a small site can realistically win, and leaves a non-empty winnable set for a customer at zero.",
-          "disposition": "open"
+          "disposition": "undischargeable",
+          "reason": "Architect's wave-close read, 2026-09-04 (rule 2.3b). Superseded by REQ-047, which carries this claim as its own row 1. No pass over a retired artifact discharges a row on it."
         },
         {
           "claim": "A domain ranking for no more than the greater of 100 searches and twice the customer's own count reads to the customer as a site roughly their own size, which is what the word Winnable promises them. The floor is 100 rather than 500 because at 500 this expression and criterion 1's are equal for every customer ranking below 250 searches, so every queued target banded Winnable and the Reach band was unreachable for the cold-start founder.",
-          "disposition": "open"
+          "disposition": "undischargeable",
+          "reason": "Architect's wave-close read, 2026-09-04 (rule 2.3b). Superseded by REQ-047, which carries this claim as its own row 2. No pass over a retired artifact discharges a row on it."
         }
       ],
       "supersedes": [],
@@ -4159,11 +4285,13 @@
       "rests-on": [
         {
           "claim": "Three hundred characters is the opening a reader judges a page by, so a page that reaches the end of it without naming the brand is answering the search rather than funnelling the reader.",
-          "disposition": "open"
+          "disposition": "undischargeable",
+          "reason": "Architect's wave-close read, 2026-09-04 (rule 2.3b). 'The opening a reader judges a page by' is a claim about readers; no build, test or measurement in this product observes it. The 300-character parameter is this system's to set (rule 1.1) and stands unchanged."
         },
         {
           "claim": "Eighty-five per cent similarity, by one fixed measure applied to every comparison, is the point at which two pages compete with each other rather than each earning its own place.",
-          "disposition": "open"
+          "disposition": "undischargeable",
+          "reason": "Architect's wave-close read, 2026-09-04 (rule 2.3b). 'The point at which two pages compete with each other rather than each earning its own place' is a judgement about how search treats near-duplicates, not a property this product can observe: nothing it builds measures whether two of its own pages cannibalised each other. The 85% threshold stands as a parameter; only the claim about what that number means is unverifiable."
         }
       ],
       "supersedes": [
@@ -4198,7 +4326,8 @@
       "rests-on": [
         {
           "claim": "Three hundred characters is the opening a reader judges a page by, so a page that reaches the end of it without naming the brand is answering the search rather than funnelling the reader.",
-          "disposition": "open"
+          "disposition": "undischargeable",
+          "reason": "Architect's wave-close read, 2026-09-04 (rule 2.3b). Superseded by REQ-050, which carries this claim as its own row 1. No pass over a retired artifact discharges a row on it."
         }
       ],
       "supersedes": [],
@@ -4231,7 +4360,8 @@
       "rests-on": [
         {
           "claim": "Eighty-five per cent similarity, by one fixed measure applied to every comparison, is the point at which two pages compete with each other rather than each earning its own place.",
-          "disposition": "open"
+          "disposition": "undischargeable",
+          "reason": "Architect's wave-close read, 2026-09-04 (rule 2.3b). Superseded by REQ-050, which carries this claim as its own row 2. No pass over a retired artifact discharges a row on it."
         }
       ],
       "supersedes": [],
@@ -4320,7 +4450,8 @@
       "rests-on": [
         {
           "claim": "Every WordPress site a customer can connect lets ReachKit give the posts it creates there something the customer can list posts by in their own WordPress admin and can tell from posts they wrote themselves, under the application password they gave. Which attribute that is, and whether every install and every credential permits one, is unverified in this corpus; where a connected site permits none, criterion 6 cannot be met and REQ-079 criterion 6's mail has no place to name.",
-          "disposition": "open"
+          "disposition": "undischargeable",
+          "reason": "Architect's wave-close read, 2026-09-04 (rule 2.3b). Universally quantified over every WordPress site a customer can connect, under whatever credential they gave — a population the product does not control and cannot enumerate. One install permitting a tag proves nothing about the next; one install permitting none refutes only itself, and the requirement already states what happens there ('where a connected site permits none, criterion 6 cannot be met'). This is the corpus's most-copied row: BP-048 row 3, ADR-083 row 1 and REQ-079 row 1 all restate it and are dispositioned to match as copies (rule 2.4)."
         }
       ],
       "supersedes": [],
@@ -4514,7 +4645,8 @@
       "rests-on": [
         {
           "claim": "Stripe's customer portal can be configured so that a customer adds or corrects the tax ID (VAT number) on their own billing record there. Nothing in this corpus establishes that capability: BUILD.md §13 names the portal only for card and cancellation, and puts the VAT ID field at Checkout. Criterion 2 rests on it (rule 1.2 — the vendor behaviour is asserted from outside the corpus and is unverified in it).",
-          "disposition": "open"
+          "disposition": "open",
+          "reason": "Left open deliberately, 2026-09-04 (rule 2.3b): reading the Stripe dashboard's customer-portal configuration settles it in one sitting, and nothing has. Dischargeable, not yet discharged. BP-017 row 1 and BP-060 row 1 are its copies and are dispositioned as such."
         },
         {
           "claim": "Every customer-facing date this requirement states — the next invoice date, the paid-through date access ends on — is stated in the customer's own stated time zone, the single stored preference REQ-073 criterion 3 governs.",
@@ -4568,7 +4700,8 @@
       "rests-on": [
         {
           "claim": "A connected WordPress site permits one place that brings every post ReachKit created there up together, so criterion 6's mail has a place to name — the same assumption REQ-060 carries for its criterion 6, unverified in this corpus. Where a site permits none, criterion 6's mail says so and still carries its counts; the customer is then left with pages live on their own domain that no product surface can point them to.",
-          "disposition": "open"
+          "disposition": "undischargeable",
+          "reason": "Architect's wave-close read, 2026-09-04 (rule 2.3b). Two grounds, either sufficient. (1) Rule 2.4: this is REQ-060 row 1's claim restated — the row says so itself — and the live home is there. (2) The claim is universally quantified over every connectable WordPress install, so no observation closes it. The requirement already states the consequence where a site permits none, so nothing downstream waits on this."
         }
       ],
       "supersedes": [],
@@ -4684,11 +4817,13 @@
       "rests-on": [
         {
           "claim": "The onboarding deep pass, on the pinned battery (12 question SERPs, up to 13 target SERPs, rival ranked rows, two suggestion calls, up to 25 measured pages), can yield 30 qualifying unused opportunities for a customer who ranks for nothing — the default customer under the cold-start law. No yield has been measured; `BUILD.md` §16 milestone 6 ('Real supply fills the calendar; empty days honest') is the first point at which it can be.",
-          "disposition": "open"
+          "disposition": "undischargeable",
+          "reason": "Architect's wave-close read, 2026-09-04 (rule 2.3b). A yield claim over a real customer population — 'can yield 30 qualifying unused opportunities for a customer who ranks for nothing' — is settled only by watching real supply across real customers, which is what the row's own discharge point (BUILD.md §16 milestone 6, 'Real supply fills the calendar') describes. No factory pass observes it. BP-041 row 1 is the design-side copy. A shortfall in production is a defect against this requirement, raised as feedback."
         },
         {
           "claim": "Seven unused opportunities — one week of pages — is the count at which a customer must be told supply is short, because the weekly re-measurement (REQ-065 criterion 1) is the only event that replenishes supply and cannot arrive sooner than the following Monday.",
-          "disposition": "open"
+          "disposition": "open",
+          "reason": "Left open deliberately, 2026-09-04 (rule 2.3b). The row asserts both a threshold (seven) and a corpus fact underneath it (that REQ-065 criterion 1's weekly re-measurement is the *only* event that replenishes supply). The second half is dischargeable — it is a closed question over the approved supply design — and I did not settle it in this pass rather than assert it without reading BP-041's replenishment path end to end. Not closed on a half-read."
         }
       ],
       "supersedes": [],
@@ -4709,11 +4844,13 @@
       "rests-on": [
         {
           "claim": "A rival's total count of searches it appears in is available from the same monthly rival measurement the how-far-ahead ratio already rests on, and is not limited to the rows that measurement fetches — the contrast the product already promises (a rival at 12,400 against a customer at 25) is unreadable otherwise. No implementation has verified it; `BUILD.md` §16 milestone 2 is the first point at which it can be.",
-          "disposition": "open"
+          "disposition": "open",
+          "reason": "Left open deliberately, 2026-09-04 (rule 2.3b): this is a question about the shape of one vendor response — whether the rival measurement reports a total ranked count or only the rows it fetched — and one live call answers it. Cheaply dischargeable, not yet attempted. BP-040 row 1 and BP-052 row 1 carry the engine-side statements of the same question."
         },
         {
           "claim": "The two counts that separate the three bands — 100 searches or twice the customer's own, and 500 searches or five times the customer's own — read to a customer as the difference between a rival roughly their size, one bigger but still catchable, and one out of their league. Derivation and reversal cost: `registry/evidence/REQ-096.md`.",
-          "disposition": "open"
+          "disposition": "undischargeable",
+          "reason": "Architect's wave-close read, 2026-09-04 (rule 2.3b). What two counts 'read to a customer as' is a claim about a reader, with no observation available to it in this factory. The two counts are parameters this system owns and they stand unchanged; `registry/evidence/REQ-096.md` keeps the derivation and the reversal cost, which is where the argument belongs (rule 5.2)."
         }
       ],
       "supersedes": [],
@@ -4739,7 +4876,8 @@
       "rests-on": [
         {
           "claim": "Stripe's own billing surface, configured for this product, reaches all five of the things criterion 1 routes there. Two of the five are unverified in this corpus and BP-060 carries each as an open `rests-on` row — the VAT number (REQ-076's own row, carried forward) and the billing address invoices and receipts are sent to. If either is refuted, the promise that leg carries — REQ-076 criterion 9 for the VAT number, REQ-076 criterion 2 for the address — has no surface anywhere in the product, and this requirement is rewritten rather than patched. The other three legs — the card, the invoices and cancelling — are BUILD.md §13's and §4.7's, and BP-060 raises no row for them.",
-          "disposition": "open"
+          "disposition": "undischargeable",
+          "reason": "Architect's wave-close read, 2026-09-04 (rule 2.3b). This row is a roll-up of rows whose homes are elsewhere and it says so: of the five legs, three raise no assumption at all and the two that do are BP-060 row 1 (the VAT number) and BP-060 row 2 (the billing address), both still `open` and both dischargeable there. Nothing observed at this requirement settles it; it is discharged when those two are (rule 2.4 — one claim, one home)."
         }
       ],
       "supersedes": [],
@@ -4779,7 +4917,8 @@
       "rests-on": [
         {
           "claim": "A demo video of the running product will exist and be hosted somewhere the page can embed it. Nothing in this corpus produces, hosts or budgets one, and no milestone in BUILD §16 names it; criterion 5 rests on it, and criterion 6 is what holds the page together if it is refuted.",
-          "disposition": "open"
+          "disposition": "open",
+          "reason": "Left open deliberately, 2026-09-04 (rule 2.3b), and escalated. Whether a demo video will exist, be produced and be hosted is not an engineering observation and not a parameter this system may choose — it is a commitment about what the product shows a customer, and only the owner can settle it. It is neither `confirmed` (nothing in the corpus produces, hosts or budgets one) nor `undischargeable` (the owner can settle it in one sentence). It stays `open` with the escalation named."
         }
       ],
       "supersedes": [],
