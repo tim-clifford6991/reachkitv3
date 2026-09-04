@@ -5,7 +5,7 @@
 # Traceability — REQ → BP → WO → TST
 
 - `satisfies` is projected from 44 of 63 blueprints — the rest are silent on it.
-- `implements` is projected from 273 of 273 work orders — the rest are silent on it.
+- `implements` is projected from 274 of 274 work orders — the rest are silent on it.
 - `covers` is projected from 32 of 63 blueprints — the rest are silent on it.
 - `verdict` is projected from 30 of 38 validation nodes — the rest declare none and render `unknown`.
 
@@ -268,6 +268,7 @@ One row per chain leg reached from an approved requirement's `satisfies` edges �
 | REQ-093 | BP-020 | WO-279 | TST-028 (unknown) |
 | REQ-093 | BP-020 | WO-279 | TST-037 (pass) |
 | REQ-093 | BP-020 | WO-285 | — |
+| REQ-093 | BP-020 | WO-287 | — |
 | REQ-094 | BP-028 | WO-080 | — |
 | REQ-094 | BP-028 | WO-081 | — |
 | REQ-094 | BP-028 | WO-082 | — |

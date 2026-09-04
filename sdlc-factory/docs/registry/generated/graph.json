@@ -2,55 +2,55 @@
   "coverage": {
     "satisfies": {
       "carrying": 44,
-      "total": 484
+      "total": 485
     },
     "covers": {
       "carrying": 32,
-      "total": 484
+      "total": 485
     },
     "implements": {
-      "carrying": 273,
-      "total": 484
+      "carrying": 274,
+      "total": 485
     },
     "decides-for": {
       "carrying": 32,
-      "total": 484
+      "total": 485
     },
     "about": {
       "carrying": 0,
-      "total": 484
+      "total": 485
     },
     "depends-on": {
-      "carrying": 399,
-      "total": 484
+      "carrying": 400,
+      "total": 485
     },
     "blocked-by": {
       "carrying": 7,
-      "total": 484
+      "total": 485
     },
     "cites-retired": {
       "carrying": 0,
-      "total": 484
+      "total": 485
     },
     "supersedes": {
       "carrying": 30,
-      "total": 484
+      "total": 485
     },
     "rests-on": {
-      "carrying": 297,
-      "total": 484
+      "carrying": 298,
+      "total": 485
     },
     "code": {
       "carrying": 63,
-      "total": 484
+      "total": 485
     },
     "exercises": {
       "carrying": 6,
-      "total": 484
+      "total": 485
     },
     "origin": {
       "carrying": 0,
-      "total": 484
+      "total": 485
     }
   },
   "nodes": {
@@ -12250,6 +12250,60 @@
       ],
       "supersedes": [],
       "file": "sdlc-factory/docs/work-orders/WO-286.md"
+    },
+    "WO-287": {
+      "id": "WO-287",
+      "type": "work-order",
+      "title": "The report address's own sentences enter the copy registry — eighteen ruled strings under fixed keys, and the subject slot reaches renderMeasured",
+      "status": "approved",
+      "implements": [
+        "BP-019",
+        "BP-020",
+        "REQ-001",
+        "REQ-002",
+        "REQ-003",
+        "REQ-004",
+        "REQ-094"
+      ],
+      "depends-on": [
+        "WO-041",
+        "WO-278"
+      ],
+      "blocked-by": [],
+      "rests-on": [
+        {
+          "claim": "The eighteen values are the owner's ruling of 2026-09-04 (sheet 2), recorded verbatim at `sdlc-factory/docs/registry/evidence/RULING-copy-2026-09-04.json`. No agent writes, re-wraps, re-punctuates or 'improves' any of them; the implementer copies each value out of that file.",
+          "disposition": "confirmed",
+          "reason": "The evidence file was copied byte-for-byte from the orchestrator's machine-verified artifact and re-verified after the copy by this planner: 18 keys, 8 U+2019 apostrophes, 8 U+2014 em dashes, zero U+0027, slots {what} {address} {domain} {wait}. sha256 86207a6274e94466fc4d9432d8ea6c260baf26bdb89167a29223669eeb95cef9. This work order names keys and never a value."
+        },
+        {
+          "claim": "Filling `unmeasured.undeterminable` and `unmeasured.not-attempted` breaks `renderMeasured` at run time unless its options object also carries the subject those two ruled lines declare a slot for.",
+          "disposition": "confirmed",
+          "reason": "Observed directly in two files. `src/lib/presentation/copy/copy.ts` throws `copy(): \"<key>\" requires slot \"<slot>\", which was not supplied.` for any slot declared in `COPY_META[key].slots` and absent from `vars`. `src/lib/presentation/measured.ts` has exactly one such call — `copy(o.unmeasuredLine)` — and passes no `vars`. Today the two keys are owner-owed, so `copy()` throws earlier and the defect is invisible; supplying the values moves the throw past the owner-owed guard and onto every unmeasured render."
+        },
+        {
+          "claim": "Widening `renderMeasured`'s options object with that required member errors in exactly two files and nowhere else in the tree.",
+          "disposition": "confirmed",
+          "reason": "Type fan-out check, measured, not grepped. A scratch edit of `src/lib/presentation/measured.ts` alone, then the repo's own type-check command — `npx tsc --noEmit`, the `typecheck` script in `package.json`; `factory.config.json` sets no `typeCheck` key, so the command is derived from the project's own tooling (rule 1.1). Baseline 0 errors; after the edit, 14 errors, all TS2345 'Property … is missing': `src/lib/presentation/copy/explain.ts` (1) and `tests/presentation/measured.test.ts` (13). `tsconfig.json`'s `include` covers `tests/**`, so the test boundary is inside the check. The edit was reverted and the tree left clean."
+        },
+        {
+          "claim": "No thirteenth `keys/*.ts` partition is needed or wanted for the thirteen new keys.",
+          "disposition": "confirmed",
+          "reason": "`src/lib/presentation/copy/registry.ts`'s own header states the list is closed — 'The closed partition list, written once (BP-020 decision 5) … no thirteenth import, no re-export by name' — and `tests/presentation/copy/registry.test.ts` asserts it with `expect(importedKeyFiles).toHaveLength(12)`. WO-070 and WO-249 both landed new keys inside an existing partition on the same reasoning; this order is the third application, not a new one."
+        },
+        {
+          "claim": "The ten `notice.*`/`control.*`/`copy-link.*` names are exactly the gap the design-guardian reported on WO-282's v1 preview, and naming them changes nothing else about that preview.",
+          "disposition": "confirmed",
+          "reason": "WO-282 `## Log`, 2026-09-04 preview line, verbatim: 'Duty-2 self-review: PASS, one non-blocking gap reported (§7's copy keys for the notice/control/copy-link text have no fixed `CopyKey` name anywhere in the corpus yet — distinct from the `verdict.limiting.*`, `unmeasured.*` and `removal.*` keys, which are already named)'. The gap is a name, not a layout; no token, component or placement moves."
+        },
+        {
+          "claim": "This order is the only place in the corpus where these eighteen values can land — no other work order claims `src/lib/presentation/copy/keys/**` for them.",
+          "disposition": "confirmed",
+          "reason": "Sixteen work orders name `copy/keys/`; of those, WO-041, WO-070 and WO-278 are `done`, WO-248/WO-249 are `superseded`, and the remaining eleven (WO-045, WO-049, WO-118, WO-121, WO-162, WO-165, WO-167, WO-241, WO-247, WO-250, WO-258) carry no wave and name none of these eighteen keys — checked by grep for `removal.`, `notice.`, `control.` and `copy-link` across all eleven. WO-282's own file plan carries no `keys/*.ts` row and its own words are 'This WO creates the reference and the test; it writes no address'."
+        }
+      ],
+      "supersedes": [],
+      "file": "sdlc-factory/docs/work-orders/WO-287.md"
     }
   }
 }
