@@ -31,9 +31,19 @@
 // `place.report.first-page.rival` (WO-041 `## Log`, this date's ruling) —
 // filled verbatim, byte for byte. Every key this partition declares now
 // has a string; none is owner-owed.
+//
+// 2026-09-04, separately again: WO-278 (BP-024 decision 6, rule 1.1 — see
+// `## Decision taken under rule 1.1`) adds the three `verdict.limiting.*`
+// keys `LIMITING_LINES` (`src/lib/presentation/bands.ts`) resolves — one
+// per `ScoreFactorName`. They ship owner-owed and empty: the one written
+// line REQ-004 criterion 2 requires is a customer-visible string and
+// therefore the owner's (constitution §1). No sentence is written here.
 import type { CopyPartition } from "../registry.ts";
 
 export const REPORT_COPY = Object.freeze({
+  "verdict.limiting.foundations": ["", { slots: {}, fixedBy: "REQ-004 c2" }],
+  "verdict.limiting.answerability": ["", { slots: {}, fixedBy: "REQ-004 c2" }],
+  "verdict.limiting.presence": ["", { slots: {}, fixedBy: "REQ-004 c2" }],
   "place.report.first-page.rival": [
     "No rival holds this ground yet",
     { law: "no-presence-yet", slots: {}, fixedBy: "REQ-010 c1" },
