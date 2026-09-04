@@ -233,6 +233,72 @@ describe('BP-007 `## Error & edge behavior` — "Caps degrade, never throw."', (
   });
 });
 
+describe(
+  'BP-007 `## Public interface` — "Cache-first, ledger-always ... `fresh` false means the payload came from cache and cost nothing" — `index.ts`\'s own comment: "a hit is free and bypasses the cap entirely — it never reaches the vendor, so there is nothing for the cap to protect against."',
+  () => {
+    it("a cache hit is served even when the context is already at or over its cap — the cap check is never consulted for a hit (TST-029 coverage gap)", async () => {
+      const source = "cache-first-vs-cap";
+      const cacheKey = "k1";
+
+      // Seed a non-empty cached row on this key from an earlier scan.
+      const seedScanId = freshScanId("cache-first-seed");
+      await withCostContext({ scanId: seedScanId, cap: "FREE", policyVersion: 1 }, async (cost) => {
+        const seeded = await cost.recordFetch({
+          source,
+          cacheKey,
+          freshnessDays: 7,
+          costCents: 1,
+          run: async () => ({ result: "cached-payload" }),
+        });
+        expect(seeded).toMatchObject({ fresh: true, costCents: 1 });
+      });
+
+      // A fresh scan whose reservation alone already exhausts CAPS.FREE_C
+      // (12) before the cache-hit call is even made.
+      const scanId = freshScanId("cache-first-vs-cap");
+      let capHitBeforeHit = false;
+      let hitResult: unknown;
+      await withCostContext({ scanId, cap: "FREE", policyVersion: 1 }, async (cost) => {
+        await cost.recordFetch({
+          source: "cache-first-vs-cap-exhaust",
+          cacheKey: "exhaust-key",
+          freshnessDays: 7,
+          costCents: 12, // lands exactly on CAPS.FREE_C
+          run: async () => ({ v: "exhaust" }),
+        });
+        capHitBeforeHit = cost.capHit();
+
+        // The cap is already exhausted (`capHitBeforeHit` above). A hit on
+        // `source`/`cacheKey` must still be served — cache-first means the
+        // cap check is never reached for it. `costCents: 999` is an
+        // absurd reservation, chosen so that if the cap were checked first
+        // this call would be skipped by a wide margin rather than by
+        // coincidence.
+        hitResult = await cost.recordFetch({
+          source,
+          cacheKey,
+          freshnessDays: 7,
+          costCents: 999,
+          run: async () => {
+            throw new Error("run() must not be invoked on a cache hit, cap or no cap");
+          },
+        });
+      });
+
+      expect(capHitBeforeHit).toBe(true);
+      expect(hitResult).toEqual({ payload: { result: "cached-payload" }, fresh: false, costCents: 0 });
+
+      // No row was ledgered for the hit — only the seed row and the
+      // cap-exhausting row exist; the cap-exhausted scan carries exactly
+      // one row, not two.
+      const seedRows = fetchesRowsFor(seedScanId);
+      const scanRows = fetchesRowsFor(scanId);
+      expect(seedRows).toHaveLength(1);
+      expect(scanRows).toHaveLength(1);
+    });
+  }
+);
+
 describe('BP-007 decision 1 — "`capHit()` is re-checked between calls in any multi-call step"', () => {
   it("a body making three calls where the second crosses the cap gets `{ skipped: \"cap\" }` on the third and a true `capHit()` between them", async () => {
     const scanId = freshScanId("cap-hit-between");
