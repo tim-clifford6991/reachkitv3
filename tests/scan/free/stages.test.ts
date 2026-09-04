@@ -234,6 +234,71 @@ describe(
       const events = await lateSubscriber;
       expect(events).toEqual([{ ending }]);
     });
+
+    // TST-036 (WO-281 validation report): every case above publishes its
+    // `ending` synchronously, in the same tick as the pull that observes
+    // it — the generator is still draining its own *replay* for-loop
+    // (`for (const event of stream.events) { yield event; if ("ending" in
+    // event) return; }`) at that point, never the live `while (true)`
+    // loop's own, independent halt-on-ending. That leaves the live path a
+    // subscriber watching a real, still-running scan actually takes —
+    // idle, with a listener registered, `await`ing `Promise.race(...)` —
+    // unexercised: `stages.ts`'s live-listener `if ("ending" in event)
+    // return;` survives deletion against all of this file's other cases.
+    // This case forces the generator genuinely idle first (real
+    // macrotask ticks, nothing queued) before publishing, so it is the
+    // live halt, not the replay loop's, that must fire.
+    it("stages/ending · a live-published ending reaches a genuinely idle subscriber, and closes the stream (TST-036)", async () => {
+      const scanId = freshScanId();
+      const iterator = progress(scanId)[Symbol.asyncIterator]();
+
+      let settled = false;
+      const pending = iterator.next().then((result) => {
+        settled = true;
+        return result;
+      });
+
+      // Real macrotask ticks with nothing published: lets `progress()` run
+      // past `scanExists`, drain the empty replay for-loop, register its
+      // live listener, and reach its own idle `await Promise.race(...)` —
+      // the branch this case exists to reach, as opposed to a synchronous
+      // `emitEnding` call right after `iterator.next()`, which never gives
+      // the generator a chance to get that far before the ending is
+      // already sitting in `stream.events` for the replay loop to find.
+      for (let i = 0; i < 5; i++) {
+        await new Promise<void>((resolve) => setTimeout(resolve, 0));
+      }
+      expect(settled).toBe(false); // still idle — nothing published yet
+
+      const ending: Ending = { kind: "report", complete: true, stoppedReason: "complete" };
+      emitEnding(scanId, ending);
+
+      // Guarded with a timeout, not an unbounded await: if the live halt
+      // regresses, the generator falls through to `continue` instead of
+      // returning and this pull never settles — a hang is the legitimate
+      // failure signal here, but an unbounded one in CI is its own defect.
+      const first = await Promise.race([
+        pending,
+        new Promise<never>((_, reject) =>
+          setTimeout(
+            () => reject(new Error("timed out: the live-listener halt-on-ending did not fire (TST-036)")),
+            2000
+          )
+        ),
+      ]);
+      expect(first).toEqual({ done: false, value: { ending } });
+
+      const second = await Promise.race([
+        iterator.next(),
+        new Promise<never>((_, reject) =>
+          setTimeout(
+            () => reject(new Error("timed out: the stream did not close after the live ending (TST-036)")),
+            3000
+          )
+        ),
+      ]);
+      expect(second.done).toBe(true);
+    });
   }
 );
 
