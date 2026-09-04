@@ -81,14 +81,14 @@ absent row reads as nothing-to-report. The denominators, as of 2026-09-01:
 | Postgres access, RLS default-deny, magic-link auth | `supabase/`, `src/lib/db/` | BP-002 | `db()` · `dbAdmin()` | every module |
 | Scheduled and evented work, kill switch | `src/jobs/` | BP-003 | `serve()` · the seven `JobId`s | BP-012, BP-014, BP-015, BP-016, BP-017 |
 | Serving published pages on a customer domain | `src/app/(hosted)/` | BP-004 | Host-keyed `GET /*` · `/robots.txt` · `/sitemap.xml` | crawlers, readers |
-| Every pinned number and env binding | `src/lib/config/` | BP-005 | `constants.ts` (incl. `SELECTION` · `COHERENCE` · `CORRECTION` · `SEVERITY_THRESHOLDS` · `AI_READER_AGENTS` · `EFFORT_BY_TYPE` · `FIT_WEIGHT` · `VERIFY` · `WEEKLY_DUE_HOUR_LOCAL` · `GOAL_VALUES`) · `env` · `tests/pins.test.ts` | every module |
+| Every pinned number and env binding | `src/lib/config/` | BP-005 | `constants.ts` (incl. `SELECTION` · `COHERENCE` · `CORRECTION` · `SEVERITY_THRESHOLDS` · `AI_READER_AGENTS` · `EFFORT_BY_TYPE` · `FIT_WEIGHT` · `VERIFY` · `WEEKLY_DUE_HOUR_LOCAL` · `GOAL_VALUES` · `SCORING`, transcribed by WO-251) · `env` · `tests/pins.test.ts` | every module |
 | Safe outbound fetch of a URL we did not author | `src/lib/egress/` | BP-006 | `safeFetch()` | BP-010, BP-011, BP-015, BP-017 |
 | Does this domain resolve in DNS | `src/lib/egress/` | BP-006 | `resolvesInDns()` | BP-011, BP-017 (setup, settings, rivals) |
 | robots.txt read and per-agent verdicts | `src/lib/egress/` | BP-006 | `readRobots()` | BP-010 |
 | Cost context, cap enforcement, cache-first, ledger | `src/lib/costs/` | BP-007 | `withCostContext()` · `recordFetch()` · `capHit()` | BP-008, BP-009, BP-012 |
 | DataForSEO — the closed endpoint list | `src/lib/vendors/dataforseo/` | BP-008 | `rankedKeywords()` · `keywordSuggestions()` · `competitorsDomain()` · `serpOrganic()` · `aiMode()` · `llmScraper()` | BP-010, BP-011, BP-013 |
 | Model calls, one seam, closed call-site union | `src/lib/llm/` | BP-009 | `llm()` · `LlmCallSite` | BP-011, BP-013, BP-014 |
-| Deterministic HTML parse and on-page facts | `src/lib/measure/` | BP-010 | `measureDomain()` | BP-012, BP-013, BP-014 |
+| Deterministic HTML parse and on-page facts | `src/lib/measure/` | BP-010 | `measureDomain()` · `parseOnPage()` · `visibleText()` · `OnPageFacts` (`parse.ts`, WO-251) | BP-012, BP-013, BP-014 |
 | Re-reading one already-measured page's text, without a second whole-domain measurement | `src/lib/measure/text.ts` | BP-010 | `readMeasuredText()` | BP-013, BP-014 |
 | The three shown score factors, the score and its band | `src/lib/measure/` | BP-024 (four measured quantities are BP-010's `Drivers`) | `factorsOf()` · `presenceOf()` · `computeScore()` · `bandOf()` | BP-012, BP-022 |
 | The measured / measured-zero / unmeasured trichotomy | `src/lib/measure/` | BP-010 | `Measured<T>` | every producer and every surface |

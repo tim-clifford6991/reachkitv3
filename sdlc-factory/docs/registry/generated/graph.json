@@ -25,7 +25,7 @@
       "total": 486
     },
     "blocked-by": {
-      "carrying": 9,
+      "carrying": 8,
       "total": 486
     },
     "cites-retired": {
@@ -7121,7 +7121,7 @@
       "rests-on": [
         {
           "claim": "`PLATFORM_DOMAINS` is pinned in `src/lib/config/constants.ts` (BP-005), which BP-026's `## NFR budget` records as 'already declared there'. That file is BP-005's and is not touched here. If the pin is absent when this WO starts, that is a `blocked-by` on BP-005's work order, added at that moment.",
-          "disposition": "open"
+          "disposition": "confirmed"
         }
       ],
       "supersedes": [],
@@ -11227,21 +11227,21 @@
       "id": "WO-251",
       "type": "work-order",
       "title": "OnPageFacts and the deterministic on-page parse — headings, answer blocks, evidence density, schema, OG, access gates",
-      "status": "draft",
+      "status": "approved",
       "implements": [
         "BP-010"
       ],
       "depends-on": [
         "WO-001",
-        "WO-006"
+        "WO-006",
+        "WO-277"
       ],
-      "blocked-by": [
-        "BP-005"
-      ],
+      "blocked-by": [],
       "rests-on": [
         {
           "claim": "No source tree, package manifest, tsconfig or test runner exists on disk at cut time (verified 2026-08-31 — this repository carries no `src/`). Every path in this file plan is NEW and its placement is provisional against a repo with no code.",
-          "disposition": "open"
+          "disposition": "refuted",
+          "reason": "Spent, and its consequence with it — observed by the planner 2026-09-04. `src/` exists: `src/lib/measure/` holds `measured.ts`, `partition.ts`, `score.ts`, `bands.ts` and `verdict.ts` (WO-277, `done`) and `tests/measure/verdict/` holds their six suites, so the placement this row hedged is now read off disk rather than assumed. `src/lib/measure/parse.ts` and `tests/measure/domain/` are still new and still fall to BP-010 under `structure.md` rule 2 — BP-024's `code:` names five files by name and none is `parse.ts`. The three files this plan now also modifies (`src/lib/config/constants.ts`, `tests/config/constants.test.ts`, `src/lib/measure/score.ts`) all exist and were read on this pass."
         },
         {
           "claim": "`OnPageFacts` has no declared shape anywhere in the corpus. BP-010 names it in `measureDomain`'s return type and BP-012's `StoredReport` carries it as `onPage: OnPageFacts // BP-010`; six work orders (WO-184, WO-185, WO-186, WO-189, WO-191, WO-192) copy that line verbatim and none declares the type either. The shape in `## Interfaces` below is derived by this work order from BP-010's own module sentence — \"the parsers (headings, answer blocks, evidence density, schema, OG)\" — and from `BUILD.md` §5's named sub-measures, and is flagged for the architect to fold into BP-010's `## Public interface` (constitution rule 1.1: chosen, recorded, reversible). Reversal cost: one interface, no stored data — the blob is `jsonb` and no migration names these fields.",
@@ -11249,7 +11249,8 @@
         },
         {
           "claim": "BP-005's `constants.ts` carries the direct-answer character window. BP-010 decision 2 assigns it there by name — \"the coefficients that are numbers (band thresholds, the answerability floor, the direct-answer character window) are pins in BP-005\" — and `BUILD.md` §5 fixes its value: \"`directAnswers` = question headings whose first block is 40–320 visible chars ÷ all headings × 100\". BP-005's `## Public interface` as it stands on disk declares no such pin, so WO-006 will not have written one. See the stop condition under `## Interfaces`.",
-          "disposition": "open"
+          "disposition": "confirmed",
+          "reason": "Confirmed as raised, then cleared on the interface half — planner, 2026-09-04. The claim was true at cut time and stayed true through the 2026-09-04 refusal; commit `2fe462e` (`docs(BP-005): declare the scoring pins BP-010 delegates`) added `SCORING { directAnswerCharsMin: 40, directAnswerCharsMax: 320, answerabilityFloor: 1 }` to BP-005's `## Public interface` after `SCORE_BAND_BOUNDS`. Re-verified against source rather than inherited: `BUILD.md` §5 reads \"`directAnswers` = question headings whose first block is 40–320 visible chars\" and \"Answerability = shape of the home + measured pages, 0–100, floored at 1\" — all three values transcribed, none chosen. `src/lib/config/constants.ts` still carries no `SCORING`; landing it there is this order's first file-plan row, not another order's."
         }
       ],
       "supersedes": [],
