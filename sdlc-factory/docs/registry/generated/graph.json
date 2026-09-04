@@ -2,55 +2,55 @@
   "coverage": {
     "satisfies": {
       "carrying": 44,
-      "total": 459
+      "total": 460
     },
     "covers": {
       "carrying": 32,
-      "total": 459
+      "total": 460
     },
     "implements": {
       "carrying": 262,
-      "total": 459
+      "total": 460
     },
     "decides-for": {
       "carrying": 31,
-      "total": 459
+      "total": 460
     },
     "about": {
       "carrying": 0,
-      "total": 459
+      "total": 460
     },
     "depends-on": {
       "carrying": 387,
-      "total": 459
+      "total": 460
     },
     "blocked-by": {
       "carrying": 6,
-      "total": 459
+      "total": 460
     },
     "cites-retired": {
       "carrying": 0,
-      "total": 459
+      "total": 460
     },
     "supersedes": {
       "carrying": 23,
-      "total": 459
+      "total": 460
     },
     "rests-on": {
       "carrying": 287,
-      "total": 459
+      "total": 460
     },
     "code": {
       "carrying": 63,
-      "total": 459
+      "total": 460
     },
     "exercises": {
       "carrying": 6,
-      "total": 459
+      "total": 460
     },
     "origin": {
       "carrying": 0,
-      "total": 459
+      "total": 460
     }
   },
   "nodes": {
@@ -5006,6 +5006,16 @@
       ],
       "file": "sdlc-factory/docs/work-orders/WO-003.md"
     },
+    "TST-026": {
+      "id": "TST-026",
+      "type": "validation",
+      "title": "WO-070 validation report",
+      "status": "pass",
+      "validates": [
+        "WO-070"
+      ],
+      "file": "sdlc-factory/docs/work-orders/WO-070.md"
+    },
     "WO-001": {
       "id": "WO-001",
       "type": "work-order",
@@ -6640,7 +6650,7 @@
       "id": "WO-070",
       "type": "work-order",
       "title": "The landing page — one text input, one submit, and nothing else",
-      "status": "approved",
+      "status": "done",
       "implements": [
         "BP-022",
         "REQ-001"
@@ -6655,7 +6665,7 @@
       "rests-on": [
         {
           "claim": "BP-019's `copy()` holds the landing headline, the field label, the submit label and one written line per `DomainProblem`. All are the owner's strings and this WO renders keys; `BUILD.md` §3 quotes a headline ('See what AI tells buyers about your market — and write your way in.') but a quotation in the build specification is not a copy-registry value, and minting one here would be writing customer-visible copy this node has no right to (constitution §1)",
-          "disposition": "open"
+          "disposition": "confirmed"
         }
       ],
       "supersedes": [],
