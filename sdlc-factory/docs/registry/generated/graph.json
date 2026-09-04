@@ -2,55 +2,55 @@
   "coverage": {
     "satisfies": {
       "carrying": 44,
-      "total": 474
+      "total": 475
     },
     "covers": {
       "carrying": 32,
-      "total": 474
+      "total": 475
     },
     "implements": {
-      "carrying": 272,
-      "total": 474
+      "carrying": 273,
+      "total": 475
     },
     "decides-for": {
       "carrying": 32,
-      "total": 474
+      "total": 475
     },
     "about": {
       "carrying": 0,
-      "total": 474
+      "total": 475
     },
     "depends-on": {
-      "carrying": 398,
-      "total": 474
+      "carrying": 399,
+      "total": 475
     },
     "blocked-by": {
-      "carrying": 6,
-      "total": 474
+      "carrying": 7,
+      "total": 475
     },
     "cites-retired": {
       "carrying": 0,
-      "total": 474
+      "total": 475
     },
     "supersedes": {
       "carrying": 30,
-      "total": 474
+      "total": 475
     },
     "rests-on": {
-      "carrying": 296,
-      "total": 474
+      "carrying": 297,
+      "total": 475
     },
     "code": {
       "carrying": 63,
-      "total": 474
+      "total": 475
     },
     "exercises": {
       "carrying": 6,
-      "total": 474
+      "total": 475
     },
     "origin": {
       "carrying": 0,
-      "total": 474
+      "total": 475
     }
   },
   "nodes": {
@@ -11807,35 +11807,35 @@
       "rests-on": [
         {
           "claim": "No source tree, package manifest, tsconfig or test runner exists on disk at cut time (verified 2026-08-31: the repo root holds only BUILD.md, DATA-COSTS.md, REQUIREMENTS-CONSOLIDATION.md, factory.config.json, CLAUDE.md and sdlc-factory/). Every path in this file plan is NEW and its placement is provisional against a repo with no code. The TypeScript project, its path resolution and the `*.test.ts` runner are established by other work orders; this WO creates none of them and adds no repo-root file.",
-          "disposition": "open"
+          "disposition": "refuted"
         },
         {
           "claim": "The thirteen strings these three maps resolve to are written by WO-041 into `src/lib/presentation/copy/keys/bands.ts` and are not owner-owed there (WO-041 Steps 5: 'None of the thirteen is in `OWNER_OWED`: they have values, so `copy()` returns them'). This WO declares keys only and asserts each resolves; if any of the thirteen is missing or empty when this WO runs, the failure is WO-041's and the implementer says so rather than seeding a string here (constitution rule 4.2).",
-          "disposition": "open"
+          "disposition": "confirmed"
         },
         {
           "claim": "The handle sets are the engines' and are fixed elsewhere: `winnable | reach | not-yet` is BP-040's `Winnability`, `near | middle | far` is BP-011's rival-size handle set, `invisible | hard-to-find | findable | dominant` is BP-010's `BandHandle`, and `low | mid | high` is BP-027's `Severity`. This WO restates each union in the map's own type because the map must be total over it; a handle set that changes at its owning node without changing here is a compile error at the `Record<>`, which is the intended coupling.",
-          "disposition": "open"
+          "disposition": "confirmed"
         },
         {
           "claim": "No source tree, package manifest, tsconfig or test runner exists on disk at cut time (verified 2026-08-31). Every path in this file plan is NEW except the one Modify row, and its placement is provisional against a repo with no code. This WO creates no repo-root file.",
-          "disposition": "open"
+          "disposition": "refuted"
         },
         {
           "claim": "The whole argument of this WO rests on TypeScript's discriminated-union narrowing being on: `strict`, `strictNullChecks` and no `any` on the `Measured<T>` import path. Without them the `unmeasured` arm does not lose its `value` field on narrowing and the central guarantee below degrades from a compile error to a convention. The tsconfig is BP-001's and does not exist today; the implementer stops and says so if `strict` is off (constitution rule 4.2).",
-          "disposition": "open"
+          "disposition": "confirmed"
         },
         {
           "claim": "The two sentences REQ-004 criteria 6 and 9 require — the line naming what could not be determined, and the line stating the scan stopped early — are customer-visible strings and therefore the owner's (constitution §1). They stand **owner-owed**: this WO seeds two empty keys for them so callers have a key to pass, and `copy()` throws naming the key rather than rendering a blank (WO-041's chosen representation). Until the owner writes them, `renderMeasured` is complete in mechanism and throws loudly on the unmeasured arm; every test below asserts the key reached, never the sentence.",
-          "disposition": "open"
+          "disposition": "confirmed"
         },
         {
           "claim": "No source tree, package manifest, tsconfig or test runner exists on disk at cut time (verified 2026-08-31). Every path in this file plan is NEW and its placement is provisional against a repo with no code.",
-          "disposition": "open"
+          "disposition": "refuted"
         },
         {
           "claim": "BP-010's `Measured<T>` and BP-019's `renderMeasured()` are consumed here by import and are created by work orders outside WO-041..WO-050. This WO cannot be implemented before both symbols exist at their owning nodes' public entry points; the implementer stops and says so if they do not (constitution rule 4.2).",
-          "disposition": "open"
+          "disposition": "confirmed"
         },
         {
           "claim": "BP-019's `## Public interface` does not yet transcribe a symbol for the one written line REQ-004 criterion 2 requires, which BP-024 decision 6 (2026-09-03) assigns to BP-019. This work order names it `LIMITING_LINES` in `src/lib/presentation/bands.ts` under rule 1.1 (see `## Decision taken under rule 1.1`) and the architect folds the symbol into BP-019 at wave close. Nothing about what is promised turns on the name. **Confirmed 2026-09-04 by direct read**: `blueprints/BP-019.md` `## Public interface` declares `CopyKey`, `copy`, `renderMeasured`, `emptyStateLine`, `generatedLabel`, `WorkStop`/`stoppedWorkStatement`, `BAND_LABELS`, `SCORE_BANDS` and `SEVERITY`, and no symbol for criterion 2's line; `grep -rn 'limitingFactorOf\\|LimitingFactor' blueprints/ decisions/` returns BP-024 only. The gap is real and the name chosen here is the disposition, not a pending question",
@@ -11894,47 +11894,23 @@
     "WO-280": {
       "id": "WO-280",
       "type": "work-order",
-      "title": "The stored report and the address that resolves to it — one current row, the closed address union, the eight-row order, the one control",
+      "title": "The current-report pointer and the one address — two current reports made unrepresentable by the database, and every written form of a domain redirecting to one place",
       "status": "approved",
       "implements": [
         "BP-012",
         "BP-022",
-        "REQ-001",
-        "REQ-002",
-        "REQ-003"
+        "REQ-001"
       ],
       "depends-on": [
         "WO-001",
         "WO-006",
         "WO-051",
-        "WO-057",
-        "WO-267",
-        "WO-277"
+        "WO-267"
       ],
       "blocked-by": [],
       "rests-on": [
         {
           "claim": "No source tree, package manifest, tsconfig or test runner exists on disk at cut time (verified 2026-08-31 — this repository carries no `src/` and no `supabase/`). Every path in this file plan is NEW and its placement is provisional against a repo with no code.",
-          "disposition": "open"
-        },
-        {
-          "claim": "Three blueprints describe the blob's `market` section differently and this work order follows BP-012. BP-012 declares `market: Measured<SuggestionRow[]>`; BP-025's `## Data model delta` declares `report.market = { profile, suggestions, totalVolume }`; BP-056's `## Data model delta` reads `report.market.category`, which is a field of BP-025's `Profile` and reachable under neither of the other two shapes. BP-012 is followed because its decision 3 is the corpus's only declaration of the type and states the ownership ground — \"This node owns it because it assembles the blob and is its only writer\" — and because rule 2.4 makes the other two the second and third copies, not the home. The consequence is that **the blob carries no `Profile`**, which is the fact WO-183's stop condition turns on; that stop condition is carried forward unchanged (see `## Interfaces`). Resolving the three-way disagreement is the architect's, on BP-012, BP-025 and BP-056; it is reported with this block's return.",
-          "disposition": "open"
-        },
-        {
-          "claim": "BP-011's `## Data model delta` says it \"Writes the `questions`, `market`, `rivals` and **`coherence`** sections of `scans.report jsonb`\", and `StoredReport` has no `coherence` field — it carries `correctionState: CorrectionState` (BP-028's value domain) and nothing holding a `CoherenceVerdict`. Following BP-012 verbatim means a coherence verdict has nowhere in the blob to live. Reported rather than fixed: widening `StoredReport` is BP-012's author's, not this work order's.",
-          "disposition": "open"
-        },
-        {
-          "claim": "`OnPageFacts` is declared by WO-251 and by no blueprint; `SerpResult` is declared by WO-023 in `src/lib/vendors/dataforseo/types.ts` and by no blueprint, though BP-012's `StoredReport` attributes it to BP-026 in a comment. Both are imported by this file at the path its author ships it at. If either ships under a different name, this is a `blocked-by` on that work order added at that moment.",
-          "disposition": "open"
-        },
-        {
-          "claim": "BP-012's `readCurrentReport(domain): Promise<StoredReport | null>` exists before this WO runs, and `StoredReport` carries the fields the control table reads. **Discharged 2026-08-31**: BP-012 decision 3 declares `StoredReport`, and the three fields this table reads are on it by name — `measuredAt`, `complete` and `fromIncompleteRescan`. This WO imports the type and defines no local reader interface; the remaining assumption is only that BP-012's module exists before this one runs, which `depends-on` does not express because the type is another node's",
-          "disposition": "confirmed"
-        },
-        {
-          "claim": "BP-005 pins `FREE_RESCAN_WINDOW_D: 7` and `FAILURE_COOLDOWN_H: 24`. `structure.md` rule 5 puts every number in `constants.ts`; this WO imports them and declares none",
           "disposition": "open"
         }
       ],
@@ -12111,6 +12087,75 @@
       ],
       "supersedes": [],
       "file": "sdlc-factory/docs/work-orders/WO-285.md"
+    },
+    "WO-286": {
+      "id": "WO-286",
+      "type": "work-order",
+      "title": "The stored report read and what a visit resolves to — StoredReport declared once, one indexed read, the eight-row order and the one control",
+      "status": "approved",
+      "implements": [
+        "BP-012",
+        "BP-022",
+        "REQ-001",
+        "REQ-002",
+        "REQ-003"
+      ],
+      "depends-on": [
+        "WO-001",
+        "WO-006",
+        "WO-018",
+        "WO-023",
+        "WO-051",
+        "WO-057",
+        "WO-072",
+        "WO-075",
+        "WO-076",
+        "WO-078",
+        "WO-081",
+        "WO-087",
+        "WO-251",
+        "WO-267",
+        "WO-277",
+        "WO-280"
+      ],
+      "blocked-by": [
+        "WO-023",
+        "WO-072",
+        "WO-075",
+        "WO-076",
+        "WO-078",
+        "WO-081",
+        "WO-087",
+        "WO-251"
+      ],
+      "rests-on": [
+        {
+          "claim": "Three blueprints describe the blob's `market` section differently and this work order follows BP-012. BP-012 declares `market: Measured<SuggestionRow[]>`; BP-025's `## Data model delta` declares `report.market = { profile, suggestions, totalVolume }`; BP-056's `## Data model delta` reads `report.market.category`, which is a field of BP-025's `Profile` and reachable under neither of the other two shapes. BP-012 is followed because its decision 3 is the corpus's only declaration of the type and states the ownership ground — \"This node owns it because it assembles the blob and is its only writer\" — and because rule 2.4 makes the other two the second and third copies, not the home. The consequence is that **the blob carries no `Profile`**, which is the fact WO-183's stop condition turns on; that stop condition is carried forward unchanged (see `## Interfaces`). Resolving the three-way disagreement is the architect's, on BP-012, BP-025 and BP-056; it is reported with this block's return.",
+          "disposition": "open"
+        },
+        {
+          "claim": "BP-011's `## Data model delta` says it \"Writes the `questions`, `market`, `rivals` and **`coherence`** sections of `scans.report jsonb`\", and `StoredReport` has no `coherence` field — it carries `correctionState: CorrectionState` (BP-028's value domain) and nothing holding a `CoherenceVerdict`. Following BP-012 verbatim means a coherence verdict has nowhere in the blob to live. Reported rather than fixed: widening `StoredReport` is BP-012's author's, not this work order's.",
+          "disposition": "open"
+        },
+        {
+          "claim": "`OnPageFacts` is declared by WO-251 and by no blueprint; `SerpResult` is declared by WO-023 in `src/lib/vendors/dataforseo/types.ts` and by no blueprint, though BP-012's `StoredReport` attributes it to BP-026 in a comment. Both are imported by this file at the path its author ships it at. If either ships under a different name, this is a `blocked-by` on that work order added at that moment.",
+          "disposition": "open"
+        },
+        {
+          "claim": "BP-012's `readCurrentReport(domain): Promise<StoredReport | null>` exists before this WO runs, and `StoredReport` carries the fields the control table reads. **Discharged 2026-08-31**: BP-012 decision 3 declares `StoredReport`, and the three fields this table reads are on it by name — `measuredAt`, `complete` and `fromIncompleteRescan`. This WO imports the type and defines no local reader interface; the remaining assumption is only that BP-012's module exists before this one runs, which `depends-on` does not express because the type is another node's",
+          "disposition": "confirmed"
+        },
+        {
+          "claim": "BP-005 pins `FREE_RESCAN_WINDOW_D: 7` and `FAILURE_COOLDOWN_H: 24`. `structure.md` rule 5 puts every number in `constants.ts`; this WO imports them and declares none",
+          "disposition": "open"
+        },
+        {
+          "claim": "None of the eight section types this order's `StoredReport` imports exists on disk: `SuggestionRow`, `Question`, `AiAnswersCard`, `SerpResult`, `RivalCandidate`, `RivalSize`, `OnPageFacts` and `CorrectionState` have zero declarations and zero occurrences anywhere under `src/`, and neither `src/lib/market/` nor `src/lib/vendors/` exists as a directory. **Confirmed 2026-09-04** by exhaustive grep of `src/` for each of the eight names (declaration form and bare occurrence, both zero) plus a full file listing of `src/`, re-run by the planner independently of the implementer's own sweep. Only `Verdict` (`src/lib/measure/verdict.ts`, WO-277), `RobotsPolicy` (`src/lib/egress/types.ts`, WO-018), `Measured` (`src/lib/measure/measured.ts`) and `CanonicalDomain` (`src/lib/scan/domain.ts`, WO-051) of the composed names are present. This is the fact `blocked-by` records as a state (rule 2.3); the forward-looking half — whether each owning order ships its type under that name at that path — stays the fourth row above, still `open`.",
+          "disposition": "confirmed"
+        }
+      ],
+      "supersedes": [],
+      "file": "sdlc-factory/docs/work-orders/WO-286.md"
     }
   }
 }
