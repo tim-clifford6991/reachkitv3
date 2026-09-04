@@ -2,55 +2,55 @@
   "coverage": {
     "satisfies": {
       "carrying": 44,
-      "total": 486
+      "total": 495
     },
     "covers": {
       "carrying": 32,
-      "total": 486
+      "total": 495
     },
     "implements": {
       "carrying": 274,
-      "total": 486
+      "total": 495
     },
     "decides-for": {
-      "carrying": 33,
-      "total": 486
+      "carrying": 34,
+      "total": 495
     },
     "about": {
       "carrying": 0,
-      "total": 486
+      "total": 495
     },
     "depends-on": {
       "carrying": 400,
-      "total": 486
+      "total": 495
     },
     "blocked-by": {
       "carrying": 8,
-      "total": 486
+      "total": 495
     },
     "cites-retired": {
       "carrying": 0,
-      "total": 486
+      "total": 495
     },
     "supersedes": {
       "carrying": 30,
-      "total": 486
+      "total": 495
     },
     "rests-on": {
       "carrying": 298,
-      "total": 486
+      "total": 495
     },
     "code": {
       "carrying": 63,
-      "total": 486
+      "total": 495
     },
     "exercises": {
       "carrying": 6,
-      "total": 486
+      "total": 495
     },
     "origin": {
       "carrying": 0,
-      "total": 486
+      "total": 495
     }
   },
   "nodes": {
@@ -849,6 +849,25 @@
       "rests-on": [],
       "supersedes": [],
       "file": "sdlc-factory/docs/decisions/ADR-095.md"
+    },
+    "ADR-096": {
+      "id": "ADR-096",
+      "type": "decision",
+      "title": "LANDMINE — UnmeasuredReason stays two-membered: a schema-parse failure is `undeterminable`, and `unparseable` lives only in the log",
+      "status": "accepted",
+      "decides-for": [
+        "BP-009",
+        "BP-010",
+        "BP-019",
+        "BP-020",
+        "BP-024",
+        "BP-027"
+      ],
+      "depends-on": [],
+      "blocked-by": [],
+      "rests-on": [],
+      "supersedes": [],
+      "file": "sdlc-factory/docs/decisions/ADR-096.md"
     },
     "BP-001": {
       "id": "BP-001",
@@ -5304,6 +5323,86 @@
       ],
       "file": "sdlc-factory/docs/work-orders/WO-281.md"
     },
+    "TST-039": {
+      "id": "TST-039",
+      "type": "validation",
+      "title": "WO-023 validation report",
+      "status": "pass",
+      "validates": [
+        "WO-023"
+      ],
+      "file": "sdlc-factory/docs/work-orders/WO-023.md"
+    },
+    "TST-040": {
+      "id": "TST-040",
+      "type": "validation",
+      "title": "WO-026 validation report",
+      "status": "pass",
+      "validates": [
+        "WO-026"
+      ],
+      "file": "sdlc-factory/docs/work-orders/WO-026.md"
+    },
+    "TST-041": {
+      "id": "TST-041",
+      "type": "validation",
+      "title": "WO-071 validation report",
+      "status": "pass",
+      "validates": [
+        "WO-071"
+      ],
+      "file": "sdlc-factory/docs/work-orders/WO-071.md"
+    },
+    "TST-042": {
+      "id": "TST-042",
+      "type": "validation",
+      "title": "WO-251 validation report",
+      "status": "pass",
+      "validates": [
+        "WO-251"
+      ],
+      "file": "sdlc-factory/docs/work-orders/WO-251.md"
+    },
+    "TST-043": {
+      "id": "TST-043",
+      "type": "validation",
+      "title": "WO-077 validation report",
+      "status": "pass",
+      "validates": [
+        "WO-077"
+      ],
+      "file": "sdlc-factory/docs/work-orders/WO-077.md"
+    },
+    "TST-044": {
+      "id": "TST-044",
+      "type": "validation",
+      "title": "WO-080 validation report",
+      "status": "pass",
+      "validates": [
+        "WO-080"
+      ],
+      "file": "sdlc-factory/docs/work-orders/WO-080.md"
+    },
+    "TST-045": {
+      "id": "TST-045",
+      "type": "validation",
+      "title": "WO-081 validation report",
+      "status": "pass",
+      "validates": [
+        "WO-081"
+      ],
+      "file": "sdlc-factory/docs/work-orders/WO-081.md"
+    },
+    "TST-046": {
+      "id": "TST-046",
+      "type": "validation",
+      "title": "WO-287 validation report",
+      "status": "pass",
+      "validates": [
+        "WO-287"
+      ],
+      "file": "sdlc-factory/docs/work-orders/WO-287.md"
+    },
     "WO-001": {
       "id": "WO-001",
       "type": "work-order",
@@ -5772,7 +5871,8 @@
       "rests-on": [
         {
           "claim": "`Measured<T>` is BP-010's (`src/lib/measure/`, per `registry/capabilities.md`) and does not exist in this repo. BP-008's whole public interface returns it. This work order declares a local type-only import from `@/lib/measure` and cannot type-check until BP-010's work order lands; the type is consumed, never re-declared here (rule 7.1). The type fan-out check the planner would normally run — make the type edit alone, run the project's type-check, take the erroring files as the plan — could not be run: the repo holds no TypeScript to check.",
-          "disposition": "open"
+          "disposition": "confirmed",
+          "reason": "Implementer, 2026-09-04 (rule 2.3b). `Measured<T>` exists now — `src/lib/measure/measured.ts`, shipped by WO-277 (consolidating WO-052) under BP-024, not BP-010 as this row assumed; the discriminated union and its constructors are exactly what BP-008's interface returns. The type-fan-out check the row said could not be run, ran: `index.ts` imports `Measured` from `@/lib/measure/measured` (type-only) and `npm run typecheck` passes clean over the whole repo including this WO's three new files and its test. The row's blocking condition — no `Measured<T>` to type-check against — no longer holds; consumed, never re-declared, as the row itself required. Re-confirmed independently, validator, 2026-09-04 (TST-039, rule 2.3b): read `src/lib/measure/measured.ts` directly — exports `Measured<T>`, `measured()`, `measuredZero()`, `unmeasured()` — and `src/lib/vendors/dataforseo/index.ts` line 41, `import type { Measured } from \"@/lib/measure/measured\"`; `npm run typecheck` re-run clean over the whole repo on this session's own pass."
         }
       ],
       "supersedes": [],
@@ -5832,7 +5932,28 @@
       "rests-on": [
         {
           "claim": "`Measured<T>` is BP-010's (`src/lib/measure/`, per `registry/capabilities.md`) and does not exist in this repo. `llm()` returns it. The type is consumed by a type-only import and never re-declared here (rule 7.1); this work order cannot type-check until BP-010's work order lands. The planner's type fan-out check could not be run: the repo holds no TypeScript to check.",
-          "disposition": "open"
+          "disposition": "refuted",
+          "reason": "Implementer, 2026-09-04. Stale (the WO's own instruction: \"Rows asserting 'no source tree exists on disk' are stale — judge them against what you see\"). `Measured<T>`, `measured()`, `unmeasured()` and `UnmeasuredReason` exist today at `src/lib/measure/measured.ts` (its own header: \"WO-277 … BP-024\"), a plain discriminated union exactly as BP-010 decision 2 describes. `src/lib/llm/index.ts` imports it as a type-only import and `npm run typecheck` is clean. Not blocked. Re-confirmed independently, validator, 2026-09-04 (TST-040, rule 2.3b): read `src/lib/llm/index.ts` line 56 directly, `npm run typecheck` re-run clean."
+        },
+        {
+          "claim": "`llm()`'s `call.site` is declared `LlmCallSite` (BP-009 `## Public interface`), but that union is WO-027's own file (`src/lib/llm/call-sites.ts`, `depends-on: [WO-026]` — it lands *after* this order) and WO-027's file plan never lists `index.ts` as a modify row. `src/lib/llm/index.ts` therefore types `call.site` as `string` instead — every member `LlmCallSite` will ever have is a string literal, so this is source-compatible with any caller WO-027 adds; nothing here needs to change when that union lands, unless the architect prefers `index.ts` narrowed to the exact declared type, in which case WO-027 gains a one-line modify row.",
+          "disposition": "confirmed",
+          "reason": "Implementer, 2026-09-04: for the architect to confirm at WO-027's own dispatch — either `string` stands (no code change) or WO-027's file plan adds `src/lib/llm/index.ts` as a one-line modify row. Validator, 2026-09-04 (TST-040, rule 2.3b): the underlying fact is confirmed by direct read (`index.ts`'s `call.site` is `string`, source-compatible with any literal WO-027 adds), but the design choice this row raises — narrow now or leave widened — is WO-027's own dispatch and the architect's to make, not observable from this build. Left `open`, deliberately: WO-027 has not landed, so no build available to this validation pass can discharge it, and it is not `undischargeable` (2.3a) since WO-027's own build will resolve it either way. Blocks WO-026's `done` gate until WO-027 lands or the architect rules directly. **Architect, 2026-09-04 — ruled, and the row is `confirmed`: the claim is true as stated and nothing WO-026 shipped is wrong, so `refuted` would misread it.** The design question it raises is settled in BP-009 `## Decisions` 2: `call.site` is **narrowed** to `LlmCallSite`, and WO-027 is what narrows it — BP-009 decision 1 requires the closed set to be 'enforced by the type system', and a `string` parameter at the only seam that reaches a model enforces nothing, which is the review burden decision 1 explicitly rejected. Consequence carried on BP-009 decision 2 for the planner: **WO-027's file plan gains `src/lib/llm/index.ts` as a modify row** (one import, one parameter type) and its test plan gains the non-member-is-a-type-error assertion. No change to `src/` in this work order: the widening is source-compatible in both directions, so WO-026's own code and tests stand as validated. Cost of reversing: one line, one direction, no data and no caller."
+        },
+        {
+          "claim": "BP-009 `## Error & edge behavior` states a schema-parse failure is `unmeasured` with reason `unparseable`. The shipped `Measured<T>` (`src/lib/measure/measured.ts`, BP-024, WO-277 — outside this WO's file plan, rule 7.1: one owner per capability) declares `UnmeasuredReason` as the closed `'undeterminable' | 'not_attempted'` — `unparseable` is not a member. `src/lib/llm/index.ts` maps both a schema-parse failure and model unavailability to `undeterminable` ('nothing returned, unreadable, or a data source did not answer' — BP-024's own words, which already cover an unparsed response) rather than invent a third member of a type this WO does not own.",
+          "disposition": "confirmed",
+          "reason": "Implementer, 2026-09-04: for the architect — either amend BP-009's prose to read `undeterminable` (the type it must actually return), or amend `UnmeasuredReason` at BP-024/BP-010 to add `unparseable`. This implementer chose the former reading rather than widen a type outside this file plan. Validator, 2026-09-04 (TST-040, rule 2.3b): the factual mismatch is confirmed by direct read — `UnmeasuredReason` has no `unparseable` member, and `index.ts` maps both parse failure and unavailability to `undeterminable`, matching the implementer's stated choice. Which artifact moves is a rule-7.1 ownership call this validation pass cannot make. Left `open`, deliberately, for the architect; blocks WO-026's own `done` gate until ruled. **Architect, 2026-09-04 — ruled, and the row is `confirmed`: the mismatch was real and the implementer read it the right way round.** **BP-009's prose was the wrong artifact and it moved**; `UnmeasuredReason` stays two-membered. Reasoning is ADR-096 (landmine), which earns a file under rule 2.2 because the load-bearing half of the argument lives in nodes BP-024 does not own: each member of that union is an **owner-owed customer sentence** (BP-020 decision 3's `unmeasured.undeterminable` / `unmeasured.not-attempted` keys, both marked owner-owed; BP-019's `unmeasuredLine: CopyKey`, 'differs by reason'), so a third member is a customer-visible string under §1 — never a type edit — plus a third stored reason value in two `jsonb` columns and an unranked member in `worseReason` (BP-024 decision 3). `unparseable` keeps the one home where it is useful and harmless: `ParseOutcome` in `src/lib/llm/index.ts`, reaching the log field BP-009's `## NFR budget` already specifies ('parse outcome'). `src/lib/llm/index.ts` is correct as shipped and changes nothing; BP-009 `## Error & edge behavior` now reads `undeterminable`, so this WO's `## Test plan` row 1 quotes a reason the type actually has and the test itself is unaffected."
+        },
+        {
+          "claim": "No approved artifact states a machine-readable model id for either tier. BP-009 `## Public interface` declares only the abstract `tier: 'nano' | 'haiku'` union; the charter's own stack row (`00-project.md` / `BUILD.md` §1) reads 'Anthropic Haiku 4.5 (prose) + a nano-class model (scaffolding)' — a class, not a name, for the second tier. `src/lib/llm/tiers.ts` pinned `haiku: 'claude-haiku-4-5'` (transcribing the charter's own family name) and, in this WO's first commit, `nano: 'claude-fable-5'` (chosen under rule 1.1 as an internal, reversible id).",
+          "disposition": "confirmed",
+          "reason": "2026-09-04, coordinator review + implementer correction. `haiku`'s id is confirmed against Anthropic's current catalogue, matching `INFERENCE_PRICE_BOOK.haiku` exactly ($1.00/$5.00 per MTok = 100/500¢). `nano`'s first id, `claude-fable-5`, was real but Anthropic's *most expensive* tier ($10.00/$50.00 per MTok) wired into the cheapest lane — a 50×/40× under-count no test could see, since the price book and the id agreed with each other and were both wrong together. Corrected to `nano: 'claude-haiku-4-5'` — the cheapest real model in the current catalogue, still 5× the `INFERENCE_PRICE_BOOK.nano` pin rather than 50×/40× — an interim, not a final answer. Validator, 2026-09-04 (TST-040, rule 2.3b): the row's core claim — no approved artifact states a machine-readable model id, so the implementer must choose one under rule 1.1 — is confirmed, and the choice is now correctly made, pinned and regression-guarded (mutation re-run: setting `nano` back to `claude-fable-5` kills 2 tests). Choosing a model id is a parameter (rule 1.1), not a promise change, and does not itself require owner escalation. Settled, not left open. The unresolved consequence — no real model prices at the pin's own figure — is the next row, dispositioned separately."
+        },
+        {
+          "claim": "BP-005's `INFERENCE_PRICE_BOOK.nano` pin (20/125 ¢/MTok, cut from BP-005's own `## Public interface`) matches no model in Anthropic's current catalogue — the cheapest available at any tier is Haiku 4.5 at 100/500 ¢/MTok. With any real model behind the `nano` tier, `llm()`'s ledger under-records nano spend relative to what the vendor actually bills, and `CAPS.FREE_C`'s cap arithmetic (BP-007/WO-276's cap-check machinery) is computed from a price the product cannot actually buy at — the free-scan spend ceiling silently fails open. This is exactly the seam WO-026 was rated `risk: high` for.",
+          "disposition": "open",
+          "reason": "Implementer, 2026-09-04: named explicitly as the architect's and the owner's to resolve, not a code change in this work order — a price is the owner's to move under the decision-rights table (rule 1.2, §1), and it changes what a free scan actually costs to run. Validator, 2026-09-04 (TST-040, rule 2.3b): left `open`, not `undischargeable` — the claim (\"no model in Anthropic's current catalogue prices at 20/125¢/MTok\") is in principle dischargeable by a cited, dated vendor-pricing source (constitution §8: \"cite your source — verbatim, with a URL and a date\"), and no such evidence file exists in `registry/evidence/`; this validation session has no browsing tool to produce one and does not take the implementer's uncited catalogue check on report per §8. Record gap, not a code defect — the fix is either a cited `RESEARCH-*.md` evidence file confirming the mismatch, or the owner's ruling on whether to move `INFERENCE_PRICE_BOOK.nano`. Per rule 2.3b a disposition that changes what is promised (the free scan's actual cost) reaches the owner — it does here, via this `open` state naming the architect/owner, not via a validator ruling on the price itself. This is the third `open` row WO-026 carries on itself and blocks its own `done` gate; deliberate, not an oversight. **Architect, 2026-09-04 — the evidence gap the validator named is closed and the row stays `open`, because what is left is a price and a price is the owner's (§1's decision-rights table).** The cited, dated source is now `registry/evidence/RESEARCH-nano-tier-pricing.md` — read its §0 before quoting it: its vendor figures come from **the `claude-api` skill's bundled model table, cached 2026-06-24, read 2026-09-04**, which is a cached table and **not** a fetch of Anthropic's live pricing page; no session in this chain performed one and no URL is quoted, because none was accessed. The finding is sharper than the row as written: §3 of that file shows the pin is not an error at all but a faithful transcription of `DATA-COSTS.md` §1's row 'Nano class (GPT-nano / Flash-Lite) | $0.20 · $1.25' — **a non-Anthropic price**, matching the charter's own stack row, which names Haiku 4.5 but only a *class* for the second tier, and matching `tiers.ts`'s separate `env.NANO_API_KEY` credential. So the undecided thing is **which vendor sells the nano tier**: option A (a second vendor, pin stays 20/125, a second SDK lands behind the seam) or option B (Anthropic's cheapest, pin moves to 100/500, the free scan gains roughly +1.8 to +2.4c per scan and its worst case goes from 9.0c to ~11.4c against an owner-ruled 12c `CAPS.FREE_C`). That is what a free scan costs to run — the owner's, not this architect's, and not answered here. **Not `undischargeable`: one owner ruling ends it.** It continues to block this WO's `done` gate, correctly."
         }
       ],
       "supersedes": [],
@@ -6976,7 +7097,8 @@
       "rests-on": [
         {
           "claim": "The seams this WO imports are declared but not yet built: `llm()` and the `'profile'` call site (BP-009), `CostContext` (BP-007), `Measured<T>` (BP-010). Their work orders are in sibling planners' blocks and were cut concurrently with this one, so they cannot be enumerated in `depends-on` here. If any seam is absent when this WO starts, that is a `blocked-by` on the WO that owns it, added at that moment.",
-          "disposition": "open"
+          "disposition": "confirmed",
+          "reason": "Observed directly at implementation time. `src/lib/llm/index.ts` exports `llm()` and accepts an arbitrary `site: string` (WO-026, `done`) — the `'profile'` call site needs no separate declaration to be usable, it is passed as a literal; `src/lib/costs/index.ts` exports `CostContext` (WO-276, `done`); `src/lib/measure/measured.ts` exports `Measured<T>` (WO-277, `done`). All three imported without a stub or a local redeclaration; no `blocked-by` was needed. Re-confirmed independently, validator, 2026-09-04 (TST-041, rule 2.3b): read all three exports directly (`src/lib/llm/index.ts` line 214 `llm()`; `src/lib/costs/index.ts` line 42 `CostContext`; `src/lib/measure/measured.ts` line 19 `Measured<T>`) and `npm run typecheck` re-run clean."
         }
       ],
       "supersedes": [],
@@ -7198,6 +7320,10 @@
         {
           "claim": "`COHERENCE: { minMeasuredSearches: 3; shareDivisor: 4; minAppearances: 2 }` is declared in BP-005's `## Public interface` — verbatim, `export const COHERENCE: { minMeasuredSearches: 3; shareDivisor: 4; minAppearances: 2 }`, under the header 'Added 2026-08-31 (decision 3)' and traced there to 'BP-028 · REQ-094 c2 · BUILD §6.7 step 5'. Confirmed 2026-08-31: BP-028's `## NFR budget` note that it was 'not yet listed in BP-005's interface, reported to the parent' is spent and BP-028 now records the pin as declared. `src/lib/config/constants.ts` is BP-005's file and is not touched here; if the block is absent from that file when this WO starts, that is a `blocked-by` on BP-005's work order, added at that moment.",
           "disposition": "confirmed"
+        },
+        {
+          "claim": "BP-028's `## Public interface` names `checkCoherence`'s parameter type `SerpResult`, BP-008's canonical product type (declared at `src/lib/vendors/dataforseo/types.ts` under WO-023's file plan — WO-023 is running concurrently, not yet landed on this branch, and this WO's own `depends-on` omits it). This WO's own test plan requires `check.ts` to resolve no import into `src/lib/vendors/` (the purity clause, quoted in `## Test plan`), which forbids importing BP-008's `SerpResult` even type-only, and no neutral re-export of it exists yet under `src/lib/market/` for a pure leaf to import instead. Verified 2026-09-04: `src/lib/vendors/` does not exist anywhere in this worktree (`find src -type d` lists no such path), so the gap is real, not stale. Implemented as a local, minimal, structural type in `check.ts` — `interface SerpResult { organic: readonly { domain: string }[] }` — covering exactly the fields `checkCoherence` reads (BP-028 step 3: organic top-ten appearances only, never `ai_overview`); any real `SerpResult` satisfies it structurally, so no caller-side cast is needed once BP-008's type lands. This is a second declaration of one name under rule 2.4/7.1 and is the architect's to resolve — the same shape of cross-node disagreement ADR-095 settled for `report.market` and `coherence` — not decided unilaterally by this WO. Flagged in the WO-080 implementer return, once, per rule 4.2.",
+          "disposition": "open"
         }
       ],
       "supersedes": [],
@@ -11245,7 +11371,8 @@
         },
         {
           "claim": "`OnPageFacts` has no declared shape anywhere in the corpus. BP-010 names it in `measureDomain`'s return type and BP-012's `StoredReport` carries it as `onPage: OnPageFacts // BP-010`; six work orders (WO-184, WO-185, WO-186, WO-189, WO-191, WO-192) copy that line verbatim and none declares the type either. The shape in `## Interfaces` below is derived by this work order from BP-010's own module sentence — \"the parsers (headings, answer blocks, evidence density, schema, OG)\" — and from `BUILD.md` §5's named sub-measures, and is flagged for the architect to fold into BP-010's `## Public interface` (constitution rule 1.1: chosen, recorded, reversible). Reversal cost: one interface, no stored data — the blob is `jsonb` and no migration names these fields.",
-          "disposition": "open"
+          "disposition": "confirmed",
+          "reason": "Left open by the planner, for the validator to disposition. Validator, 2026-09-04 (TST-042, rule 2.3b): confirmed by direct read that the underlying fact holds — `BP-010.md`'s `## Public interface` still declares only `Drivers` and `Measured<T>`, names `OnPageFacts` solely in `measureDomain`'s return-type signature, and does not declare its shape; `BP-012.md` and six work orders (`WO-184`, `WO-185`, `WO-186`, `WO-189`, `WO-191`, `WO-192`, confirmed by grep) all use the type name without declaring it either. So the row's claim is true as stated. What remains unresolved is not observable from this build: whether the architect folds this WO's derived shape into BP-010's `## Public interface` verbatim, as flagged, is a structure decision reserved to the architect (rule 2.2), not something this validation pass or a future build alone would resolve on its own — it needs an architect pass over `BP-010.md` specifically. Left `open`, deliberately, not `undischargeable`: the fix is a one-file blueprint edit (reversal cost the row itself already states as low), well within a normal architect pass, so it is dischargeable in principle, just not by this validator. This is WO-251's only open row on itself and blocks its own `done` gate until the architect acts. **Architect, 2026-09-04 — acted, and the row is `confirmed`: the claim was true as stated, and `OnPageFacts` is now homed.** It is **BP-010's**, recorded as BP-010 `## Decisions` 5: `src/lib/measure/parse.ts` already fell to BP-010 under `structure.md` rule 2 (inside BP-010's `code:` globs, outside BP-024's five named files), and the type follows the file — one capability, one BP node, one module (rule 7.1). **The sixteen members were deliberately not transcribed into the blueprint** (rules 2.4 and 2.5): BP-010's `## Public interface` names `OnPageFacts`, bounds it ('counts only: no score, ratio, floor or band is a member') and cites the declaration by anchor — `src/lib/measure/parse.ts` › `export interface OnPageFacts` — whose own doc-comment already carries each field's `BUILD.md` §5 provenance, so a prose copy would be strictly less informative and would diverge on the first field added. `parseOnPage` and `visibleText` are named alongside it. **The shape this WO shipped is adopted unchanged**: it was compared member for member against the blueprint entry, so no code, test or stored blob moves, and BP-012 and the six work orders carrying `onPage: OnPageFacts // BP-010` are now citing a declaration that exists. Cost of reversing: one paragraph — the facts live inside the `jsonb` report blob and no migration names these fields."
         },
         {
           "claim": "BP-005's `constants.ts` carries the direct-answer character window. BP-010 decision 2 assigns it there by name — \"the coefficients that are numbers (band thresholds, the answerability floor, the direct-answer character window) are pins in BP-005\" — and `BUILD.md` §5 fixes its value: \"`directAnswers` = question headings whose first block is 40–320 visible chars ÷ all headings × 100\". BP-005's `## Public interface` as it stands on disk declares no such pin, so WO-006 will not have written one. See the stop condition under `## Interfaces`.",

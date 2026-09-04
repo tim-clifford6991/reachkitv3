@@ -7,7 +7,7 @@
 - `satisfies` is projected from 44 of 63 blueprints — the rest are silent on it.
 - `implements` is projected from 274 of 274 work orders — the rest are silent on it.
 - `covers` is projected from 32 of 63 blueprints — the rest are silent on it.
-- `verdict` is projected from 30 of 38 validation nodes — the rest declare none and render `unknown`.
+- `verdict` is projected from 38 of 46 validation nodes — the rest declare none and render `unknown`.
 
 One row per chain leg reached from an approved requirement's `satisfies` edges — this is the DERIVATION chain (rule 5.4): `satisfies` means *this node was cut from that requirement* and it is the only gate-bearing edge walked here. `—` means the chain stops there — nothing downstream cites this node (yet, or ever; see orphans.md for which).
 
@@ -56,14 +56,14 @@ One row per chain leg reached from an approved requirement's `satisfies` edges �
 | REQ-004 | BP-024 | WO-277 | TST-031 (pass) |
 | REQ-004 | BP-024 | WO-282 | — |
 | REQ-005 | — | — | — |
-| REQ-006 | BP-025 | WO-071 | — |
+| REQ-006 | BP-025 | WO-071 | TST-041 (pass) |
 | REQ-006 | BP-025 | WO-072 | — |
 | REQ-006 | BP-025 | WO-073 | — |
 | REQ-006 | BP-025 | WO-074 | — |
 | REQ-006 | BP-025 | WO-075 | — |
 | REQ-006 | BP-025 | WO-076 | — |
 | REQ-007 | — | — | — |
-| REQ-008 | BP-026 | WO-077 | — |
+| REQ-008 | BP-026 | WO-077 | TST-043 (pass) |
 | REQ-008 | BP-026 | WO-078 | — |
 | REQ-008 | BP-026 | WO-079 | — |
 | REQ-009 | BP-027 | WO-064 | — |
@@ -268,9 +268,9 @@ One row per chain leg reached from an approved requirement's `satisfies` edges �
 | REQ-093 | BP-020 | WO-279 | TST-028 (unknown) |
 | REQ-093 | BP-020 | WO-279 | TST-037 (pass) |
 | REQ-093 | BP-020 | WO-285 | — |
-| REQ-093 | BP-020 | WO-287 | — |
-| REQ-094 | BP-028 | WO-080 | — |
-| REQ-094 | BP-028 | WO-081 | — |
+| REQ-093 | BP-020 | WO-287 | TST-046 (pass) |
+| REQ-094 | BP-028 | WO-080 | TST-044 (pass) |
+| REQ-094 | BP-028 | WO-081 | TST-045 (pass) |
 | REQ-094 | BP-028 | WO-082 | — |
 | REQ-095 | BP-041 | WO-188 | — |
 | REQ-095 | BP-041 | WO-189 | — |
