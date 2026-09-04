@@ -21,6 +21,15 @@
 // value — a transcription of REQ-004's own "—" character, on the same
 // footing as the thirteen band words, and the reason no dash literal
 // appears anywhere in `src/lib/presentation/`.
+//
+// 2026-09-04, separately again: WO-287 (owner ruling 2026-09-04, sheet 2 —
+// `registry/evidence/RULING-copy-2026-09-04.json`) fills
+// `unmeasured.undeterminable` and `unmeasured.not-attempted`, filled
+// verbatim, byte for byte; neither is owner-owed any longer. Each declares
+// one `what: "text"` slot — the subject that could not be measured — the
+// slot the ruled sentence itself takes; `renderMeasured` (BP-019,
+// `src/lib/presentation/measured.ts`) gains the matching options member
+// to supply it. `unmeasured.dash` is untouched.
 import type { CopyPartition } from "../registry.ts";
 
 export const LAWS_COPY = Object.freeze({
@@ -63,7 +72,7 @@ export const LAWS_COPY = Object.freeze({
     "",
     { slots: { pageTitle: "text" }, fixedBy: "REQ-093 c2" },
   ],
-  "unmeasured.undeterminable": ["", { law: "unmeasured", slots: {}, fixedBy: "REQ-004 c6" }],
-  "unmeasured.not-attempted": ["", { law: "unmeasured", slots: {}, fixedBy: "REQ-004 c9" }],
+  "unmeasured.undeterminable": ["{what} couldn’t be measured — nothing came back that could be read.", { law: "unmeasured", slots: { what: "text" }, fixedBy: "REQ-004 c6" }],
+  "unmeasured.not-attempted": ["{what} wasn’t measured — the scan stopped early, before it got there.", { law: "unmeasured", slots: { what: "text" }, fixedBy: "REQ-004 c9" }],
   "unmeasured.dash": ["—", { law: "unmeasured", slots: {}, fixedBy: "REQ-004 c2" }],
 }) satisfies CopyPartition;

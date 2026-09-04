@@ -19,6 +19,11 @@ const SOURCE = readFileSync(SOURCE_PATH, "utf8");
 // without throwing.
 const FILLED_LINE_KEY = "stopped.work.line" as const;
 
+// A subject for `renderMeasured`'s `what` option (WO-287) in tests that do
+// not care about its content — it only needs to satisfy `unmeasuredLine`'s
+// declared `{what}` slot when the real key is passed.
+const WHAT = "the score";
+
 describe(
   'REQ-004 c2 — "…one written line beside it names the one driver … Where the score could not be computed, criterion 3 governs the line instead." — measured · an unmeasured value renders the dash and nothing else',
   () => {
@@ -28,6 +33,7 @@ describe(
         const result = renderMeasured(unmeasured<number>(reason, AT), {
           format: (v) => String(v),
           unmeasuredLine: FILLED_LINE_KEY,
+          what: WHAT,
         });
         expect(result.text).toBe(copy("unmeasured.dash"));
         expect(result.isDash).toBe(true);
@@ -58,7 +64,7 @@ describe(
     ];
 
     it.each(cases.map((c) => [c.label, c.m] as const))("%s → isDash === (kind === 'unmeasured')", (_label, m) => {
-      const result = renderMeasured(m, { format, unmeasuredLine: FILLED_LINE_KEY });
+      const result = renderMeasured(m, { format, unmeasuredLine: FILLED_LINE_KEY, what: WHAT });
       expect(result.isDash).toBe(m.kind === "unmeasured");
       expect("line" in result).toBe(m.kind === "unmeasured");
     });
@@ -72,24 +78,19 @@ describe(
       const result = renderMeasured(unmeasured<number>("undeterminable", AT), {
         format: (v) => String(v),
         unmeasuredLine: FILLED_LINE_KEY,
+        what: WHAT,
       });
       expect(result.line).toBe(copy(FILLED_LINE_KEY));
     });
 
-    it("with the owner-owed unmeasured.undeterminable, renderMeasured throws and the message names the key", () => {
-      expect(() =>
-        renderMeasured(unmeasured<number>("undeterminable", AT), {
-          format: (v) => String(v),
-          unmeasuredLine: "unmeasured.undeterminable",
-        })
-      ).toThrow("unmeasured.undeterminable");
-      expect(() =>
-        renderMeasured(unmeasured<number>("undeterminable", AT), {
-          format: (v) => String(v),
-          unmeasuredLine: "unmeasured.undeterminable",
-        })
-      ).toThrow("owner-owed");
-    });
+    // The two assertions this describe block previously carried here —
+    // that `unmeasured.undeterminable` was owner-owed and that
+    // `renderMeasured` threw naming it — no longer discriminate anything:
+    // WO-287 fills that key, so the throw they asserted can no longer
+    // happen. Their replacement lives in
+    // `tests/presentation/copy/ruled-copy.test.ts` (`ruled-copy/unmeasured
+    // · the undeterminable line names its subject`), which asserts the
+    // filled key renders with its `{what}` slot substituted instead.
   }
 );
 
@@ -104,6 +105,7 @@ describe(
       const result = renderMeasured(measuredZero(zeroValue as never, AT), {
         format: format as (v: never) => string,
         unmeasuredLine: FILLED_LINE_KEY,
+        what: WHAT,
       });
       expect(result.text).toBe((format as (v: unknown) => string)(zeroValue));
       expect(result.isDash).toBe(false);
@@ -126,6 +128,7 @@ describe(
       const result = renderMeasured(unmeasured<number>("not_attempted", AT), {
         format: (v) => String(v),
         unmeasuredLine: FILLED_LINE_KEY,
+        what: WHAT,
       });
       expect(result.isDash).toBe(true);
       expect(result.text).not.toBe("0");
@@ -157,23 +160,34 @@ describe(
   () => {
     it("format is called exactly once on measured/zero, with m.value and no second argument; zero times on unmeasured", () => {
       const formatMeasured = vi.fn((v: number) => `${v}`);
-      renderMeasured(measured(7, AT), { format: formatMeasured, unmeasuredLine: FILLED_LINE_KEY });
+      renderMeasured(measured(7, AT), { format: formatMeasured, unmeasuredLine: FILLED_LINE_KEY, what: WHAT });
       expect(formatMeasured).toHaveBeenCalledTimes(1);
       expect(formatMeasured).toHaveBeenCalledWith(7);
 
       const formatZero = vi.fn((v: number) => `${v}`);
-      renderMeasured(measuredZero(0, AT), { format: formatZero, unmeasuredLine: FILLED_LINE_KEY });
+      renderMeasured(measuredZero(0, AT), { format: formatZero, unmeasuredLine: FILLED_LINE_KEY, what: WHAT });
       expect(formatZero).toHaveBeenCalledTimes(1);
       expect(formatZero).toHaveBeenCalledWith(0);
 
       const formatUnmeasured = vi.fn((v: number) => `${v}`);
-      renderMeasured(unmeasured<number>("undeterminable", AT), { format: formatUnmeasured, unmeasuredLine: FILLED_LINE_KEY });
-      renderMeasured(unmeasured<number>("not_attempted", AT), { format: formatUnmeasured, unmeasuredLine: FILLED_LINE_KEY });
+      renderMeasured(unmeasured<number>("undeterminable", AT), {
+        format: formatUnmeasured,
+        unmeasuredLine: FILLED_LINE_KEY,
+        what: WHAT,
+      });
+      renderMeasured(unmeasured<number>("not_attempted", AT), {
+        format: formatUnmeasured,
+        unmeasuredLine: FILLED_LINE_KEY,
+        what: WHAT,
+      });
       expect(formatUnmeasured).not.toHaveBeenCalled();
     });
 
     it("renderMeasured called twice with identical arguments returns deep-equal results — no module-level mutable state", () => {
-      const args = [measured(7, AT), { format: (v: number) => `${v}`, unmeasuredLine: FILLED_LINE_KEY }] as const;
+      const args = [
+        measured(7, AT),
+        { format: (v: number) => `${v}`, unmeasuredLine: FILLED_LINE_KEY, what: WHAT },
+      ] as const;
       const a = renderMeasured(...args);
       const b = renderMeasured(...args);
       expect(a).toEqual(b);
