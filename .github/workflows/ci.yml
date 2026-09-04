@@ -53,9 +53,9 @@ jobs:
           cache: npm
       - uses: supabase/setup-cli@v1
         with:
-          version: 2.116.0
+          version: latest
       - run: npm ci
-      - run: supabase start -x studio,imgproxy,inbucket,edge-runtime,logflare,vector
+      - run: supabase start -x studio,imgproxy,mailpit,edge-runtime,logflare,vector
       - name: export local credentials under both current and WO-284 names
         run: |
           eval "$(supabase status -o env | sed 's/^/export /')"
