@@ -215,13 +215,7 @@
 - WO-250 (work-order, approved) — no TST section validates it. sdlc-factory/docs/work-orders/WO-250.md
 - WO-271 (work-order, approved) — no TST section validates it. sdlc-factory/docs/work-orders/WO-271.md
 - WO-273 (work-order, approved) — no TST section validates it. sdlc-factory/docs/work-orders/WO-273.md
-- WO-277 (work-order, approved) — no TST section validates it. sdlc-factory/docs/work-orders/WO-277.md
-- WO-278 (work-order, approved) — no TST section validates it. sdlc-factory/docs/work-orders/WO-278.md
-- WO-280 (work-order, approved) — no TST section validates it. sdlc-factory/docs/work-orders/WO-280.md
-- WO-281 (work-order, approved) — no TST section validates it. sdlc-factory/docs/work-orders/WO-281.md
 - WO-282 (work-order, approved) — no TST section validates it. sdlc-factory/docs/work-orders/WO-282.md
-- WO-283 (work-order, approved) — no TST section validates it. sdlc-factory/docs/work-orders/WO-283.md
-- WO-284 (work-order, approved) — no TST section validates it. sdlc-factory/docs/work-orders/WO-284.md
 - WO-285 (work-order, approved) — no TST section validates it. sdlc-factory/docs/work-orders/WO-285.md
 - WO-286 (work-order, approved) — no TST section validates it. sdlc-factory/docs/work-orders/WO-286.md
 

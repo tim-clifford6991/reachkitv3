@@ -7,7 +7,7 @@
 - `satisfies` is projected from 44 of 63 blueprints — the rest are silent on it.
 - `implements` is projected from 273 of 273 work orders — the rest are silent on it.
 - `covers` is projected from 32 of 63 blueprints — the rest are silent on it.
-- `verdict` is projected from 22 of 29 validation nodes — the rest declare none and render `unknown`.
+- `verdict` is projected from 30 of 38 validation nodes — the rest declare none and render `unknown`.
 
 One row per chain leg reached from an approved requirement's `satisfies` edges — this is the DERIVATION chain (rule 5.4): `satisfies` means *this node was cut from that requirement* and it is the only gate-bearing edge walked here. `—` means the chain stops there — nothing downstream cites this node (yet, or ever; see orphans.md for which).
 
@@ -21,8 +21,9 @@ One row per chain leg reached from an approved requirement's `satisfies` edges �
 | REQ-001 | BP-022 | WO-068 | — |
 | REQ-001 | BP-022 | WO-069 | — |
 | REQ-001 | BP-022 | WO-070 | TST-026 (pass) |
-| REQ-001 | BP-022 | WO-280 | — |
-| REQ-001 | BP-022 | WO-281 | — |
+| REQ-001 | BP-022 | WO-280 | TST-032 (pass) |
+| REQ-001 | BP-022 | WO-281 | TST-036 (unknown) |
+| REQ-001 | BP-022 | WO-281 | TST-038 (pass) |
 | REQ-001 | BP-022 | WO-282 | — |
 | REQ-001 | BP-022 | WO-286 | — |
 | REQ-002 | BP-022 | WO-051 | TST-017 (pass) |
@@ -33,8 +34,9 @@ One row per chain leg reached from an approved requirement's `satisfies` edges �
 | REQ-002 | BP-022 | WO-068 | — |
 | REQ-002 | BP-022 | WO-069 | — |
 | REQ-002 | BP-022 | WO-070 | TST-026 (pass) |
-| REQ-002 | BP-022 | WO-280 | — |
-| REQ-002 | BP-022 | WO-281 | — |
+| REQ-002 | BP-022 | WO-280 | TST-032 (pass) |
+| REQ-002 | BP-022 | WO-281 | TST-036 (unknown) |
+| REQ-002 | BP-022 | WO-281 | TST-038 (pass) |
 | REQ-002 | BP-022 | WO-282 | — |
 | REQ-002 | BP-022 | WO-286 | — |
 | REQ-003 | BP-023 | WO-051 | TST-017 (pass) |
@@ -44,13 +46,14 @@ One row per chain leg reached from an approved requirement's `satisfies` edges �
 | REQ-003 | BP-023 | WO-058 | TST-023 (pass) |
 | REQ-003 | BP-023 | WO-059 | — |
 | REQ-003 | BP-023 | WO-060 | — |
-| REQ-003 | BP-023 | WO-281 | — |
+| REQ-003 | BP-023 | WO-281 | TST-036 (unknown) |
+| REQ-003 | BP-023 | WO-281 | TST-038 (pass) |
 | REQ-004 | BP-024 | WO-052 | — |
 | REQ-004 | BP-024 | WO-053 | — |
 | REQ-004 | BP-024 | WO-054 | — |
 | REQ-004 | BP-024 | WO-055 | — |
 | REQ-004 | BP-024 | WO-068 | — |
-| REQ-004 | BP-024 | WO-277 | — |
+| REQ-004 | BP-024 | WO-277 | TST-031 (pass) |
 | REQ-004 | BP-024 | WO-282 | — |
 | REQ-005 | — | — | — |
 | REQ-006 | BP-025 | WO-071 | — |
@@ -261,8 +264,9 @@ One row per chain leg reached from an approved requirement's `satisfies` edges �
 | REQ-093 | BP-020 | WO-042 | — |
 | REQ-093 | BP-020 | WO-043 | — |
 | REQ-093 | BP-020 | WO-044 | — |
-| REQ-093 | BP-020 | WO-278 | — |
+| REQ-093 | BP-020 | WO-278 | TST-035 (pass) |
 | REQ-093 | BP-020 | WO-279 | TST-028 (unknown) |
+| REQ-093 | BP-020 | WO-279 | TST-037 (pass) |
 | REQ-093 | BP-020 | WO-285 | — |
 | REQ-094 | BP-028 | WO-080 | — |
 | REQ-094 | BP-028 | WO-081 | — |
