@@ -29,10 +29,11 @@ export function renderMeasured<T>(
   o: {
     format: (v: T) => string;
     unmeasuredLine: CopyKey; // differs by reason: undeterminable vs not_attempted
+    what: string; // the subject unmeasuredLine's own {what} slot names (WO-287)
   }
 ): { text: string; isDash: boolean; line?: string } {
   if (m.kind === "unmeasured") {
-    return { text: copy(DASH_KEY), isDash: true, line: copy(o.unmeasuredLine) };
+    return { text: copy(DASH_KEY), isDash: true, line: copy(o.unmeasuredLine, { what: o.what }) };
   }
   return { text: o.format(m.value), isDash: false };
 }

@@ -120,7 +120,15 @@ describe("REQ-093 c5 — the registry renders with every model unavailable", () 
     // date's ruling): 21 + 13 = 34. WO-278 adds one more filled key
     // (`unmeasured.dash` → "—", a transcription on the same footing as
     // the thirteen band words): 34 + 1 = 35.
-    expect(nonOwnerOwed.length).toBe(35);
+    //
+    // WO-287 (owner ruling 2026-09-04, sheet 2 — `registry/evidence/
+    // RULING-copy-2026-09-04.json`) fills five keys that were previously
+    // owner-owed (`verdict.limiting.foundations/answerability/presence` in
+    // report.ts, `unmeasured.undeterminable`/`unmeasured.not-attempted` in
+    // laws.ts) — 35 + 5 = 40 — and adds thirteen new, already-filled keys
+    // for the report address's sentences (`removal.*`, `notice.*`,
+    // `control.*`, `copy-link.label`, all in report.ts) — 40 + 13 = 53.
+    expect(nonOwnerOwed.length).toBe(53);
 
     for (const key of nonOwnerOwed) {
       const slotNames = Object.keys(COPY_META[key].slots);
@@ -216,7 +224,7 @@ describe("owner-owed and empty agree both ways", () => {
     expect(new Set(emptyKeys)).toEqual(new Set(OWNER_OWED));
   });
 
-  it("counts: 22 owner-owed, 35 filled, 57 total (rule 5.5 — the index states its own coverage)", () => {
+  it("counts: 17 owner-owed, 53 filled, 70 total (rule 5.5 — the index states its own coverage)", () => {
     // WO-070 added report.ts's eight landing keys (headline, field label,
     // submit label, five DomainProblem lines), all owner-owed: 30 + 8 = 38.
     // 2026-09-03: the owner ruled on three of them (headline, field label,
@@ -248,9 +256,23 @@ describe("owner-owed and empty agree both ways", () => {
     // (`unmeasured.dash` → "—") carries a value, a transcription of
     // REQ-004's own character. 17 + 5 = 22 owner-owed, 34 + 1 = 35
     // filled, 51 + 6 = 57 total.
-    expect(OWNER_OWED.length).toBe(22);
-    expect(Object.keys(COPY).length - OWNER_OWED.length).toBe(35);
-    expect(Object.keys(COPY).length).toBe(57);
+    //
+    // 2026-09-04, separately again: WO-287 (owner ruling 2026-09-04, sheet
+    // 2) fills the five keys the previous paragraph left owner-owed
+    // (`verdict.limiting.foundations/answerability/presence`,
+    // `unmeasured.undeterminable`, `unmeasured.not-attempted`) — 22 - 5 =
+    // 17 remain owner-owed and 35 + 5 = 40 are filled — and adds thirteen
+    // new, already-filled keys in `report.ts` for the report address's
+    // sentences (`removal.address`, `removal.line.on-report`,
+    // `removal.line.removed`, `notice.incomplete`,
+    // `notice.measurement-failed`, `notice.correction-failed`,
+    // `notice.refused.network-limit`, `notice.refused.scan-running`,
+    // `control.rescan-age`, `control.rescan-incomplete`, `control.retry`,
+    // `control.correction-retry`, `copy-link.label`) — 40 + 13 = 53 filled,
+    // 17 owner-owed, 57 + 13 = 70 total.
+    expect(OWNER_OWED.length).toBe(17);
+    expect(Object.keys(COPY).length - OWNER_OWED.length).toBe(53);
+    expect(Object.keys(COPY).length).toBe(70);
   });
 });
 

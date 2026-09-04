@@ -89,7 +89,16 @@ export function explain<K extends ExplainKey>(
       // boundary translating the per-slot-`T` public shape into
       // `renderMeasured`'s single-`T` call, which TypeScript cannot see
       // across two independently-typed fields of one object literal.
-      const rendered = renderMeasured(slot.value as Measured<never>, { format: slot.format, unmeasuredLine });
+      // `what` (WO-287): the subject unmeasuredLine's own {what} slot
+      // names. explain() carries no per-slot label beyond the slot's own
+      // name in `meta.slots`, and producing a friendlier subject is the
+      // caller's, on WO-282/WO-286 (out of scope here) — so this passes
+      // the slot name itself, the one subject already in scope.
+      const rendered = renderMeasured(slot.value as Measured<never>, {
+        format: slot.format,
+        unmeasuredLine,
+        what: slotName,
+      });
       measuredAt.push(slot.value.at);
       if (rendered.isDash) hasUnmeasured = true;
       text = text.split(`{${slotName}}`).join(rendered.text);

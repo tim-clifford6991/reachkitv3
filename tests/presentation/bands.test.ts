@@ -210,12 +210,12 @@ describe(
       expect(Object.keys(LIMITING_LINES).sort()).toEqual(["answerability", "foundations", "presence"]);
     });
 
-    it("each value is a declared CopyKey listed in OWNER_OWED, and copy() throws naming it", async () => {
+    it("each value is a declared CopyKey no longer listed in OWNER_OWED, and copy() returns its sentence (WO-287, owner ruling 2026-09-04, sheet 2)", async () => {
       const { OWNER_OWED } = await import("../../src/lib/presentation/copy/registry.ts");
       for (const key of Object.values(LIMITING_LINES)) {
-        expect(OWNER_OWED).toContain(key);
-        expect(() => copy(key)).toThrow("owner-owed");
-        expect(() => copy(key)).toThrow(key);
+        expect(OWNER_OWED).not.toContain(key);
+        expect(() => copy(key)).not.toThrow();
+        expect(copy(key).length).toBeGreaterThan(0);
       }
     });
 

@@ -38,12 +38,38 @@
 // per `ScoreFactorName`. They ship owner-owed and empty: the one written
 // line REQ-004 criterion 2 requires is a customer-visible string and
 // therefore the owner's (constitution §1). No sentence is written here.
+//
+// 2026-09-04, separately again: WO-287 (owner ruling 2026-09-04, sheet 2 —
+// `registry/evidence/RULING-copy-2026-09-04.json`) fills the three
+// `verdict.limiting.*` values above, filled verbatim, byte for byte; none
+// is owner-owed any longer. The same ruling adds thirteen new keys for the
+// report address's own sentences — `removal.*`, `notice.*`, `control.*`
+// and `copy-link.label` — the gap the design-guardian named on WO-282's
+// v1 preview (its `## Log`, 2026-09-04 preview line). They land in this
+// partition rather than a thirteenth (constitution rule 2.2/BP-020
+// decision 5, the same reasoning WO-070 and WO-249 already applied here
+// and to `laws.ts`): BP-022 owns the report address, and `report.ts` is
+// its partition. No `law` tag on any of the thirteen: none of
+// `CopyMeta.law`'s four cross-cutting arms names this surface.
 import type { CopyPartition } from "../registry.ts";
 
 export const REPORT_COPY = Object.freeze({
-  "verdict.limiting.foundations": ["", { slots: {}, fixedBy: "REQ-004 c2" }],
-  "verdict.limiting.answerability": ["", { slots: {}, fixedBy: "REQ-004 c2" }],
-  "verdict.limiting.presence": ["", { slots: {}, fixedBy: "REQ-004 c2" }],
+  "verdict.limiting.foundations": ["What holds your score down most: the foundations — how your site is built and how easily it can be read.", { slots: {}, fixedBy: "REQ-004 c2" }],
+  "verdict.limiting.answerability": ["What holds your score down most: answerability — how well your pages answer the questions buyers actually ask.", { slots: {}, fixedBy: "REQ-004 c2" }],
+  "verdict.limiting.presence": ["What holds your score down most: presence — how often you appear where buyers look, in Google and in AI answers.", { slots: {}, fixedBy: "REQ-004 c2" }],
+  "removal.address": ["remove@reachkit.app", { slots: {}, fixedBy: "REQ-002 c1" }],
+  "removal.line.on-report": ["Own this site and want this report taken down? Write to {address}.", { slots: { address: "text" }, fixedBy: "REQ-002 c1" }],
+  "removal.line.removed": ["This report was removed at the site owner’s request. To make {domain} scannable again, write to {address}.", { slots: { domain: "text", address: "text" }, fixedBy: "REQ-002 c3" }],
+  "notice.incomplete": ["This report is incomplete — {what} wasn’t measured.", { slots: { what: "text" }, fixedBy: "REQ-001 c14" }],
+  "notice.measurement-failed": ["The last measurement didn’t finish, so nothing new was stored.", { slots: {}, fixedBy: "REQ-001 c16" }],
+  "notice.correction-failed": ["The correction didn’t finish — this is the report from before it.", { slots: {}, fixedBy: "REQ-094 c7" }],
+  "notice.refused.network-limit": ["That’s five scans from your network in the last hour — you can scan again in {wait}.", { slots: { wait: "text" }, fixedBy: "REQ-003 c6" }],
+  "notice.refused.scan-running": ["A scan is already running from your network. It finishes in about {wait}, then this one can start.", { slots: { wait: "text" }, fixedBy: "REQ-003 c7" }],
+  "control.rescan-age": ["Measure again", { slots: {}, fixedBy: "REQ-001 c15" }],
+  "control.rescan-incomplete": ["Measure what’s missing", { slots: {}, fixedBy: "REQ-001 c14" }],
+  "control.retry": ["Try again", { slots: {}, fixedBy: "REQ-001 c16" }],
+  "control.correction-retry": ["Try the correction again", { slots: {}, fixedBy: "REQ-094 c7" }],
+  "copy-link.label": ["Copy link", { slots: {}, fixedBy: "REQ-001 c7" }],
   "place.report.first-page.rival": [
     "No rival holds this ground yet",
     { law: "no-presence-yet", slots: {}, fixedBy: "REQ-010 c1" },
