@@ -117,8 +117,10 @@ describe("REQ-093 c5 — the registry renders with every model unavailable", () 
     // — ruled 2026-09-04; both dates WO-070 `## Log`): 13 + 8 = 21, plus
     // the thirteen keys the owner ruled 2026-09-04 across offer.ts (7),
     // mail.ts (2), laws.ts (3) and report.ts (1) (WO-041 `## Log`, this
-    // date's ruling): 21 + 13 = 34.
-    expect(nonOwnerOwed.length).toBe(34);
+    // date's ruling): 21 + 13 = 34. WO-278 adds one more filled key
+    // (`unmeasured.dash` → "—", a transcription on the same footing as
+    // the thirteen band words): 34 + 1 = 35.
+    expect(nonOwnerOwed.length).toBe(35);
 
     for (const key of nonOwnerOwed) {
       const slotNames = Object.keys(COPY_META[key].slots);
@@ -214,7 +216,7 @@ describe("owner-owed and empty agree both ways", () => {
     expect(new Set(emptyKeys)).toEqual(new Set(OWNER_OWED));
   });
 
-  it("counts: 17 owner-owed, 34 filled, 51 total (rule 5.5 — the index states its own coverage)", () => {
+  it("counts: 22 owner-owed, 35 filled, 57 total (rule 5.5 — the index states its own coverage)", () => {
     // WO-070 added report.ts's eight landing keys (headline, field label,
     // submit label, five DomainProblem lines), all owner-owed: 30 + 8 = 38.
     // 2026-09-03: the owner ruled on three of them (headline, field label,
@@ -234,13 +236,21 @@ describe("owner-owed and empty agree both ways", () => {
     // byte. 30 - 13 = 17 remain owner-owed and 21 + 13 = 34 are filled;
     // the total is unchanged at 51. `price.vat_included` and
     // `offer.cancel_self_service` were not part of this ruling (no owner
-    // string was supplied for either) and remain owner-owed — the
-    // dispatch that requested this change described the post-change
-    // count as 15 owner-owed, which undercounts these two; this test
-    // asserts the count `OWNER_OWED` actually derives.
-    expect(OWNER_OWED.length).toBe(17);
-    expect(Object.keys(COPY).length - OWNER_OWED.length).toBe(34);
-    expect(Object.keys(COPY).length).toBe(51);
+    // string was supplied for either) and remain owner-owed.
+    //
+    // 2026-09-04, separately again: WO-278 adds six keys. Three in
+    // `report.ts` (`verdict.limiting.foundations/answerability/presence`,
+    // BP-024 decision 6, rule 1.1) and two in `laws.ts`
+    // (`unmeasured.undeterminable`, `unmeasured.not-attempted`) are
+    // owner-owed and empty — the two REQ-004 c6/c9 sentences and the
+    // three limiting-factor lines are all customer-visible strings and
+    // therefore the owner's (constitution §1). One in `laws.ts`
+    // (`unmeasured.dash` → "—") carries a value, a transcription of
+    // REQ-004's own character. 17 + 5 = 22 owner-owed, 34 + 1 = 35
+    // filled, 51 + 6 = 57 total.
+    expect(OWNER_OWED.length).toBe(22);
+    expect(Object.keys(COPY).length - OWNER_OWED.length).toBe(35);
+    expect(Object.keys(COPY).length).toBe(57);
   });
 });
 

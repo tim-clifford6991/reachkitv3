@@ -12,6 +12,15 @@
 // and `next-publish.scheduled` — filled verbatim, byte for byte, and no
 // longer owner-owed. The remaining nine were not part of this ruling and
 // stay owner-owed, empty.
+//
+// 2026-09-04, separately: WO-278 (BP-019 decision 6, WO-249's block) closes
+// the fourth cross-cutting law — `law: 'unmeasured'` — with the three keys
+// `renderMeasured`'s `unmeasuredLine: CopyKey` argument takes. Two are
+// owner-owed and empty (REQ-004 criteria 6 and 9's own written lines are
+// the owner's, constitution §1); the third, `unmeasured.dash`, carries a
+// value — a transcription of REQ-004's own "—" character, on the same
+// footing as the thirteen band words, and the reason no dash literal
+// appears anywhere in `src/lib/presentation/`.
 import type { CopyPartition } from "../registry.ts";
 
 export const LAWS_COPY = Object.freeze({
@@ -54,4 +63,7 @@ export const LAWS_COPY = Object.freeze({
     "",
     { slots: { pageTitle: "text" }, fixedBy: "REQ-093 c2" },
   ],
+  "unmeasured.undeterminable": ["", { law: "unmeasured", slots: {}, fixedBy: "REQ-004 c6" }],
+  "unmeasured.not-attempted": ["", { law: "unmeasured", slots: {}, fixedBy: "REQ-004 c9" }],
+  "unmeasured.dash": ["—", { law: "unmeasured", slots: {}, fixedBy: "REQ-004 c2" }],
 }) satisfies CopyPartition;
