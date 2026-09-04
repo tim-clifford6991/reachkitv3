@@ -44,7 +44,15 @@ describe("policy/classifyAddress · one case per named class", () => {
     expect(checkAddress("93.184.216.34")).toEqual({ ok: true });
   });
 
-  it("an IPv4-mapped IPv6 literal is unwrapped and reclassified — a known SSRF bypass", () => {
+  it("an IPv4-mapped IPv6 literal is still refused when its embedded IPv4 address is blocked (TST-027)", () => {
+    // Not a hand-rolled unwrap in this module — `RANGES` adds both
+    // families' subnets into one `BlockList` per class, and
+    // `BlockList.check(ip, "ipv6")` resolves an IPv4-mapped literal
+    // against the IPv4 subnets in that same list on its own. This test
+    // locks the *outcome*, not a mechanism this file owns: if a later
+    // refactor ever splits the IPv4 and IPv6 subnets of one class into two
+    // separate `BlockList`s, the mapped form silently stops being caught,
+    // and this is the test that would catch that.
     expect(classifyAddress("::ffff:127.0.0.1")).toBe("loopback");
     expect(classifyAddress("::ffff:10.0.0.5")).toBe("private");
   });
