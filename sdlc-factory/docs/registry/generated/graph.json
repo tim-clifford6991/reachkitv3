@@ -11801,7 +11801,7 @@
       "id": "WO-276",
       "type": "work-order",
       "title": "The fetch ledger and the cost context — one insert-only row, cache-first, cap-degrades",
-      "status": "approved",
+      "status": "done",
       "implements": [
         "BP-007",
         "REQ-003"
@@ -11832,7 +11832,7 @@
       "id": "WO-277",
       "type": "work-order",
       "title": "The verdict — the three-armed measurement, the partition, the score and its band, and the one Verdict the report is made of",
-      "status": "approved",
+      "status": "done",
       "implements": [
         "BP-024",
         "REQ-004"
@@ -11881,7 +11881,7 @@
       "id": "WO-278",
       "type": "work-order",
       "title": "The presentation boundary for a measured value — handles become terms, values become a dash or a number, and a number reaches a sentence only with its scan date",
-      "status": "approved",
+      "status": "done",
       "implements": [
         "BP-019",
         "BP-020",
@@ -11946,7 +11946,7 @@
       "id": "WO-279",
       "type": "work-order",
       "title": "Generated text, the question and its search, and the surface sweep that proves nothing else gets through",
-      "status": "approved",
+      "status": "done",
       "implements": [
         "BP-020",
         "REQ-093"
@@ -11988,7 +11988,7 @@
       "id": "WO-280",
       "type": "work-order",
       "title": "The current-report pointer and the one address — two current reports made unrepresentable by the database, and every written form of a domain redirecting to one place",
-      "status": "approved",
+      "status": "done",
       "implements": [
         "BP-012",
         "BP-022",
@@ -12018,7 +12018,7 @@
       "id": "WO-281",
       "type": "work-order",
       "title": "The bounded scan and its progress stream — two ceilings, one Ending, six named stages, and the wire they reach a visitor on",
-      "status": "approved",
+      "status": "done",
       "implements": [
         "BP-022",
         "BP-023",
@@ -12124,7 +12124,7 @@
       "id": "WO-283",
       "type": "work-order",
       "title": "npm test is flaky again — the live-scratch-schema file set outgrew the db project's include list; make the two lists one",
-      "status": "approved",
+      "status": "done",
       "implements": [
         "BP-001"
       ],
@@ -12140,7 +12140,7 @@
       "id": "WO-284",
       "type": "work-order",
       "title": "Bind the boot environment to the deployment — SUPABASE_SERVICE_ROLE_KEY end to end, NANO_API_KEY optional, DATABASE_URL out of Env",
-      "status": "approved",
+      "status": "done",
       "implements": [
         "BP-001",
         "BP-002",
