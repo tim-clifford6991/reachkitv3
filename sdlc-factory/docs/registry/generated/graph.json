@@ -5859,7 +5859,7 @@
       "id": "WO-023",
       "type": "work-order",
       "title": "DataForSEO transport, credentials and the never-list enforced by absence",
-      "status": "approved",
+      "status": "done",
       "implements": [
         "BP-008"
       ],
@@ -7082,7 +7082,7 @@
       "id": "WO-071",
       "type": "work-order",
       "title": "deriveProfile — the nano profile call and the Measured<Profile> it returns",
-      "status": "approved",
+      "status": "done",
       "implements": [
         "BP-011",
         "BP-025",
@@ -7231,7 +7231,7 @@
       "id": "WO-077",
       "type": "work-order",
       "title": "Domain normalisation: registrableDomain, isPlatformDomain, isOwnDomain",
-      "status": "approved",
+      "status": "done",
       "implements": [
         "BP-026",
         "REQ-008"
@@ -7305,7 +7305,7 @@
       "id": "WO-080",
       "type": "work-order",
       "title": "checkCoherence and coherenceThreshold — a three-valued verdict against a rescaling threshold",
-      "status": "approved",
+      "status": "done",
       "implements": [
         "BP-011",
         "BP-028",
@@ -7334,7 +7334,7 @@
       "id": "WO-081",
       "type": "work-order",
       "title": "The correction state machine and CORRECTION_SCOPE",
-      "status": "approved",
+      "status": "done",
       "implements": [
         "BP-028",
         "REQ-094"
@@ -11354,7 +11354,7 @@
       "id": "WO-251",
       "type": "work-order",
       "title": "OnPageFacts and the deterministic on-page parse — headings, answer blocks, evidence density, schema, OG, access gates",
-      "status": "approved",
+      "status": "done",
       "implements": [
         "BP-010"
       ],
@@ -12530,7 +12530,7 @@
       "id": "WO-287",
       "type": "work-order",
       "title": "The report address's own sentences enter the copy registry — eighteen ruled strings under fixed keys, and the subject slot reaches renderMeasured",
-      "status": "approved",
+      "status": "done",
       "implements": [
         "BP-019",
         "BP-020",
