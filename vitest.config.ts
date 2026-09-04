@@ -42,6 +42,7 @@ const LIVE_SCHEMA_TESTS = [
   "tests/costs/fetches-schema.test.ts",
   "tests/costs/context.test.ts",
   "tests/measure/verdict/constraint.test.ts",
+  "tests/scan/report/schema.test.ts",
 ];
 
 export default defineConfig({
