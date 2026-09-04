@@ -2,55 +2,55 @@
   "coverage": {
     "satisfies": {
       "carrying": 44,
-      "total": 470
+      "total": 474
     },
     "covers": {
       "carrying": 32,
-      "total": 470
+      "total": 474
     },
     "implements": {
-      "carrying": 271,
-      "total": 470
+      "carrying": 272,
+      "total": 474
     },
     "decides-for": {
-      "carrying": 31,
-      "total": 470
+      "carrying": 32,
+      "total": 474
     },
     "about": {
       "carrying": 0,
-      "total": 470
+      "total": 474
     },
     "depends-on": {
-      "carrying": 396,
-      "total": 470
+      "carrying": 398,
+      "total": 474
     },
     "blocked-by": {
       "carrying": 6,
-      "total": 470
+      "total": 474
     },
     "cites-retired": {
       "carrying": 0,
-      "total": 470
+      "total": 474
     },
     "supersedes": {
       "carrying": 30,
-      "total": 470
+      "total": 474
     },
     "rests-on": {
-      "carrying": 295,
-      "total": 470
+      "carrying": 296,
+      "total": 474
     },
     "code": {
       "carrying": 63,
-      "total": 470
+      "total": 474
     },
     "exercises": {
       "carrying": 6,
-      "total": 470
+      "total": 474
     },
     "origin": {
       "carrying": 0,
-      "total": 470
+      "total": 474
     }
   },
   "nodes": {
@@ -107,8 +107,8 @@
       "blocked-by": [],
       "rests-on": [
         {
-          "claim": "Every surface the product renders or sends is reachable from a repo-relative path glob — src/app/**, src/app/(hosted)/**, src/lib/mail/** and src/ui/** — so a surface added later is in scope without anyone adding it to a list. A surface rendered from a path outside those globs is invisible to every suite this decision creates.",
-          "disposition": "open"
+          "claim": "Every surface the product renders or sends is reachable from a repo-relative path glob — src/app/**, src/app/(hosted)/**, src/lib/mail/** and src/ui/** — so a surface added later is in scope without anyone adding it to a list. A surface rendered from a path outside those globs is invisible to every suite this decision creates. Dispositioned undischargeable 2026-09-04 by the architect on TST-028's observation (rule 2.3b's fallback; the validator judged it in prose on WO-279 and left the transcription to this pass): it is a universal claim over files that do not yet exist, and no build can prove it. What TST-028 could show, it showed — every surface in the tree today sits inside the four globs, with per-glob counts reported rather than omitted, including the two that are legitimately zero.",
+          "disposition": "undischargeable"
         }
       ],
       "supersedes": [],
@@ -128,6 +128,22 @@
       "rests-on": [],
       "supersedes": [],
       "file": "sdlc-factory/docs/decisions/ADR-011.md"
+    },
+    "ADR-012": {
+      "id": "ADR-012",
+      "type": "decision",
+      "title": "LANDMINE — GeneratedText is nominal: the brand is the boundary, and deleting it looks like tidying",
+      "status": "accepted",
+      "decides-for": [
+        "BP-020"
+      ],
+      "depends-on": [
+        "ADR-010"
+      ],
+      "blocked-by": [],
+      "rests-on": [],
+      "supersedes": [],
+      "file": "sdlc-factory/docs/decisions/ADR-012.md"
     },
     "ADR-020": {
       "id": "ADR-020",
@@ -1508,12 +1524,20 @@
           "disposition": "confirmed"
         },
         {
-          "claim": "Every string a surface renders can be reached from a repo-relative path glob over src/app/**, src/app/(hosted)/**, src/lib/mail/** and src/ui/**, so the conformance suite of ADR-010 enumerates surfaces added later without being told about them. A surface rendered from a path outside those globs is invisible to the suite.",
+          "claim": "Every string a surface renders can be reached from a repo-relative path glob over src/app/**, src/app/(hosted)/**, src/lib/mail/** and src/ui/**, so the conformance suite of ADR-010 enumerates surfaces added later without being told about them. A surface rendered from a path outside those globs is invisible to the suite. Dispositioned undischargeable 2026-09-04 by the architect on TST-028's observation (rule 2.3b's fallback; the validator judged it in prose on WO-279 and left the transcription here): it is a universal claim over files that do not yet exist, and no build can prove it. What TST-028 could show, it showed — every surface in the tree today sits inside the four globs (26 files walked, per-glob counts reported).",
+          "disposition": "undischargeable"
+        },
+        {
+          "claim": "Model-produced text reaches a surface only through a bounded set of stored columns — a draft's body, title, slug and description, an opportunity's proposed title and slug, and a question's wording — so the suite can name the fields whose flow into a surface it must gate. Discharged 2026-09-04: TST-028 verified the flow gate's GENERATED_COLUMNS is exactly these seven and that the gate's reach is exactly as wide as the set — no wider, no narrower. Dispositioned by the architect per rule 2.3b's fallback, on the validator's own prose finding on WO-279.",
+          "disposition": "confirmed"
+        },
+        {
+          "claim": "Until the brand of Decisions 7 / ADR-012 lands in src/lib/presentation/generated/text.ts, GeneratedText is a plain structural interface and this node's central guarantee — that model text reaches a surface only through fromStored and renderGenerated — is a convention a careful author can violate by accident. TST-028 reproduced it concretely from a file outside the module: an object literal of the right shape, no cast, no second constructor, rendered through renderGenerated indistinguishably from stored model text. This is the live claim; it is dischargeable and a follow-up work order on this node discharges it (see ADR-012 Consequences). WO-279 carries no copy of it — the type is this node's declared interface, so the claim's home is here (rule 2.4).",
           "disposition": "open"
         },
         {
-          "claim": "Model-produced text reaches a surface only through a bounded set of stored columns — a draft's body, title, slug and description, an opportunity's proposed title and slug, and a question's wording — so the suite can name the fields whose flow into a surface it must gate.",
-          "disposition": "open"
+          "claim": "Even with the brand, fromStored(column, value) cannot verify that value was in fact read from column: an author who calls the sanctioned constructor with hand-typed text mints a conforming GeneratedText. No compile-time check in a single-program type system can close this, and no test-time sweep can either — the call is well-formed by construction. The residual defence is that fromStored is called only in the data-access path, which the flow gate sweeps, and that its column argument is a closed union of seven literals naming real storage.",
+          "disposition": "undischargeable"
         }
       ],
       "supersedes": [],
@@ -5030,6 +5054,26 @@
         "WO-018"
       ],
       "file": "sdlc-factory/docs/work-orders/WO-018.md"
+    },
+    "TST-028": {
+      "id": "TST-028",
+      "type": "validation",
+      "title": "WO-279 validation report",
+      "status": "unknown",
+      "validates": [
+        "WO-279"
+      ],
+      "file": "sdlc-factory/docs/work-orders/WO-279.md"
+    },
+    "TST-029": {
+      "id": "TST-029",
+      "type": "validation",
+      "title": "WO-276 validation report",
+      "status": "unknown",
+      "validates": [
+        "WO-276"
+      ],
+      "file": "sdlc-factory/docs/work-orders/WO-276.md"
     },
     "WO-001": {
       "id": "WO-001",
@@ -11680,7 +11724,8 @@
       "rests-on": [
         {
           "claim": "This migration creates `fetches`, which `BUILD.md` §10 lists among its nine baseline tables. WO-267 (`done`) deliberately leaves it out — its baseline migration's own header states the exclusion — because `structure.md` rule 3 makes `*_fetches*.sql` BP-007's topic and BP-007's `## Data model delta` fully specifies the table, so one table has one writer. The derivation and its reversal cost are recorded on WO-267's first `rests-on` row, which carries `disposition: confirmed`.",
-          "disposition": "open"
+          "disposition": "confirmed",
+          "reason": "TST-029 — observed directly, not merely read. `00000000000001_baseline.sql` applied alone creates exactly the eight tables `BUILD.md` §10 lists minus `fetches` (`users, sites, scans, opportunities, drafts, publications, destinations, leads`); the six migrations WO-267 through the free-path claim column, applied in order, add none. `20260903080000_fetches.sql` applied after them is the only statement in the composed, from-scratch migration chain that creates `fetches` — verified by applying all seven migrations to a freshly dropped `public` schema and enumerating `information_schema.tables` (one `fetches` row, one writer). One table, one writer, holds."
         },
         {
           "claim": "The `fetches` table this context writes to carries no unique constraint on `(source, cache_key, policy_version)` — BP-007 decision 3 (2026-09-03) dropped it, and the cache read is 'the newest row on that key inserted within `freshnessDays`, excluding a row whose payload is the vendor's own zero-result shape'. WO-021, which creates the table and is `approved` and unbuilt, still plans that constraint and predates the decision. If it ships as planned, the empty-payload re-buy this work order tests cannot insert its second row. Reported to the planner queue on 2026-09-03, not repaired here: `*_fetches*.sql`'s create-table statement is WO-021's file. **Discharged 2026-09-03**: the planner re-planned WO-021 in the same pass — its file plan carries no unique constraint, and its test plan now asserts positively that two rows on one `(source, cache_key, policy_version)` triple both insert. The premise no longer holds.",
@@ -11821,23 +11866,23 @@
       "rests-on": [
         {
           "claim": "No source tree, package manifest, tsconfig or test runner exists on disk at cut time (verified 2026-08-31). Every path in this file plan is NEW and its placement is provisional against a repo with no code.",
-          "disposition": "open"
+          "disposition": "confirmed"
         },
         {
           "claim": "Model-produced text reaches a surface only through the seven stored columns `GeneratedColumn` names (BP-020 rests-on row 3). A model string reaching a surface from any other column is outside this module's sink and is invisible to it; WO-044's flow gate is scoped to the same seven and inherits the same limit.",
-          "disposition": "open"
+          "disposition": "confirmed"
         },
         {
           "claim": "No source tree, package manifest, tsconfig or test runner exists on disk at cut time (verified 2026-08-31), so the four governed globs match zero files on the day this suite lands and it would pass vacuously. This WO therefore ships a synthetic fixture surface tree carrying known violations, so the sweep discriminates from the first run rather than from the first screen.",
-          "disposition": "open"
+          "disposition": "confirmed"
         },
         {
           "claim": "Every surface the product renders or sends is reachable from `src/app/**`, `src/app/(hosted)/**`, `src/lib/mail/**` and `src/ui/**` (ADR-010 rests-on; BP-020 rests-on row 2). A surface rendered from a path outside those globs is invisible to this suite.",
-          "disposition": "open"
+          "disposition": "undischargeable"
         },
         {
           "claim": "This suite is recorded, not enforced (constitution rule 3.3, ADR-010 point 6): no CI configuration, no branch protection and no pre-commit hook exists in this repository at cut time. A failing sweep blocks no merge until a platform decision creates one. This WO creates no such configuration.",
-          "disposition": "open"
+          "disposition": "confirmed"
         }
       ],
       "supersedes": [
@@ -12039,6 +12084,33 @@
       "rests-on": [],
       "supersedes": [],
       "file": "sdlc-factory/docs/work-orders/WO-284.md"
+    },
+    "WO-285": {
+      "id": "WO-285",
+      "type": "work-order",
+      "title": "The GeneratedText brand — make fromStored the only construction path as a compiler fact, and hold it there with a test that fails when the brand is deleted",
+      "status": "approved",
+      "implements": [
+        "ADR-012",
+        "BP-020",
+        "REQ-093"
+      ],
+      "depends-on": [
+        "WO-279"
+      ],
+      "blocked-by": [],
+      "rests-on": [
+        {
+          "claim": "Adding the brand as a REQUIRED member of the exported `GeneratedText` changes no call site anywhere in the corpus — every construction already goes through `fromStored` and there is not one object literal to convert (ADR-012 alternative 1's measured price: zero, across three source files, four test files and eleven fixtures, 21 files). Confirmed 2026-09-04 by the planner's own rule-1b fan-out check, not taken on report: the brand applied ALONE on a detached scratch worktree of `wo/WO-279-generated-text` (tip `47a3ac3`), `tsc --noEmit` over the whole tree — `tsconfig.json`'s `include` covers `tests/**/*.ts` and `tests/**/*.tsx`, so the boundary is source AND tests — returns 0 errors, and `vitest run --project node tests/presentation/generated tests/presentation/copy` returns 57/57 pass, matching TST-028's own reported baseline exactly. The file plan below is therefore two rows, not twenty-one.",
+          "disposition": "confirmed"
+        },
+        {
+          "claim": "A `unique symbol` used as a computed interface key is NOT contextually narrowed to its literal type through `Object.freeze`'s generic inference, so the current one-expression body `return Object.freeze({ ... })` does not compile with the brand added (measured: `error TS2322` — `Type 'boolean' is not assignable to type 'true'`). A form that keeps the zero-cast invariant ADR-012 Decision 1 requires does exist and was measured clean. Confirmed 2026-09-04 by the planner on the same scratch worktree; recorded so the implementer does not read the first TS2322 as grounds to reach for the cast this module forbids.",
+          "disposition": "confirmed"
+        }
+      ],
+      "supersedes": [],
+      "file": "sdlc-factory/docs/work-orders/WO-285.md"
     }
   }
 }
