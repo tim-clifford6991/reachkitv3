@@ -107,6 +107,24 @@ export const SCORE_BAND_BOUNDS = Object.freeze({ // BP-024 · REQ-004 c1 · BUIL
   invisible: 0, "hard-to-find": 25, findable: 50, dominant: 75,
 } as const);
 
+/** The other two numbers BP-010 decision 2 assigns to this file — "the
+ *  coefficients that are numbers (band thresholds, the answerability floor,
+ *  the direct-answer character window) are pins in BP-005" — transcribed
+ *  verbatim from BP-005's `## Public interface` (2026-09-04, `2fe462e`),
+ *  which is itself `BUILD.md` §5, transcribed (rule 1.2 — nothing chosen):
+ *  "Answerability = shape of the home + measured pages, 0–100, floored at
+ *  1" and "`directAnswers` = question headings whose first block is
+ *  40–320 visible chars ÷ all headings × 100". The window is closed at
+ *  both ends. `PRESENCE_FLOOR` (`src/lib/measure/score.ts`) is
+ *  deliberately not a fourth member here — equal to `answerabilityFloor`
+ *  today by coincidence of value, not by derivation; `BUILD.md` §5 states
+ *  the two floors independently. */
+export const SCORING = Object.freeze({                    // BP-010 d2 · BUILD §5
+  directAnswerCharsMin: 40,   // inclusive
+  directAnswerCharsMax: 320,  // inclusive
+  answerabilityFloor: 1,
+} as const);
+
 export const GENERATION = Object.freeze({
   brandGapChars: 300, duplicateThreshold: 0.85, regenerations: 1,
 } as const);
