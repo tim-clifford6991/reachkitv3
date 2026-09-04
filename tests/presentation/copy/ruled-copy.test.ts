@@ -17,7 +17,7 @@ import { unmeasured } from "../../../src/lib/measure/measured.ts";
 import type { ScoreFactorName } from "@/lib/measure/score";
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
-const RULING_PATH = path.resolve(HERE, "../../../tests/presentation/copy/__fixtures__/RULING-copy-2026-09-04.json");
+const RULING_PATH = path.resolve(HERE, "__fixtures__/RULING-copy-2026-09-04.json");
 const RULING: { strings: Record<string, string> } = JSON.parse(fs.readFileSync(RULING_PATH, "utf8"));
 
 const AT = new Date("2026-09-04T00:00:00.000Z");
