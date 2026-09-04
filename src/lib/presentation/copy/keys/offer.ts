@@ -13,16 +13,23 @@
 // here (constitution §1). The four offer.cadence.*/offer.veto.* keys carry
 // a `value` slot: the values are BP-005 pins supplied by BP-031's
 // offerTerms(), never written into the sentence here.
+//
+// 2026-09-04: the owner ruled on seven of the nine (WO-041 `## Log`, this
+// date's ruling) — `price.amount`, `price.interval`, `offer.start` and the
+// four `offer.cadence.*`/`offer.veto.*` slotted lines — filled verbatim,
+// byte for byte, and no longer owner-owed. `price.vat_included` and
+// `offer.cancel_self_service` were not part of this ruling and remain
+// owner-owed, empty.
 import type { CopyPartition } from "../registry.ts";
 
 export const OFFER_COPY = Object.freeze({
-  "price.amount": ["", { slots: {}, fixedBy: "REQ-022 c1" }],
+  "price.amount": ["€49", { slots: {}, fixedBy: "REQ-022 c1" }],
   "price.vat_included": ["", { slots: {}, fixedBy: "REQ-022 c1" }],
-  "price.interval": ["", { slots: {}, fixedBy: "REQ-022 c1" }],
-  "offer.cadence.page": ["", { slots: { value: "text" }, fixedBy: "REQ-021 c2" }],
-  "offer.cadence.measure": ["", { slots: { value: "text" }, fixedBy: "REQ-021 c2" }],
-  "offer.cadence.movement": ["", { slots: { value: "text" }, fixedBy: "REQ-021 c2" }],
-  "offer.veto.window": ["", { slots: { value: "text" }, fixedBy: "REQ-021 c2" }],
+  "price.interval": ["per month, VAT included", { slots: {}, fixedBy: "REQ-022 c1" }],
+  "offer.cadence.page": ["One new page written for your site {value}", { slots: { value: "text" }, fixedBy: "REQ-021 c2" }],
+  "offer.cadence.measure": ["Your findability re-measured {value}", { slots: { value: "text" }, fixedBy: "REQ-021 c2" }],
+  "offer.cadence.movement": ["What moved, in your inbox {value}", { slots: { value: "text" }, fixedBy: "REQ-021 c2" }],
+  "offer.veto.window": ["Every page waits {value} for you to stop it before it goes live — and you can cancel any time, yourself", { slots: { value: "text" }, fixedBy: "REQ-021 c2" }],
   "offer.cancel_self_service": ["", { slots: {}, fixedBy: "REQ-021 c2" }],
-  "offer.start": ["", { slots: {}, fixedBy: "REQ-021 c4" }],
+  "offer.start": ["Start ReachKit", { slots: {}, fixedBy: "REQ-021 c4" }],
 }) satisfies CopyPartition;

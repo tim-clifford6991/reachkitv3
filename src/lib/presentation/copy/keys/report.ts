@@ -26,11 +26,16 @@
 // eight landing keys are now supplied; none is owner-owed. No `law` tag
 // on any of the eight: none of `CopyMeta.law`'s four cross-cutting arms
 // names this surface.
+//
+// 2026-09-04, separately: the owner also ruled on this file's other key,
+// `place.report.first-page.rival` (WO-041 `## Log`, this date's ruling) —
+// filled verbatim, byte for byte. Every key this partition declares now
+// has a string; none is owner-owed.
 import type { CopyPartition } from "../registry.ts";
 
 export const REPORT_COPY = Object.freeze({
   "place.report.first-page.rival": [
-    "",
+    "No rival holds this ground yet",
     { law: "no-presence-yet", slots: {}, fixedBy: "REQ-010 c1" },
   ],
   "landing.headline": [
