@@ -149,3 +149,46 @@ describe('BP-005 `AI_READER_AGENTS` — "An empty list fails the pins test."', (
     expect(constants.AI_READER_AGENTS.length).toBeGreaterThan(0);
   });
 });
+
+// WO-251 — BP-005 `SCORING` (added 2026-09-04): "`directAnswerCharsMin: 40
+// // inclusive` · `directAnswerCharsMax: 320 // inclusive` ·
+// `answerabilityFloor: 1`" — transcribed, frozen, three members.
+describe("BP-005 `SCORING` (added 2026-09-04) — transcribed, frozen, three members", () => {
+  it("has exactly the three keys directAnswerCharsMin, directAnswerCharsMax, answerabilityFloor", () => {
+    expect(Object.keys(constants.SCORING).sort()).toEqual(
+      ["answerabilityFloor", "directAnswerCharsMax", "directAnswerCharsMin"].sort()
+    );
+  });
+
+  it("directAnswerCharsMin === 40", () => {
+    expect(constants.SCORING.directAnswerCharsMin).toBe(40);
+  });
+
+  it("directAnswerCharsMax === 320", () => {
+    expect(constants.SCORING.directAnswerCharsMax).toBe(320);
+  });
+
+  it("answerabilityFloor === 1", () => {
+    expect(constants.SCORING.answerabilityFloor).toBe(1);
+  });
+
+  it("is frozen", () => {
+    expect(Object.isFrozen(constants.SCORING)).toBe(true);
+  });
+});
+
+// BP-005's `SCORING` comment, verbatim: "`PRESENCE_FLOOR` is deliberately
+// not a fourth member, and unifying it with `answerabilityFloor` would be
+// a defect wearing a cleanup's clothes." The key-set assertion above is
+// exact (three keys), so a fourth member named for Presence already fails
+// it; this row names that guard explicitly so the intent is not silent.
+describe("SCORING carries no presence floor", () => {
+  it("has no key naming presence", () => {
+    const names = Object.keys(constants.SCORING);
+    expect(names.some((n) => /presence/i.test(n))).toBe(false);
+  });
+
+  it("has exactly three keys, not four", () => {
+    expect(Object.keys(constants.SCORING)).toHaveLength(3);
+  });
+});

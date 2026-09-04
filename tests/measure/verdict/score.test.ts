@@ -5,7 +5,8 @@
 import { execFileSync } from "node:child_process";
 import { readFileSync } from "node:fs";
 import path from "node:path";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
+import { SCORING } from "@/lib/config/constants";
 import { measured, measuredZero, unmeasured } from "../../../src/lib/measure/measured.ts";
 import {
   computeScore,
@@ -18,6 +19,8 @@ import {
 
 const AT = new Date("2026-09-04T00:00:00.000Z");
 const SOURCE_PATH = path.resolve(import.meta.dirname, "../../../src/lib/measure/score.ts");
+const CONSTANTS_MODULE = "@/lib/config/constants";
+const SCORE_MODULE = "../../../src/lib/measure/score.ts";
 
 function factors(f: ScoreFactors): ScoreFactors {
   return f;
@@ -275,6 +278,62 @@ describe(
       const result = factorsOf(drivers);
       expect(result.answerability.kind).not.toBe("unmeasured");
       expect((result.answerability as { value: number }).value).toBeGreaterThanOrEqual(1);
+    });
+  }
+);
+
+describe(
+  "WO-251 — the answerability floor `factorsOf` applies is the pinned SCORING.answerabilityFloor, not the literal 1",
+  () => {
+    it("an answerability of 0 (measured) floors to SCORING.answerabilityFloor, asserted against the pin", () => {
+      const drivers: Drivers = {
+        foundations: measured(50, AT),
+        answerability: measured(0, AT),
+        searchPresence: measured(50, AT),
+        aiPresence: measured(50, AT),
+      };
+      const result = factorsOf(drivers);
+      expect((result.answerability as { value: number }).value).toBe(SCORING.answerabilityFloor);
+    });
+  }
+);
+
+describe(
+  'BP-005 `SCORING` comment — "`PRESENCE_FLOOR` is deliberately not a fourth member, and unifying it with `answerabilityFloor` would be a defect wearing a cleanup\'s clothes." — the two floors are separate numbers that happen to be equal',
+  () => {
+    it("score.ts still declares its own local PRESENCE_FLOOR, and presenceOf's body reads it, not SCORING", () => {
+      const source = readFileSync(SOURCE_PATH, "utf8");
+      expect(source).toMatch(/const\s+PRESENCE_FLOOR\s*=\s*1\s*;/);
+      const fnMatch = source.match(/export function presenceOf\([\s\S]*?\n}\n/);
+      expect(fnMatch).not.toBeNull();
+      const body = (fnMatch as RegExpMatchArray)[0];
+      expect(body).toMatch(/\bPRESENCE_FLOOR\b/);
+      expect(body).not.toMatch(/\bSCORING\b/);
+    });
+
+    it("mutation guard: stubbing SCORING.answerabilityFloor to 2 moves factorsOf's answerability and leaves presenceOf's output unmoved — the 'cleanup' that points presenceOf at SCORING fails this pair", async () => {
+      vi.resetModules();
+      vi.doMock(CONSTANTS_MODULE, async (importOriginal) => {
+        const actual = await importOriginal<Record<string, unknown>>();
+        return {
+          ...actual,
+          SCORING: { ...(actual.SCORING as Record<string, unknown>), answerabilityFloor: 2 },
+        };
+      });
+      const stubbed = await import(SCORE_MODULE);
+      const drivers: Drivers = {
+        foundations: measured(50, AT),
+        answerability: measured(0, AT),
+        searchPresence: measured(0, AT),
+        aiPresence: measured(0, AT),
+      };
+      const result = stubbed.factorsOf(drivers) as ScoreFactors;
+      // Answerability moves with the stubbed pin.
+      expect((result.answerability as { value: number }).value).toBe(2);
+      // Presence does not — PRESENCE_FLOOR is untouched by the pin.
+      expect((result.presence as { value: number }).value).toBe(1);
+      vi.doUnmock(CONSTANTS_MODULE);
+      vi.resetModules();
     });
   }
 );
