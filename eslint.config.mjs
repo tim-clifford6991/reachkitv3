@@ -3,7 +3,7 @@
 // Flat config extending `next/core-web-vitals` + `@typescript-eslint`.
 // BP-001 decision 2: "`eslint.config.mjs` is where the corpus's
 // cross-module lint invariants land," and this node is answerable for
-// them. Four project rules below, each with a comment naming its source.
+// them. Five project rules below, each with a comment naming its source.
 //
 // ADR-050's other half is not recast here (WO-001 step 3, verbatim):
 // "'Computes no access predicate' is not a lexical property an import rule
@@ -40,9 +40,34 @@ function importFenceRule(test, message) {
   };
 }
 
-// Exported (not just used below) so tests/app/lint-rules.test.ts can be
-// pointed at the exact rule objects this file defines, without needing a
-// second copy of the invariant text.
+/**
+ * A single-purpose local rule factory for a bare-identifier call, e.g.
+ * `fetch(...)`. Unlike `importFenceRule`, this needs no type information
+ * either — a `CallExpression` whose callee is the identifier named `name`
+ * is a lexical property of the AST, decidable without a type checker.
+ *
+ * @param {string} name
+ * @param {string} message
+ */
+function callFenceRule(name, message) {
+  return {
+    meta: { type: "problem", docs: { description: message } },
+    create(context) {
+      return {
+        CallExpression(node) {
+          const callee = node.callee;
+          if (callee.type === "Identifier" && callee.name === name) {
+            context.report({ node, message });
+          }
+        },
+      };
+    },
+  };
+}
+
+// Exported (not just used below) so tests/app/lint-rules.test.ts and
+// tests/egress/policy.test.ts can be pointed at the exact rule objects this
+// file defines, without needing a second copy of the invariant text.
 export const localImportRules = {
   rules: {
     // (a) BP-002 boundary: "no import of src/lib/db internals outside
@@ -78,6 +103,16 @@ export const localImportRules = {
       (spec) => spec.startsWith("@/lib/account/billing/"),
       "ADR-050: nothing outside src/lib/account/billing/** may import users.paid_through's reader or re-derive access from plan_status. Only src/lib/account/billing's own public interface (hasActiveAccess) may be imported elsewhere."
     ),
+
+    // (e) BP-006 NFR budget, verbatim: "A `fetch(` call anywhere else under
+    // `src/lib/` that is not BP-008's vendor client is a lint error."
+    // `src/lib/egress/**` is the audited boundary itself (BP-006);
+    // `src/lib/vendors/**` is BP-008's vendor client. Scoped below to every
+    // other `src/lib/**` file.
+    "no-fetch-outside-egress": callFenceRule(
+      "fetch",
+      "BP-006: a fetch( call anywhere under src/lib/ that is not src/lib/egress/** (the audited boundary) or src/lib/vendors/** (BP-008's vendor client) is a lint error — route it through safeFetch()."
+    ),
   },
 };
 
@@ -109,6 +144,14 @@ export default tseslint.config(
     ignores: ["src/lib/account/billing/**"],
     plugins: { local: localImportRules },
     rules: { "local/no-billing-internal-import": "error" },
+  },
+  {
+    // (e) — scoped to every src/lib/** file except the audited boundary
+    // itself and the vendor client.
+    files: ["src/lib/**/*.{ts,tsx}"],
+    ignores: ["src/lib/egress/**", "src/lib/vendors/**"],
+    plugins: { local: localImportRules },
+    rules: { "local/no-fetch-outside-egress": "error" },
   },
   {
     ignores: [".next/**", "node_modules/**", "coverage/**", "src/**/*.generated.ts"],
