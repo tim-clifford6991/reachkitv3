@@ -100,6 +100,14 @@ export function extractFrontMatter({ fileTypes, DOCS, FILE_RE, cfg, nodes, edges
         // here assumes that). rule wave-off-record is what checks it against
         // the record; this is only the read.
         if (typeof data.wave === "string" && data.wave) meta.Wave = data.wave;
+        // `risk` (0.13.2): `high` or `normal`, set by the planner from the
+        // project's own named seams. Meta only, read like `wave` — the
+        // vocabulary is checked by `high-risk-without-mutation`, which is
+        // also the rule the field exists for: only a high-risk order is
+        // mutation-tested, so only a high-risk order's `done` needs a
+        // mutation record. Absent means normal, which is why no migration
+        // has to write anything into an existing corpus.
+        if (typeof data.risk === "string" && data.risk) meta.Risk = data.risk.trim().toLowerCase();
       }
       if (vocabDrift) health.vocab[nodeType] = (health.vocab[nodeType] || 0) + 1;
 
@@ -247,6 +255,29 @@ export function extractFrontMatter({ fileTypes, DOCS, FILE_RE, cfg, nodes, edges
             ui: false, meta: {}, file: `${type.dir}/${f}`, body: "", bytes: 0,
           });
           edges.push({ from: h.id, to: id, rel: "validates" });
+
+          // 0.13.2 — one validation pass can cover a whole wave. A TST
+          // section carrying a `Validates: WO-001, WO-002, …` line declares
+          // the orders it checked beyond the one whose body holds it, and
+          // each becomes a real `validates` edge here, at parse time. That
+          // is the whole mechanism: `done-without-validation` needs no
+          // special case, the graph says what was actually checked, and a
+          // named id that does not exist is `dangling-id` like any other.
+          // A range token is refused and reported, never expanded — the
+          // same rule every other id list in this parser lives under.
+          const vLine = section.split("\n").find((l) => /^\s*\**\s*Validates:/i.test(l));
+          if (vLine) {
+            if (/…|\.\.\./.test(vLine)) {
+              health.rangeLines.push({ id: h.id, key: "Validates", line: vLine.trim().slice(0, 90) });
+            } else {
+              const seen = new Set([id]);
+              for (const tok of vLine.match(/\b[A-Z]{2,}-\d{3,}\b/g) || []) {
+                if (seen.has(tok)) continue;
+                seen.add(tok);
+                edges.push({ from: h.id, to: tok, rel: "validates" });
+              }
+            }
+          }
         }
 
         // A heading that opens with a TST id but misses the grammar is not a

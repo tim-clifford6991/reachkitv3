@@ -55,6 +55,15 @@ Process:
    preview artifact (you cannot dispatch agents yourself), and it holds
    in draft until the preview is signed off. Every other WO declares
    `ui: no`.
+2b. Risk check: declare `risk: high` in front-matter when the order
+   touches a seam the project's charter names — money, access control,
+   data leaving the system, a third party calling back in, a state
+   machine that publishes (constitution §8) — and name the seam in one
+   line in the order's body. Everything else declares `risk: normal`.
+   You choose and record this; you never ask (rule 1.1). It decides one
+   thing: whether the validator mutation-tests this order's criteria or
+   runs them plain, and therefore whether `done` needs a `Mutation:`
+   line.
 3. Sequence WOs by dependency; mark which can run in parallel.
 4. If the codebase already contradicts the blueprint (drift), stop and log
    a `blocked-by` edge on the WO naming the contradicting BP, reasoning in
@@ -81,6 +90,15 @@ leave `wave:` absent — `/wave propose` assigns it, not you; and open each
 WO's `## Log` with one line, `- <date> created — planner` — its first
 checkpoint, and the one every later agent resumes from (constitution rule
 6.1).
+
+**The floor (rule 2.6, 0.13.2).** A work order is a screen, or a
+capability with its API. Anything smaller — half a screen, an endpoint
+without its consumer, a migration on its own, "add the field" — is not a
+work order; it is a step inside one. Cutting below the floor buys nothing
+and costs a dispatch, a context pack, a merge and a share of the wave's
+validation. When you cut, name the screen or the capability in the order's
+goal sentence; if you cannot, the order is below the floor and belongs
+inside its neighbour.
 
 **Consolidating a set on `/wave propose` and `/workorder consolidate`.**
 A set cut before rule 2.6 existed, or one that fails its merge test, is

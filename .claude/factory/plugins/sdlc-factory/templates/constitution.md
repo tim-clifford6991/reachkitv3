@@ -154,10 +154,15 @@ live corpus before any code existed: 681,900 live words, 14,824 per
 approved requirement, 253 work orders totalling more lines than the
 first corpus's whole implementation.*
 
-**Rule 2.6 — a work order is a slice, never a file.** The unit of a work
-order is one journey step end to end, or one capability from its
-interface to its test — cut vertically through whatever files that
-takes, never horizontally along a layer, a directory, or a file. The
+**Rule 2.6 — a work order is a slice, never a file, and it has a floor.**
+The unit of a work order is **a screen, or a capability with its API** —
+cut vertically through whatever files that takes, never horizontally
+along a layer, a directory, or a file, and never smaller than that unit
+(0.13.2). Below the floor an order costs more to gate than to build: the
+same dispatch, the same pack, the same merge, for a fraction of a thing.
+The planner merges anything smaller at wave proposal, before the row is
+written — one place, once, per slice (rule 7.4), and as a merge, never a
+discard. The
 merge test, mirroring rule 2.1's: **two work orders that cannot state
 their goal and stop condition without citing each other are one work
 order.** A set that fails it is merged before it is approved — a merge,
@@ -179,13 +184,31 @@ refuses retroactively when a gate was not met. (Rule 7.3's preview
 sign-off is not a third owner gate: it holds one `ui: yes` work order's
 implementation, never an artifact's approval.)
 
+**The gates are per wave, not per order (0.13.2).** An order's own gate is
+the one thing only it can prove: its tests and its typecheck, green, in
+its own worktree, before it merges. Every gate that has to read the corpus
+to reach a verdict — validation, regression, the `done` audit — runs
+**once, at wave close, over the wave's merged result**. *Measured
+2026-09-02: roughly 70% of a work order's elapsed time was validate +
+regress + audit, and each of those dispatches re-read the corpus — 41M
+cache-read tokens for one order. Run per order, that cost is paid n times
+to answer a question once.* The gates below are unchanged in what they
+require; what changed is how often they are asked.
+
 - No blueprint from a non-approved requirement.
 - No work order from a non-verified blueprint.
 - No code without a work order.
-- No merge without a passing validation report.
-- No work order reaches `done` without a regression record — its latest
-  validation section states what else was re-checked, not just the new
-  work (`/regress`).
+- No merge without the order's **own tests and typecheck green** — the
+  gate an order can prove alone, and the only one it must clear to merge.
+- No wave closes without **one validation pass over its merged result** —
+  a single `## TST-###` section, written into the wave's first order,
+  carrying `Validates: <every order in the wave>`. Every id that line
+  names is validated by it, and an id it does not name is not
+  (`done-without-validation`).
+- No wave closes without a regression record — one `Regression:` line on
+  that same section, covering the wave (`/regress`;
+  `tst-without-regression` reports every order the section leaves
+  uncovered).
 - No `ui: yes` work order is implemented without a signed preview — a
   dated `Signed-off:` line before an implementer opens it, and the page's
   URL and version in its `## Log` (`preview-without-url`). This gate is
@@ -193,13 +216,14 @@ implementation, never an artifact's approval.)
   not name the work order, `/implement` will not dispatch it, the
   implementer will not start it — and waived only by the owner's own
   ruling, recorded in that work order's log.
-- No `ui: yes` work order reaches `done` without a placement note — its
-  latest validation section carries a `Placement:` line before the
-  librarian sets it.
+- No `ui: yes` work order reaches `done` without a placement note — the
+  wave's validation section carries one `Placement:` line per `ui: yes`
+  order it names, each naming that order, before the librarian sets it.
 - No work order reaches `done` with an `open` `rests-on` row — its
-  validator dispositioned every row it carries (2.3b).
+  validator dispositioned every row it carries (2.3b), in the wave pass.
 - Statuses: `draft → in-review → approved → superseded`; work orders alone
-  add the terminal `done`, set only by the librarian after merge.
+  add the terminal `done`, set only by the librarian — once per wave, for
+  every order in the closing wave at the same time.
 
 **Rule 3.1 — the verifier never asks.** It refuses, states which clause
 failed, and names what would clear it. *On the reference corpus it refused
@@ -328,6 +352,20 @@ as prose relitigated in every later return.
 **Rule 4.3 — returns are deltas.** An agent's return states what changed,
 what stands, and the counts — never a restatement of content the files
 already hold. The corpus is the record; the return is the diff.
+
+**Rule 4.5 — every dispatch carries a context pack, and reads nothing
+else.** A pack is three things and no others: the work order, the
+artifacts its own front-matter edges name (`implements` and `depends-on`,
+one hop, plus the requirements those blueprints `satisfies`), and the
+files its `## File plan` names. It is built mechanically —
+`factory-console pack WO-###`, never assembled by judgement — and handed
+to the subagent as its reading list, with **"read nothing beyond the pack
+unless a test fails"** in the prompt. A failing test is the one licence to
+read wider, because a failure is evidence the pack was wrong. Its size is
+recorded on the order's own `## Log`, so the cost of a dispatch is a
+number in the corpus rather than a feeling. *Measured 2026-09-02: 41M
+cache-read tokens for one work order's loop, because every dispatch
+re-read whatever the agent thought might matter.*
 
 **Rule 4.4 — the model is chosen by what the agent decides, not by how
 much it writes.** An agent that decides what is promised or what shape
@@ -476,8 +514,21 @@ absent from some worktrees, and a false claim live on a public page.
 
 - **Watch it fail first.** A test that passes before the code exists tests
   nothing.
-- **Mutation testing inside validation.** A test that survives deletion of
-  its feature is vacuous.
+- **Mutation testing inside validation, scoped by risk (0.13.2).** A test
+  that survives deletion of its feature is vacuous — that has not changed.
+  What changed is where the pass is spent: the validator mutation-tests
+  the work orders declaring `risk: high` and gives the rest plain
+  criterion tests. **A seam is where a defect is expensive and silent**:
+  money, access control, data leaving the system, a third party calling
+  back in, a state machine that publishes. Each project names its own
+  seams in its charter (`00-project.md`) — the first live project's were
+  the cost seam, RLS/default-deny, the egress fetcher, the Stripe webhook
+  and the publish state machine, and that list is the worked example, not
+  the doctrine. The planner sets the field from that list when it cuts the
+  order (rule 1.1: it chooses and records, it does not ask); absent means
+  `normal`. A high-risk order cannot reach `done` without a `Mutation:`
+  line in the validation section covering it — `high-risk-without-mutation`,
+  at error.
 - **The independent verifier.**
 - **Cite your source — verbatim, with a URL and a date.** A paraphrase
   presented as a quotation is a defect.

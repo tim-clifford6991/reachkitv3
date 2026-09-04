@@ -15,6 +15,7 @@ import { loadConfig, ConfigError } from "../src/config.mjs";
 import { extract } from "../src/extract/index.mjs";
 import { check, formatReport } from "../src/check/index.mjs";
 import { computeImpact } from "../src/impact.mjs";
+import { computePack, formatPack } from "../src/pack.mjs";
 import { serve } from "../src/serve.mjs";
 import { readRegistry, register, unregister, tabsFor, expand, isProject } from "../src/projects.mjs";
 import { upgradeProject, doctrineVersion, corpusVersion } from "../src/upgrade.mjs";
@@ -30,6 +31,7 @@ const USAGE = `factory-console — read-only console for an SDLC Factory corpus
   factory-console [path]              serve the viewer (default port 4319)
   factory-console --check [path]      conformance run; exit 1 on an error finding
   factory-console --json [path]       write the graph to stdout
+  factory-console pack WO-042 [path]          the reading list for one dispatch (rule 4.5)
   factory-console impact WO-042 [path]        what WO-042's commits land on
   factory-console impact <file> [path]        what a bare file path lands on
   factory-console next [path]         the state-derived next action for the pipeline
@@ -80,7 +82,7 @@ function die(msg, code = 2) {
 }
 
 const { flags, positional } = parseArgs(process.argv.slice(2));
-const command = ["register", "unregister", "projects", "upgrade", "registry", "impact", "next", "pivot", "vendor"].includes(positional[0]) ? positional.shift() : null;
+const command = ["register", "unregister", "projects", "upgrade", "registry", "impact", "pack", "next", "pivot", "vendor"].includes(positional[0]) ? positional.shift() : null;
 
 if (flags.help || flags.h) {
   console.log(USAGE);
@@ -208,6 +210,18 @@ try {
       }
       console.log(`registry OK · wrote ${r.wrote.length} file(s) to ${relative(root, r.outDir) || "."}`);
       if (r.warnings.length > 0) console.log(`  (${r.warnings.length} unresolved edge(s) — reported, not fatal; run --check for details)`);
+      break;
+    }
+    case "pack": {
+      const target = positional[0];
+      if (!target) die("factory-console pack <WO-###> [project path]");
+      const root = rootFrom(positional, 1);
+      const { config } = loadConfig(root);
+      const graph = extract(root, config);
+      const pack = computePack(graph, config, root, target);
+      if (!pack) die(`no work order ${target} in this corpus`);
+      if (flags.json) { process.stdout.write(JSON.stringify(pack)); break; }
+      console.log(formatPack(pack));
       break;
     }
     case "impact": {

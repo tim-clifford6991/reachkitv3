@@ -5,6 +5,16 @@ description: How to write execution-ready work orders (WO) with file-level plans
 
 # Work Order Writing
 
+**The floor (rule 2.6, 0.13.2).** One work order is **a screen, or a
+capability with its API** — never less. Half a screen, an endpoint with no
+consumer, a migration by itself, "add the field": those are steps inside
+an order, written in its `## Steps`, not orders of their own. Every order
+pays the same fixed cost — one dispatch, one context pack, one merge, a
+share of the wave's single validation pass — so an order below the floor
+spends a whole gate on a fraction of a thing. If the goal sentence cannot
+name a screen or a capability, the order belongs inside its neighbour, and
+the planner merges it at wave proposal (`commands/wave.md`).
+
 A WO is a contract an implementer can execute with no further questions.
 
 ## Front-matter
@@ -107,26 +117,27 @@ too big — split it.
 The last section before the validation report — the checkpoint any agent
 resumes from (constitution rule 6.1: "a run that writes no log line did
 not happen"). Body text, not front-matter: it carries no edge the
-registry projects, only history read in order. Eight line forms, newest
+registry projects, only history read in order. Nine line forms, newest
 last:
 
     - <YYYY-MM-DD> created — <agent>
     - <YYYY-MM-DD> started — <agent>
     - <YYYY-MM-DD> finished — <agent> — <one line>
     - <YYYY-MM-DD> failed — <agent> — <why> — next: <the step to resume at>
+    - <YYYY-MM-DD> pack — <n> items · <n> artifacts · <n> files · <n> KB
     - <YYYY-MM-DD> preview — design-guardian — v<n> — <url>
     - <YYYY-MM-DD> ruled — owner — <one line>
     - <YYYY-MM-DD> opened — migration <version>
     - <YYYY-MM-DD> guard — <agent> wrote <file> outside §4's <zone>/ row — allowed under SDLC_FACTORY_GUARD=log
 
-The eighth is the guard's alone (0.12.0): in an unattended run the write
+The ninth is the guard's alone (0.12.0): in an unattended run the write
 gate records an out-of-row subagent write here instead of prompting, and
-the librarian audits the line on `/sync`. The seventh is migration-only: a `factory upgrade` backfill writes it when it
+the librarian audits the line on `/sync`. The eighth is migration-only: a `factory upgrade` backfill writes it when it
 adds the section to a work order (or the work-order template) that predates
 constitution rule 6.1, rather than fabricating a `created` line for a run
 that never happened.
 
-The sixth is the owner's, written by the librarian on the owner's behalf
+The seventh is the owner's, written by the librarian on the owner's behalf
 (0.13.1) — the main session cannot write a corpus and the owner does not
 type into files. It records a gate this work order does not meet and that
 the owner has waived anyway: `- 2026-09-03 ruled — owner — build first,
@@ -138,7 +149,15 @@ is a fact in the file forever — and `preview-without-url` keeps reporting
 the order until a sheet is actually published, waiver or not (rule 3.3:
 a refusal is recorded, not enforced, where nothing enforces it).
 
-The fifth is the only line in this section a checker reads (0.13.0,
+The fifth is the context pack (0.13.2, constitution rule 4.5): what one
+dispatch against this order was allowed to read, written by the
+dispatching verb from `factory-console pack WO-###` — the order, the
+artifacts its own edges name, and the files its file plan names. One line
+per dispatch, so the cost of building this order is a number in the file
+rather than a feeling. Nothing reads it mechanically; it is the record
+that makes rule 4.5 auditable at all.
+
+The sixth is the only line in this section a checker reads (0.13.0,
 constitution rule 7.3). The design-guardian writes one per publication of
 this WO's preview sheet — `v<n>` the artifact's version, `<url>` its
 page — so the section is the sheet's revision history and the last such
@@ -161,14 +180,32 @@ didn't finish.
 ## Validation report
 
 Appended by the validator (`agents/validator.md`), never by this WO's own
-author — body text, not front-matter, carrying no edge the registry
-projects. TST ids are corpus-global — every heading becomes a node in one
-id map, so the validator takes the next unused TST-### across the whole
-corpus, never restarting at TST-001 per work order. Once this WO reaches
-`status: done`, its LATEST `## TST-###`
-section — by id sort, the same "-R"/"-R2" convention the blockers panel
-uses (`TST-002-R` sorts after `TST-002`; `TST-021-R2` after `TST-021-R`) —
-must also carry a line starting `Regression:`, recording what was
+author — body text, not front-matter, but the one body section that DOES
+mint edges: each `## TST-###` heading becomes a validation node with a
+`validates` edge to the work order whose body holds it. TST ids are
+corpus-global — every heading becomes a node in one id map, so the
+validator takes the next unused TST-### across the whole corpus, never
+restarting at TST-001 per work order.
+
+**One section per wave.** The gates moved from per order to per wave
+(constitution §3, 0.13.2): the validator runs once at `/wave close`, over
+the merged branch, and writes ONE section — into the wave's first order —
+opening with
+
+    Validates: WO-003, WO-004, WO-007
+
+every order the wave's row names. The parser mints one more `validates`
+edge per id on that line, so most work orders carry no validation section
+of their own and are validated by the section that names them:
+`done-without-validation` reads the edge, not the location. A per-order
+section is still legal for a surgical re-check of one order, and is not
+what closes a wave.
+
+Once this WO reaches `status: done`, the LATEST `## TST-###`
+section validating it — by id sort, the same "-R"/"-R2" convention the
+blockers panel uses (`TST-002-R` sorts after `TST-002`; `TST-021-R2` after
+`TST-021-R`), found through the `validates` edge rather than by looking in
+this file — must also carry a line starting `Regression:`, recording what was
 re-checked alongside the new work, not just the new work itself:
 
     Regression: <n> files · <REQ-… list | none> re-checked — pass
@@ -177,6 +214,27 @@ re-checked alongside the new work, not just the new work itself:
 A done WO whose latest validation section carries no such line is the
 `tst-without-regression` finding (warn) — the line is added via `/regress`,
 rule 3 (structure compliance) extended.
+
+## `risk:` (front-matter)
+
+`risk: high` or `risk: normal`, and **absent means normal** — which is why
+0.13.2 rewrote no corpus. The planner sets it when it cuts the order, from
+the seams the project's charter names (constitution §8): money, access
+control, data leaving the system, a third party calling back in, a state
+machine that publishes. It is a choice the planner makes and records, not
+one it asks about (rule 1.1); the reason goes in the order's own body, one
+line, where the seam is named.
+
+The field buys exactly one thing: the validator mutation-tests `high`
+orders and gives the rest plain criterion tests. So a `high` order cannot
+reach `done` until the validation section covering it carries
+
+    Mutation: <n> of <n> criterion tests failed under mutation — discriminating
+    Mutation: <n> of <n> — <which test survived deletion of its feature>
+
+`high-risk-without-mutation` (error) reports the gap, and reports a
+`risk:` value that is neither word rather than reading it as `normal` — a
+typo must not quietly disable the gate on the orders it exists for.
 
 ## `ui:` (front-matter) and the display bullets (body)
 

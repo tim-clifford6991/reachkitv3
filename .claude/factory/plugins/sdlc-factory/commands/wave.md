@@ -21,8 +21,13 @@ itself; `registry/` is the librarian's (constitution §4's agent table),
 the same reason `/wave show` and `/wave close` below dispatch the
 librarian rather than the planner.
 
-Before selecting, the planner applies rule 2.6's merge test to the
-candidates the goal draws on and consolidates any group that fails it
+Before selecting, the planner applies rule 2.6's **floor** and its merge
+test to the candidates the goal draws on: an order smaller than a screen
+or a capability-with-its-API is merged into its neighbour here, at
+proposal, before the row is written (0.13.2) — the cheapest place to do
+it, since below the floor an order costs a dispatch, a pack, a merge and
+a share of the wave's one validation pass for a fraction of a thing. It
+consolidates any group that fails either
 (`agents/planner.md`, "Consolidating a set") — per slice, never the
 whole backlog (rule 7.4), and as a merge, never a discard: criteria and
 file plans carried verbatim, the replaced orders kept as `superseded`.
@@ -34,6 +39,11 @@ Dispatch the librarian subagent with the planner's proposal to write it: a
 new `open` row in `registry/waves.md` — the next unused `W<n>`, the goal,
 the ordered WO list, `open` — and `wave: W<n>` set in front-matter on
 each WO it names, the same declared-field posture as `implements:`.
+
+The wave's integration branch `wave/W<n>` is cut from main when I commit
+the row. Each order merges into it as it passes its own tests and
+typecheck (`commands/implement.md`); main is fast-forwarded to it once,
+at close — not per order.
 
 This lands uncommitted, same as `/expand-requirement`: I accept it by committing, or
 edit the row and the WOs it names before I do either.
@@ -48,7 +58,31 @@ line in its own `## Log`.
 
 ## close
 
-Dispatch the librarian subagent to close the current wave. Every WO the
+**This is where the gates are (0.13.2, §3).** Three passes run here, once
+each, over the wave's merged result — not once per order:
+
+1. **One validator pass.** Dispatch the validator subagent over the whole
+   wave: the acceptance criteria of every order the row names, checked
+   against the merged branch (`agents/validator.md`). It writes ONE
+   `## TST-###`
+   section into the wave's **first** order — the first id in the row's
+   list — carrying `Validates: <every id in the row>`. The parser turns
+   each id on that line into a real `validates` edge, so every order it
+   names is validated and one it omits is not
+   (`done-without-validation`).
+2. **One regression pass.** `/regress` over the same section: one
+   `Regression:` line, one impact sweep across the wave's whole merged
+   diff, appended to that same `## TST-###` section — never a new
+   heading.
+3. **One librarian audit.** The `done` audit runs once and sets
+   `status: done` for **every** order in the row that clears it, with one
+   `finished — librarian` line on each order's own `## Log`. An order
+   that fails its own condition is named and left `approved`; the rest
+   still close.
+
+Then fast-forward `main` to `wave/W<n>`.
+
+Only after those three does the row's Status move. Every WO the
 row names must clear one of three paths — never a silent partial close:
 
 - **`status: done`** — counts on its own; nothing else required.

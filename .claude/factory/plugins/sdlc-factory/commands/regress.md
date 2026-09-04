@@ -1,13 +1,14 @@
 ---
 description: System · Run the regression gate a work order needs before done
 ---
-You ask me nothing here — this derives, runs, and records. Invoked by
-`/implement`'s close, or directly on a WO whose own validation already
-passed.
+You ask me nothing here — this derives, runs, and records. Invoked once
+per wave, by `/wave close`, after its validator pass (0.13.2): the sweep
+covers the wave's whole merged diff, not one order's.
 
-Refuse unless $ARGUMENTS' latest `## TST-###` section (by id, the same
-"-R"/"-R2" sort the blockers panel uses) already carries a passing verdict
-(`agents/validator.md`) — regression re-checks what already passed, not
+Refuse unless the wave's validation section — the `## TST-###` the
+validator just wrote into the wave's first order, carrying its
+`Validates:` list — already declares a passing verdict
+(`agents/validator.md`). Regression re-checks what already passed, not
 code that hasn't cleared its own criteria yet. Name the missing verdict
 and stop; nothing below runs.
 
@@ -15,17 +16,21 @@ Dispatch the validator subagent's regression pass (`agents/validator.md`)
 on the WO:
 
 1. Run the full test suite.
-2. Run `factory-console impact WO-###` (Task 1's read-only query) — the
-   files this WO's commits touched, the blueprints those anchor, their
-   direct importers, and the requirements those blueprints `satisfies`.
+2. Run `factory-console impact WO-###` for **every** order the wave's
+   `Validates:` line names (Task 1's read-only query) and take the union —
+   the files those orders' commits touched, the blueprints those anchor,
+   their direct importers, and the requirements those blueprints
+   `satisfies`. One sweep over the union, not one sweep per order: the
+   orders merged into one branch and the union is what shipped.
 3. Re-check the acceptance criteria of every requirement the impact set
    names — actually re-verify each one, not just relist it.
-4. Append one `Regression:` line to that same latest `## TST-###`
+4. Append one `Regression:` line to the wave's own `## TST-###`
    section — never a new heading — in the grammar
    `skills/work-order-writing/SKILL.md` states: `Regression: <n> files ·
    <REQ-… list | none> re-checked — pass` or `Regression: <n> files ·
    <REQ-… list | none> re-checked — findings: <one line>`.
-5. Log it on the WO's own `## Log`: a clean sweep gets
+5. Log it on the wave's first order's `## Log` — the one holding the
+   section: a clean sweep gets
    `- <date> finished — validator — <one line>`; a finding gets
    `- <date> failed — validator — <why> — next: <the step to resume at>`
    instead — `failed` here records the sweep's own outcome in the Log

@@ -52,6 +52,14 @@ Rules:
    log is the checkpoint the next agent resumes from (constitution rule
    6.1) — a run that writes no log line did not happen.
 
+7. **Read nothing beyond your context pack unless a test fails**
+   (constitution rule 4.5). The dispatch hands you a list — the work
+   order, the artifacts its edges name, the files its file plan names —
+   and that list is the corpus for this run. A failing test is the one
+   licence to read wider, because a failure is evidence the pack was
+   wrong; say so in your return when you use it, naming what you had to
+   open and why, so the next pack is built better.
+
 Style: match existing codebase conventions; small commits. Commit subjects
 are `type(WO-###): what moved and why`; one work order per commit, never a
 range.

@@ -32,11 +32,13 @@ know which verb comes next; that is this command's job.
    - approved work with no wave → `/wave propose` (the row comes to the
      checkpoint);
    - an open wave → per work order, the preview gate above first, then
-     the whole build loop: `/implement` →
-     `/validate` → `/regress` → the librarian's done audit — then the
-     next work order, until the wave is done or a gate blocks. This loop
-     is the one caller of `/validate` and `/regress` (constitution §4's
-     routing map); `/implement` builds and stops;
+     `/implement`, which builds, runs that order's own tests and
+     typecheck, merges into `wave/W<n>` and stops (0.13.2) — then the
+     next order, until every one has merged. **`/validate`, `/regress`
+     and the done audit do not run here**: all three run once, at
+     `/wave close`, over the wave's merged result (constitution §3). This
+     loop is still the one caller of `/validate` and `/regress`
+     (constitution §4's routing map) — it calls them at close, once;
    - a `ui: yes` work order with no dated `Signed-off:` line → `/design
      preview WO-###`, whose published page lands in the checkpoint as a
      link for sign-off; once the owner has answered — on the page or in

@@ -9,6 +9,24 @@ A wave is one goal sentence and up to 8 work orders that together deliver
 it. Smaller is fine; bigger means the goal isn't one thing yet — split it
 into two waves rather than writing a longer sentence.
 
+## The wave is the gate unit (0.13.2)
+
+A wave is no longer just a batch of work: it is the unit every
+corpus-reading gate runs over exactly once. At close, one validator pass
+covers every order the row names against the merged `wave/W<n>` branch and
+writes one `## TST-###` section with a `Validates:` line; one regression
+sweep covers the union of those orders' impact; one librarian audit sets
+`done` for all of them. An order proves only its own tests and typecheck
+before it merges (constitution §3).
+
+Two consequences for how a row is proposed. **The cap matters more.** Eight
+orders is one validation pass over eight orders' criteria — a row that runs
+long makes that pass long, and a rejected order at close blocks nothing
+else but still has to be re-run inside the wave. **The row's first id is
+load-bearing**: the wave's single validation section is written into that
+order's body, so it should be an order that survives the wave (never one
+likely to be carried or superseded).
+
 ## The record, in two places
 
 `registry/waves.md` is the librarian's to write, same as every other

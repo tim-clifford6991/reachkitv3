@@ -14,6 +14,7 @@ import orphanRequirement from "./orphan-requirement.mjs";
 import doneWithoutValidation from "./done-without-validation.mjs";
 import tstWithoutRegression from "./tst-without-regression.mjs";
 import previewWithoutUrl from "./preview-without-url.mjs";
+import highRiskWithoutMutation from "./high-risk-without-mutation.mjs";
 import silentIndex from "./silent-index.mjs";
 import edgeOffSchema from "./edge-off-schema.mjs";
 import requirementOffJourney from "./requirement-off-journey.mjs";
@@ -29,6 +30,6 @@ import openAssumptionOnDone from "./open-assumption-on-done.mjs";
 import pivotRelink from "./pivot-relink.mjs";
 import mintedOpenAssumption from "./minted-open-assumption.mjs";
 
-export const RULE_MODULES = [danglingId, registryContradiction, generatedDrift, statusOffGrammar, fieldVocabulary, ellipsisRange, tstHeadingOffGrammar, orphanRequirement, doneWithoutValidation, tstWithoutRegression, previewWithoutUrl, silentIndex, edgeOffSchema, requirementOffJourney, satisfiesSuperseded, staleBlueprint, untracedChange, doneWithoutCommits, waveOffRecord, workOrderFanout, corpusVolume, assumptionBudget, openAssumptionOnDone, pivotRelink, mintedOpenAssumption];
+export const RULE_MODULES = [danglingId, registryContradiction, generatedDrift, statusOffGrammar, fieldVocabulary, ellipsisRange, tstHeadingOffGrammar, orphanRequirement, doneWithoutValidation, tstWithoutRegression, previewWithoutUrl, highRiskWithoutMutation, silentIndex, edgeOffSchema, requirementOffJourney, satisfiesSuperseded, staleBlueprint, untracedChange, doneWithoutCommits, waveOffRecord, workOrderFanout, corpusVolume, assumptionBudget, openAssumptionOnDone, pivotRelink, mintedOpenAssumption];
 export const RULES = RULE_MODULES.map((r) => r.id);
 export const RULE_TEXT = Object.fromEntries(RULE_MODULES.map((r) => [r.id, r.text]));

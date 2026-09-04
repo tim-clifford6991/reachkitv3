@@ -36,14 +36,21 @@ than cutting a worktree that cannot see its own work order. *On the
 first live run two worktrees had to carry their WO docs in by hand;
 this clause is the cure.*
 
-Pack the context so the run starts with everything it needs and nothing
-left to reconstruct mid-flight: the WO itself; the blueprint(s) it
-`implements` and the requirement(s) each one `satisfies`; any ADR those
-blueprints cite; the blueprints' `code:` anchors (rule 5.6); the journey
-step(s), if any, whose `exercises` names one of those requirements; and a
-preview of the blast radius — `factory-console impact WO-###` (Task 1's
-read-only query) — run once before a line changes, so the file plan can
-be checked against a computed answer, not a guess.
+Build the context pack and hand it over as the dispatch's reading list
+(rule 4.5): `factory-console pack WO-###` returns the WO, the artifacts
+its own edges name, and the files its file plan names, plus the byte
+count. Say **"read nothing beyond the pack unless a test fails"** in the
+prompt, and write the command's own log line onto the order's `## Log`.
+The pack is mechanical on purpose — an assembled-by-judgement pack is how
+41M cache-read tokens happened for one order — and a failing test is the
+one licence to read wider, because a failure is evidence the pack was
+wrong.
+
+Then run `factory-console impact WO-###` (Task 1's read-only query) once,
+before a line changes, so the file plan can be checked against a computed
+answer rather than a guess. The blueprints' `code:` anchors (rule 5.6) and
+the journey step(s) whose `exercises` names one of the pack's requirements
+are read only if the pack's own files do not answer the question.
 
 Create an isolated worktree — this command's own rule, not
 implementer.md's — on the WO's own branch, `wo/WO-###-slug` (the branch
@@ -59,11 +66,25 @@ convention.
 On a clean finish, the implementer subagent commits inside the worktree
 — the convention `agents/implementer.md` states under Style
 (`type(WO-###): what moved and why`, one work order per commit, never a
-range) — and this ends. Report the commit(s), the implementer's
-per-file summary and test results, and the worktree path. Verification
-is not this verb's: `/factory` — this verb's one caller (constitution
-§4's routing map) — invokes `/validate` and then `/regress` on the
-return, and the librarian's `done` audit after merge. Run surgically,
-`/implement` builds and stops; it never verifies its own work.
+range) — and then this verb closes the order itself, which is the 0.13.2
+change:
+
+1. **Run the order's own tests and its typecheck.** Both green is the
+   whole per-order gate (§3) — the one thing an order can prove without
+   reading the corpus. Red: the implementer gets it back, `failed —` on
+   the log, and nothing merges.
+2. **Merge.** The `wo/WO-###` branch goes into the wave's integration
+   branch (`wave/W<n>`, cut from main when the wave opened). `main` is
+   fast-forwarded to that branch once, at wave close — unchanged, and
+   deliberately not per order.
+3. **Stop.** No validator, no regression, no `done`. All three now run
+   once per wave, over the merged result (`/wave close`). A work order
+   that merges stays `approved`; `done` is set for the whole wave at
+   once, by the librarian, at close.
+
+Report the commit(s), the implementer's per-file summary, and the test,
+typecheck and merge results. Run surgically,
+`/implement` builds, proves, merges and stops; it never verifies its own
+work against the corpus — that is what the wave pass is for.
 
 Work order: $ARGUMENTS

@@ -55,10 +55,38 @@ Process:
    five work orders each opening at `TST-001` is four collisions the
    registry generator refuses.
 
+   **Read the pack, then the diff (rule 4.5).** Your dispatch carries the
+   wave's packs and the merged diff; read nothing beyond them unless a
+   criterion cannot be judged from what you were handed — and when that
+   happens, name what you had to open, because it is evidence the pack was
+   wrong rather than a licence to browse.
+
+   **Mutation testing is scoped by risk (0.13.2).** Mutation-test the
+   criteria of the orders in this wave declaring `risk: high` — delete the
+   feature, prove the test fails — and record the result as one
+   `Mutation:` line per high-risk order in the wave's section, naming the
+   order. Orders at `risk: normal` get plain criterion tests and no
+   mutation line. The bar in §8 has not moved; what moved is where the
+   pass is spent, and `high-risk-without-mutation` (error) is what holds
+   it: no high-risk order reaches `done` without that line.
+
+   **One section per wave, not per order (0.13.2).** You are dispatched
+   once, at `/wave close`, over the wave's merged branch. Write ONE
+   `## TST-###` section, into the wave's **first** order — the first id in
+   its row of `registry/waves.md` — and open it with
+
+       Validates: WO-003, WO-004, WO-007
+
+   naming every order the row names. The parser mints one `validates` edge
+   per id on that line, so the section validates them all and an order you
+   leave off it stays unvalidated (`done-without-validation` reports it).
+   The PASS/FAIL table inside the section keeps one row per criterion with
+   its order named, so a reject points at an order, not at "the wave".
+
    **Write the report to disk.** It is the gate for `done`; a verdict that
    exists only in your reply is not a verdict.
 
-   **For a `ui: yes` WO,** the report also carries one `Placement:` line
+   **For each `ui: yes` WO in the wave,** the report carries one `Placement:` line naming that order
    — `/validate` (`commands/validate.md`) dispatches the design-guardian's
    UI-fit pass (`agents/design-guardian.md`) before invoking you, and this
    line is how its result reaches your report: count the `REVIEW(placement)`

@@ -20,15 +20,22 @@ Duties:
    the clause, name what would clear it (rule 3.1). Verification is an
    audit, not a precondition; do not block on running it first.
 
-   A work order's terminal `done` is this same audit, run once, after
-   merge: check the validator's verdict against its report, the
-   commit(s) naming the WO, and that its LATEST `## TST-###` section (the
-   same "-R"/"-R2" sort the blockers panel uses) carries a `Regression:`
-   line — what `/regress` records, and what `tst-without-regression`
+   A work order's terminal `done` is this same audit, run **once per
+   wave** (0.13.2), at `/wave close`, over every order the row names —
+   never once per order. The conditions below are unchanged; you check
+   them for each order in the row in one pass, set `status: done` on every
+   order that clears them, and name the ones that do not without holding
+   up the rest. The validation and regression records you check are the
+   wave's single `## TST-###` section — the one carrying `Validates:` —
+   not a section in each order's own body: check the validator's verdict against its report, the
+   commit(s) naming the WO, and that the LATEST `## TST-###` section
+   validating it (the same "-R"/"-R2" sort the blockers panel uses —
+   found through the `validates` edge, which for a wave pass points from a
+   section in another order's body) carries a `Regression:` line — what `/regress` records, and what `tst-without-regression`
    (`console/src/check/index.mjs`) warns is missing (rule 3, extended). A
    passing verdict with no regression record does not clear the gate. A
    fourth condition applies only to a `ui: yes` WO: that same latest
-   section must also carry a `Placement:` line (`commands/validate.md`,
+   section must also carry a `Placement:` line naming that order (`commands/validate.md`,
    `agents/validator.md`) — a `ui: no` WO is never checked against this
    condition, since it never has one to carry. A fifth condition applies
    to every work order: no `rests-on` row on it is still `open`

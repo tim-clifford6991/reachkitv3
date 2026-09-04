@@ -110,6 +110,7 @@
       "wave-off-record": "warn",
       "tst-without-regression": "warn",
       "preview-without-url": "warn",
+      "high-risk-without-mutation": "error",
       "satisfies-superseded": "warn",
       "work-order-fanout": "warn",
       "corpus-volume": "warn",
