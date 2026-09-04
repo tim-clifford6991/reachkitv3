@@ -6,7 +6,7 @@
 import { readFileSync } from "node:fs";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
-import { measured, measuredZero, unmeasured, type Measured } from "../../../src/lib/measure/measured.ts";
+import { measured, unmeasured, type Measured } from "../../../src/lib/measure/measured.ts";
 import type { InputOutcome, ScanInput } from "../../../src/lib/measure/partition.ts";
 import type { Drivers } from "../../../src/lib/measure/score.ts";
 import { verdictOf, type Verdict } from "../../../src/lib/measure/verdict.ts";
