@@ -22,10 +22,15 @@
 // file only, with no customer-visible consequence; only the set of
 // addresses refused moves, never a promise this product makes.
 //
-// IPv4-mapped IPv6 literals (`::ffff:a.b.c.d`) are unwrapped and
-// reclassified against the IPv4 tables too — a known SSRF bypass (an
-// attacker-controlled URL spelling a private IPv4 address inside a
-// technically-distinct IPv6 literal) that a naive per-family check misses.
+// An IPv4-mapped IPv6 literal (`::ffff:a.b.c.d`) is still refused when its
+// embedded IPv4 address is blocked — `RANGES` below adds both families'
+// subnets into one `BlockList` per class, and `BlockList.check(ip, "ipv6")`
+// resolves that literal against the IPv4 subnets in the same list on its
+// own (verified directly against `node:net`, no unwrap needed or present
+// here — TST-027: an earlier hand-rolled unwrap-and-reclassify step was
+// dead code credited with a guarantee `BlockList` already provided, which
+// is a worse defect than no code in a security module. The test asserting
+// the outcome stays; see `tests/egress/policy.test.ts`).
 import { BlockList, isIP } from "node:net";
 
 export type AddressClass = "private" | "loopback" | "link_local" | "multicast" | "reserved" | "public";
@@ -86,8 +91,6 @@ const CLASS_ORDER: Array<Exclude<AddressClass, "public">> = [
   "reserved",
 ];
 
-const IPV4_MAPPED_RE = /^::ffff:(\d+\.\d+\.\d+\.\d+)$/i;
-
 /** Classifies one already-resolved IP literal. Never throws; an input that
  *  is not a valid IPv4/IPv6 literal is treated as `"reserved"` (refused) —
  *  a resolver returning garbage is refused, never silently let through. */
@@ -95,21 +98,10 @@ export function classifyAddress(ip: string): AddressClass {
   const family = isIP(ip);
   if (family === 0) return "reserved";
 
-  const mapped = family === 6 ? IPV4_MAPPED_RE.exec(ip) : null;
-  const embeddedIpv4 = mapped?.[1];
-  if (embeddedIpv4 && isIP(embeddedIpv4) === 4) {
-    const embeddedClass = classifyAddress(embeddedIpv4);
-    if (embeddedClass !== "public") return embeddedClass;
-  }
-
   for (const cls of CLASS_ORDER) {
     if (BLOCK_LISTS[cls].check(ip, family === 4 ? "ipv4" : "ipv6")) return cls;
   }
   return "public";
-}
-
-export function isBlockedAddress(ip: string): boolean {
-  return classifyAddress(ip) !== "public";
 }
 
 const ALLOWED_SCHEMES = new Set(["http:", "https:"]);
