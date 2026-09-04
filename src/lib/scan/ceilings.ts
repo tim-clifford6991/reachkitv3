@@ -1,5 +1,5 @@
 // src/lib/scan/ceilings.ts — BP-023 `## Public interface`, WO-281
-// (consolidates WO-059; see `sdlc-factory/docs/work-orders/WO-281.md`
+// (consolidates WO-059; see `archive/sdlc-factory-2026-09-04/corpus/docs/work-orders/WO-281.md`
 // `## Consolidation`)
 //
 // **Read `decisions/ADR-021.md` first.** Two ceilings — 90 seconds

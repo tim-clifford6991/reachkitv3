@@ -1,33 +1,16 @@
 {
-  "hooks": {
-    "UserPromptSubmit": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "node \"$CLAUDE_PROJECT_DIR/.claude/factory/plugins/sdlc-factory/hooks/route-prompt.mjs\"",
-            "timeout": 5
-          }
-        ]
-      }
-    ],
-    "PreToolUse": [
-      {
-        "matcher": "Write|Edit|MultiEdit|NotebookEdit",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "node \"$CLAUDE_PROJECT_DIR/.claude/factory/plugins/sdlc-factory/hooks/guard-corpus-write.mjs\"",
-            "timeout": 5
-          }
-        ]
-      }
+  "permissions": {
+    "allow": [
+      "Bash(npm run typecheck)",
+      "Bash(npm run lint)",
+      "Bash(npm test)",
+      "Bash(npm run test:*)",
+      "Bash(gh issue view:*)",
+      "Bash(gh issue list:*)",
+      "Bash(gh pr view:*)",
+      "Bash(gh pr checks:*)",
+      "Bash(gh pr list:*)",
+      "Bash(node scripts/drift-audit.mjs*)"
     ]
-  },
-  "enabledPlugins": {
-    "sdlc-factory@timclifford": false
-  },
-  "env": {
-    "SDLC_FACTORY_GUARD": "off"
   }
 }

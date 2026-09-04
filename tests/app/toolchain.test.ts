@@ -48,15 +48,12 @@ describe('BUILD.md §1 — "Repo shape: standard Next.js."', () => {
   });
 
   it("no top-level directory outside structure.md rule 7's set is present", () => {
-    // structure.md rule 7 (as amended 2026-09-02, commit 1fdab38): "The
-    // top-level set is fixed at `src/`, `supabase/`, `tests/`, `public/`,
-    // `sdlc-factory/`, and `.claude/` (the factory's vendored agents,
-    // commands, skills and console — tooling, not product; committed
-    // 2026-09-02 under commit 61f1fd0)." Tooling/VCS directories that are
-    // never committed (node_modules, .next, coverage, .git) are not a
-    // top-level directory in that sense and are excluded here the same way
-    // .gitignore excludes them from the tree.
-    const allowed = new Set(["src", "supabase", "tests", "public", "sdlc-factory", ".claude"]);
+    // ARCHITECTURE.md rule 7: the committed top-level set is fixed at `src/`,
+    // `supabase/`, `tests/`, `public/`, `scripts/`, `archive/` (the frozen
+    // sdlc-factory corpus, 2026-09-04), `.github/` and `.claude/`. Tooling/VCS
+    // directories that are never committed (node_modules, .next, coverage,
+    // .git) are excluded here the same way .gitignore excludes them.
+    const allowed = new Set(["src", "supabase", "tests", "public", "scripts", "archive", ".github", ".claude"]);
     const toolingOnly = new Set(["node_modules", ".next", "coverage", ".git"]);
     const entries = readdirSync(ROOT, { withFileTypes: true }).filter((e) => e.isDirectory());
     const unexpected = entries
