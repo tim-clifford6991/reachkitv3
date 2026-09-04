@@ -307,12 +307,35 @@ describe("llm() — tier -> model id (mutation probe 2)", () => {
     expect(check("haiku")).toBe("ok");
   });
 
-  it("each tier binds to exactly one model id, distinct from the other's — a literal-value check independent of any call site, so swapping the two ids inside `tiers.ts` fails here even though a call site reading through `tierBinding()` could not see it", () => {
+  it(
+    "each tier binds to a catalogue-real, literal model id, independent of any call site — " +
+      "so a mutation inside `tiers.ts`'s own map fails here even though a call site reading " +
+      "through `tierBinding()` could not see it. `nano` and `haiku` deliberately share one id " +
+      "today (2026-09-04 coordinator finding: `claude-fable-5` was real but Anthropic's most " +
+      "expensive tier, wired into the cheapest lane — a 50×/40× spend-ledger under-count that " +
+      "no test could see because the price book and the id agreed with each other and were " +
+      "both wrong together; `INFERENCE_PRICE_BOOK`, untouched, still prices and times the two " +
+      "tiers differently, so a swap between *those* two still fails — see the next test)",
+    () => {
+      const nano = tierBinding("nano");
+      const haiku = tierBinding("haiku");
+      expect(nano.modelId).toBe("claude-haiku-4-5");
+      expect(haiku.modelId).toBe("claude-haiku-4-5");
+      // Regression guard for the money defect itself: never again the
+      // vendor's most expensive tier wired into the cheapest lane.
+      expect(nano.modelId).not.toBe("claude-fable-5");
+    }
+  );
+
+  it("nano and haiku stay priced and timed differently even while they share a model id — a swap of `INFERENCE_PRICE_BOOK`'s two tiers (BP-005's own pin, untouched by this file) still fails here", () => {
     const nano = tierBinding("nano");
     const haiku = tierBinding("haiku");
-    expect(nano.modelId).toBe("claude-fable-5");
-    expect(haiku.modelId).toBe("claude-haiku-4-5");
-    expect(nano.modelId).not.toBe(haiku.modelId);
+    expect(nano.inCentsPerM).toBe(20);
+    expect(nano.outCentsPerM).toBe(125);
+    expect(haiku.inCentsPerM).toBe(100);
+    expect(haiku.outCentsPerM).toBe(500);
+    expect(nano.inCentsPerM).not.toBe(haiku.inCentsPerM);
+    expect(nano.timeoutMs).not.toBe(haiku.timeoutMs);
   });
 
   it("a caller's own extra 'model' field can never shadow the tier's pinned model id — `llm()` reads only `call.tier`, never spreads `call`", async () => {
@@ -335,6 +358,25 @@ describe("llm() — tier -> model id (mutation probe 2)", () => {
     // leave open against this specific mutation.
     expect(sentParams.model).toBe("claude-haiku-4-5");
     expect(sentParams.model).not.toBe("evil-model-nobody-pinned");
+  });
+
+  it("the same holds for the nano lane specifically — the one the money defect was in", async () => {
+    createMock.mockResolvedValueOnce(textMessage({ headline: "ok" }));
+    const { ctx } = fakeCostContext();
+
+    const shadowingCall = {
+      site: "profile",
+      input: {},
+      schema: SCHEMA,
+      tier: "nano" as Tier,
+      model: "claude-fable-5", // the exact wrong id this suite once shipped
+    };
+    await llm(ctx, shadowingCall);
+
+    expect(createMock).toHaveBeenCalledTimes(1);
+    const sentParams = createMock.mock.calls[0]![0] as { model: string };
+    expect(sentParams.model).toBe("claude-haiku-4-5");
+    expect(sentParams.model).not.toBe("claude-fable-5");
   });
 });
 

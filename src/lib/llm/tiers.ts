@@ -29,15 +29,31 @@
 // a *class*, deliberately not a name, for the second tier. `haiku`'s id
 // below transcribes the charter's own family name, unversioned (no
 // snapshot date is stated anywhere the corpus can cite, so none is
-// invented — rule 1.2). `nano` has no name anywhere in this corpus to
-// transcribe; its id is chosen here as an internal, reversible parameter
-// (rule 1.1 — "internal names, type members" is the System's row: a
-// customer never reads a model id, and the product's promise is "a
-// nano-class model", satisfied by any suitably cheap, fast model this
-// vendor's own key can call). Reversal cost: one string, this file only.
-// Recorded as an open `rests-on` row on WO-026 for the architect to
-// confirm against the vendor's current catalogue before a real customer
-// call depends on it.
+// invented — rule 1.2).
+//
+// **`nano`'s id — corrected 2026-09-04, coordinator finding, superseding
+// this file's first commit.** The first cut of this file picked
+// `claude-fable-5` because the *name* read as a small/cheap tier; it is
+// real, but its actual catalogue price is $10.00 input / $50.00 output
+// per MTok — Anthropic's *most expensive* tier, wired into the cheapest
+// lane. Against this file's own `INFERENCE_PRICE_BOOK.nano` pin
+// (20/125 ¢/MTok), that is the ledger under-recording every nano call
+// 50× on input and 40× on output — silently, since the price book and
+// the id agreed with each other and were both wrong together; no test in
+// `tests/llm/seam.test.ts` could see it, because none of them know the
+// vendor's real price list. `nano` now points at `claude-haiku-4-5` —
+// the same id as `haiku` — as the interim: it is the cheapest real model
+// in the current catalogue, still 5× the `INFERENCE_PRICE_BOOK.nano` pin
+// rather than 50×/40×, and it is not invented (rule 1.2's own
+// discipline: pick a *real*, catalogue-verified id, never one chosen
+// because its name sounds right). `INFERENCE_PRICE_BOOK.nano` itself is
+// left untouched — that pin is BP-005's, transcribed, and a price is the
+// owner's to move (decision-rights table, rule 1.2), not this file's.
+// **This does not resolve the underlying gap — it is recorded as its own
+// open `rests-on` row on WO-026**: no model in the current catalogue
+// prices at 20/125 ¢/MTok, so `CAPS.FREE_C`'s ceiling is still computed
+// from a price the product cannot actually buy at, at any nano id. That
+// is the architect's and the owner's to resolve, not a code change here.
 import { env } from "@/lib/config/env";
 import { INFERENCE_PRICE_BOOK, INFERENCE_TIMEOUT_MS } from "@/lib/config/constants";
 
@@ -48,9 +64,16 @@ export type Tier = "nano" | "haiku";
  *  path into this map, so a caller cannot shadow it with an argument of
  *  its own (BP-009 `## Decisions` 1: "an eighth call site is a
  *  requirement change, not a code change" — the same closedness applied
- *  to model selection). */
+ *  to model selection).
+ *
+ *  `nano` and `haiku` deliberately share one id today (see the file
+ *  header's 2026-09-04 correction) — there is no cheaper *real* model to
+ *  point `nano` at, so the two tiers are priced and timed differently
+ *  (`INFERENCE_PRICE_BOOK`, `INFERENCE_TIMEOUT_MS`) but call the same
+ *  vendor model until a genuinely cheaper one exists or the pin is
+ *  revisited. */
 const TIER_MODEL_IDS: Readonly<Record<Tier, string>> = Object.freeze({
-  nano: "claude-fable-5",
+  nano: "claude-haiku-4-5",
   haiku: "claude-haiku-4-5",
 });
 
