@@ -2,55 +2,55 @@
   "coverage": {
     "satisfies": {
       "carrying": 44,
-      "total": 467
+      "total": 470
     },
     "covers": {
       "carrying": 32,
-      "total": 467
+      "total": 470
     },
     "implements": {
-      "carrying": 269,
-      "total": 467
+      "carrying": 271,
+      "total": 470
     },
     "decides-for": {
       "carrying": 31,
-      "total": 467
+      "total": 470
     },
     "about": {
       "carrying": 0,
-      "total": 467
+      "total": 470
     },
     "depends-on": {
-      "carrying": 394,
-      "total": 467
+      "carrying": 396,
+      "total": 470
     },
     "blocked-by": {
       "carrying": 6,
-      "total": 467
+      "total": 470
     },
     "cites-retired": {
       "carrying": 0,
-      "total": 467
+      "total": 470
     },
     "supersedes": {
       "carrying": 30,
-      "total": 467
+      "total": 470
     },
     "rests-on": {
-      "carrying": 294,
-      "total": 467
+      "carrying": 295,
+      "total": 470
     },
     "code": {
       "carrying": 63,
-      "total": 467
+      "total": 470
     },
     "exercises": {
       "carrying": 6,
-      "total": 467
+      "total": 470
     },
     "origin": {
       "carrying": 0,
-      "total": 467
+      "total": 470
     }
   },
   "nodes": {
@@ -1006,7 +1006,12 @@
       ],
       "depends-on": [],
       "blocked-by": [],
-      "rests-on": [],
+      "rests-on": [
+        {
+          "claim": "The Vercel project `reachkit` holds, by name, every binding this node's boot schema requires after decision 6 — in particular `SUPABASE_SERVICE_ROLE_KEY` rather than `SUPABASE_SERVICE_ROLE`, and `ANTHROPIC_API_KEY`, which serves the nano tier too when `NANO_API_KEY` is unset. This is a claim about names, never about values: the project's environment variables are write-only (decision 6's standing fact), so a row asserting any binding's *value* could never be discharged by reading it, and none is raised. Discharged by the first deployment that boots — a name the project does not hold is exactly the boot failure this node's `## Error & edge behavior` already specifies, so the deploy either settles the row or names the missing binding.",
+          "disposition": "open"
+        }
+      ],
       "supersedes": [],
       "code": [
         "src/lib/config/**",
@@ -5015,6 +5020,16 @@
         "WO-070"
       ],
       "file": "sdlc-factory/docs/work-orders/WO-070.md"
+    },
+    "TST-027": {
+      "id": "TST-027",
+      "type": "validation",
+      "title": "WO-018 validation report",
+      "status": "pass",
+      "validates": [
+        "WO-018"
+      ],
+      "file": "sdlc-factory/docs/work-orders/WO-018.md"
     },
     "WO-001": {
       "id": "WO-001",
@@ -11989,6 +12004,41 @@
         "WO-069"
       ],
       "file": "sdlc-factory/docs/work-orders/WO-282.md"
+    },
+    "WO-283": {
+      "id": "WO-283",
+      "type": "work-order",
+      "title": "npm test is flaky again — the live-scratch-schema file set outgrew the db project's include list; make the two lists one",
+      "status": "approved",
+      "implements": [
+        "BP-001"
+      ],
+      "depends-on": [
+        "WO-275"
+      ],
+      "blocked-by": [],
+      "rests-on": [],
+      "supersedes": [],
+      "file": "sdlc-factory/docs/work-orders/WO-283.md"
+    },
+    "WO-284": {
+      "id": "WO-284",
+      "type": "work-order",
+      "title": "Bind the boot environment to the deployment — SUPABASE_SERVICE_ROLE_KEY end to end, NANO_API_KEY optional, DATABASE_URL out of Env",
+      "status": "approved",
+      "implements": [
+        "BP-001",
+        "BP-002",
+        "BP-005"
+      ],
+      "depends-on": [
+        "WO-005",
+        "WO-267"
+      ],
+      "blocked-by": [],
+      "rests-on": [],
+      "supersedes": [],
+      "file": "sdlc-factory/docs/work-orders/WO-284.md"
     }
   }
 }

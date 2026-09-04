@@ -5,9 +5,9 @@
 # Traceability — REQ → BP → WO → TST
 
 - `satisfies` is projected from 44 of 63 blueprints — the rest are silent on it.
-- `implements` is projected from 269 of 269 work orders — the rest are silent on it.
+- `implements` is projected from 271 of 271 work orders — the rest are silent on it.
 - `covers` is projected from 32 of 63 blueprints — the rest are silent on it.
-- `verdict` is projected from 21 of 26 validation nodes — the rest declare none and render `unknown`.
+- `verdict` is projected from 22 of 27 validation nodes — the rest declare none and render `unknown`.
 
 One row per chain leg reached from an approved requirement's `satisfies` edges — this is the DERIVATION chain (rule 5.4): `satisfies` means *this node was cut from that requirement* and it is the only gate-bearing edge walked here. `—` means the chain stops there — nothing downstream cites this node (yet, or ever; see orphans.md for which).
 
