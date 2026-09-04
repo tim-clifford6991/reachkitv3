@@ -27,7 +27,7 @@ import { readFileSync } from "node:fs";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
 import ts from "typescript";
-import { surfaceTree } from "../copy/surface-tree.ts";
+import { GOVERNED_GLOBS, surfaceTree } from "../copy/surface-tree.ts";
 import { COPY_SWEEP_BUDGET_MS } from "../copy/budget.ts";
 
 const REAL_ROOT = path.resolve(__dirname, "../../..");
@@ -152,6 +152,27 @@ function relativeSignature(root: string, violations: Violation[]): Array<{ file:
     .sort((a, b) => (a.file === b.file ? a.rule.localeCompare(b.rule) : a.file.localeCompare(b.file)));
 }
 
+/** TST-028 finding 3, same rationale as `string-literal-sweep.test.ts`'s
+ *  twin helper: an aggregate non-zero file count cannot tell a mistyped
+ *  glob from a governed directory that is genuinely empty today.
+ *  `GOVERNED_GLOBS`' exact strings are asserted against ADR-010's decision,
+ *  independent of file-system state; given the glob list is right,
+ *  `expectedEmpty` is asserted `0` explicitly, not merely un-asserted. */
+function assertGovernedCoverage(
+  tree: { perGlob: Record<string, number> },
+  expectedNonEmpty: readonly string[],
+  expectedEmpty: readonly string[]
+): void {
+  expect(GOVERNED_GLOBS).toEqual(["src/app", "src/app/(hosted)", "src/lib/mail", "src/ui"]);
+  expect([...expectedNonEmpty, ...expectedEmpty].sort()).toEqual([...GOVERNED_GLOBS].sort());
+  for (const glob of expectedNonEmpty) {
+    expect(tree.perGlob[glob], `expected ${glob} to hold at least one file`).toBeGreaterThan(0);
+  }
+  for (const glob of expectedEmpty) {
+    expect(tree.perGlob[glob], `expected ${glob} to be empty today`).toBe(0);
+  }
+}
+
 describe("REQ-093 c2/c3 — flow gate, over the fixture tree", () => {
   const start = performance.now();
   const result = sweepRoot(FIXTURE_ROOT);
@@ -165,6 +186,10 @@ describe("REQ-093 c2/c3 — flow gate, over the fixture tree", () => {
 
   it("walks a non-empty fixture tree — an empty walk would pass vacuously", () => {
     expect(result.filesWalked).toBeGreaterThan(0);
+  });
+
+  it("reports coverage per governed glob — the fixture tree seeds all four", () => {
+    assertGovernedCoverage(result, ["src/app", "src/app/(hosted)", "src/lib/mail", "src/ui"], []);
   });
 
   it("a stored column reaching JSX directly is flagged by file and position", () => {
@@ -226,6 +251,10 @@ describe("REQ-093 c2/c3 — flow gate, over the real surface globs", () => {
 
   it("walks a non-empty real tree — an empty walk would pass vacuously (constitution rule 5.5)", () => {
     expect(result.filesWalked).toBeGreaterThan(0);
+  });
+
+  it("reports coverage per governed glob — src/app and src/ui must hold files; src/app/(hosted) and src/lib/mail are empty today, and that is asserted, not just unasserted (TST-028 finding 3)", () => {
+    assertGovernedCoverage(result, ["src/app", "src/ui"], ["src/app/(hosted)", "src/lib/mail"]);
   });
 
   it("no GeneratedColumn value or GeneratedText field reaches a surface outside renderGenerated/renderQuestion", () => {

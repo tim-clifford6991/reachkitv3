@@ -19,7 +19,7 @@ import { readFileSync } from "node:fs";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
 import ts from "typescript";
-import { surfaceTree } from "./surface-tree.ts";
+import { GOVERNED_GLOBS, surfaceTree } from "./surface-tree.ts";
 import { isAllowlistedAttribute } from "./allowlist.ts";
 import { COPY_SWEEP_BUDGET_MS } from "./budget.ts";
 
@@ -74,6 +74,22 @@ function sweepFile(filePath: string, sourceText: string, mailFile: boolean): Swe
     return ts.isStringLiteral(node) || ts.isNoSubstitutionTemplateLiteral(node);
   }
 
+  /** TST-028 finding 1: a bare literal and a `+`-concatenation of literals
+   *  are the same violation — `"a" + "b"` composes a string exactly as
+   *  much as `"ab"` does, and copy() is bypassed either way. Recurses
+   *  through a chain (`"a" + "b" + "c"`) so it is not defeated by adding a
+   *  third term. Scoped to *both* operands being literals (or literal
+   *  chains) — `name + "!"`, a literal concatenated with a variable, is
+   *  not this rule's concern (BP-020 does not forbid interpolating a
+   *  customer-written value; only a hand-composed *sentence* is voice). */
+  function isVoiceExpression(node: ts.Node): node is ts.Expression {
+    if (isVoiceLiteral(node)) return true;
+    if (ts.isBinaryExpression(node) && node.operatorToken.kind === ts.SyntaxKind.PlusToken) {
+      return isVoiceExpression(node.left) && isVoiceExpression(node.right);
+    }
+    return false;
+  }
+
   function visit(node: ts.Node): void {
     if (ts.isJsxText(node)) {
       if (node.text.trim().length > 0) {
@@ -84,12 +100,13 @@ function sweepFile(filePath: string, sourceText: string, mailFile: boolean): Swe
     } else if (
       ts.isJsxExpression(node) &&
       node.expression &&
-      isVoiceLiteral(node.expression) &&
+      isVoiceExpression(node.expression) &&
       (ts.isJsxElement(node.parent) || ts.isJsxFragment(node.parent))
     ) {
-      // A bare string literal written as a JSX child through an expression
-      // container — `{"literal"}` — the same violation as JsxText, spelled
-      // differently to dodge a text-node-only check.
+      // A bare string literal, or a `+`-concatenation of literals, written
+      // as a JSX child through an expression container — `{"literal"}` or
+      // `{"a" + "b"}` — the same violation as JsxText, spelled differently
+      // to dodge a text-node-only check.
       literalsInspected++;
       const { line, column } = posOf(node.expression);
       violations.push({
@@ -97,19 +114,17 @@ function sweepFile(filePath: string, sourceText: string, mailFile: boolean): Swe
         line,
         column,
         rule: "jsx-expression-string",
-        snippet: node.expression.text,
+        snippet: node.expression.getText(sf),
       });
     } else if (ts.isJsxAttribute(node)) {
-      let literal: ts.StringLiteral | ts.NoSubstitutionTemplateLiteral | undefined;
+      let literal: ts.Expression | undefined;
       if (node.initializer) {
-        if (isVoiceLiteral(node.initializer)) {
+        if (ts.isJsxExpression(node.initializer)) {
+          if (node.initializer.expression && isVoiceExpression(node.initializer.expression)) {
+            literal = node.initializer.expression;
+          }
+        } else if (isVoiceExpression(node.initializer)) {
           literal = node.initializer;
-        } else if (
-          ts.isJsxExpression(node.initializer) &&
-          node.initializer.expression &&
-          isVoiceLiteral(node.initializer.expression)
-        ) {
-          literal = node.initializer.expression;
         }
       }
       if (literal) {
@@ -124,12 +139,12 @@ function sweepFile(filePath: string, sourceText: string, mailFile: boolean): Swe
             line,
             column,
             rule: "jsx-attribute",
-            snippet: `${name}=${literal.text}`,
+            snippet: `${name}=${literal.getText(sf)}`,
           });
         }
       }
     } else if (mailFile && ts.isPropertyAssignment(node) && ts.isIdentifier(node.name)) {
-      if (MAIL_BODY_FIELDS.has(node.name.text) && isVoiceLiteral(node.initializer)) {
+      if (MAIL_BODY_FIELDS.has(node.name.text) && isVoiceExpression(node.initializer)) {
         literalsInspected++;
         const { line, column } = posOf(node.initializer);
         violations.push({
@@ -137,7 +152,7 @@ function sweepFile(filePath: string, sourceText: string, mailFile: boolean): Swe
           line,
           column,
           rule: "mail-body",
-          snippet: node.initializer.text,
+          snippet: node.initializer.getText(sf),
         });
       }
     }
@@ -174,6 +189,34 @@ function relativeSignature(root: string, violations: Violation[]): Array<{ file:
     .sort((a, b) => (a.file === b.file ? a.rule.localeCompare(b.rule) : a.file.localeCompare(b.file)));
 }
 
+/** TST-028 finding 3: an aggregate non-zero file count cannot tell a
+ *  mistyped glob (e.g. `"src/lib/mails"`) from a governed directory that
+ *  is genuinely empty today — both walk to zero files, aggregated or not.
+ *  What actually distinguishes them is independent of today's file-system
+ *  state: `GOVERNED_GLOBS`' exact strings, asserted against ADR-010's
+ *  decision verbatim. A typo changes that string and fails here regardless
+ *  of whether the directory it now points at happens to exist. Given the
+ *  glob list is right, `expectedEmpty` is asserted `0` explicitly — not
+ *  merely un-asserted — so a later regression that silently empties one of
+ *  the globs expected to hold files (`expectedNonEmpty`) is caught, and a
+ *  glob that is expected empty today (WO-279 rests-on row 1: `src/lib/mail`
+ *  does not exist yet; `src/app/(hosted)` holds only `.gitkeep`) is
+ *  reported as exactly that, not hidden inside an aggregate. */
+function assertGovernedCoverage(
+  tree: { perGlob: Record<string, number> },
+  expectedNonEmpty: readonly string[],
+  expectedEmpty: readonly string[]
+): void {
+  expect(GOVERNED_GLOBS).toEqual(["src/app", "src/app/(hosted)", "src/lib/mail", "src/ui"]);
+  expect([...expectedNonEmpty, ...expectedEmpty].sort()).toEqual([...GOVERNED_GLOBS].sort());
+  for (const glob of expectedNonEmpty) {
+    expect(tree.perGlob[glob], `expected ${glob} to hold at least one file`).toBeGreaterThan(0);
+  }
+  for (const glob of expectedEmpty) {
+    expect(tree.perGlob[glob], `expected ${glob} to be empty today`).toBe(0);
+  }
+}
+
 describe("REQ-093 c1 — string-literal sweep, over the fixture tree", () => {
   const start = performance.now();
   const result = sweepRoot(FIXTURE_ROOT);
@@ -192,12 +235,17 @@ describe("REQ-093 c1 — string-literal sweep, over the fixture tree", () => {
     expect(result.filesWalked).toBeGreaterThan(0);
   });
 
+  it("reports coverage per governed glob — the fixture tree seeds all four", () => {
+    assertGovernedCoverage(result, ["src/app", "src/app/(hosted)", "src/lib/mail", "src/ui"], []);
+  });
+
   it("flags exactly the known violations, by file and rule, and nothing else", () => {
     // Discriminates: deleting the JSX-text rule (or any other rule) drops
     // an entry below and this assertion fails; the allow-listed attribute
     // fixture is intentionally absent from this list — it must pass.
     expect(relativeSignature(FIXTURE_ROOT, result.violations)).toEqual([
       { file: "src/app/violation-jsx-text.tsx", rule: "jsx-text" },
+      { file: "src/app/violation-string-concat.tsx", rule: "jsx-expression-string" },
       { file: "src/app/violation-text-prop.tsx", rule: "jsx-attribute" },
       { file: "src/lib/mail/violation-mail-body.ts", rule: "mail-body" },
     ]);
@@ -242,6 +290,10 @@ describe("REQ-093 c1 — string-literal sweep, over the real surface globs", () 
 
   it("walks a non-empty real tree — an empty walk would pass vacuously (constitution rule 5.5)", () => {
     expect(result.filesWalked).toBeGreaterThan(0);
+  });
+
+  it("reports coverage per governed glob — src/app and src/ui must hold files; src/app/(hosted) and src/lib/mail are empty today, and that is asserted, not just unasserted (TST-028 finding 3)", () => {
+    assertGovernedCoverage(result, ["src/app", "src/ui"], ["src/app/(hosted)", "src/lib/mail"]);
   });
 
   it("no surface holds a product sentence", () => {

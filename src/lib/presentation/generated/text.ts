@@ -1,10 +1,20 @@
 // src/lib/presentation/generated/text.ts — BP-020, WO-279 (supersedes WO-043)
 //
-// Model output, wrapped at the point it is read out of storage. An
-// unwrapped string is the product's own voice by construction: `fromStored`
-// is the only constructor of `GeneratedText`, no overload accepts a literal
-// and no widening cast appears in this file — a hand-written sentence
-// cannot be laundered into the generated arm to escape REQ-093 criterion 1.
+// Model output, wrapped at the point it is read out of storage. `fromStored`
+// is this module's only exported constructor of `GeneratedText`, no
+// overload accepts a literal, and no widening cast appears in this file —
+// that closes a cast-based or second-constructor mint *inside this
+// module*. Corrected per TST-028 finding 2: `GeneratedText` is a plain,
+// unbranded interface (BP-020's declared shape), so TypeScript's structural
+// typing accepts a hand-written object literal shaped `{ source: 'model',
+// text: <any string> }`, written in *any* file — including a real surface —
+// wherever a `GeneratedText` is expected, with no cast and no second
+// constructor at all. This module does not close that path. `GeneratedText`
+// is BP-020's declared interface (rule 2.4 — one claim, one home), so the
+// gap and its disposition are BP-020's to carry, not restated as a second
+// copy here; see `tests/presentation/generated/text.test.ts`'s matching
+// describe for a reproduction of the exact construction TST-028's
+// validator used.
 //
 // `renderGenerated` is the one sink for model text (REQ-093 criterion 2):
 // it cannot be called without the identity of the page the text belongs
@@ -34,9 +44,14 @@ export interface GeneratedText {
   readonly text: string;
 }
 
-/** The only constructor of a `GeneratedText`. No overload accepts a literal
- *  and no widening cast appears in this file — a model string cannot
- *  arrive without declaring which column it came from. */
+/** This module's only exported constructor of a `GeneratedText`. No
+ *  overload accepts a literal and no widening cast appears in this file —
+ *  that closes a cast-based or second-constructor mint inside this module.
+ *  It does not, and structurally cannot, prevent a differently-typed
+ *  object literal built outside this module and passed in anywhere a
+ *  `GeneratedText` is expected (TST-028 finding 2; see the module header
+ *  comment above — the gap is BP-020's to carry, since the interface is
+ *  its declared shape). */
 export function fromStored(column: GeneratedColumn, value: string): GeneratedText {
   return Object.freeze({ source: "model", text: value });
 }

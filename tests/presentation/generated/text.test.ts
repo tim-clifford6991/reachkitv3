@@ -39,13 +39,24 @@ describe("REQ-093 c1 — a hand-written sentence cannot be laundered into the ge
     // does enforce is that the one exported constructor, `fromStored`,
     // refuses that same object literal in its own argument position — it
     // takes `(column: GeneratedColumn, value: string)`, not a
-    // `GeneratedText`-shaped object. The source-text check below (no `as
-    // GeneratedText`, no `as unknown as`, and `fromStored` the only export
-    // returning `GeneratedText`) is what actually closes the structural
-    // gap in practice: nothing in this module hands back a `GeneratedText`
-    // except `fromStored`, so a hand-written sentence can enter only by an
-    // author writing a cast or a second constructor, both of which the
-    // source-text checks below catch.
+    // `GeneratedText`-shaped object.
+    //
+    // Correction (TST-028 finding 2): an earlier version of this comment
+    // claimed the source-text check below "actually closes the structural
+    // gap in practice". That claim was false and TST-028's validator
+    // disproved it directly: from an *external* file, with no cast and no
+    // second constructor anywhere, `{ source: 'model', text: someString }`
+    // is a valid `GeneratedText` by shape alone, and flows straight through
+    // `renderGenerated`. The source-text check below closes only a
+    // cast-based or second-constructor mint *inside this module's own
+    // files* (`text.ts`, `question.ts`) — it says nothing about a value
+    // built anywhere else. The describe below this one reproduces that
+    // exact bypass, so the gap is a passing, visible test rather than a
+    // claim in a comment. `GeneratedText` is BP-020's declared interface
+    // (rule 2.4 — one claim, one home), so the gap's disposition is
+    // recorded there, not restated as a second copy on this work order;
+    // the architect has since ruled on a nominal brand to close it (a
+    // follow-up work order, not this one's to implement).
     // @ts-expect-error — fromStored takes (column, value); an object
     // literal is neither.
     const fake = fromStored({ source: "model", text: "a hand-written sentence" });
@@ -86,6 +97,48 @@ describe("REQ-093 c1 — a hand-written sentence cannot be laundered into the ge
     // Discriminates: a second exported constructor, or an overload of
     // fromStored, adds a second (or duplicate) entry here.
     expect(returningGeneratedText).toEqual(["fromStored"]);
+  });
+});
+
+describe("REQ-093 c1 — open hole (TST-028 finding 2): structural construction from outside this module", () => {
+  it("a GeneratedText built by an external file, with no cast and no second constructor, still reaches renderGenerated", async () => {
+    vi.resetModules();
+    vi.doMock(COPY_INDEX_PATH, () => ({ copy: (key: string) => `[[${key}]]` }));
+    const { renderGenerated, fromStored } = await import(
+      "../../../src/lib/presentation/generated/text.ts"
+    );
+    type GeneratedText = import("../../../src/lib/presentation/generated/text.ts").GeneratedText;
+
+    // No `as`, no `as unknown as`, no call to fromStored, no second
+    // constructor exported by text.ts — exactly the construction TST-028's
+    // validator used. This is not this test file "laundering" a value
+    // through a loophole in its own logic; it is what any file anywhere in
+    // the repository — including a real surface under src/app/** — can
+    // write today, because GeneratedText is a plain, unbranded interface.
+    const handWritten: GeneratedText = {
+      source: "model",
+      text: "a sentence nobody read out of storage",
+    };
+
+    const identity = {
+      state: "written" as const,
+      pageId: "page-1",
+      title: fromStored("drafts.title", "T"),
+      slug: fromStored("drafts.slug", "s"),
+      body: fromStored("drafts.body", "b"),
+    };
+
+    // This assertion is expected to PASS today — it documents the gap, it
+    // does not paper over it. BP-020 carries the disposition (rule 2.4 —
+    // `GeneratedText` is its declared interface, not this work order's to
+    // hold a second copy of); the architect has ruled yes on a nominal
+    // brand to close this, as a follow-up work order this one does not
+    // implement or pre-empt.
+    const result = renderGenerated(handWritten, identity);
+    expect(result.text).toBe("a sentence nobody read out of storage");
+
+    vi.doUnmock(COPY_INDEX_PATH);
+    vi.resetModules();
   });
 });
 
