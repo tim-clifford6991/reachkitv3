@@ -89,7 +89,7 @@ const ENV_FIXTURE: Record<string, string> = {
   DATABASE_URL: `postgresql://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_NAME}`,
   SUPABASE_URL,
   SUPABASE_ANON_KEY: "anon-key-fixture",
-  SUPABASE_SERVICE_ROLE: SERVICE_ROLE_KEY,
+  SUPABASE_SERVICE_ROLE_KEY: SERVICE_ROLE_KEY,
   STRIPE_SECRET_KEY: "sk_test_fixture",
   STRIPE_WEBHOOK_SECRET: "whsec_fixture",
   STRIPE_PRICE_ID: "price_fixture",

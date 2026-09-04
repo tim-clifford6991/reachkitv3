@@ -254,15 +254,17 @@ function requestScopedPoliciesMissingDeletedAtCondition(): string[] {
     .map((row) => requiredCell(row, 0));
 }
 
-// A complete, validly-shaped set of the 17 bindings `env.ts` requires
-// (BP-005) — fixtures for everything but the three Supabase bindings, which
-// carry this substrate's real values so `db()`/`dbAdmin()` reach the
-// scratch PostgREST instance.
+// A complete, validly-shaped set of the bindings `env.ts` requires (BP-005,
+// moved onto decision 6) — fixtures for everything but the three Supabase
+// bindings, which carry this substrate's real values so `db()`/`dbAdmin()`
+// reach the scratch PostgREST instance. `DATABASE_URL` is no longer a
+// member of `Env` (decision 6c) but stays here: this file builds it and
+// connects on it directly.
 const ENV_FIXTURE: Record<string, string> = {
   DATABASE_URL: `postgresql://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_NAME}`,
   SUPABASE_URL,
   SUPABASE_ANON_KEY: ANON_KEY,
-  SUPABASE_SERVICE_ROLE: SERVICE_ROLE_KEY,
+  SUPABASE_SERVICE_ROLE_KEY: SERVICE_ROLE_KEY,
   STRIPE_SECRET_KEY: "sk_test_fixture",
   STRIPE_WEBHOOK_SECRET: "whsec_fixture",
   STRIPE_PRICE_ID: "price_fixture",

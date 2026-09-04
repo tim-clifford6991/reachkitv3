@@ -44,7 +44,7 @@ const ENV_FIXTURE: Record<string, string> = {
   DATABASE_URL: "postgresql://reachkit:reachkit@127.0.0.1:5432/reachkit_scratch",
   SUPABASE_URL: "http://127.0.0.1:3001",
   SUPABASE_ANON_KEY: "anon-key-fixture",
-  SUPABASE_SERVICE_ROLE: "service-role-fixture",
+  SUPABASE_SERVICE_ROLE_KEY: "service-role-key-fixture",
   STRIPE_SECRET_KEY: "sk_test_fixture",
   STRIPE_WEBHOOK_SECRET: "whsec_fixture",
   STRIPE_PRICE_ID: "price_fixture",
