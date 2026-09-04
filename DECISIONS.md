@@ -45,3 +45,4 @@ Format (checked by `scripts/drift-audit.mjs`): `YYYY-MM-DD  ruling — optional 
 2026-09-04  Conformance suites are scoped by path glob over the surface tree, not by call-site lists; they run in CI. — ADR-010
 2026-09-04  `GeneratedText` is a nominal brand; `fromStored` is the only construction path. Deleting the brand "looks like tidying" and is forbidden. — ADR-012
 2026-09-04  The sdlc-factory process is retired for this project. Corpus and plugin frozen under `archive/sdlc-factory-2026-09-04/`; requirements and work orders become GitHub issues, waves become milestones, validation becomes CI, traceability becomes `Closes #N`. Three owner files carry intent: BUILD.md, DECISIONS.md, ARCHITECTURE.md. Rules that matter are checks, not prose.
+2026-09-04  `MarketSet` is a declared type owned by the questions leaf (`src/lib/market/questions/market-set.ts`); the report blob's market section takes the leaf's shape, and coherence is a member of it. — ADR-095
