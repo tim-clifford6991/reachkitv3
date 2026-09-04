@@ -8,7 +8,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
-import { COPY, copy, type CopyKey, type CopyPartition } from "../../../src/lib/presentation/copy/index.ts";
+import { COPY, COPY_META, copy, type CopyKey, type CopyPartition } from "../../../src/lib/presentation/copy/index.ts";
 // OWNER_OWED is WO-041's own addition to the interface, not the blueprint's
 // (WO-041 `## Interfaces` "Exposes additionally") — it is declared in
 // registry.ts, not re-exported through the public barrel, so it is
@@ -114,11 +114,28 @@ describe("REQ-093 c5 — the registry renders with every model unavailable", () 
     // Count assertion (rule 5.5): the thirteen band/severity/score words,
     // plus WO-070's eight now-ruled landing keys (headline, field label,
     // submit label — ruled 2026-09-03; the five `landing.problem.*` lines
-    // — ruled 2026-09-04; both dates WO-070 `## Log`): 13 + 8 = 21.
-    expect(nonOwnerOwed.length).toBe(21);
+    // — ruled 2026-09-04; both dates WO-070 `## Log`): 13 + 8 = 21, plus
+    // the thirteen keys the owner ruled 2026-09-04 across offer.ts (7),
+    // mail.ts (2), laws.ts (3) and report.ts (1) (WO-041 `## Log`, this
+    // date's ruling): 21 + 13 = 34.
+    expect(nonOwnerOwed.length).toBe(34);
 
     for (const key of nonOwnerOwed) {
-      expect(copy(key)).toBe(COPY[key]);
+      const slotNames = Object.keys(COPY_META[key].slots);
+      if (slotNames.length === 0) {
+        expect(copy(key)).toBe(COPY[key]);
+        continue;
+      }
+      // A slotted key's stored literal still carries its `{slotName}`
+      // placeholder(s) — that is what COPY holds — so the discriminating
+      // assertion here is that copy() substitutes rather than reaches for
+      // anything external, not literal equality against COPY[key].
+      const vars = Object.fromEntries(slotNames.map((name) => [name, `<${name}>`]));
+      const rendered = copy(key, vars);
+      for (const name of slotNames) {
+        expect(rendered).not.toContain(`{${name}}`);
+        expect(rendered).toContain(`<${name}>`);
+      }
     }
   });
 });
@@ -197,7 +214,7 @@ describe("owner-owed and empty agree both ways", () => {
     expect(new Set(emptyKeys)).toEqual(new Set(OWNER_OWED));
   });
 
-  it("counts: 30 owner-owed, 21 filled, 51 total (rule 5.5 — the index states its own coverage)", () => {
+  it("counts: 17 owner-owed, 34 filled, 51 total (rule 5.5 — the index states its own coverage)", () => {
     // WO-070 added report.ts's eight landing keys (headline, field label,
     // submit label, five DomainProblem lines), all owner-owed: 30 + 8 = 38.
     // 2026-09-03: the owner ruled on three of them (headline, field label,
@@ -206,8 +223,23 @@ describe("owner-owed and empty agree both ways", () => {
     // remaining five (the `landing.problem.*` lines — WO-070 `## Log`),
     // so 35 - 5 = 30 remain owner-owed and 16 + 5 = 21 are filled; the
     // total is unchanged at 51.
-    expect(OWNER_OWED.length).toBe(30);
-    expect(Object.keys(COPY).length - OWNER_OWED.length).toBe(21);
+    //
+    // 2026-09-04, separately: the owner ruled on thirteen more keys
+    // (WO-041 `## Log`, this date's ruling) — `price.amount`,
+    // `price.interval`, `offer.cadence.page`, `offer.cadence.measure`,
+    // `offer.cadence.movement`, `offer.veto.window`, `offer.start`,
+    // `place.report.first-page.rival`, `stopped.work.line`,
+    // `stopped.work.needs-nothing`, `next-publish.scheduled`,
+    // `optout.confirmed`, `optout.invalid` — filled verbatim, byte for
+    // byte. 30 - 13 = 17 remain owner-owed and 21 + 13 = 34 are filled;
+    // the total is unchanged at 51. `price.vat_included` and
+    // `offer.cancel_self_service` were not part of this ruling (no owner
+    // string was supplied for either) and remain owner-owed — the
+    // dispatch that requested this change described the post-change
+    // count as 15 owner-owed, which undercounts these two; this test
+    // asserts the count `OWNER_OWED` actually derives.
+    expect(OWNER_OWED.length).toBe(17);
+    expect(Object.keys(COPY).length - OWNER_OWED.length).toBe(34);
     expect(Object.keys(COPY).length).toBe(51);
   });
 });
@@ -239,5 +271,61 @@ describe("the thirteen band words are the ruled words", () => {
     expect(copy("band.score.hard-to-find")).toBe("Hard to find");
     expect(copy("band.score.findable")).toBe("Findable");
     expect(copy("band.score.dominant")).toBe("Dominant");
+  });
+});
+
+describe("the thirteen keys the owner ruled 2026-09-04 (WO-041 `## Log`, this date's ruling)", () => {
+  it("price and offer — unslotted", () => {
+    expect(copy("price.amount")).toBe("€49");
+    expect(copy("price.interval")).toBe("per month, VAT included");
+    expect(copy("offer.start")).toBe("Start ReachKit");
+  });
+
+  it("price and offer — slotted, {value}", () => {
+    expect(copy("offer.cadence.page", { value: "every week" })).toBe(
+      "One new page written for your site every week"
+    );
+    expect(copy("offer.cadence.measure", { value: "every week" })).toBe(
+      "Your findability re-measured every week"
+    );
+    expect(copy("offer.cadence.movement", { value: "every week" })).toBe(
+      "What moved, in your inbox every week"
+    );
+    expect(copy("offer.veto.window", { value: "24 hours" })).toBe(
+      "Every page waits 24 hours for you to stop it before it goes live — and you can cancel any time, yourself"
+    );
+  });
+
+  it("report — no-presence-yet line for the first page of the rival list", () => {
+    expect(copy("place.report.first-page.rival")).toBe("No rival holds this ground yet");
+  });
+
+  it("stopped-work law — two of the five lines", () => {
+    expect(copy("stopped.work.line")).toBe(
+      "ReachKit stopped its own work today, so no page was written. Nothing about your market changed."
+    );
+    expect(copy("stopped.work.needs-nothing")).toBe(
+      "Nothing is needed from you — ReachKit picks up again on its own."
+    );
+  });
+
+  it("next-publish law — one of the five lines, slotted, {at}", () => {
+    expect(copy("next-publish.scheduled", { at: "Tuesday" })).toBe("Next page goes live Tuesday");
+  });
+
+  it("mail — the two opt-out surface lines, one carrying a literal quoted \"stop\"", () => {
+    expect(copy("optout.confirmed")).toBe(
+      "You’re unsubscribed. ReachKit won’t email you again — about this site or any other."
+    );
+    expect(copy("optout.invalid")).toBe(
+      "That unsubscribe link isn’t valid any more. Reply to any ReachKit email with \"stop\" and we’ll stop by hand."
+    );
+  });
+
+  it("the two keys this ruling did not cover remain owner-owed and copy() still refuses them", () => {
+    expect(COPY["price.vat_included"]).toBe("");
+    expect(COPY["offer.cancel_self_service"]).toBe("");
+    expect(() => copy("price.vat_included")).toThrow(/owner-owed/);
+    expect(() => copy("offer.cancel_self_service")).toThrow(/owner-owed/);
   });
 });

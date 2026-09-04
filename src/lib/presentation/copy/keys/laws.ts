@@ -6,12 +6,18 @@
 // string is written here (constitution §1). BP-019 decision 6 adds a
 // fourth law's three keys later (WO-249); this file seeds only these
 // twelve.
+//
+// 2026-09-04: the owner ruled on three of the twelve (WO-041 `## Log`,
+// this date's ruling) — `stopped.work.line`, `stopped.work.needs-nothing`
+// and `next-publish.scheduled` — filled verbatim, byte for byte, and no
+// longer owner-owed. The remaining nine were not part of this ruling and
+// stay owner-owed, empty.
 import type { CopyPartition } from "../registry.ts";
 
 export const LAWS_COPY = Object.freeze({
-  "stopped.work.line": ["", { law: "stopped-work", slots: {}, fixedBy: "REQ-092 c1" }],
+  "stopped.work.line": ["ReachKit stopped its own work today, so no page was written. Nothing about your market changed.", { law: "stopped-work", slots: {}, fixedBy: "REQ-092 c1" }],
   "stopped.work.needs-nothing": [
-    "",
+    "Nothing is needed from you — ReachKit picks up again on its own.",
     { law: "stopped-work", slots: {}, fixedBy: "REQ-092 c2" },
   ],
   "stopped.work.resumes-on": [
@@ -28,7 +34,7 @@ export const LAWS_COPY = Object.freeze({
   ],
   "next-publish.stopped": ["", { law: "next-publish", slots: {}, fixedBy: "REQ-092 c7" }],
   "next-publish.scheduled": [
-    "",
+    "Next page goes live {at}",
     { law: "next-publish", slots: { at: "date" }, fixedBy: "REQ-040 c4" },
   ],
   "next-publish.paused": ["", { law: "next-publish", slots: {}, fixedBy: "REQ-040 c4" }],
