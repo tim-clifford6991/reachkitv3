@@ -37,6 +37,27 @@ export const CAPS = Object.freeze({
   FREE_C: 12, DEEP_C: 150, WEEKLY_C: 40, DRAFT_C: 45,
 } as const);
 
+/** Per-token model prices, cents per million tokens — BP-005 `## Public
+ *  interface`, transcribed verbatim (rule 1.2 — data, not a chosen
+ *  parameter): `nano: { inCentsPerM: 20; outCentsPerM: 125 }`,
+ *  `haiku: { inCentsPerM: 100; outCentsPerM: 500 }`. `costCents` for one
+ *  call is `tokensIn/1e6 * inCentsPerM + tokensOut/1e6 * outCentsPerM`,
+ *  computed at BP-009's own call site (`src/lib/llm/tiers.ts`), never
+ *  here — this file holds the price, never the formula (rule 2.5). */
+export const INFERENCE_PRICE_BOOK = Object.freeze({
+  nano: Object.freeze({ inCentsPerM: 20, outCentsPerM: 125 } as const),
+  haiku: Object.freeze({ inCentsPerM: 100, outCentsPerM: 500 } as const),
+} as const);
+
+/** BP-009 `## NFR budget`, verbatim: "p95 latency: nano ≤ 3 s, haiku ≤
+ *  20 s." Not among the pins BP-005's own `## Public interface` lists —
+ *  added here under the same "pins live in `constants.ts` and nowhere
+ *  else" rule (rule 2.4, WO-026), transcribing the other approved
+ *  artifact that states a number `tiers.ts` and its test must agree on. */
+export const INFERENCE_TIMEOUT_MS = Object.freeze({
+  nano: 3000, haiku: 20000,
+} as const);
+
 export const BATTERY = Object.freeze({
   QUESTIONS: 12, TARGET_SERPS_MAX: 13, MEASURED_PAGES_MAX: 25, COMPETITORS_MAX: 5,
 } as const);

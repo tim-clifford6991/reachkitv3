@@ -1,0 +1,88 @@
+// src/lib/llm/tiers.ts — WO-026, BP-009's two model tiers.
+//
+// The closed tier set — `nano` and `haiku`, no third (BP-009 `## Public
+// interface`: `tier: 'nano' | 'haiku'`; file plan: "No third tier"). Each
+// tier binds three things: the credential it authenticates with, the
+// vendor model id it calls, and the per-token price and timeout budget it
+// is held to.
+//
+// **Credential — settled elsewhere, not re-derived here (BP-005 decision
+// 6b, shipped by WO-284).** `env.NANO_API_KEY` is already a required
+// `string` by the time this module reads it: absent, `env.ts` itself
+// resolved it to `env.ANTHROPIC_API_KEY` before either module's caller
+// could observe which key it received. This file makes no fallback
+// decision of its own — it reads the two already-resolved members and
+// nothing else authenticates a call.
+//
+// **Price and timeout — transcribed, not chosen (rule 1.2).**
+// `INFERENCE_PRICE_BOOK` is BP-005's `## Public interface`, verbatim.
+// `INFERENCE_TIMEOUT_MS` is BP-009's `## NFR budget`, verbatim: "p95
+// latency: nano ≤ 3 s, haiku ≤ 20 s." Both live in `constants.ts` and
+// nowhere else (rule 2.4) — this file only reads them.
+//
+// **Model id — chosen, not transcribed (rule 1.1 — flagged once, here,
+// per constitution rule 4.2, and in this WO's return).** No approved
+// artifact states a machine-readable model id for either tier: BP-009's
+// `## Public interface` declares only the abstract `tier` union, and the
+// charter's own stack row (`00-project.md` / `BUILD.md` §1) reads "
+// **Anthropic Haiku 4.5** (prose) + a nano-class model (scaffolding)" —
+// a *class*, deliberately not a name, for the second tier. `haiku`'s id
+// below transcribes the charter's own family name, unversioned (no
+// snapshot date is stated anywhere the corpus can cite, so none is
+// invented — rule 1.2). `nano` has no name anywhere in this corpus to
+// transcribe; its id is chosen here as an internal, reversible parameter
+// (rule 1.1 — "internal names, type members" is the System's row: a
+// customer never reads a model id, and the product's promise is "a
+// nano-class model", satisfied by any suitably cheap, fast model this
+// vendor's own key can call). Reversal cost: one string, this file only.
+// Recorded as an open `rests-on` row on WO-026 for the architect to
+// confirm against the vendor's current catalogue before a real customer
+// call depends on it.
+import { env } from "@/lib/config/env";
+import { INFERENCE_PRICE_BOOK, INFERENCE_TIMEOUT_MS } from "@/lib/config/constants";
+
+export type Tier = "nano" | "haiku";
+
+/** Not exported — the only way a caller reaches a model id is through
+ *  `tierBinding()`, keyed by the closed `Tier` union. There is no second
+ *  path into this map, so a caller cannot shadow it with an argument of
+ *  its own (BP-009 `## Decisions` 1: "an eighth call site is a
+ *  requirement change, not a code change" — the same closedness applied
+ *  to model selection). */
+const TIER_MODEL_IDS: Readonly<Record<Tier, string>> = Object.freeze({
+  nano: "claude-fable-5",
+  haiku: "claude-haiku-4-5",
+});
+
+export interface TierBinding {
+  tier: Tier;
+  modelId: string;
+  apiKey: string;
+  timeoutMs: number;
+  inCentsPerM: number;
+  outCentsPerM: number;
+}
+
+/** The one place a tier's model id, credential, price and timeout are
+ *  assembled. `llm()` (`index.ts`) calls this once per invocation and
+ *  reads nothing else to build the request — no caller-supplied field
+ *  can substitute for any member this function returns. */
+export function tierBinding(tier: Tier): TierBinding {
+  const priceBook = INFERENCE_PRICE_BOOK[tier];
+  return Object.freeze({
+    tier,
+    modelId: TIER_MODEL_IDS[tier],
+    apiKey: tier === "nano" ? env.NANO_API_KEY : env.ANTHROPIC_API_KEY,
+    timeoutMs: INFERENCE_TIMEOUT_MS[tier],
+    inCentsPerM: priceBook.inCentsPerM,
+    outCentsPerM: priceBook.outCentsPerM,
+  });
+}
+
+/** BP-005's own stated formula ("computed at the call site … not here"),
+ *  applied at BP-009's call site — this file, not `constants.ts` (rule
+ *  2.5). */
+export function costCentsFor(tier: Tier, tokensIn: number, tokensOut: number): number {
+  const { inCentsPerM, outCentsPerM } = INFERENCE_PRICE_BOOK[tier];
+  return (tokensIn / 1_000_000) * inCentsPerM + (tokensOut / 1_000_000) * outCentsPerM;
+}
