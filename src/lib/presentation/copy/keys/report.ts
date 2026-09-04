@@ -19,12 +19,13 @@
 // 2026-09-03: the owner ruled on the headline, field label and submit
 // label (WO-070 `## Log`, "landing copy approved"; strings per `BUILD.md`
 // §3) — those three are filled verbatim, byte for byte, and no longer
-// owner-owed. The five `DomainProblem` lines remain **owner-owed and
-// empty**, exactly on WO-041's terms: `copy()` throws naming the key
-// until the owner supplies the sentence (constitution §1 — customer-visible
-// strings are the owner's, and WO-070's own file plan renders keys, never
-// wording it invents). No `law` tag on any of the eight: none of
-// `CopyMeta.law`'s four cross-cutting arms names this surface.
+// owner-owed.
+//
+// 2026-09-04: the owner ruled on the five `DomainProblem` lines (WO-070
+// `## Log`, this date's ruling) — filled verbatim, byte for byte. All
+// eight landing keys are now supplied; none is owner-owed. No `law` tag
+// on any of the eight: none of `CopyMeta.law`'s four cross-cutting arms
+// names this surface.
 import type { CopyPartition } from "../registry.ts";
 
 export const REPORT_COPY = Object.freeze({
@@ -38,9 +39,9 @@ export const REPORT_COPY = Object.freeze({
   ],
   "landing.field.label": ["Your website", { slots: {}, fixedBy: "REQ-001 c1" }],
   "landing.submit.label": ["Scan my site", { slots: {}, fixedBy: "REQ-001 c1" }],
-  "landing.problem.empty": ["", { slots: {}, fixedBy: "REQ-001 c3" }],
-  "landing.problem.not-a-hostname": ["", { slots: {}, fixedBy: "REQ-001 c3" }],
-  "landing.problem.ip-literal": ["", { slots: {}, fixedBy: "REQ-001 c3" }],
-  "landing.problem.no-public-suffix": ["", { slots: {}, fixedBy: "REQ-001 c3" }],
-  "landing.problem.too-long": ["", { slots: {}, fixedBy: "REQ-001 c3" }],
+  "landing.problem.empty": ["Type your website’s address first — for example, example.com.", { slots: {}, fixedBy: "REQ-001 c3" }],
+  "landing.problem.not-a-hostname": ["That doesn’t look like a website address. Try the form example.com.", { slots: {}, fixedBy: "REQ-001 c3" }],
+  "landing.problem.ip-literal": ["That’s a numeric address, not a website name. Type the name people visit, like example.com.", { slots: {}, fixedBy: "REQ-001 c3" }],
+  "landing.problem.no-public-suffix": ["That address is missing its ending — try example.com rather than example.", { slots: {}, fixedBy: "REQ-001 c3" }],
+  "landing.problem.too-long": ["That’s longer than any website address can be — check for extra text pasted in.", { slots: {}, fixedBy: "REQ-001 c3" }],
 }) satisfies CopyPartition;

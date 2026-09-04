@@ -19,14 +19,13 @@
 // depending on the owner's own wording either way.
 //
 // Of this WO's eight copy keys (`src/lib/presentation/copy/keys/report.ts`,
-// WO-070's Modify row), three — `landing.headline`, `landing.field.label`,
-// `landing.submit.label` — were filled 2026-09-03 by the owner's ruling
-// (WO-070 `## Log`) and no longer throw against the real registry. The
-// five `landing.problem.*` lines remain owner-owed and empty (constitution
-// §1), so the *real* `copy()` still throws on every one of them (WO-041's
-// representation, applied here the same way WO-249 applied it to
-// `renderMeasured`). Both the throw, over the five still-empty keys, and
-// the pass-through, over the three the owner has supplied, are proved
+// WO-070's Modify row), all eight are now filled: `landing.headline`,
+// `landing.field.label`, `landing.submit.label` were filled 2026-09-03 by
+// the owner's ruling (WO-070 `## Log`, "landing copy approved"), and the
+// five `landing.problem.*` lines were filled 2026-09-04 by the owner's
+// ruling (WO-070 `## Log`, this date's ruling). None is owner-owed and
+// none throws against the real (unmocked) registry any longer. That all
+// eight resolve, and resolve to exactly the owner's strings, is proved
 // once, directly against `copy.ts`, in the describe block below (mirroring
 // WO-249's "asserts the key reached, never the sentence").
 import { readFileSync } from "node:fs";
@@ -336,28 +335,54 @@ describe('REQ-093 c1 (BP-022: "This node contains no string literal a person rea
   });
 });
 
-describe("WO-070 `## rests-on` — five landing keys remain owner-owed; three the owner has now written", () => {
-  it("landing/copy · the five still-empty problem keys throw, naming themselves, against the real (unmocked) registry", async () => {
+// The owner's exact strings for the five `landing.problem.*` keys
+// (2026-09-04 ruling, WO-070 `## Log`) — transcribed byte-exact from the
+// ruling's canonical source, never retyped by eye, on the same terms the
+// three 2026-09-03 strings below were entered into
+// `src/lib/presentation/copy/keys/report.ts`.
+const OWNER_PROBLEM_LINES: Record<string, string> = {
+  "landing.problem.empty": "Type your website’s address first — for example, example.com.",
+  "landing.problem.not-a-hostname": "That doesn’t look like a website address. Try the form example.com.",
+  "landing.problem.ip-literal":
+    "That’s a numeric address, not a website name. Type the name people visit, like example.com.",
+  "landing.problem.no-public-suffix": "That address is missing its ending — try example.com rather than example.",
+  "landing.problem.too-long": "That’s longer than any website address can be — check for extra text pasted in.",
+};
+
+describe("WO-070 — all eight landing keys are supplied; none is owner-owed", () => {
+  it("landing/copy · all eight landing keys resolve through the real (unmocked) registry and return exactly the owner's strings", async () => {
     vi.resetModules();
     vi.doUnmock("@/lib/presentation/copy");
     const { copy: realCopy } = await import("@/lib/presentation/copy/copy.ts");
 
-    const keys = DOMAIN_PROBLEMS.map((p) => `landing.problem.${p.replace(/_/g, "-")}`);
-    expect(keys).toHaveLength(5);
-    for (const key of keys) {
-      expect(() => realCopy(key as never)).toThrow(new RegExp(key.replace(/[.-]/g, "\\$&")));
-    }
-  });
-
-  it("landing/copy · the three owner-supplied keys no longer throw and return the owner's exact strings", async () => {
-    vi.resetModules();
-    vi.doUnmock("@/lib/presentation/copy");
-    const { copy: realCopy } = await import("@/lib/presentation/copy/copy.ts");
-
+    // The three keys ruled 2026-09-03 (WO-070 `## Log`, "landing copy
+    // approved").
     expect(realCopy("landing.headline" as never)).toBe(
       "See what AI tells buyers about your market — and write your way in."
     );
     expect(realCopy("landing.field.label" as never)).toBe("Your website");
     expect(realCopy("landing.submit.label" as never)).toBe("Scan my site");
+
+    // The five `landing.problem.*` keys ruled 2026-09-04, one per
+    // `DomainProblem` handle — none throws, and each returns the owner's
+    // exact sentence.
+    const keys = DOMAIN_PROBLEMS.map((p) => `landing.problem.${p.replace(/_/g, "-")}`);
+    expect(keys).toHaveLength(5);
+    for (const key of keys) {
+      let resolved: string | undefined;
+      expect(() => {
+        resolved = realCopy(key as never);
+      }).not.toThrow();
+      expect(resolved).toBe(OWNER_PROBLEM_LINES[key]);
+    }
+
+    // Discriminating against drift: every resolved problem line is
+    // non-empty and the five are pairwise distinct, so an emptied key or
+    // two keys collapsed onto one string would fail here even if each
+    // individually happened to match its own `OWNER_PROBLEM_LINES` entry
+    // by coincidence.
+    const resolvedLines = keys.map((key) => realCopy(key as never));
+    expect(resolvedLines.every((line) => line.length > 0)).toBe(true);
+    expect(new Set(resolvedLines).size).toBe(5);
   });
 });
