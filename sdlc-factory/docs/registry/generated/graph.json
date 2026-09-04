@@ -5395,7 +5395,7 @@
       "id": "WO-018",
       "type": "work-order",
       "title": "safeFetch — the SSRF-guarded, DNS-pinned, size-capped outbound fetcher",
-      "status": "approved",
+      "status": "done",
       "implements": [
         "BP-006"
       ],
