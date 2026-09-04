@@ -25,7 +25,7 @@
       "total": 486
     },
     "blocked-by": {
-      "carrying": 8,
+      "carrying": 9,
       "total": 486
     },
     "cites-retired": {
@@ -11235,7 +11235,9 @@
         "WO-001",
         "WO-006"
       ],
-      "blocked-by": [],
+      "blocked-by": [
+        "BP-005"
+      ],
       "rests-on": [
         {
           "claim": "No source tree, package manifest, tsconfig or test runner exists on disk at cut time (verified 2026-08-31 — this repository carries no `src/`). Every path in this file plan is NEW and its placement is provisional against a repo with no code.",
@@ -12340,10 +12342,12 @@
         "WO-023",
         "WO-051",
         "WO-057",
+        "WO-071",
         "WO-072",
         "WO-075",
         "WO-076",
         "WO-078",
+        "WO-080",
         "WO-081",
         "WO-087",
         "WO-251",
@@ -12357,18 +12361,21 @@
         "WO-075",
         "WO-076",
         "WO-078",
+        "WO-080",
         "WO-081",
         "WO-087",
         "WO-251"
       ],
       "rests-on": [
         {
-          "claim": "Three blueprints describe the blob's `market` section differently and this work order follows BP-012. BP-012 declares `market: Measured<SuggestionRow[]>`; BP-025's `## Data model delta` declares `report.market = { profile, suggestions, totalVolume }`; BP-056's `## Data model delta` reads `report.market.category`, which is a field of BP-025's `Profile` and reachable under neither of the other two shapes. BP-012 is followed because its decision 3 is the corpus's only declaration of the type and states the ownership ground — \"This node owns it because it assembles the blob and is its only writer\" — and because rule 2.4 makes the other two the second and third copies, not the home. The consequence is that **the blob carries no `Profile`**, which is the fact WO-183's stop condition turns on; that stop condition is carried forward unchanged (see `## Interfaces`). Resolving the three-way disagreement is the architect's, on BP-012, BP-025 and BP-056; it is reported with this block's return.",
-          "disposition": "open"
+          "claim": "Three blueprints describe the blob's `market` section differently and this work order follows BP-012. BP-012 declares `market: Measured<SuggestionRow[]>`; BP-025's `## Data model delta` declares `report.market = { profile, suggestions, totalVolume }`; BP-056's `## Data model delta` reads `report.market.category`, which is a field of BP-025's `Profile` and reachable under neither of the other two shapes. The consequence is that **the blob carries no `Profile`**.",
+          "disposition": "refuted",
+          "reason": "Answered and reversed by ADR-095 (accepted 2026-09-04), which this work order was cut before. Decision 1 declares `MarketSet` in BP-025's own `src/lib/market/questions/market-set.ts` — `{ profile, suggestions, totalVolume }`, the leaf's shape, on the general rule decision 5 states: 'where a composing node and the leaf that writes a section declare the same thing differently, the leaf's declaration stands and the composer's line is corrected to it'. Decision 2 makes `StoredReport.market` a single `Measured<MarketSet>`. Decision 4 points BP-056 at `report.market.profile.category`. The three readings no longer disagree, and the consequence this row records — that the blob carries no `Profile` — is false under the shipped shape: `Profile` lives at `market.profile`. BP-012's `## Public interface` on disk now reads `market: Measured<MarketSet>            // BP-025 — profile, suggestions, total volume (ADR-095)`, verified 2026-09-04, and the file plan and `## Interfaces` block below are re-cut against it."
         },
         {
-          "claim": "BP-011's `## Data model delta` says it \"Writes the `questions`, `market`, `rivals` and **`coherence`** sections of `scans.report jsonb`\", and `StoredReport` has no `coherence` field — it carries `correctionState: CorrectionState` (BP-028's value domain) and nothing holding a `CoherenceVerdict`. Following BP-012 verbatim means a coherence verdict has nowhere in the blob to live. Reported rather than fixed: widening `StoredReport` is BP-012's author's, not this work order's.",
-          "disposition": "open"
+          "claim": "BP-011's `## Data model delta` says it \"Writes the `questions`, `market`, `rivals` and **`coherence`** sections of `scans.report jsonb`\", and `StoredReport` has no `coherence` field — so a coherence verdict has nowhere in the blob to live.",
+          "disposition": "refuted",
+          "reason": "Answered by ADR-095 decision 3 (accepted 2026-09-04): `StoredReport` gains `coherence: CoherenceVerdict`, BP-028's type, **unwrapped** — not `Measured<…>`, because the union is already total over the failure it has (`{ verdict: 'unjudgeable'; measuredCount: number }`) and a wrapper would give a consumer two `unknown`s to branch on. BP-012's `## Public interface` on disk now carries `coherence: CoherenceVerdict            // BP-028 — total union, unwrapped; ADR-095 decision 3`, verified 2026-09-04. The field is imported from `src/lib/market/coherence/check.ts`, which WO-080 creates — the one edge this decision moves, added to `blocked-by` above."
         },
         {
           "claim": "`OnPageFacts` is declared by WO-251 and by no blueprint; `SerpResult` is declared by WO-023 in `src/lib/vendors/dataforseo/types.ts` and by no blueprint, though BP-012's `StoredReport` attributes it to BP-026 in a comment. Both are imported by this file at the path its author ships it at. If either ships under a different name, this is a `blocked-by` on that work order added at that moment.",
@@ -12383,7 +12390,7 @@
           "disposition": "open"
         },
         {
-          "claim": "None of the eight section types this order's `StoredReport` imports exists on disk: `SuggestionRow`, `Question`, `AiAnswersCard`, `SerpResult`, `RivalCandidate`, `RivalSize`, `OnPageFacts` and `CorrectionState` have zero declarations and zero occurrences anywhere under `src/`, and neither `src/lib/market/` nor `src/lib/vendors/` exists as a directory. **Confirmed 2026-09-04** by exhaustive grep of `src/` for each of the eight names (declaration form and bare occurrence, both zero) plus a full file listing of `src/`, re-run by the planner independently of the implementer's own sweep. Only `Verdict` (`src/lib/measure/verdict.ts`, WO-277), `RobotsPolicy` (`src/lib/egress/types.ts`, WO-018), `Measured` (`src/lib/measure/measured.ts`) and `CanonicalDomain` (`src/lib/scan/domain.ts`, WO-051) of the composed names are present. This is the fact `blocked-by` records as a state (rule 2.3); the forward-looking half — whether each owning order ships its type under that name at that path — stays the fourth row above, still `open`.",
+          "claim": "None of the eight section types this order's `StoredReport` imports exists on disk: `SuggestionRow`, `Question`, `AiAnswersCard`, `SerpResult`, `RivalCandidate`, `RivalSize`, `OnPageFacts` and `CorrectionState` have zero declarations and zero occurrences anywhere under `src/`, and neither `src/lib/market/` nor `src/lib/vendors/` exists as a directory. **Confirmed 2026-09-04** by exhaustive grep of `src/` for each of the eight names (declaration form and bare occurrence, both zero) plus a full file listing of `src/`, re-run by the planner independently of the implementer's own sweep. Only `Verdict` (`src/lib/measure/verdict.ts`, WO-277), `RobotsPolicy` (`src/lib/egress/types.ts`, WO-018), `Measured` (`src/lib/measure/measured.ts`) and `CanonicalDomain` (`src/lib/scan/domain.ts`, WO-051) of the composed names are present. This is the fact `blocked-by` records as a state (rule 2.3); the forward-looking half — whether each owning order ships its type under that name at that path — stays the fourth row above, still `open`. **Amended 2026-09-04 for ADR-095**: the two names the decision changes — `MarketSet` (which replaces `SuggestionRow` at this file's import site) and `CoherenceVerdict` (a new member) — were re-grepped on the same sweep and are likewise zero under `src/`, so the count of absent types goes from eight to eight and the claim is unchanged in substance.",
           "disposition": "confirmed"
         }
       ],
