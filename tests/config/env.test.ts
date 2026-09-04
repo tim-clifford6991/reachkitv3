@@ -4,7 +4,15 @@
 // `BUILD.md` §15, not from a requirement (BP-005 carries no requirement
 // ancestor for `env.ts` — see the work order's test-plan header note).
 // `structure.md` rule 4 puts a module's tests at `tests/<module>/**`.
+//
+// WO-284 moved this file onto BP-005 decision 6's three bindings:
+// `SUPABASE_SERVICE_ROLE` retired for `SUPABASE_SERVICE_ROLE_KEY` (6a),
+// `NANO_API_KEY` optional and resolved to `ANTHROPIC_API_KEY` when absent
+// (6b), `DATABASE_URL` out of `Env` entirely (6c). The step-1 red run this
+// order's own `## Steps` names is `git log -p` on this file's history, not
+// a block kept here — the suites below are what stands.
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import type { Env } from "../../src/lib/config/env.ts";
 
 const ENV_MODULE = "../../src/lib/config/env.ts";
 
@@ -13,14 +21,16 @@ const ENV_MODULE = "../../src/lib/config/env.ts";
 //   STRIPE_SECRET_KEY STRIPE_WEBHOOK_SECRET STRIPE_PRICE_ID RESEND_API_KEY
 //   DATAFORSEO_LOGIN DATAFORSEO_PASSWORD ANTHROPIC_API_KEY NANO_API_KEY
 //   IP_HASH_SALT KILL_SWITCH OWNER_EMAILS NEXT_PUBLIC_APP_URL"
-// plus `HOSTED_EDGE_CNAME_TARGET` (BP-005 `## Public interface`'s note) —
-// the same 17 names `tests/app/env-example.test.ts` asserts against
-// `.env.example`.
+// plus `HOSTED_EDGE_CNAME_TARGET` (BP-005 `## Public interface`'s note),
+// moved onto BP-005 decision 6a and 6c: `SUPABASE_SERVICE_ROLE_KEY`
+// replaces `SUPABASE_SERVICE_ROLE`, one name end to end, no alias;
+// `DATABASE_URL` is gone — 16 names, `env`'s own key set (`NANO_API_KEY`
+// stays a member; 6b makes it optional at the *schema* level, not absent
+// from `Env`).
 const BINDING_NAMES = [
-  "DATABASE_URL",
   "SUPABASE_URL",
   "SUPABASE_ANON_KEY",
-  "SUPABASE_SERVICE_ROLE",
+  "SUPABASE_SERVICE_ROLE_KEY",
   "STRIPE_SECRET_KEY",
   "STRIPE_WEBHOOK_SECRET",
   "STRIPE_PRICE_ID",
@@ -36,9 +46,15 @@ const BINDING_NAMES = [
   "HOSTED_EDGE_CNAME_TARGET",
 ] as const;
 
-// WO-005 file plan's closed set of server-only bindings.
+// The missing-binding it.each below (BP-005 `## Error & edge behavior`,
+// "Every other binding keeps the no-default, no-fallback rule") excludes
+// `NANO_API_KEY` — decision 6b's whole point is that its absence resolves
+// rather than throws; that behaviour has its own suite further down.
+const NO_DEFAULT_BINDING_NAMES = BINDING_NAMES.filter((name) => name !== "NANO_API_KEY");
+
+// WO-005 file plan's closed set of server-only bindings, moved onto 6a.
 const SERVER_ONLY_NAMES = [
-  "SUPABASE_SERVICE_ROLE",
+  "SUPABASE_SERVICE_ROLE_KEY",
   "STRIPE_SECRET_KEY",
   "RESEND_API_KEY",
   "DATAFORSEO_PASSWORD",
@@ -51,10 +67,9 @@ const SERVER_ONLY_NAMES = [
 // real credentials — `tests/setup.ts` also refuses any real network call
 // from this process.
 const VALID_ENV: Record<(typeof BINDING_NAMES)[number], string> = {
-  DATABASE_URL: "postgres://user:pass@localhost:5432/reachkit",
   SUPABASE_URL: "https://project.supabase.co",
   SUPABASE_ANON_KEY: "anon-key-fixture",
-  SUPABASE_SERVICE_ROLE: "service-role-fixture",
+  SUPABASE_SERVICE_ROLE_KEY: "service-role-key-fixture",
   STRIPE_SECRET_KEY: "sk_test_fixture",
   STRIPE_WEBHOOK_SECRET: "whsec_fixture",
   STRIPE_PRICE_ID: "price_fixture",
@@ -72,10 +87,16 @@ const VALID_ENV: Record<(typeof BINDING_NAMES)[number], string> = {
 
 const ORIGINAL_ENV = { ...process.env };
 
-/** Resets the 17 bindings to a complete, valid set, then applies overrides.
+/** Resets the 16 bindings to a complete, valid set, then applies overrides.
  * `undefined` deletes the key — `process.env[k] = undefined` would instead
- * coerce to the string `"undefined"`, which is not what "missing" means. */
+ * coerce to the string `"undefined"`, which is not what "missing" means.
+ * Also always clears `DATABASE_URL` and the retired `SUPABASE_SERVICE_ROLE`
+ * name from `process.env` first, so a value left behind by another test
+ * file cannot make a decision-6c or decision-6a case pass by accident —
+ * callers that want either name present set it explicitly afterward. */
 function applyEnv(overrides: Partial<Record<string, string | undefined>>) {
+  delete process.env.DATABASE_URL;
+  delete process.env.SUPABASE_SERVICE_ROLE;
   for (const name of BINDING_NAMES) delete process.env[name];
   for (const [key, value] of Object.entries(VALID_ENV)) {
     process.env[key] = value;
@@ -104,8 +125,8 @@ afterEach(() => {
   vi.resetModules();
 });
 
-describe('BP-005 error behaviour — "`env` throws at boot on a missing or malformed binding; there is no default and no fallback, so a deployment cannot start half-configured."', () => {
-  it.each(BINDING_NAMES)("throws at module load when %s is missing", async (name) => {
+describe('BP-005 error behaviour — "`env` throws at boot on a missing or malformed binding; there is no default and no fallback, so a deployment cannot start half-configured." (BP-005 `## Error & edge behavior`: "Every other binding keeps the no-default, no-fallback rule.")', () => {
+  it.each(NO_DEFAULT_BINDING_NAMES)("throws at module load when %s is missing", async (name) => {
     applyEnv({ [name]: undefined });
     await expect(importEnvModule()).rejects.toThrow();
   });
@@ -136,8 +157,8 @@ describe('BP-005 error behaviour — "`env` throws at boot on a missing or malfo
   });
 });
 
-describe("`BUILD.md` §15's binding list", () => {
-  it("env's key set equals §15's list plus HOSTED_EDGE_CNAME_TARGET — an extra binding fails; a missing one fails", async () => {
+describe("`BUILD.md` §15's binding list, moved onto BP-005 decision 6", () => {
+  it("env's key set equals the new 16-name list — an extra binding fails; a missing one fails", async () => {
     applyEnv({});
     const { env } = await importEnvModule();
     expect(Object.keys(env).sort()).toEqual([...BINDING_NAMES].sort());
@@ -171,5 +192,100 @@ describe('BP-002 error behaviour, applied to env\'s own secrets — "A `dbAdmin(
     const { env } = await importEnvModule();
     vi.stubGlobal("window", {});
     expect(() => env.NEXT_PUBLIC_APP_URL).not.toThrow();
+  });
+});
+
+describe('BP-005 decision 6, owner ruling relayed on BP-005 decision 6 (2026-09-04): "a fixture env carrying the old names must fail loudly" / "the new shape must boot"', () => {
+  it("a fixture carrying the retired SUPABASE_SERVICE_ROLE name (not SUPABASE_SERVICE_ROLE_KEY) throws at module load, and the message names the missing binding", async () => {
+    applyEnv({ SUPABASE_SERVICE_ROLE_KEY: undefined });
+    process.env.SUPABASE_SERVICE_ROLE = "retired-name-fixture";
+    await expect(importEnvModule()).rejects.toThrow(/SUPABASE_SERVICE_ROLE_KEY/);
+  });
+
+  it("a fixture carrying exactly the new key set, and no DATABASE_URL, constructs env without throwing; env.SUPABASE_SERVICE_ROLE_KEY is the fixture's value", async () => {
+    applyEnv({});
+    expect(process.env.DATABASE_URL).toBeUndefined();
+    const { env } = await importEnvModule();
+    expect(env.SUPABASE_SERVICE_ROLE_KEY).toBe(VALID_ENV.SUPABASE_SERVICE_ROLE_KEY);
+  });
+});
+
+describe('BP-005 decision 6a — "One name end to end, not an alias… The process-env key and the `Env` member are both `SUPABASE_SERVICE_ROLE_KEY`; every reader (`dbAdmin()`\'s, and the server-only key set in this same file) moves with it."', () => {
+  it("the key-set assertion names SUPABASE_SERVICE_ROLE_KEY and refuses SUPABASE_SERVICE_ROLE as an extra binding", async () => {
+    applyEnv({});
+    const { env } = await importEnvModule();
+    const keys = Object.keys(env);
+    expect(keys).toContain("SUPABASE_SERVICE_ROLE_KEY");
+    expect(keys).not.toContain("SUPABASE_SERVICE_ROLE");
+  });
+});
+
+describe('BP-005 `## Error & edge behavior` — "`NANO_API_KEY` absent resolves to `ANTHROPIC_API_KEY` — another required member of this same schema, a credential the deployment has already supplied and this file has already validated, never a fabricated or hard-coded one"', () => {
+  it("with NANO_API_KEY unset, env boots and env.NANO_API_KEY equals env.ANTHROPIC_API_KEY", async () => {
+    applyEnv({ NANO_API_KEY: undefined });
+    const { env } = await importEnvModule();
+    expect(env.NANO_API_KEY).toBe(env.ANTHROPIC_API_KEY);
+  });
+
+  it("with NANO_API_KEY and ANTHROPIC_API_KEY set to different values, env.NANO_API_KEY is its own", async () => {
+    applyEnv({ NANO_API_KEY: "nano-own-fixture", ANTHROPIC_API_KEY: "anthropic-fixture" });
+    const { env } = await importEnvModule();
+    expect(env.NANO_API_KEY).toBe("nano-own-fixture");
+    expect(env.NANO_API_KEY).not.toBe(env.ANTHROPIC_API_KEY);
+  });
+
+  it("with NANO_API_KEY and ANTHROPIC_API_KEY both unset, env still throws — the fallback is a member, not a literal", async () => {
+    applyEnv({ NANO_API_KEY: undefined, ANTHROPIC_API_KEY: undefined });
+    await expect(importEnvModule()).rejects.toThrow();
+  });
+});
+
+describe('BP-005 decision 6b — "The resolution happens inside this file, before any caller reads `env`, and the member\'s type is a required `string` either way — no caller can observe which key it received, and none is asked to choose."', () => {
+  it("type-level: Env['NANO_API_KEY'] is string, not string | undefined — a runtime witness that `npm run typecheck` enforces at compile time", async () => {
+    applyEnv({ NANO_API_KEY: undefined });
+    const { env } = await importEnvModule();
+    // If `NANO_API_KEY` were `string | undefined` at the type level, this
+    // runtime check would still pass after the resolution above — the type
+    // witness functions below are what `npm run typecheck` actually polices;
+    // this assertion is the corresponding runtime fact.
+    expect(typeof env.NANO_API_KEY).toBe("string");
+  });
+});
+
+// Type witnesses (BP-005 decision 6b) — checked by `npm run typecheck`,
+// never executed. `Env["NANO_API_KEY"]` must be a required `string`; making
+// the member optional (reverting `Omit<ParsedEnv, "NANO_API_KEY"> & {
+// NANO_API_KEY: string }` to a bare `z.infer`) fails this file's typecheck.
+function _nanoApiKeyIsRequiredString(value: Env["NANO_API_KEY"]): string {
+  return value;
+}
+void _nanoApiKeyIsRequiredString;
+
+function _nanoApiKeyRejectsUndefined(): void {
+  // @ts-expect-error — `Env["NANO_API_KEY"]` must not accept `undefined`;
+  // an `.optional()`-shaped `Env` member would compile here instead.
+  const value: Env["NANO_API_KEY"] = undefined;
+  void value;
+}
+void _nanoApiKeyRejectsUndefined;
+
+describe('BP-005 decision 6c — "**Out of `Env` entirely, not optional inside it**… `Env` is the *boot* contract; a member no module reads is a declaration promising a validation it no longer performs."', () => {
+  it("env boots with DATABASE_URL absent from process.env", async () => {
+    applyEnv({});
+    expect(process.env.DATABASE_URL).toBeUndefined();
+    await expect(importEnvModule()).resolves.toBeDefined();
+  });
+
+  it("DATABASE_URL is absent from env's key set", async () => {
+    applyEnv({});
+    const { env } = await importEnvModule();
+    expect(Object.keys(env)).not.toContain("DATABASE_URL");
+  });
+
+  it("DATABASE_URL present in process.env (as the tooling's own binding) does not change env's key set or throw", async () => {
+    applyEnv({});
+    process.env.DATABASE_URL = "postgres://user:pass@localhost:5432/reachkit";
+    const { env } = await importEnvModule();
+    expect(Object.keys(env)).not.toContain("DATABASE_URL");
   });
 });

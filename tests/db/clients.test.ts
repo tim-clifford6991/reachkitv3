@@ -102,14 +102,16 @@ function normalize(text: string): string {
   return text.trim().replace(/\r\n/g, "\n");
 }
 
-// A complete, validly-shaped set of the 17 bindings `env.ts` requires
-// (BP-005) — none of these tests execute a query, so the three Supabase
-// bindings need only be syntactically valid, not reachable.
+// A complete, validly-shaped set of the bindings `env.ts` requires (BP-005,
+// moved onto decision 6) — none of these tests execute a query, so the
+// three Supabase bindings need only be syntactically valid, not reachable.
+// `DATABASE_URL` is no longer a member of `Env` (decision 6c) but stays in
+// this fixture: this file reads it for its own `pg` connection.
 const ENV_FIXTURE: Record<string, string> = {
   DATABASE_URL: `postgresql://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_NAME}`,
   SUPABASE_URL: "http://127.0.0.1:3001",
   SUPABASE_ANON_KEY: "anon-key-fixture",
-  SUPABASE_SERVICE_ROLE: "service-role-fixture",
+  SUPABASE_SERVICE_ROLE_KEY: "service-role-key-fixture",
   STRIPE_SECRET_KEY: "sk_test_fixture",
   STRIPE_WEBHOOK_SECRET: "whsec_fixture",
   STRIPE_PRICE_ID: "price_fixture",
@@ -230,8 +232,9 @@ describe('BP-002 error behaviour — "A `dbAdmin()` import from a client compone
   });
 
   // TST-004 Deviation 1: `env.ts` (BP-005/WO-005) carries its own,
-  // independent `SUPABASE_SERVICE_ROLE` guard whose message also contains
-  // the substring "server-only" — `dbAdmin()` reads `env.SUPABASE_SERVICE_ROLE`
+  // independent `SUPABASE_SERVICE_ROLE_KEY` guard whose message also
+  // contains the substring "server-only" — `dbAdmin()` reads
+  // `env.SUPABASE_SERVICE_ROLE_KEY` (renamed by WO-284, BP-005 decision 6a)
   // in the same function body, so a bare `/server-only/` match does not
   // discriminate removal of *this* guard: the throw would still come from
   // `env.ts` and still satisfy that regex. Both assertions below match only

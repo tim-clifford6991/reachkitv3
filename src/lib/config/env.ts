@@ -19,14 +19,27 @@ import { z } from "zod";
 // points `content.{their-domain}` at … It is one deployment-scoped
 // hostname, so it is a binding rather than a constant."
 //
-// No `.default(...)` and no `.optional()` anywhere in this schema (WO-005
-// step 2 / file plan: "No default, no fallback.") — a missing or malformed
-// binding fails `safeParse` and `parseEnv()` below throws.
+// BP-005 decision 6: three of §15's rows above are bound differently, because
+// the deployment target is the existing Vercel project `reachkit` and its
+// secrets are write-only. §15 itself is upstream source text and stays cited,
+// not edited — this schema is what actually binds. 6a:
+// `SUPABASE_SERVICE_ROLE` is retired; the schema's (and the platform's) only
+// name is `SUPABASE_SERVICE_ROLE_KEY`, no alias. 6b: `NANO_API_KEY` is the
+// schema's one optional member, resolved to `ANTHROPIC_API_KEY` when absent
+// inside `parseEnv()` below, before `env` is constructed — see `type Env`
+// two lines down for how the member's type stays a required `string` either
+// way. 6c: `DATABASE_URL` is not a member of this schema at all — no module
+// under `src/` reads it; it is the migration and test tooling's binding.
+//
+// No `.default(...)` and no other `.optional()` anywhere in this schema
+// (WO-005 step 2 / file plan: "No default, no fallback.") — a missing or
+// malformed binding fails `safeParse` and `parseEnv()` below throws.
+// `NANO_API_KEY` above is the decision 6b exception: optional at the schema
+// level only, resolved to a required member before any caller sees it.
 const schema = z.object({
-  DATABASE_URL: z.url(),
   SUPABASE_URL: z.url(),
   SUPABASE_ANON_KEY: z.string().min(1),
-  SUPABASE_SERVICE_ROLE: z.string().min(1),
+  SUPABASE_SERVICE_ROLE_KEY: z.string().min(1),
   STRIPE_SECRET_KEY: z.string().min(1),
   STRIPE_WEBHOOK_SECRET: z.string().min(1),
   STRIPE_PRICE_ID: z.string().min(1),
@@ -34,7 +47,7 @@ const schema = z.object({
   DATAFORSEO_LOGIN: z.string().min(1),
   DATAFORSEO_PASSWORD: z.string().min(1),
   ANTHROPIC_API_KEY: z.string().min(1),
-  NANO_API_KEY: z.string().min(1),
+  NANO_API_KEY: z.string().min(1).optional(),
   IP_HASH_SALT: z.string().min(1),
   // "boolean-ish for KILL_SWITCH" (WO-005 step 1).
   KILL_SWITCH: z.stringbool(),
@@ -48,16 +61,23 @@ const schema = z.object({
   HOSTED_EDGE_CNAME_TARGET: z.string().min(1),
 });
 
-export type Env = z.infer<typeof schema>;
+// BP-005 decision 6b: "the member's type is a required `string` either
+// way — no caller can observe which key it received, and none is asked to
+// choose." `z.infer` alone would make `NANO_API_KEY` `string | undefined`
+// (the schema's own `.optional()`); this type is what every reader of `Env`
+// actually sees, once `parseEnv()` has resolved the fallback.
+type ParsedEnv = z.infer<typeof schema>;
+export type Env = Omit<ParsedEnv, "NANO_API_KEY"> & { NANO_API_KEY: string };
 
 // WO-005 file plan: "`SUPABASE_SERVICE_ROLE`, `STRIPE_SECRET_KEY`,
 // `RESEND_API_KEY`, `DATAFORSEO_PASSWORD`, `ANTHROPIC_API_KEY`,
 // `NANO_API_KEY` and `IP_HASH_SALT` are marked server-only and their access
 // throws if the module is evaluated in a client bundle." — the closed set;
 // nothing outside it is guarded, and BP-002's `dbAdmin()` (WO-011) carries
-// the analogous build-time guard for its own secret.
+// the analogous build-time guard for its own secret. BP-005 decision 6a:
+// one name end to end, not an alias — this reader moves with the rename.
 const SERVER_ONLY_KEYS = [
-  "SUPABASE_SERVICE_ROLE",
+  "SUPABASE_SERVICE_ROLE_KEY",
   "STRIPE_SECRET_KEY",
   "RESEND_API_KEY",
   "DATAFORSEO_PASSWORD",
@@ -83,7 +103,13 @@ function parseEnv(): Env {
       `src/lib/config/env.ts: invalid or missing environment binding(s):\n${result.error.message}`
     );
   }
-  return result.data;
+  // BP-005 decision 6b: the resolution happens here, before any caller reads
+  // `env` — `ANTHROPIC_API_KEY` is itself a required member this same parse
+  // has already validated, never a fabricated or hard-coded literal.
+  return {
+    ...result.data,
+    NANO_API_KEY: result.data.NANO_API_KEY ?? result.data.ANTHROPIC_API_KEY,
+  };
 }
 
 function freezeWithGuards(parsed: Env): Readonly<Env> {

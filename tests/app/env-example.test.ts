@@ -16,11 +16,21 @@ const ROOT = path.resolve(__dirname, "../..");
 //    DATAFORSEO_LOGIN DATAFORSEO_PASSWORD ANTHROPIC_API_KEY NANO_API_KEY
 //    IP_HASH_SALT KILL_SWITCH OWNER_EMAILS NEXT_PUBLIC_APP_URL"
 // Plus BP-005's `Env` note: "HOSTED_EDGE_CNAME_TARGET".
+//
+// BP-005 decision 6 rebinds three of §15's rows: `SUPABASE_SERVICE_ROLE` is
+// retired in favour of `SUPABASE_SERVICE_ROLE_KEY` (6a) — `.env.example`
+// carries the new name below. `DATABASE_URL` stays on this list even though
+// it left `Env` (6c): it is still the migration and test tooling's binding,
+// and this file asserts `.env.example` names it as well as every binding
+// `Env` reads — the two lists are no longer identical, and this is the one
+// row where that is deliberate. `NANO_API_KEY` (6b, optional inside `Env`)
+// still names a required row here — `.env.example` documents every binding
+// a deployment may set, not `Env`'s narrower required-at-boot set.
 const REQUIRED_BINDINGS = [
   "DATABASE_URL",
   "SUPABASE_URL",
   "SUPABASE_ANON_KEY",
-  "SUPABASE_SERVICE_ROLE",
+  "SUPABASE_SERVICE_ROLE_KEY",
   "STRIPE_SECRET_KEY",
   "STRIPE_WEBHOOK_SECRET",
   "STRIPE_PRICE_ID",

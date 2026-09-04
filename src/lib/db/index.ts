@@ -55,7 +55,7 @@ export function dbAdmin(): SupabaseClient<Database> {
     );
   }
   if (!adminClient) {
-    adminClient = createClient<Database>(env.SUPABASE_URL, env.SUPABASE_SERVICE_ROLE, {
+    adminClient = createClient<Database>(env.SUPABASE_URL, env.SUPABASE_SERVICE_ROLE_KEY, {
       auth: { persistSession: false, autoRefreshToken: false },
     });
   }

@@ -132,7 +132,11 @@ const ENV_FIXTURE: Record<string, string> = {
   DATABASE_URL: `postgresql://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_NAME}`,
   SUPABASE_URL,
   SUPABASE_ANON_KEY: ANON_KEY,
-  SUPABASE_SERVICE_ROLE: SERVICE_ROLE_KEY,
+  // Renamed by WO-284 (BP-005 decision 6a) — outside that order's own file
+  // plan, whose grep for this literal missed this file; fixed here as the
+  // same mechanical rename applied to the six files that plan does name,
+  // flagged once (constitution rule 4.2) in that order's own return.
+  SUPABASE_SERVICE_ROLE_KEY: SERVICE_ROLE_KEY,
   STRIPE_SECRET_KEY: "sk_test_fixture",
   STRIPE_WEBHOOK_SECRET: "whsec_fixture",
   STRIPE_PRICE_ID: "price_fixture",
