@@ -103,6 +103,14 @@ export const ATTRIBUTE_ALLOWLIST: readonly AllowlistedAttribute[] = Object.freez
   },
   {
     kind: "exact",
+    name: "state",
+    reason:
+      "a registered component's own discriminant token (e.g. Card's " +
+      "'default' | 'degraded', BP-018 decision 2) — it chooses which arm of " +
+      "the component renders, and is never read by a person.",
+  },
+  {
+    kind: "exact",
     name: "variant",
     reason: "a registered component's style-variant token (e.g. 'primary'), not a sentence.",
   },

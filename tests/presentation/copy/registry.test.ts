@@ -304,9 +304,18 @@ describe("owner-owed and empty agree both ways", () => {
     // `settings.ts`, the sentence each screen states inside the shell
     // until its own content lands (#15, #16, #18). 22 + 5 = 27
     // owner-owed, 54 + 5 = 59 filled, 76 + 10 = 86 total.
-    expect(OWNER_OWED.length).toBe(27);
+    //
+    // 2026-09-05, separately again: issue #31 (lead capture and the
+    // giveaway, BUILD §4.2) adds twenty keys in `mail.ts`, every one
+    // owner-owed and empty — the five the first-page mail speaks, the six
+    // the unavailable notice speaks (its subject and one line per
+    // `FirstPageFailure`), the six the three nurture touches speak, the
+    // three `POST /api/lead` answers with, and the opt-out page's third
+    // arm. Not one of them is written by this feature (constitution §1).
+    // 27 + 20 = 47 owner-owed, 59 filled unchanged, 86 + 20 = 106 total.
+    expect(OWNER_OWED.length).toBe(47);
     expect(Object.keys(COPY).length - OWNER_OWED.length).toBe(59);
-    expect(Object.keys(COPY).length).toBe(86);
+    expect(Object.keys(COPY).length).toBe(106);
   });
 });
 
