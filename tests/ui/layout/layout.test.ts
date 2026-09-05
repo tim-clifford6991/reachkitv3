@@ -35,6 +35,17 @@ console.log(
     (routes.length === 0 ? " — src/app/ holds no route yet (WO-269 rests-on row 5)" : "")
 );
 
+/** The headers a route is rendered with: a `(hosted)` page's `Host`, an
+ *  `(account)` page's session `Cookie` (`src/middleware.ts` is default-deny
+ *  and would otherwise redirect the sweep to the sign-in prompt), or — for
+ *  an ordinary public route — none. */
+function headersFor(route: EnumeratedRoute): { extraHTTPHeaders?: Record<string, string> } {
+  const headers: Record<string, string> = {};
+  if (route.host) headers.Host = route.host;
+  if (route.cookie) headers.Cookie = route.cookie;
+  return Object.keys(headers).length > 0 ? { extraHTTPHeaders: headers } : {};
+}
+
 function urlFor(route: EnumeratedRoute): string {
   const baseURL = getBaseURL();
   if (!baseURL) {
@@ -75,7 +86,7 @@ describe(`layout sweep — ${routes.length} route(s) × 5 widths`, () => {
             ];
             return results.flat();
           },
-          route.host ? { extraHTTPHeaders: { Host: route.host } } : {}
+          headersFor(route)
         );
         expect(offenders).toEqual([]);
       });
@@ -90,7 +101,7 @@ describe(`layout sweep — ${routes.length} route(s) × 5 widths`, () => {
           await page.goto(urlFor(route));
           return page.evaluate(() => document.querySelectorAll("[data-surface]").length);
         },
-        route.host ? { extraHTTPHeaders: { Host: route.host } } : {}
+        headersFor(route)
       );
       expect(count, `${route.path} must render exactly one [data-surface] root`).toBe(1);
     }
@@ -115,7 +126,7 @@ describe(`layout sweep — ${routes.length} route(s) × 5 widths`, () => {
             };
           });
         },
-        route.host ? { extraHTTPHeaders: { Host: route.host } } : {}
+        headersFor(route)
       );
       expect(tokens.breakpointLg, `${route.path}: --breakpoint-lg must be declared`).not.toBe("");
       expect(tokens.breakpointXl, `${route.path}: --breakpoint-xl must be declared`).not.toBe("");

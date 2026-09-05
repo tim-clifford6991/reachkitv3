@@ -10,7 +10,7 @@ import https from "node:https";
 import dns from "node:dns";
 import path from "node:path";
 import { ESLint } from "eslint";
-import { afterEach, beforeEach, describe, expect, expectTypeOf, it, vi } from "vitest";
+import { afterEach, beforeAll, beforeEach, describe, expect, expectTypeOf, it, vi } from "vitest";
 import { checkAddress, checkSchemeAndPort, classifyAddress } from "../../src/lib/egress/policy";
 import type { RobotsPolicy } from "../../src/lib/egress/types";
 
@@ -213,6 +213,17 @@ describe("safeFetch · policy refusal opens no socket", () => {
 
 const ROOT = path.resolve(__dirname, "../..");
 
+/** Each `it` below constructs its own `ESLint`, which loads and resolves the
+ *  repo's real `eslint.config.mjs` — `next/core-web-vitals` and
+ *  `typescript-eslint` included — before it lints one string. That cold boot
+ *  is seconds, it grows with the config's plugin set, and under a full
+ *  parallel run it crossed Vitest's 5 s default the week `src/app` gained the
+ *  app shell's routes (issue #9). The bound below is on the toolchain's
+ *  startup, not on the assertion, and it is per-`it` so nothing else in this
+ *  file loses its deadline. Same value, same reason, as
+ *  `tests/app/lint-rules.test.ts`'s. */
+const ESLINT_BOOT_MS = 30_000;
+
 async function lint(source: string, filePath: string): Promise<ESLint.LintResult> {
   const eslint = new ESLint({ cwd: ROOT });
   const [result] = await eslint.lintText(source, { filePath: path.join(ROOT, filePath) });
@@ -220,11 +231,22 @@ async function lint(source: string, filePath: string): Promise<ESLint.LintResult
   return result;
 }
 
+// The first ESLint run in a worker pays the whole flat-config bootstrap —
+// `eslint-config-next` resolves a TypeScript program over the repo, so that
+// one-off cost grows with the source tree and has outgrown Vitest's 5 s
+// per-test default (adding `src/jobs/**` in #39 was what pushed it over).
+// It is paid once here, under its own timeout; every assertion below then
+// runs in tens of milliseconds and keeps the default, so a rule that
+// actually breaks still fails fast.
+beforeAll(async () => {
+  await lint("export const warmUp = true;\n", "src/lib/measure/eslint-warm-up.ts");
+}, 60_000);
+
 describe("BP-006 NFR — fetch( is confined to src/lib/egress/** and src/lib/vendors/**", () => {
   it("reports a fetch( call under src/lib/measure/", async () => {
     const result = await lint("export async function f() {\n  return fetch('https://x');\n}\n", "src/lib/measure/uses-fetch.ts");
     expect(result.messages.length).toBeGreaterThan(0);
-  });
+  }, ESLINT_BOOT_MS);
 
   it("does not report a fetch( call inside src/lib/egress/", async () => {
     const result = await lint(
@@ -232,7 +254,7 @@ describe("BP-006 NFR — fetch( is confined to src/lib/egress/** and src/lib/ven
       "src/lib/egress/some-internal.ts"
     );
     expect(result.messages).toEqual([]);
-  });
+  }, ESLINT_BOOT_MS);
 
   it("does not report a fetch( call inside src/lib/vendors/", async () => {
     const result = await lint(
@@ -240,7 +262,7 @@ describe("BP-006 NFR — fetch( is confined to src/lib/egress/** and src/lib/ven
       "src/lib/vendors/dataforseo.ts"
     );
     expect(result.messages).toEqual([]);
-  });
+  }, ESLINT_BOOT_MS);
 });
 
 // ── RobotsPolicy — the type-level suite row 8's test names ─────────────

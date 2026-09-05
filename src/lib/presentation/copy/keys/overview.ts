@@ -5,6 +5,11 @@
 // partial-week states. Empty value, owner-owed — no string is written here
 // (constitution §1). The block that owns Overview fills every other
 // sentence this surface needs.
+//
+// 2026-09-05: issue #9 (BUILD §4.4) adds `overview.head` — the one written
+// line this screen states inside the app shell until its own content lands
+// (issue #15, §4.5). Owner-owed and empty: it is a customer-visible sentence
+// (constitution §1).
 import type { CopyPartition } from "../registry.ts";
 
 export const OVERVIEW_COPY = Object.freeze({
@@ -20,4 +25,5 @@ export const OVERVIEW_COPY = Object.freeze({
     "",
     { law: "no-presence-yet", slots: {}, fixedBy: "REQ-065 c4" },
   ],
+  "overview.head": ["", { slots: {}, fixedBy: "BUILD §4.5" }],
 }) satisfies CopyPartition;
