@@ -140,7 +140,16 @@ describe("REQ-093 c5 — the registry renders with every model unavailable", () 
     // five filled `shell.*` keys in `laws.ts`, each a transcription of a
     // word `BUILD.md` §4.4 or §4.3 prints — the three destination names
     // and the two publishing modes: 54 + 5 = 59.
-    expect(nonOwnerOwed.length).toBe(59);
+    //
+    // 2026-09-05, separately again: issue #16 (the calendar, BUILD §4.6)
+    // fills twenty in `calendar.ts` — §4.6's head line, its six stage
+    // filter cards, its six action words, the "Why this page" title and
+    // its five row labels, and the first half of its footnote. Every one
+    // is a transcription of a word or sentence §4.6 itself prints, on the
+    // same footing as the thirteen band words; `calendar.head` moves from
+    // owner-owed to filled with them, because §4.6 prints that sentence in
+    // quotes. 59 + 20 = 79.
+    expect(nonOwnerOwed.length).toBe(79);
 
     for (const key of nonOwnerOwed) {
       const slotNames = Object.keys(COPY_META[key].slots);
@@ -304,9 +313,22 @@ describe("owner-owed and empty agree both ways", () => {
     // `settings.ts`, the sentence each screen states inside the shell
     // until its own content lands (#15, #16, #18). 22 + 5 = 27
     // owner-owed, 54 + 5 = 59 filled, 76 + 10 = 86 total.
-    expect(OWNER_OWED.length).toBe(27);
-    expect(Object.keys(COPY).length - OWNER_OWED.length).toBe(59);
-    expect(Object.keys(COPY).length).toBe(86);
+    //
+    // 2026-09-05, separately again: issue #16 (the calendar, BUILD §4.6)
+    // adds twenty-five keys to `calendar.ts` and fills `calendar.head`.
+    // Twenty of the new ones carry a value and every one is a
+    // transcription of a word or sentence §4.6 prints — six stage filter
+    // cards, six action words, the "Why this page" title and its five row
+    // labels, the footnote's first half — plus `calendar.head` itself,
+    // §4.6's `Head: "One page a day. Every day."`. Five are owner-owed and
+    // empty, because no artifact states them: REQ-043 c4's three remaining
+    // empty-date causes, c10's provenance line, §9's veto-deadline line,
+    // and the supply half of the footnote (six keys, less the one
+    // `calendar.head` that left the owner-owed set). 27 − 1 + 6 = 32
+    // owner-owed, 59 + 20 = 79 filled, 86 + 25 = 111 total.
+    expect(OWNER_OWED.length).toBe(32);
+    expect(Object.keys(COPY).length - OWNER_OWED.length).toBe(79);
+    expect(Object.keys(COPY).length).toBe(111);
   });
 });
 
