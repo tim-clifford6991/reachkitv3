@@ -21,7 +21,10 @@ export const MAIL_COPY = Object.freeze({
   // of them is a sentence the product speaks in its own voice, so none is
   // written here (constitution §1 / CLAUDE.md "never invent copy"). The
   // sixth is the product's own name, transcribed — not a sentence, on the
-  // same footing as `unmeasured.dash`'s "—" and `removal.address`.
+  // same footing as the em-dash and the removal address that two other
+  // partitions transcribe. (Those two keys are not named here: issue #28's
+  // `tests/app/scan-address/removal.test.tsx` asserts one of them appears
+  // in exactly one file under `src/`, and a comment naming it is a second.)
   //
   // Note on the empty five: `copy()` throws on an owner-owed key, so a
   // mail that would carry one of these lines fails loudly at compose time
@@ -34,4 +37,54 @@ export const MAIL_COPY = Object.freeze({
   "mail.week_partly_measured": ["", { slots: { sections: "text" }, fixedBy: "§12" }],
   "mail.unsubscribe.label": ["", { slots: {}, fixedBy: "§12" }],
   "mail.optout.label": ["", { slots: {}, fixedBy: "§12" }],
+
+  // 2026-09-05, issue #31 (lead capture, the giveaway page and the nurture
+  // sequence, `BUILD.md` §4.2). Twenty-one keys, every one owner-owed and
+  // empty: each is a sentence the product speaks in its own voice, so none
+  // is written here (constitution §1 / CLAUDE.md "never invent copy").
+  // `copy()` throws on an owner-owed key, so a mail or a response that
+  // would carry one of these fails loudly rather than shipping a blank
+  // line to a founder.
+  //
+  // The four `mail.firstPageUnavailable.<cause>` keys are named for the
+  // four `FirstPageFailure` members verbatim: `FIRST_PAGE_UNAVAILABLE_COPY`
+  // (`src/lib/mail/leads/giveaway.ts`) is a `Record` over that union, so a
+  // cause with no key of its own is a compile error — which is what makes
+  // REQ-010 criterion 7's "and why" enforceable rather than aspirational.
+
+  // The page itself (REQ-010 c4).
+  "mail.firstPage.subject": ["", { slots: {}, fixedBy: "REQ-010 c4" }],
+  "mail.firstPage.target_search": ["", { slots: { query: "text" }, fixedBy: "REQ-010 c4" }],
+  "mail.firstPage.volume_label": ["", { slots: {}, fixedBy: "REQ-010 c4" }],
+  "mail.firstPage.volume_note": ["", { slots: {}, fixedBy: "REQ-010 c4" }],
+  "mail.firstPage.first_of_n": ["", { slots: { pagesFound: "text" }, fixedBy: "REQ-010 c4" }],
+
+  // The message that closes the request when no page is coming (c7), one
+  // line per cause.
+  "mail.firstPageUnavailable.subject": ["", { slots: {}, fixedBy: "REQ-010 c7" }],
+  "mail.firstPageUnavailable.no-page-to-write": ["", { slots: {}, fixedBy: "REQ-010 c7" }],
+  "mail.firstPageUnavailable.writing-failed": ["", { slots: {}, fixedBy: "REQ-010 c7" }],
+  "mail.firstPageUnavailable.writing-refused": ["", { slots: {}, fixedBy: "REQ-010 c7" }],
+  "mail.firstPageUnavailable.delivery-failed": ["", { slots: {}, fixedBy: "REQ-010 c7" }],
+
+  // The three touches (c9). One subject and one line each; the touch is
+  // carried by the key, never by a conditional inside a template.
+  "mail.nurture.subject.1": ["", { slots: {}, fixedBy: "REQ-010 c9" }],
+  "mail.nurture.subject.2": ["", { slots: {}, fixedBy: "REQ-010 c9" }],
+  "mail.nurture.subject.3": ["", { slots: {}, fixedBy: "REQ-010 c9" }],
+  "mail.nurture.body.1": ["", { slots: { domain: "text" }, fixedBy: "REQ-010 c9" }],
+  "mail.nurture.body.2": ["", { slots: { domain: "text" }, fixedBy: "REQ-010 c9" }],
+  "mail.nurture.body.3": ["", { slots: { domain: "text" }, fixedBy: "REQ-010 c9" }],
+
+  // What `POST /api/lead` answers with. The adapter maps each arm of
+  // `captureLead()` to one of these keys and never to a sentence of its
+  // own or a vendor payload (REQ-003 c10, REQ-010 c1).
+  "lead.accepted": ["", { slots: {}, fixedBy: "REQ-010 c1" }],
+  "lead.invalid_address": ["", { slots: {}, fixedBy: "REQ-010 c1" }],
+  "lead.unavailable": ["", { slots: {}, fixedBy: "REQ-003 c10" }],
+
+  // The third arm of the opt-out page: the link is good and our store is
+  // not. Telling the reader their link is invalid would be a false
+  // statement about the one thing they came to do.
+  "optout.unavailable": ["", { slots: {}, fixedBy: "REQ-010 c11" }],
 }) satisfies CopyPartition;
