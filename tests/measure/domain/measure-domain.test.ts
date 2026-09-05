@@ -6,6 +6,36 @@
 // doubled through the `MeasurePorts` record, and the cost seam is doubled
 // as a `CostContext`; nothing here reaches a network, a database or a
 // vendor (`tests/setup.ts` would refuse it anyway).
+// The module under test imports the vendor client for its default
+// `rankedKeywords` port, and `src/lib/config/env.ts` validates every
+// binding at module load — so a valid-shaped fixture has to be in place
+// *before* the static imports below run, which is what `vi.hoisted` is
+// for (same use as `tests/market/questions/profile.test.ts`). It buys
+// nothing else: every port this suite exercises is doubled, `fetch` is
+// refused by `tests/setup.ts`, and no credential here is real.
+vi.hoisted(() => {
+  const ENV_FIXTURE: Record<string, string> = {
+    DATABASE_URL: "postgresql://reachkit:reachkit@127.0.0.1:5432/reachkit_scratch",
+    SUPABASE_URL: "http://127.0.0.1:3001",
+    SUPABASE_ANON_KEY: "anon-key-fixture",
+    SUPABASE_SERVICE_ROLE_KEY: "service-role-key-fixture",
+    STRIPE_SECRET_KEY: "sk_test_fixture",
+    STRIPE_WEBHOOK_SECRET: "whsec_fixture",
+    STRIPE_PRICE_ID: "price_fixture",
+    RESEND_API_KEY: "re_fixture",
+    DATAFORSEO_LOGIN: "dfs-login-fixture-do-not-leak",
+    DATAFORSEO_PASSWORD: "dfs-password-fixture-do-not-leak",
+    ANTHROPIC_API_KEY: "sk-ant-fixture",
+    NANO_API_KEY: "nano-fixture",
+    IP_HASH_SALT: "salt-fixture",
+    KILL_SWITCH: "false",
+    OWNER_EMAILS: "owner@example.com",
+    NEXT_PUBLIC_APP_URL: "https://app.example.com",
+    HOSTED_EDGE_CNAME_TARGET: "content.example.com",
+  };
+  for (const [key, value] of Object.entries(ENV_FIXTURE)) process.env[key] = value;
+});
+
 import { readFileSync } from "node:fs";
 import path from "node:path";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";

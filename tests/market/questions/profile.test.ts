@@ -40,6 +40,7 @@ beforeEach(async () => {
  *  here, not merely unexercised. */
 function fakeCostContext(): CostContext {
   return {
+    cap: "FREE",
     async recordFetch() {
       throw new Error("deriveProfile must call llm(), not CostContext.recordFetch directly");
     },

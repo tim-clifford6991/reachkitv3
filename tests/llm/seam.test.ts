@@ -125,6 +125,7 @@ interface RecordedCall {
 function fakeCostContext(): { ctx: CostContext; calls: RecordedCall[] } {
   const calls: RecordedCall[] = [];
   const ctx: CostContext = {
+    cap: "DEEP",
     async recordFetch<P>(call: {
       source: string;
       cacheKey: string;
@@ -150,6 +151,7 @@ function fakeCostContext(): { ctx: CostContext; calls: RecordedCall[] } {
 function cappedCostContext(): { ctx: CostContext; calls: RecordedCall[] } {
   const calls: RecordedCall[] = [];
   const ctx: CostContext = {
+    cap: "DEEP",
     async recordFetch<P>(call: {
       source: string;
       cacheKey: string;

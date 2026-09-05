@@ -1,11 +1,10 @@
-// src/lib/vendors/dataforseo/transport.ts — WO-023, BP-008 file-plan row 1.
+// BUILD §6.3 — the one DataForSEO request builder and credential read (issue #23)
 //
-// The one request builder and the one place `env.DATAFORSEO_LOGIN` /
-// `env.DATAFORSEO_PASSWORD` are read (risk: high — money, data leaving the
-// system). Not exported through `index.ts` — the package's public barrel
-// is exactly BP-008's six functions (decision 1); this module is imported
-// only from inside `src/lib/vendors/dataforseo/**` (this WO's `index.ts`
-// today, WO-024's and WO-025's endpoint modules once they land).
+// The one place `env.DATAFORSEO_LOGIN` / `env.DATAFORSEO_PASSWORD` are read
+// (risk: high — money, data leaving the system). Not exported through
+// `index.ts` — the package's public barrel is exactly the six functions
+// ARCHITECTURE.md names; this module is imported only from inside
+// `src/lib/vendors/dataforseo/**`.
 //
 // **Credentials never appear in a log, a payload or an error message**
 // (BP-008 `## Error & edge behavior`). The only place the raw login and
@@ -18,11 +17,26 @@
 // caller argument). `buildRequest` enforces this structurally: the three
 // reserved task keys are deleted from whatever the caller supplies and then
 // set from the pins, in that order, so a caller cannot shadow them even by
-// constructing an object that carries those keys.
+// constructing an object that carries those keys. `depth` is *set* only on
+// the one vendor family that has a `depth` parameter — organic SERPs
+// (`/v3/serp/google/organic/`); Labs, AI Mode and the LLM scraper have no
+// such field and the vendor rejects unknown fields (`40501 Invalid Field`),
+// so on those paths the key is stripped and left unset. Either way no
+// caller can set it — the never-list's "SERP depth > 10" stays enforced by
+// absence (BUILD §6.4).
+//
+// **Two request shapes, both built here.** Live endpoints are one `POST`.
+// The standard queue (`mode: "std"`, BUILD §6.4 "everything scheduled =
+// standard queue") is `task_post` followed by a `GET task_get/…/{id}` —
+// `sendGet` below is that second leg, same credential, same outcome shape.
 import { env } from "@/lib/config/env";
 import { SERP_LOCATION } from "@/lib/config/constants";
 
 const DATAFORSEO_BASE_URL = "https://api.dataforseo.com";
+
+/** The one vendor path family whose tasks take `depth` (see header). */
+const DEPTH_PATH_PREFIX = "/v3/serp/google/organic/";
+const SERP_DEPTH = 10;
 
 /** BP-008 decision 2's pattern, applied here at the transport level too:
  *  every request this module builds states which vendor API surface it
@@ -74,7 +88,7 @@ export function buildRequest(spec: DataForSeoRequestSpec): DataForSeoRequest {
   for (const key of RESERVED_TASK_KEYS) delete task[key];
   task.location_name = SERP_LOCATION.location;
   task.language_code = SERP_LOCATION.language;
-  task.depth = 10;
+  if (spec.path.startsWith(DEPTH_PATH_PREFIX)) task.depth = SERP_DEPTH;
 
   return {
     url: `${DATAFORSEO_BASE_URL}${spec.path}`,
@@ -104,12 +118,27 @@ export type DataForSeoOutcome<T> =
  *  header). */
 export async function sendRequest<T>(spec: DataForSeoRequestSpec): Promise<DataForSeoOutcome<T>> {
   const request = buildRequest(spec);
+  return issue<T>(request.url, {
+    method: request.method,
+    headers: request.headers,
+    body: request.body,
+  });
+}
+
+/** The standard queue's second leg: `GET {path}` (a `task_get/…/{id}`
+ *  path the endpoint module builds from the vendor's own task id, never
+ *  from caller input). Same credential placement, same never-throws
+ *  outcome contract as `sendRequest`. */
+export async function sendGet<T>(path: string): Promise<DataForSeoOutcome<T>> {
+  return issue<T>(`${DATAFORSEO_BASE_URL}${path}`, {
+    method: "GET",
+    headers: { Authorization: authorizationHeader() },
+  });
+}
+
+async function issue<T>(url: string, init: RequestInit): Promise<DataForSeoOutcome<T>> {
   try {
-    const response = await fetch(request.url, {
-      method: request.method,
-      headers: request.headers,
-      body: request.body,
-    });
+    const response = await fetch(url, init);
     if (!response.ok) {
       return { ok: false, reason: `dataforseo: ${response.status} ${response.statusText}` };
     }
