@@ -67,7 +67,7 @@ const NOISE_BLOCK_RE = /<(script|style|template)\b[^>]*>[\s\S]*?<\/\1>/gi;
  *  change which characters map to which (BP-010: "no locale-dependent
  *  collation"). Only `A`–`Z` move; every other code unit, including any
  *  non-ASCII letter, passes through untouched. */
-function asciiLowerCase(input: string): string {
+export function asciiLowerCase(input: string): string {
   let out = "";
   for (let i = 0; i < input.length; i++) {
     const code = input.charCodeAt(i);
