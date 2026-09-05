@@ -94,3 +94,22 @@ export const COPY_META: Readonly<{ [K in keyof Entries]: Entries[K][1] }> = Obje
 export const OWNER_OWED: readonly CopyKey[] = Object.freeze(
   (Object.keys(ENTRIES) as CopyKey[]).filter((key) => COPY[key] === "")
 );
+
+/** 2026-09-05, issue #13. `CLAUDE.md`'s standing rule for this repo is
+ *  "add the key, leave the value `TODO(copy)`, flag it in the PR" — a
+ *  second, *renderable* way of saying a sentence is still the owner's,
+ *  and the one a whole screen full of new keys has to use: the empty
+ *  value's `copy()` throw takes the screen down with it, which hides the
+ *  eleven modules that were finished from the review the owner needs to
+ *  do to write the twelfth's sentence.
+ *
+ *  Renderable is not invisible. This list is derived the same way
+ *  `OWNER_OWED` is — a key is awaiting copy exactly when its value is the
+ *  marker — so "what is still unwritten" stays one question with one
+ *  answer, and `tests/presentation/copy/registry.test.ts` counts both
+ *  lists rather than only the one that throws. */
+export const TODO_COPY_MARKER = "TODO(copy)";
+
+export const AWAITING_COPY: readonly CopyKey[] = Object.freeze(
+  (Object.keys(ENTRIES) as CopyKey[]).filter((key) => COPY[key] === TODO_COPY_MARKER)
+);

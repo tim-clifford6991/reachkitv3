@@ -26,8 +26,9 @@ export interface EnumeratedRoute {
 
 /**
  * One row per dynamic segment this suite knows how to fill, keyed by the
- * segment's own bracket text (e.g. `"[domain]"`). The work that adds a
- * dynamic route adds its row here.
+ * segment's own bracket text (e.g. `"[domain]"`). A segment with no row
+ * here fails, naming the route, rather than being silently skipped. The
+ * work that adds a dynamic route adds its row here.
  */
 const SEGMENT_FIXTURES: Readonly<Record<string, string>> = {
   /**
@@ -40,6 +41,15 @@ const SEGMENT_FIXTURES: Readonly<Record<string, string>> = {
    * on every run.
    */
   "[token]": "layout-sweep-fixture",
+  /**
+   * The free report address (issue #13). The value is the one domain that
+   * resolves to the *complete* report — every module present, every count
+   * measured — because that is the widest, densest page this route can
+   * produce, and the layout law is about content fitting its box. The
+   * narrower arms (degraded, scanning, cooldown, removed, refused) are
+   * strictly less content in the same boxes.
+   */
+  "[domain]": "example.com",
 };
 
 /**
