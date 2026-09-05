@@ -15,9 +15,12 @@
 // therefore never differ — REQ-002 c3 requires the removed line to name
 // "the address criterion 1 names", and here that is not a convention to
 // keep but the same string, resolved once.
-// `tests/app/scan-address/removal.test.tsx` asserts the key is referenced
-// in exactly this one file under `src/`, and that the address itself
-// appears as a literal nowhere in `src/` outside the copy registry.
+// `tests/app/scan-address/removal.test.tsx` asserts the invariant that
+// makes that true: the key has one declaration in the registry, every
+// consumer resolves it through `copy()`/`COPY`, this module resolves it at
+// one call site, and the address itself appears as a literal nowhere in
+// `src/` outside the copy registry. (It does not count *files* mentioning
+// the key — prose may cite it, and a citation resolves nothing.)
 //
 // **No control, no route back** (REQ-001 c18, REQ-002 c3): `RemovedView`
 // renders one written line and nothing else — no button, no link, no
