@@ -1,13 +1,11 @@
-// src/lib/vendors/dataforseo/types.ts — WO-023, BP-008 `## Public interface`.
+// BUILD §6.3 — the product types the closed endpoint list returns (issue #23)
 //
-// Product types, not vendor payload shapes (BP-008 file-plan row): every
-// field here is what the rest of the corpus needs to read, not whatever
-// name-and-nesting DataForSEO's own JSON happens to use. Parsing a real
-// vendor response into these shapes is WO-024's (`RankedRow`,
-// `SuggestionRow`, `CompetitorRow`) and WO-025's (`SerpResult`, `AiAnswer`)
-// job — out of this work order's scope (`## Out of scope`) — this file
-// only fixes the address those two work orders parse into and the one
-// WO-286 imports from (this file's own header, dispatch note).
+// Product types, not vendor payload shapes: every field here is what the
+// rest of the product needs to read, not whatever name-and-nesting
+// DataForSEO's own JSON happens to use. The parsers that turn a vendor
+// response into these shapes live beside the endpoint that returns them —
+// `labs.ts`, `serp.ts`, `ai.ts` — and this file is the one address they
+// all parse into.
 
 /** `rankedKeywords` — one keyword the domain ranks for. */
 export interface RankedRow {
