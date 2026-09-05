@@ -26,6 +26,11 @@
 //
 // This route returns handles, never sentences: every key below is turned
 // into a written line by the copy registry, on the surface that renders it.
+// It is wrapped in `adapter()` (BUILD §11's convention as code), so it
+// emits the one request line every API route emits and a thrown error —
+// a database failure reading the report, a vendor payload from inside the
+// re-measurement — answers `unavailable` rather than reaching a body.
+import { adapter } from "../../../_adapter";
 import { env } from "@/lib/config/env";
 import { correctionOffer } from "@/lib/market/coherence/offer";
 import { nextCorrectionState } from "@/lib/market/coherence/state";
@@ -89,7 +94,9 @@ async function readCategory(request: Request): Promise<string | null> {
   return typeof category === "string" && category.trim().length > 0 ? category : null;
 }
 
-export async function POST(
+const ROUTE_ID = "POST /api/report/{domain}/correct";
+
+async function handle(
   request: Request,
   { params }: { params: Promise<{ domain: string }> }
 ): Promise<Response> {
@@ -143,8 +150,11 @@ export async function POST(
   return Response.json({ ok: true, scanId: run.scanId } satisfies CorrectReportResponse, { status: 200 });
 }
 
-/** The scan id and the outcome, never the submitted category and never a
- *  payload. */
+export const POST = adapter(ROUTE_ID, handle);
+
+/** What became of the correction — a different fact from the request line
+ *  `adapter()` emits, which says only that a request was answered. The scan
+ *  id and the outcome, never the submitted category and never a payload. */
 function log(fields: Record<string, unknown>): void {
   console.log(JSON.stringify({ event: "report_correction", ...fields }));
 }

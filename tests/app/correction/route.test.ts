@@ -281,3 +281,23 @@ describe("The adapter holds no engine logic of its own", () => {
     for (const l of lines) expect(l).not.toContain("a very specific corrected category");
   });
 });
+
+describe("BUILD §11's adapter convention — the route is wrapped like every other", () => {
+  it("emits the one request line, with the route id and never the request's own URL", async () => {
+    const spy = vi.spyOn(console, "log").mockImplementation(() => {});
+    spy.mockClear();
+    await post();
+    const request = spy.mock.calls
+      .map((c) => JSON.parse(String(c[0])))
+      .find((line) => line.event === "request");
+    expect(request).toMatchObject({ routeId: "POST /api/report/{domain}/correct", status: 200 });
+    expect(JSON.stringify(request)).not.toContain("app.example.com");
+  });
+
+  it("a thrown read never reaches the response body", async () => {
+    readCorrectionFacts.mockRejectedValue(new Error("connection string postgres://user:pw@host/db"));
+    const response = await post();
+    expect(response.status).toBe(500);
+    expect(await response.json()).toEqual({ error: "unavailable" });
+  });
+});
