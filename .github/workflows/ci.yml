@@ -28,10 +28,6 @@ jobs:
   layout:
     name: layout conformance (browser)
     runs-on: ubuntu-latest
-    # Fails identically on untouched wave/W3 (2026-09-04): `/` renders without
-    # the Surface root and :root lacks --t-floor — a product defect, tracked as
-    # a bug issue. Reports until that lands, then gates: remove continue-on-error.
-    continue-on-error: true
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
