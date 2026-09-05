@@ -16,6 +16,10 @@ import type {
 } from "../../src/lib/market/views.ts";
 import { checkCoherence } from "../../src/lib/market/coherence/check.ts";
 import { deriveRivals } from "../../src/lib/market/rivals/derive.ts";
+import { buildAiAnswersCard } from "../../src/lib/market/questions/matrix.ts";
+import type { SelectedSearch } from "../../src/lib/market/questions/select.ts";
+import type { Question } from "../../src/lib/market/questions/phrase.ts";
+import { measured } from "../../src/lib/measure/measured.ts";
 
 const VENDOR_SERP: SerpResult = {
   organic: [{ position: 1, domain: "rival.com", url: "https://rival.com/x", title: "Rival" }],
@@ -55,17 +59,35 @@ describe("A vendor SerpResult satisfies every view the market leaves read", () =
   });
 });
 
-describe("The two shapes the questions leaf will own", () => {
-  it("a selected search and a question, as the cards read them", () => {
-    const search: SelectedSearchView = { keyword: "best onboarding software", volume: 1900 };
-    const question: QuestionView = {
+describe("The two shapes the questions leaf owns satisfy the views the cards read them through", () => {
+  it("a real SelectedSearch is a SelectedSearchView, and a real Question is a QuestionView", () => {
+    const selected: SelectedSearch = {
+      keyword: "best onboarding software",
+      volume: 1900,
+      intent: "decision",
+      score: 9.9,
+      rank: 1,
+    };
+    const question: Question = {
       id: "q1",
       text: "What's the best onboarding software?",
+      search: selected,
       phrasing: "template",
-      // A fuller value — the shape the questions leaf declares — still
-      // satisfies the view it is read through.
-      search: { ...search, intent: "decision", score: 9.9, rank: 1 } as SelectedSearchView,
     };
-    expect(question.search.keyword).toBe("best onboarding software");
+
+    const asSearchView: SelectedSearchView = selected;
+    const asQuestionView: QuestionView = question;
+    expect(asSearchView.volume).toBe(1900);
+    expect(asQuestionView.search.keyword).toBe("best onboarding software");
+
+    // And the card reads a real question with no conversion at the call site.
+    const built = buildAiAnswersCard({
+      questions: [question],
+      serps: [measured(VENDOR_SERP, new Date("2026-09-05T10:00:00.000Z"))],
+      ownDomain: "customer.com",
+      coverage: "async_included",
+    });
+    expect(built.rows[0]).toMatchObject({ questionId: "q1", keyword: "best onboarding software" });
+    expect(Object.keys(built.rows[0] ?? {})).not.toContain("volume");
   });
 });
