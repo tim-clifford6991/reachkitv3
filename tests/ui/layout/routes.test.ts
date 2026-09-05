@@ -6,12 +6,12 @@
 // boundary minus one pixel" and "**320 CSS px and above**." Exercises
 // `enumerateRoutes` and `widths()` against a fixture tree, never the real
 // `src/app` (which holds no route today).
-import { mkdtempSync, mkdirSync, rmSync, writeFileSync } from "node:fs";
+import { mkdtempSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { afterEach, describe, expect, it } from "vitest";
 import { BAND_MIN } from "@/ui/layout/bands";
-import { enumerateRoutes, MissingRouteFixtureError } from "./routes";
+import { ACCOUNT_SESSION_COOKIE, enumerateRoutes, MissingRouteFixtureError } from "./routes";
 import { widths } from "./widths";
 
 let tmpRoot: string | undefined;
@@ -65,6 +65,36 @@ describe("enumerateRoutes — a dynamic segment with no fixture row fails, namin
       expect(err).toBeInstanceOf(MissingRouteFixtureError);
       expect((err as Error).message).toContain(expectedName);
     }
+  });
+});
+
+describe("enumerateRoutes — an (account) page carries its session cookie", () => {
+  it("(account)/app/page.tsx carries ACCOUNT_SESSION_COOKIE and strips the group", () => {
+    tmpRoot = mkdtempSync(path.join(os.tmpdir(), "wo-269-routes-"));
+    makePage("(account)", "app");
+
+    expect(enumerateRoutes(tmpRoot)).toEqual([
+      { path: "/app", cookie: ACCOUNT_SESSION_COOKIE },
+    ]);
+  });
+
+  it("a public route carries no cookie at all — the header is sent to nobody else", () => {
+    tmpRoot = mkdtempSync(path.join(os.tmpdir(), "wo-269-routes-"));
+    makePage("(public)", "pricing");
+
+    expect(enumerateRoutes(tmpRoot)).toEqual([{ path: "/pricing" }]);
+  });
+
+  it("the cookie names the one cookie src/middleware.ts reads", () => {
+    // The middleware checks presence only, so the value is a fixture; the
+    // *name* is the contract, and a rename there without one here would
+    // silently sweep the sign-in redirect instead of the account screen.
+    const middleware = readFileSync(
+      path.resolve(__dirname, "../../../src/middleware.ts"),
+      "utf8"
+    );
+    const [name] = ACCOUNT_SESSION_COOKIE.split("=");
+    expect(middleware).toContain(`"${name}"`);
   });
 });
 
