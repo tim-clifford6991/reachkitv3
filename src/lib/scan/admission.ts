@@ -38,13 +38,15 @@
 // **Two schema gaps, each flagged once here (constitution rule 4.2), not
 // fabricated around:**
 //
-//  1. `domain_blocks` (BP-002's table; the removal address holds it, and
-//     WO-012 is its migration) has not landed in this repo — `supabase/
-//     migrations/` carries no `domain_blocks` migration, and WO-012 is
-//     `status: approved` but not in wave W2's roster (WO-057's own
-//     `depends-on` does not name it). The generated `Database` type
-//     (`src/lib/db/types.generated.ts`, outside this WO's file plan)
-//     therefore carries no entry for it.
+//  1. `domain_blocks` (BP-002's table; the removal address holds it) had
+//     not landed in this repo when this module was written. **The table
+//     landed on 2026-09-05** (`supabase/migrations/
+//     20260905120000_domainblocks.sql`, issue #28), so the gap is now
+//     half closed: the read below hits a real table. What remains is the
+//     generated `Database` type (`src/lib/db/types.generated.ts`), which
+//     was not regenerated with it and still carries no entry for
+//     `domain_blocks` — so the `untyped` hatch below stays until a
+//     regeneration lands.
 //  2. `scans.network_hash` and `scans.from_incomplete_rescan` were added to
 //     the live schema by WO-056's migration (`supabase/migrations/
 //     00000000000005_scans_freepath.sql`), but `types.generated.ts` was not
@@ -57,10 +59,9 @@
 // `scans.network_hash` on the in-flight and hourly reads and on
 // `claimFreeScanSlot`'s insert; `scans.from_incomplete_rescan` on that same
 // insert (WO-058). Every other query in this file is fully typed against
-// the generated `Database`. Neither gap is this WO's to close:
-// `domain_blocks`'s migration is WO-012's, and regenerating
-// `types.generated.ts` is outside this WO's file plan (touching it would
-// be a WO-267-shaped change, not an admission-order one).
+// the generated `Database`. Regenerating `types.generated.ts` closes both
+// gaps at once and is its own change (a WO-267-shaped one, not an
+// admission-order one); the migration half of gap 1 is closed.
 import { createHmac } from "node:crypto";
 import { isIP } from "node:net";
 import { env } from "@/lib/config/env";

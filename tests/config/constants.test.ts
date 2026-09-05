@@ -206,3 +206,18 @@ describe("BUILD §6.4 `DNS_TIMEOUT_MS` — resolvesInDns bound", () => {
     expect(constants.DNS_TIMEOUT_MS).toBeGreaterThan(0);
   });
 });
+
+// REQ-002 c3, and the owner's 2026-09-05 ruling on #28: a removed domain's
+// report address serves `410 Gone` — not `404`, which would say the address
+// never existed, and not `200`, which the archived plan (WO-282) specced
+// before the ruling.
+describe("REPORT_REMOVED_STATUS — the removed report address's status", () => {
+  it("=== 410", () => {
+    expect(constants.REPORT_REMOVED_STATUS).toBe(410);
+  });
+
+  it("is not 404 and not 200", () => {
+    expect(constants.REPORT_REMOVED_STATUS).not.toBe(404);
+    expect(constants.REPORT_REMOVED_STATUS).not.toBe(200);
+  });
+});
