@@ -192,3 +192,17 @@ describe("SCORING carries no presence floor", () => {
     expect(Object.keys(constants.SCORING)).toHaveLength(3);
   });
 });
+
+// BUILD §6.4 — `DNS_TIMEOUT_MS` (added 2026-09-05, issue #22): the one bound
+// on `resolvesInDns()`'s lookup, pinned here so `src/lib/egress/dns.ts`
+// carries no number of its own.
+describe("BUILD §6.4 `DNS_TIMEOUT_MS` — resolvesInDns bound", () => {
+  it("is 5000 ms", () => {
+    expect(constants.DNS_TIMEOUT_MS).toBe(5000);
+  });
+
+  it("is a positive finite number", () => {
+    expect(Number.isFinite(constants.DNS_TIMEOUT_MS)).toBe(true);
+    expect(constants.DNS_TIMEOUT_MS).toBeGreaterThan(0);
+  });
+});
