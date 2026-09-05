@@ -10,14 +10,17 @@
 // reads `CorrectionState` values and writes the one it is handed.
 //
 // **Two stale-type gaps, worked around the way `admission.ts` already
-// works around its own two** (`untyped`, below, and that file's module
-// header for the pattern): `scans.correction_state` and `scans.is_current`
-// are on disk in `supabase/migrations/20260904110000_scans_current.sql`
-// but not yet in the generated `Database` type, and `domain_blocks` has no
-// migration in this repository at all — it is issue #28's. Every query
-// here that touches one of the three goes through a narrow, explicitly
+// works around its own** (`untyped`, below, and that file's module header
+// for the pattern): `scans.correction_state` and `scans.is_current` are on
+// disk in `supabase/migrations/20260904110000_scans_current.sql` and
+// neither is in the generated `Database` type, which has not been
+// regenerated since. Both queries here go through a narrow, explicitly
 // cast builder against a locally declared row shape; regenerating
-// `types.generated.ts` is not this change's to do.
+// `types.generated.ts` is its own change, not this one.
+//
+// The removal list is *not* read here: `admission.ts` is the one file
+// under `src/` that names that table (REQ-002 c4), and this module asks it
+// rather than opening a second reader of the same fact.
 //
 // **The re-measurement itself is issue #25's `runScan`, which is not on
 // disk.** Rather than fork a second pipeline here, this module declares
@@ -31,6 +34,7 @@
 import { dbAdmin } from "@/lib/db";
 import type { CorrectionState } from "@/lib/market/coherence/state";
 import type { ReportFacts } from "@/lib/market/coherence/offer";
+import { isDomainRemoved } from "./admission";
 import type { CanonicalDomain } from "./domain";
 
 /** The scan pipeline's own entry point, as this seam needs to call it:
@@ -90,10 +94,6 @@ interface CurrentScanRow {
   report: unknown;
 }
 
-interface DomainBlockRow {
-  domain: string;
-}
-
 const CORRECTION_STATES: readonly CorrectionState[] = [
   "none",
   "running",
@@ -132,18 +132,14 @@ function categoryIn(report: unknown): string | null {
   return typeof category === "string" && category.length > 0 ? category : null;
 }
 
-async function isDomainRemoved(domain: CanonicalDomain): Promise<boolean> {
+/** A read that cannot be answered is not evidence of a removal. The report
+ *  address decides what a removed domain is served (REQ-002 c3); this read
+ *  only keeps a correction from being offered on one, so it fails open the
+ *  same way the admission order's own first step does. */
+async function removedOrUnanswerable(domain: CanonicalDomain): Promise<boolean> {
   try {
-    const { data, error } = await untyped(dbAdmin())
-      .from<DomainBlockRow>("domain_blocks")
-      .select("domain")
-      .eq("domain", domain)
-      .limit(1);
-    if (error) return false;
-    return Array.isArray(data) && data.length > 0;
+    return await isDomainRemoved(domain);
   } catch {
-    // The table is issue #28's and is not in this repository's migrations
-    // yet. A read that cannot be answered is not evidence of a removal.
     return false;
   }
 }
@@ -171,7 +167,7 @@ export async function readCorrectionFacts(domain: CanonicalDomain): Promise<Repo
     measuredAt: new Date(row.created_at),
     category: categoryIn(row.report),
     correctionState: asCorrectionState(row.correction_state),
-    domainRemoved: await isDomainRemoved(domain),
+    domainRemoved: await removedOrUnanswerable(domain),
   };
 }
 

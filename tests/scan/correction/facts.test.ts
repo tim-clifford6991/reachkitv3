@@ -5,6 +5,8 @@
 // the seam the re-measurement is reached through. No live Postgres — the
 // two clients are mocked at `@/lib/db`, the one entry point any code may
 // hold.
+import { readFileSync } from "node:fs";
+import path from "node:path";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 interface Call {
@@ -48,6 +50,14 @@ function builder(call: Call) {
   return chain;
 }
 
+/** The removal list has one reader in the product — the admission order's
+ *  own first step (REQ-002 c4) — so this suite doubles that reader rather
+ *  than a second query of its own. */
+const isDomainRemoved = vi.fn<(domain: string) => Promise<boolean>>();
+vi.mock("@/lib/scan/admission", () => ({
+  isDomainRemoved: (domain: string) => isDomainRemoved(domain),
+}));
+
 vi.mock("@/lib/db", () => ({
   dbAdmin: () => ({
     from(table: string) {
@@ -73,24 +83,23 @@ beforeEach(() => {
   calls.length = 0;
   registerCorrectionRunner(null);
   answer = () => ({ data: [], error: null });
+  isDomainRemoved.mockReset();
+  isDomainRemoved.mockResolvedValue(false);
 });
 
 describe("readCorrectionFacts — the domain's one current report, or nothing", () => {
   it("reads the current scan row and the removal list, and returns the five facts the offer needs", async () => {
-    answer = (call) =>
-      call.table === "scans"
-        ? {
-            data: [
-              {
-                id: "scan-1",
-                created_at: "2026-09-04T09:00:00.000Z",
-                correction_state: "failed_once",
-                report: marketBlob("user onboarding software"),
-              },
-            ],
-            error: null,
-          }
-        : { data: [], error: null };
+    answer = () => ({
+      data: [
+        {
+          id: "scan-1",
+          created_at: "2026-09-04T09:00:00.000Z",
+          correction_state: "failed_once",
+          report: marketBlob("user onboarding software"),
+        },
+      ],
+      error: null,
+    });
 
     const facts = await readCorrectionFacts(DOMAIN);
     expect(facts).toEqual({
@@ -110,20 +119,31 @@ describe("readCorrectionFacts — the domain's one current report, or nothing", 
     expect(await readCorrectionFacts(DOMAIN)).toBeNull();
   });
 
-  it("reports a removed domain from the removal list", async () => {
-    answer = (call) =>
-      call.table === "scans"
-        ? { data: [{ id: "s", created_at: "2026-09-04T09:00:00.000Z", correction_state: "none", report: null }], error: null }
-        : { data: [{ domain: "customer.com" }], error: null };
+  it("reports a removed domain, through the product's one reader of the removal list", async () => {
+    answer = () => ({
+      data: [{ id: "s", created_at: "2026-09-04T09:00:00.000Z", correction_state: "none", report: null }],
+      error: null,
+    });
+    isDomainRemoved.mockResolvedValue(true);
     expect((await readCorrectionFacts(DOMAIN))?.domainRemoved).toBe(true);
+    expect(isDomainRemoved).toHaveBeenCalledWith("customer.com");
   });
 
   it("a removal list that cannot be read is not evidence of a removal", async () => {
-    answer = (call) =>
-      call.table === "scans"
-        ? { data: [{ id: "s", created_at: "2026-09-04T09:00:00.000Z", correction_state: "none", report: null }], error: null }
-        : { data: null, error: { message: "relation \"domain_blocks\" does not exist" } };
+    answer = () => ({
+      data: [{ id: "s", created_at: "2026-09-04T09:00:00.000Z", correction_state: "none", report: null }],
+      error: null,
+    });
+    isDomainRemoved.mockRejectedValue(new Error('relation "domain_blocks" does not exist'));
     expect((await readCorrectionFacts(DOMAIN))?.domainRemoved).toBe(false);
+  });
+
+  it("this module opens no second reader of the removal list", () => {
+    const source = readFileSync(
+      path.resolve(import.meta.dirname, "../../../src/lib/scan/correction.ts"),
+      "utf8"
+    );
+    expect(source.replace(/\/\*[\s\S]*?\*\//g, "").replace(/\/\/[^\n]*/g, "")).not.toContain("domain_blocks");
   });
 });
 
@@ -138,33 +158,30 @@ describe("The category is read from the stored blob, and never guessed into exis
   ];
 
   it.each(cases)("%s reads as `not reached`, never as a default category", async (_name, report) => {
-    answer = (call) =>
-      call.table === "scans"
-        ? { data: [{ id: "s", created_at: "2026-09-04T09:00:00.000Z", correction_state: "none", report }], error: null }
-        : { data: [], error: null };
+    answer = () => ({
+      data: [{ id: "s", created_at: "2026-09-04T09:00:00.000Z", correction_state: "none", report }],
+      error: null,
+    });
     expect((await readCorrectionFacts(DOMAIN))?.category).toBeNull();
   });
 
   it("a measured-zero market still carries its category", async () => {
-    answer = (call) =>
-      call.table === "scans"
-        ? {
-            data: [
-              { id: "s", created_at: "2026-09-04T09:00:00.000Z", correction_state: "none", report: marketBlob("a category", "zero") },
-            ],
-            error: null,
-          }
-        : { data: [], error: null };
+    answer = () => ({
+      data: [
+        { id: "s", created_at: "2026-09-04T09:00:00.000Z", correction_state: "none", report: marketBlob("a category", "zero") },
+      ],
+      error: null,
+    });
     expect((await readCorrectionFacts(DOMAIN))?.category).toBe("a category");
   });
 });
 
 describe("A stored state outside the machine's six members", () => {
   it("reads as `exhausted` — an unreadable attempt count spends nothing further", async () => {
-    answer = (call) =>
-      call.table === "scans"
-        ? { data: [{ id: "s", created_at: "2026-09-04T09:00:00.000Z", correction_state: "who knows", report: null }], error: null }
-        : { data: [], error: null };
+    answer = () => ({
+      data: [{ id: "s", created_at: "2026-09-04T09:00:00.000Z", correction_state: "who knows", report: null }],
+      error: null,
+    });
     expect((await readCorrectionFacts(DOMAIN))?.correctionState).toBe("exhausted");
   });
 });
