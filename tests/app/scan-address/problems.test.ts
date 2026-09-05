@@ -143,7 +143,7 @@ describe("ADR-022 — the unblock lines come from the pin and from nowhere else"
     expect(unblockLines([])).toEqual([]);
   });
 
-  it("no agent name is written anywhere under src/ outside constants.ts", async () => {
+  it("no agent name is written in code anywhere under src/ outside constants.ts", async () => {
     const { readdirSync, readFileSync, statSync } = await import("node:fs");
     const path = await import("node:path");
     const root = path.resolve(import.meta.dirname, "../../../src");
@@ -155,7 +155,13 @@ describe("ADR-022 — the unblock lines come from the pin and from nowhere else"
           walk(full);
         } else if (statSync(full).isFile() && /\.tsx?$/.test(entry.name)) {
           if (full.endsWith(path.join("config", "constants.ts"))) continue;
-          const source = readFileSync(full, "utf8");
+          // Comments stripped first: `src/lib/egress/robots.ts` explains
+          // *why* it matches a user-agent token case-insensitively by
+          // quoting one, and a citation in prose composes no directive.
+          // What this check is for is a second copy of the list in code.
+          const source = readFileSync(full, "utf8")
+            .replace(/\/\*[\s\S]*?\*\//g, " ")
+            .replace(/(^|[^:])\/\/[^\n]*/g, "$1");
           for (const agent of AI_READER_AGENTS) {
             if (source.includes(agent)) offenders.push(`${path.relative(root, full)}: ${agent}`);
           }

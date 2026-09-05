@@ -45,8 +45,10 @@ export type AddressState =
   /** REQ-001 c4: one written line names what is wrong, and the landing
    *  field is offered. The five lines are the landing page's own. */
   | { kind: "malformed"; problem: DomainProblem; value: string }
-  /** REQ-002 c3 / REQ-001 c18: one line, the removal address, HTTP 200,
-   *  and no route back — no re-scan, no retry, no form. */
+  /** REQ-002 c3 / REQ-001 c18: one line, the removal address, and no
+   *  route back — no re-scan, no retry, no form. The status is `410 Gone`
+   *  (owner ruling 2026-09-05, #28; `REPORT_REMOVED_STATUS`), which a
+   *  Next `page.tsx` cannot set — see `view.tsx`'s own note on this arm. */
   | { kind: "removed"; domain: CanonicalDomain }
   /** REQ-001 c9: no scan is running yet and the visitor need do nothing —
    *  the client posts `/api/scan` on first frame, never during server

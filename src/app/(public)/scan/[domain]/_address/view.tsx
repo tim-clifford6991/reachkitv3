@@ -11,6 +11,7 @@
 // five more: same union, same wording obligation, one home per claim.
 import type React from "react";
 import { Alert, Btn } from "@/ui/components";
+import { Surface } from "@/ui/layout";
 import { copy, type CopyKey } from "@/lib/presentation/copy";
 import LandingPage from "@/app/(public)/page";
 import { ReportView } from "./report-view";
@@ -18,10 +19,11 @@ import { RemovedView } from "./removal";
 import { ScanProgress } from "./progress";
 import type { AddressRefusal, AddressState } from "./state";
 
-const REFUSAL_KEY: Readonly<Record<AddressRefusal["reason"], CopyKey>> = Object.freeze({
-  "network-limit": "notice.refused.network-limit",
-  "scan-running": "notice.refused.scan-running",
-});
+const REFUSAL_KEY: Readonly<Record<AddressRefusal["reason"], CopyKey>> =
+  Object.freeze({
+    "network-limit": "notice.refused.network-limit",
+    "scan-running": "notice.refused.scan-running",
+  });
 
 const SECONDS_PER_MINUTE = 60;
 
@@ -31,11 +33,27 @@ function waitText(retryAfterSeconds: number): string {
   });
 }
 
-/** The frame every non-report arm renders inside: one column, the same
- *  gutters the report uses, so the six short arms and the long one are not
- *  two different pages. */
+/** The frame every short arm renders inside, and its screen root
+ *  (ADR-093 decision 6: every screen root is a `Surface`, and its three
+ *  arms are declared, never defaulted). One column at every band: each of
+ *  these arms is one written line and at most one control, which is one
+ *  column at any width. The `report` arm is the long screen and declares
+ *  its own arms; the `removed` arm brings its own `Surface` from
+ *  `_address/removal.tsx`. */
 function Pane(p: { children: React.ReactNode }): React.JSX.Element {
-  return <main className="mx-auto flex max-w-[640px] flex-col gap-4 p-6">{p.children}</main>;
+  return (
+    <Surface
+      arms={{
+        compact: { kind: "columns", count: 1 },
+        medium: { kind: "same-as-below" },
+        wide: { kind: "same-as-below" },
+      }}
+    >
+      <main className="mx-auto flex max-w-[640px] flex-col gap-4 p-6">
+        {p.children}
+      </main>
+    </Surface>
+  );
 }
 
 export function AddressView(p: {
@@ -54,20 +72,27 @@ export function AddressView(p: {
       // per `DomainProblem`, and it carries both the JavaScript and the
       // no-JavaScript transport. Rendering it here is what "offered the
       // landing field" means, with no second copy of it to keep in step.
-      return (
-        <Pane>
-          <LandingPage searchParams={{ problem: state.problem, value: state.value }} />
-        </Pane>
-      );
+      // Rendered bare, for the same reason the `removed` arm below is:
+      // the landing page has been a screen root with its own `Surface`
+      // since #65, and wrapping it would make two on one document.
+      return <LandingPage searchParams={{ problem: state.problem, value: state.value }} />;
 
     // REQ-002 c3 / REQ-001 c18: one line, the same address, and no route
-    // back — no control, no form, no link anywhere in this arm.
+    // back — no control, no form, no link anywhere in this arm. Rendered
+    // bare: `RemovedView` (#28) is already a screen root with its own
+    // `Surface`, and wrapping it would make two.
+    //
+    // **The status is not this file's to set, and is not yet set.** The
+    // owner ruled on 2026-09-05 (#28) that a removed address serves `410
+    // Gone`, pinned as `REPORT_REMOVED_STATUS` and carried with its
+    // headers by that module's `REMOVED_RESPONSE_INIT`. A Next `page.tsx`
+    // cannot return 410 — the framework offers `notFound`/`forbidden`/
+    // `unauthorized` and no `gone` — so this arm currently serves the
+    // right body with the wrong status. Flagged in this PR rather than
+    // worked around with a 404, which would be a different, wrong promise
+    // (REQ-001 c5 forbids answering a report address with one).
     case "removed":
-      return (
-        <Pane>
-          <RemovedView domain={state.domain} />
-        </Pane>
-      );
+      return <RemovedView domain={state.domain} />;
 
     // REQ-001 c9: a scan is already underway with no further action from
     // the visitor. The client posts /api/scan on first frame; nothing is

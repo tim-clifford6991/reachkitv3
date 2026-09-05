@@ -24,11 +24,15 @@
 // spinner — and the rest of the report stays usable.
 import type React from "react";
 import { Alert, Btn } from "@/ui/components";
+import { Surface } from "@/ui/layout";
 import { copy, type CopyKey } from "@/lib/presentation/copy";
 import type { ScoreFactorName } from "@/lib/measure/score";
 import type { StoredReport } from "@/lib/scan/report";
 import { AiAnswersAbsent, AiAnswersCard } from "../_modules/ai-answers";
-import { GooglePresenceAbsent, GooglePresenceCard } from "../_modules/google-presence";
+import {
+  GooglePresenceAbsent,
+  GooglePresenceCard,
+} from "../_modules/google-presence";
 import { FreePageAbsent, FreePageCard } from "../_modules/free-page";
 import { PricingCard } from "../_modules/pricing";
 import { ProblemCards } from "../_problems/cards";
@@ -47,21 +51,27 @@ const REPORT_LOCALE = "en-US";
 /** The factor's own name, for the notice line that lists what was not
  *  measured. The same three keys the verdict strip's own missing-factor
  *  lines resolve — one name per factor, one home. */
-const FACTOR_NAME_KEY: Readonly<Record<ScoreFactorName, CopyKey>> = Object.freeze({
-  foundations: "verdict.factor.foundations",
-  answerability: "verdict.factor.answerability",
-  presence: "verdict.factor.presence",
-});
+const FACTOR_NAME_KEY: Readonly<Record<ScoreFactorName, CopyKey>> =
+  Object.freeze({
+    foundations: "verdict.factor.foundations",
+    answerability: "verdict.factor.answerability",
+    presence: "verdict.factor.presence",
+  });
 
-const REFUSAL_KEY: Readonly<Record<AddressRefusal["reason"], CopyKey>> = Object.freeze({
-  "network-limit": "notice.refused.network-limit",
-  "scan-running": "notice.refused.scan-running",
-});
+const REFUSAL_KEY: Readonly<Record<AddressRefusal["reason"], CopyKey>> =
+  Object.freeze({
+    "network-limit": "notice.refused.network-limit",
+    "scan-running": "notice.refused.scan-running",
+  });
 
 const SECONDS_PER_MINUTE = 60;
 
 function formatMeasuredOn(at: Date): string {
-  return at.toLocaleDateString(REPORT_LOCALE, { year: "numeric", month: "short", day: "numeric" });
+  return at.toLocaleDateString(REPORT_LOCALE, {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+  });
 }
 
 /** The refusal lines carry a `{wait}` slot. The figure is the refusal's
@@ -75,7 +85,9 @@ function formatWait(retryAfterSeconds: number): string {
 
 /** A total switch: at most one line renders, ever, and `null` is an arm
  *  rather than a missing value. */
-function NoticeLine(p: { notice: AddressNotice | null }): React.JSX.Element | null {
+function NoticeLine(p: {
+  notice: AddressNotice | null;
+}): React.JSX.Element | null {
   const notice = p.notice;
   if (notice === null) return null;
   switch (notice.kind) {
@@ -84,7 +96,9 @@ function NoticeLine(p: { notice: AddressNotice | null }): React.JSX.Element | nu
         <Alert
           tone="warn"
           message={copy("notice.incomplete", {
-            what: notice.unmeasured.map((factor) => copy(FACTOR_NAME_KEY[factor])).join(", "),
+            what: notice.unmeasured
+              .map((factor) => copy(FACTOR_NAME_KEY[factor]))
+              .join(", "),
           })}
         />
       );
@@ -110,7 +124,9 @@ function NoticeLine(p: { notice: AddressNotice | null }): React.JSX.Element | nu
 
 /** A total switch: `none` renders nothing, every other arm renders exactly
  *  one control, and there is never a second one alongside it. */
-function ControlButton(p: { control: AddressControl }): React.JSX.Element | null {
+function ControlButton(p: {
+  control: AddressControl;
+}): React.JSX.Element | null {
   const control = p.control;
   switch (control.kind) {
     case "none":
@@ -119,7 +135,9 @@ function ControlButton(p: { control: AddressControl }): React.JSX.Element | null
       return (
         <Btn
           label={copy(
-            control.because === "incomplete" ? "control.rescan-incomplete" : "control.rescan-age"
+            control.because === "incomplete"
+              ? "control.rescan-incomplete"
+              : "control.rescan-age",
           )}
         />
       );
@@ -135,7 +153,11 @@ function ControlButton(p: { control: AddressControl }): React.JSX.Element | null
 }
 
 export function ReportView(p: {
-  state: { report: StoredReport; notice: AddressNotice | null; control: AddressControl };
+  state: {
+    report: StoredReport;
+    notice: AddressNotice | null;
+    control: AddressControl;
+  };
   /** The canonical address this report lives at — REQ-001 c7's value. */
   canonicalUrl: string;
   /** Sibling nodes' modules, absent-safe. `BUILD.md` §2.4's chart
@@ -151,44 +173,69 @@ export function ReportView(p: {
   const cards = cardsOf(report, unblockLines(report.blockedAgents));
 
   return (
-    <main className="mx-auto flex max-w-[1060px] flex-col gap-6 p-6">
-      {/* REQ-001 c14: the notice and the one control that answers it sit
+    // ADR-093 decision 6: the report is a screen, so it is a screen root,
+    // and its three band arms are declared rather than defaulted. Compact
+    // is one column — §4.1's "two equal cards, side by side" and the
+    // three-card grid both stack. Medium is where they sit side by side.
+    // Wide adds no further structural change to this screen, so it says
+    // so rather than repeating the arm below it.
+    <Surface
+      arms={{
+        compact: { kind: "columns", count: 1 },
+        medium: { kind: "columns", count: 2 },
+        wide: { kind: "same-as-below" },
+      }}
+    >
+      <main className="mx-auto flex max-w-[1060px] flex-col gap-6 p-6">
+        {/* REQ-001 c14: the notice and the one control that answers it sit
           together, so a visitor reads what happened and what they can do
           about it in one place. */}
-      <div className="flex flex-col gap-3">
-        <NoticeLine notice={notice} />
-        <ControlButton control={control} />
-      </div>
+        <div className="flex flex-col gap-3">
+          <NoticeLine notice={notice} />
+          <ControlButton control={control} />
+        </div>
 
-      <VerdictStrip
-        verdict={report.verdict}
-        category={report.category}
-        measuredOn={measuredOn}
-        canonicalUrl={p.canonicalUrl}
-      />
+        <VerdictStrip
+          verdict={report.verdict}
+          category={report.category}
+          measuredOn={measuredOn}
+          canonicalUrl={p.canonicalUrl}
+        />
 
-      <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-        {report.aiAnswers === null ? (
-          <AiAnswersAbsent />
-        ) : (
-          <AiAnswersCard section={report.aiAnswers} measuredOn={measuredOn} matrix={p.charts?.aiMatrix} />
-        )}
-        {report.presence === null ? (
-          <GooglePresenceAbsent />
-        ) : (
-          <GooglePresenceCard section={report.presence} bars={p.charts?.presenceBars} />
-        )}
-      </div>
+        <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+          {report.aiAnswers === null ? (
+            <AiAnswersAbsent />
+          ) : (
+            <AiAnswersCard
+              section={report.aiAnswers}
+              measuredOn={measuredOn}
+              matrix={p.charts?.aiMatrix}
+            />
+          )}
+          {report.presence === null ? (
+            <GooglePresenceAbsent />
+          ) : (
+            <GooglePresenceCard
+              section={report.presence}
+              bars={p.charts?.presenceBars}
+            />
+          )}
+        </div>
 
-      <ProblemCards cards={cards} />
-      <MethodSections for={PROBLEM_ORDER} />
+        <ProblemCards cards={cards} />
+        <MethodSections for={PROBLEM_ORDER} />
 
-      <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-        {report.freePage === null ? <FreePageAbsent /> : <FreePageCard section={report.freePage} />}
-        <PricingCard />
-      </div>
+        <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+          {report.freePage === null ? (
+            <FreePageAbsent />
+          ) : (
+            <FreePageCard section={report.freePage} />
+          )}
+          <PricingCard />
+        </div>
 
-      <RemovalAddressLine />
-    </main>
+        <RemovalAddressLine />
+      </main>
+    </Surface>
   );
 }

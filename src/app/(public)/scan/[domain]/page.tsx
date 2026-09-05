@@ -29,7 +29,6 @@ import { permanentRedirect } from "next/navigation";
 import type { Metadata } from "next";
 import { env } from "@/lib/config/env";
 import { parseDomain } from "@/lib/scan/domain";
-import { Surface } from "@/ui/layout";
 import { canonicalRedirect } from "./_address/canonical";
 import { AddressView } from "./_address/view";
 import type { AddressState } from "./_address/state";
@@ -53,7 +52,8 @@ function canonicalUrlFor(domain: string): string {
  *  and never a scan. */
 function resolve(rawSegment: string): AddressState {
   const parsed = parseDomain(rawSegment);
-  if (!parsed.ok) return { kind: "malformed", problem: parsed.problem, value: rawSegment };
+  if (!parsed.ok)
+    return { kind: "malformed", problem: parsed.problem, value: rawSegment };
   return fixtureStateFor(parsed.domain);
 }
 
@@ -71,21 +71,11 @@ export default async function ScanAddressPage({
   if (redirectTo !== null) permanentRedirect(redirectTo.redirectTo);
 
   const state = resolve(raw);
-  return (
-    // ADR-093 decision 6: every screen root is a `Surface`, and its three
-    // arms are declared, never defaulted. Compact is one column — the two
-    // side-by-side cards of §4.1 module 2, and the three problem cards,
-    // stack. Medium is where §4.1's "two equal cards, side by side" and
-    // the three-card grid actually sit side by side; wide adds no further
-    // structural change, so it says so.
-    <Surface
-      arms={{
-        compact: { kind: "columns", count: 1 },
-        medium: { kind: "columns", count: 2 },
-        wide: { kind: "same-as-below" },
-      }}
-    >
-      <AddressView state={state} canonicalUrl={canonicalUrlFor(raw)} />
-    </Surface>
-  );
+  // No `Surface` here. ADR-093 decision 6 puts one at every *screen* root,
+  // and seven arms are seven screens with seven different band behaviours —
+  // a long report that goes two columns at `medium`, and six short panes
+  // that never do. `view.tsx` declares each arm's own arms, and the
+  // `removed` arm brings its own from `_address/removal.tsx` (#28), so a
+  // wrapper here would make two `[data-surface]` roots on that one arm.
+  return <AddressView state={state} canonicalUrl={canonicalUrlFor(raw)} />;
 }

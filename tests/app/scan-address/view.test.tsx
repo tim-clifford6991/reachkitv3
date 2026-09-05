@@ -85,6 +85,15 @@ describe("REQ-001 c5 — every arm answers; never a blank page, a 404 or an erro
     expect(html.replace(/<[^>]*>/g, "").trim().length).toBeGreaterThan(0);
   });
 
+  it.each(ARMS)("%s renders exactly one [data-surface] screen root", (_kind, state) => {
+    // ADR-093 decision 6 / BP-018: every screen root is a `Surface`, and
+    // `tests/ui/layout/layout.test.ts` asserts exactly one per document.
+    // Seven arms are seven screens, so each declares its own — including
+    // `removed`, which brings one from `_address/removal.tsx` (#28) and is
+    // therefore rendered bare rather than wrapped a second time.
+    expect(render(state).split("data-surface").length - 1).toBe(1);
+  });
+
   it("the switch covers every arm the union declares — no row is missing here", () => {
     const declared = readFileSync(
       new URL("../../../src/app/(public)/scan/[domain]/_address/state.ts", import.meta.url),
