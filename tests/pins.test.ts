@@ -110,6 +110,12 @@ const B = {
   taxDeferred: "**Tax handling is deferred (owner ruling, 28 Aug): no Stripe Tax at launch** — charge €49",
   pricingCard: "**Pricing card**: €49/mo + four spec rows (1/day · weekly · weekly · 24h veto)",
   cappedDraft: "`CAP_DRAFT` 45¢ is enforced headroom.",
+  draftGenerate:
+    "| `draft/generate` | daily, evening | Next opportunity → pipeline → `in_review`, veto clock starts, daily email |",
+  publishVerify: "| `publish/verify` | +24h | Liveness checks |",
+  weeklyRefreshRow:
+    "| `weekly/refresh` | Mon 06:00 UTC | Weekly scan per active site → re-derive → verdicts → movement email |",
+  absentFrom: "\"5 biggest searches you're absent from\" table (search · /mo · holds #1)",
 } as const;
 
 const D = {
@@ -287,15 +293,18 @@ describe("BUILD §6.1 / §6.3a — SERP_LOCATION, the one locale constant", () =
   });
 });
 
-// ────────────────────── the six names BUILD §6.1 uses that constants.ts does not
+// ───────────────────── the five names BUILD §6.1 uses that constants.ts does not
 
 /**
  * `scripts/drift-audit.mjs` reads BUILD §6.1's price-book table and looks for
- * each row's identifier in `constants.ts`. Six rows do not match, and the
+ * each row's identifier in `constants.ts`. Five rows do not match, and the
  * audit's own instruction is "may be pinned under another name — say which,
  * or rename". This block is where each is said. It asserts the mapping — the
  * BUILD name resolves to that member, at that value — so a rename on either
- * side fails here rather than leaving the audit's six rows unexplained.
+ * side fails here rather than leaving the audit's five rows unexplained.
+ *
+ * `RIVAL_SCORE` was the sixth until #27 pinned it under its own name; its
+ * own block is below, and the audit now matches that row by name.
  */
 describe("BUILD §6.1 names that constants.ts pins under another identifier — the mapping, stated", () => {
   it("`CAP_FREE` / `CAP_DEEP` / `CAP_WEEKLY` / `CAP_DRAFT` → CAPS.FREE_C / DEEP_C / WEEKLY_C / DRAFT_C (one group, the `_C` suffix naming the unit BUILD writes as ¢)", () => {
@@ -330,14 +339,33 @@ describe("BUILD §6.1 names that constants.ts pins under another identifier — 
     expect(pins.PRICE_BOOK.COMPETITORS_DOMAIN_COST_C).toBe(1.5);
   });
 
-  // The one row of the six that is not pinned anywhere, and should not be.
-  it(`\`RIVAL_SCORE\` is not pinned and never will be: §6.1 states it as a formula — "${B.rivalScore}" — and constants.ts holds prices and boundaries, never formula shape. Its one coefficient, the ×2 weight, is stated in §6.6 and belongs to the function that is the formula`, () => {
-    expect(Object.keys(pins)).not.toContain("RIVAL_SCORE");
-    expect(B.rivalScore).toMatch(/top10Appearances \+ 2×aiCitations/);
-    expect(B.rivalScoreFormula).toMatch(/top10Appearances \+ 2 × aiCitations/);
-    expect(B.topFive).toContain("top 5");
-    // The count that IS a pin on that line is the five suggested rivals.
+});
+
+// ─────────────────────────────── §6.1 / §6.6 rival derivation, and §4.1's absent-from list
+
+describe("BUILD §6.1 / §6.6 — RIVAL_SCORE, the two weights the derivation is scored by", () => {
+  it(`${B.rivalScore} · §6.6, quoted: "${B.rivalScoreFormula}" — RIVAL_SCORE.top10Weight / aiCitationWeight. The two weights only: the formula that adds them is \`src/lib/market/rivals/derive.ts\`'s, and constants.ts holds coefficients, never formula shape`, () => {
+    expect(pins.RIVAL_SCORE.top10Weight).toBe(1);
+    expect(pins.RIVAL_SCORE.aiCitationWeight).toBe(2);
+    expect(Object.keys(pins.RIVAL_SCORE).sort()).toEqual(["aiCitationWeight", "top10Weight"]);
+  });
+
+  it('§6.6\'s parenthesis is the derivation of the pair, quoted: "cited-by-AI weighs double" — the AI weight is exactly twice the top-10 weight, so a change to one that does not keep the ratio fails here', () => {
+    expect(pins.RIVAL_SCORE.aiCitationWeight).toBe(2 * pins.RIVAL_SCORE.top10Weight);
+  });
+
+  it(`${B.topFive} — the count on that line is BATTERY.COMPETITORS_MAX, not a second five minted beside it`, () => {
     expect(pins.BATTERY.COMPETITORS_MAX).toBe(5);
+  });
+
+  it(`§4.1's Google-search card, quoted: "${B.absentFrom}" · REQ-008 c4, quoted: "up to five of the biggest are listed, each with its monthly volume and the domain currently holding the top position" — ABSENT_FROM_MAX`, () => {
+    expect(pins.ABSENT_FROM_MAX).toBe(5);
+  });
+
+  it("ABSENT_FROM_MAX and BATTERY.COMPETITORS_MAX share the number 5 by two clauses saying five, never by derivation: one bounds the absent-from rows §4.1 lists, the other the rivals §6.6 suggests, and they move independently", () => {
+    expect(pins.ABSENT_FROM_MAX).toBe(pins.BATTERY.COMPETITORS_MAX);
+    expect(B.absentFrom).toContain("5 biggest searches");
+    expect(B.topFive).toContain("top 5 by score");
   });
 });
 
@@ -471,6 +499,45 @@ describe("DECISIONS 2026-08-31 (ADR-060) — the weekly clock is site-local, and
 
   it('REQ-024 c5, quoted: "when 15 minutes have passed since the charge and no one has signed in at the address that paid" — MAINTENANCE_TICK_MINUTES is the tick that notices', () => {
     expect(pins.MAINTENANCE_TICK_MINUTES).toBe(15);
+  });
+});
+
+// ────────────────────────────────────────────────── §11 jobs — the runner's pins
+
+describe("§11 jobs — the three pins the runner itself is sized by", () => {
+  it('BP-003 error behaviour, quoted: "No job fans out across customers inside one invocation past a fixed concurrency; a slow site never starves the rest of Monday." — JOB_FAN_OUT_CONCURRENCY is that fixed concurrency: a whole number of customers, greater than one so the fan-out is a fan-out, and bounded so one tick cannot open unbounded vendor work', () => {
+    expect(pins.JOB_FAN_OUT_CONCURRENCY).toBe(10);
+    expect(Number.isInteger(pins.JOB_FAN_OUT_CONCURRENCY)).toBe(true);
+    expect(pins.JOB_FAN_OUT_CONCURRENCY).toBeGreaterThan(1);
+  });
+
+  it(`${B.draftGenerate} · BP-003 NFR budget, quoted: "\`draft/generate\` runs the evening before the publish date in the site's zone and must finish before the veto window would start" — DRAFT_DUE_HOUR_LOCAL is that evening hour: an hour of the day, in the afternoon-or-later half that "evening" can name, and site-local like WEEKLY_DUE_HOUR_LOCAL`, () => {
+    expect(pins.DRAFT_DUE_HOUR_LOCAL).toBe(18);
+    expect(Number.isInteger(pins.DRAFT_DUE_HOUR_LOCAL)).toBe(true);
+    expect(pins.DRAFT_DUE_HOUR_LOCAL).toBeGreaterThanOrEqual(12);
+    expect(pins.DRAFT_DUE_HOUR_LOCAL).toBeLessThan(24);
+  });
+
+  it(`${B.weeklyRefreshRow} is the row ADR-060 defuses, and the draft hour is pinned the same way it is — the name ends LOCAL, no constant names a UTC hour, and the two due hours are separate pins that happen to differ`, () => {
+    expect(Object.keys(pins).filter((n) => /UTC/i.test(n))).toEqual([]);
+    expect(Object.keys(pins).filter((n) => /_DUE_HOUR_/.test(n)).sort()).toEqual([
+      "DRAFT_DUE_HOUR_LOCAL",
+      "WEEKLY_DUE_HOUR_LOCAL",
+    ]);
+  });
+
+  it(`${B.publishVerify} · §9, quoted: "${B.verify24h}" — PUBLISH_VERIFY_DELAY_H is the "+24h" both lines state`, () => {
+    expect(pins.PUBLISH_VERIFY_DELAY_H).toBe(24);
+  });
+
+  it("PUBLISH_VERIFY_DELAY_H and DAILY_WINDOW_H share the number 24 and nothing else: §11's `publish/verify` delay and BP-023's free-scan rate-limit window are separate clauses, so neither is derived from the other", () => {
+    expect(pins.PUBLISH_VERIFY_DELAY_H).toBe(pins.DAILY_WINDOW_H);
+    expect(B.publishVerify).toContain("+24h");
+    expect(B.freeBounds).toContain("200 free scans/day");
+  });
+
+  it(`${B.freeBounds} — §11's bounds line is FREE_BOUNDS, already pinned above; the jobs table adds no fourth bound of its own`, () => {
+    expect(pins.FREE_BOUNDS).toEqual({ scansPerIpPerHour: 5, inFlightPerIp: 1, scansPerDay: 200 });
   });
 });
 
