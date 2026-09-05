@@ -15,6 +15,13 @@ export interface EnumeratedRoute {
   path: string;
   /** The `Host` header to send — only present for a `(hosted)` page. */
   host?: string;
+  /** The `Cookie` header to send — only present for an `(account)` page.
+   *  `src/middleware.ts` is the product's default-deny boundary: every path
+   *  under `(account)` is redirected to the sign-in prompt unless the
+   *  request carries a session cookie. A sweep that did not send one would
+   *  be measuring the redirect target at five widths and reporting it as
+   *  the account screen (issue #9). */
+  cookie?: string;
 }
 
 /**
@@ -31,6 +38,17 @@ const SEGMENT_FIXTURES: Readonly<Record<string, string>> = {};
  * when rendering it. Empty today for the same reason as `SEGMENT_FIXTURES`.
  */
 const HOST_FIXTURES: Readonly<Record<string, string>> = {};
+
+/**
+ * The `Cookie` header every `(account)` page is rendered with — the one
+ * fixture that gets the sweep past `src/middleware.ts`'s default-deny
+ * boundary. The middleware checks the cookie's *presence only* ("the check
+ * is a cookie's presence, nothing about its contents"), so a fixture value
+ * is enough and no session has to exist. The name is the one
+ * `src/middleware.ts` reads; when BP-061's identity work sets it for real
+ * (issue #35), that work order is where the two are made to agree.
+ */
+export const ACCOUNT_SESSION_COOKIE = "rk_session=layout-sweep-fixture";
 
 export class MissingRouteFixtureError extends Error {
   constructor(
@@ -86,9 +104,13 @@ export function enumerateRoutes(appRoot: string, options: EnumerateOptions = {})
 
     const urlSegments: string[] = [];
     let host: string | undefined;
+    let cookie: string | undefined;
 
     for (const segment of segments) {
       if (isRouteGroup(segment)) {
+        if (segment === "(account)") {
+          cookie = ACCOUNT_SESSION_COOKIE;
+        }
         if (segment === "(hosted)") {
           const h = hostFixtures[fsRoute];
           if (h === undefined) {
@@ -116,7 +138,10 @@ export function enumerateRoutes(appRoot: string, options: EnumerateOptions = {})
     }
 
     const urlPath = "/" + urlSegments.join("/");
-    return host !== undefined ? { path: urlPath, host } : { path: urlPath };
+    const route: EnumeratedRoute = { path: urlPath };
+    if (host !== undefined) route.host = host;
+    if (cookie !== undefined) route.cookie = cookie;
+    return route;
   });
 
   // Rule 5.5: the count this function enumerated is reported, not left to

@@ -22,11 +22,27 @@
 // One additional rule is exercised here beyond the seven-row table, because
 // step 3 says "each of the four": BP-001 decision 2 / BP-002's boundary —
 // no import of `src/lib/db` internals outside `src/lib/db`.
+//
+// **Timeout, stated here rather than left at the default (issue #9).** Each
+// `it` below constructs its own `ESLint` instance, which loads and resolves
+// `eslint.config.mjs` — `next/core-web-vitals` and `typescript-eslint`
+// included — before it lints one string. That cold start is seconds, not
+// milliseconds, it grows with the config's own plugin set, and under a full
+// parallel run it crossed Vitest's 5 s default the week `src/app` gained the
+// app shell's routes. The work these tests do has not changed; only the time
+// the first one waits for a toolchain to boot. Raising the bound is right
+// where the bound was measuring startup and not the assertion — and it is
+// per-`it`, not a global default, so nothing else in the suite loses its
+// deadline.
 import path from "node:path";
 import { describe, expect, it } from "vitest";
 import { ESLint } from "eslint";
 
 const ROOT = path.resolve(__dirname, "../..");
+
+/** Enough for one cold ESLint boot on a loaded machine; the lint itself is
+ *  a single string and takes no measurable part of it. */
+const ESLINT_BOOT_MS = 30_000;
 
 async function lint(source: string, filePath: string): Promise<ESLint.LintResult> {
   const eslint = new ESLint({ cwd: ROOT });
@@ -46,7 +62,7 @@ describe("structure.md rule 6 — src/lib/ may not import from src/app/", () => 
       "src/lib/measure/uses-app.ts"
     );
     expect(result.messages.length).toBeGreaterThan(0);
-  });
+  }, ESLINT_BOOT_MS);
 });
 
 describe("BP-002 boundary — no import of src/lib/db internals outside src/lib/db", () => {
@@ -56,7 +72,7 @@ describe("BP-002 boundary — no import of src/lib/db internals outside src/lib/
       "src/lib/scan/uses-db-internal.ts"
     );
     expect(result.messages.length).toBeGreaterThan(0);
-  });
+  }, ESLINT_BOOT_MS);
 });
 
 describe("BP-062 decision 1 — src/lib/account/export/** may not import src/lib/account/billing/**", () => {
@@ -67,7 +83,7 @@ describe("BP-062 decision 1 — src/lib/account/export/** may not import src/lib
     );
     expect(result.messages.length).toBeGreaterThan(0);
     expect(messages(result).some((m) => m.includes("REQ-078"))).toBe(true);
-  });
+  }, ESLINT_BOOT_MS);
 });
 
 describe("ADR-050 / BP-001 decision 2 — nothing outside src/lib/account/billing/** may import paid_through's reader or plan_status's accessor", () => {
@@ -78,7 +94,7 @@ describe("ADR-050 / BP-001 decision 2 — nothing outside src/lib/account/billin
     );
     expect(result.messages.length).toBeGreaterThan(0);
     expect(messages(result).some((m) => m.includes("ADR-050"))).toBe(true);
-  });
+  }, ESLINT_BOOT_MS);
 
   it("reports an outside import of plan_status's column accessor, naming ADR-050", async () => {
     const result = await lint(
@@ -87,7 +103,7 @@ describe("ADR-050 / BP-001 decision 2 — nothing outside src/lib/account/billin
     );
     expect(result.messages.length).toBeGreaterThan(0);
     expect(messages(result).some((m) => m.includes("ADR-050"))).toBe(true);
-  });
+  }, ESLINT_BOOT_MS);
 
   it("does not report the same imports from inside src/lib/account/billing/", () => {
     return Promise.all(
@@ -99,7 +115,7 @@ describe("ADR-050 / BP-001 decision 2 — nothing outside src/lib/account/billin
         expect(result.messages).toEqual([]);
       })
     );
-  });
+  }, ESLINT_BOOT_MS);
 
   it("does NOT report a hand-rolled paid_through comparison with no billing import at all", async () => {
     // ADR-050 point 3's other half. WO-001 step 3, verbatim: "'Computes no
@@ -117,5 +133,5 @@ describe("ADR-050 / BP-001 decision 2 — nothing outside src/lib/account/billin
       "src/jobs/weeklyRefresh.ts"
     );
     expect(result.messages).toEqual([]);
-  });
+  }, ESLINT_BOOT_MS);
 });
