@@ -1,0 +1,33 @@
+/* src/ui/layout/layout.css — BUILD §2.3, ADR-093 (DECISIONS 2026-09-02)
+ *
+ * The layout module's three `:root` tokens, declared once here and pinned
+ * back against `src/ui/layout/bands.ts` by `tests/ui/layout-tokens.test.ts`
+ * (the `tests/pins.test.ts` shape) and, on every rendered route, by
+ * `tests/ui/layout/layout.test.ts`. They live beside `Surface` and
+ * `BAND_MIN` rather than in `src/ui/theme.css` because that file's `:root`
+ * is `BUILD.md` §2.1's colour block verbatim and `tests/ui/tokens.test.ts`
+ * refuses any token §2.1 does not state.
+ *
+ * Values transcribe `design/tokens.md` §2b (frozen under
+ * `archive/sdlc-factory-2026-09-04/corpus/docs/design/tokens.md`):
+ *   --breakpoint-lg 1024px — "The sidebar returns"; `BAND_MIN.medium`.
+ *   --breakpoint-xl 1280px — "The day panel sits beside the grid";
+ *                             `BAND_MIN.wide`.
+ *   --t-floor       11px   — "The smallest text in the product, at any
+ *                             viewport": the bottom of `BUILD.md` §2.3's
+ *                             10.5–11px eyebrow range, and the value
+ *                             `src/ui/type.css`'s `.eyebrow` already draws.
+ *                             ADR-093 decision 3: no type step below it is
+ *                             minted, now or later.
+ *
+ * A media query cannot read a `var()`, so nothing here is consumed by an
+ * `@media` prelude yet; `tests/ui/layout/widths.ts` probes the two
+ * boundaries from `BAND_MIN`, and the sweep asserts these declarations
+ * equal it.
+ */
+
+:root {
+  --breakpoint-lg: 1024px;
+  --breakpoint-xl: 1280px;
+  --t-floor: 11px;
+}
