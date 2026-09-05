@@ -320,3 +320,11 @@ export const VENDOR = Object.freeze({                         // #23 · BUILD §
   stdQueuePollIntervalS: 10,
   stdQueueDeadlineMin: 45,
 } as const);
+
+// Report removal on written request (REQ-002 · ADR-002)
+/** The status a removed domain's report address serves (REQ-002 c3). Gone,
+ *  not Not Found: the address existed and its report was taken down at the
+ *  domain owner's request, and the one written line served with it names
+ *  the address that brings it back. Owner ruling 2026-09-05 (#28) —
+ *  supersedes the archived plan's `200`. */
+export const REPORT_REMOVED_STATUS = 410 as const;
