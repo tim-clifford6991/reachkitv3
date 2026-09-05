@@ -57,6 +57,24 @@ const SOURCES = sourceFiles().map((file) => ({
   text: readFileSync(path.join(REPO_ROOT, file), "utf8"),
 }));
 
+/** A source file's code with its comments removed, so a *reference* to a
+ *  copy key can be told apart from a *mention* of one in prose.
+ *
+ *  Why this exists: this suite used to assert that `removal.address` was
+ *  referenced in exactly one file under `src/`. That form counted files,
+ *  not addresses, so it broke the moment `src/lib/presentation/copy/keys/
+ *  mail.ts` (#79) cited the key in a comment — a mention that resolves
+ *  nothing and cannot make the address differ. REQ-002 c3 wants one
+ *  address, not one file: one value in the registry, every consumer
+ *  resolving it through `copy()`/`COPY`, and the two removal views sharing
+ *  one call site. The three assertions below say exactly that, and still
+ *  fail on the thing the file count was reaching for — a second value, a
+ *  second declaration, or a consumer that reaches the address any other
+ *  way. */
+function code(text: string): string {
+  return text.replace(/\/\*[\s\S]*?\*\//g, "").replace(/(^|[^:])\/\/.*$/gm, "$1");
+}
+
 /** Every interactive element REQ-001 c18 forbids on a removed address, as
  *  tag names and as the one attribute that makes a plain element one. */
 const INTERACTIVE_TAGS = ["button", "a", "form", "input", "select", "textarea", "label", "option"];
@@ -86,11 +104,25 @@ describe('REQ-002 c1 — "Given any report, when it renders, then it names in wr
 });
 
 describe("one address, from one key", () => {
-  it("`removal.address` is referenced in exactly one file under `src/` — the module that owns both views", () => {
-    const referencing = SOURCES.filter(
-      (s) => s.file !== COPY_PARTITION && s.text.includes("removal.address")
-    ).map((s) => s.file);
-    expect(referencing).toEqual([REMOVAL_MODULE]);
+  it("`removal.address` has exactly one value — one declaration, in one copy partition", () => {
+    const declaring = SOURCES.filter((s) => /"removal\.address"\s*:/.test(code(s.text))).map((s) => s.file);
+    expect(declaring).toEqual([COPY_PARTITION]);
+  });
+
+  it("every consumer reaches the address through the registry — no file names the key any other way", () => {
+    for (const s of SOURCES) {
+      if (s.file === COPY_PARTITION) continue;
+      const text = code(s.text);
+      const named = text.match(/removal\.address/g) ?? [];
+      const resolved = text.match(/(?:copy\(\s*"removal\.address"\s*\)|COPY\[\s*"removal\.address"\s*\])/g) ?? [];
+      expect(resolved.length, `${s.file} names \`removal.address\` without resolving it`).toBe(named.length);
+    }
+  });
+
+  it("the removal views resolve it at a single call site", () => {
+    const text = code(readFileSync(path.join(REPO_ROOT, REMOVAL_MODULE), "utf8"));
+    expect(text.match(/removal\.address/g) ?? []).toHaveLength(1);
+    expect(text).toContain('copy("removal.address")');
   });
 
   it("the address appears as a literal nowhere in `src/` outside the copy registry", () => {
