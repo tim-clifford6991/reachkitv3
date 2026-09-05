@@ -283,3 +283,29 @@ export const GOAL_VALUES = Object.freeze({
   searches_appeared_in: 400, ai_answers: 6, score: 50,
   pages_published: 30,          // owner ruling, 2026-08-31 — a month of daily pages
 } as const);
+
+// ── Vendor client (issue #23) — BUILD §6.1–§6.4, ADR-094
+/** The one endpoint whose vendor charge is data-dependent (ADR-094 d3, d3a;
+ *  DECISIONS 2026-09-03): `serpOrganic` with `loadAsyncAiOverview: true`
+ *  **reserves** the base price times this multiplier — the vendor's own
+ *  rule, "Add one base price" — and the ledger settles the documented
+ *  charge read off the response (`src/lib/vendors/dataforseo/serp.ts`).
+ *  Prices the reservation, never the customer-visible number. */
+export const ASYNC_AIO_SURCHARGE_MULTIPLIER = 2 as const;      // ADR-094 d3 · d3a
+
+/** Vendor-side request shape the price book prices but BUILD §6.1 does not
+ *  name as a row of its own. `suggestionsRows` is §6.1's own "@ 50 rows";
+ *  `competitorsDomainRows` is DATA-COSTS §1's
+ *  "`competitors_domain` … 1.5¢ @ 25 rows" — the row count the 1.5¢ pin is
+ *  derived from (task 1.2¢ + 25 × 0.012¢). The standard-queue figures are
+ *  the vendor's own published turnaround ("5 minutes on average · The
+ *  target turnaround time is 45 minutes", pricing page quoted in the
+ *  archived RESEARCH-dataforseo-endpoints.md §2.1): a `mode: "std"` call
+ *  polls `task_get` every `stdQueuePollIntervalS` seconds and gives up —
+ *  `unmeasured`, never a throw — at `stdQueueDeadlineMin`. */
+export const VENDOR = Object.freeze({                         // #23 · BUILD §6.1 · DATA-COSTS §1
+  suggestionsRows: 50,          // BUILD §6.1: "SUGGESTIONS_COST | 1.8¢ / call @ 50 rows"
+  competitorsDomainRows: 25,
+  stdQueuePollIntervalS: 10,
+  stdQueueDeadlineMin: 45,
+} as const);
