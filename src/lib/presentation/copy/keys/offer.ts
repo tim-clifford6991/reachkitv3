@@ -30,6 +30,26 @@ export const OFFER_COPY = Object.freeze({
   "offer.cadence.measure": ["Your findability re-measured {value}", { slots: { value: "text" }, fixedBy: "REQ-021 c2" }],
   "offer.cadence.movement": ["What moved, in your inbox {value}", { slots: { value: "text" }, fixedBy: "REQ-021 c2" }],
   "offer.veto.window": ["Every page waits {value} for you to stop it before it goes live — and you can cancel any time, yourself", { slots: { value: "text" }, fixedBy: "REQ-021 c2" }],
-  "offer.cancel_self_service": ["", { slots: {}, fixedBy: "REQ-021 c2" }],
+  // 2026-09-05, issue #13: value moved from "" to `TODO(copy)` per
+  // `CLAUDE.md`'s standing rule. `BUILD.md` §4.1 module 6 requires the
+  // pricing card to carry "Cancel in one click"; left empty, `copy()`
+  // throws and the report screen goes down rather than showing the owner
+  // an unwritten line. Still the owner's sentence. `price.vat_included`
+  // is untouched: no module renders it — `price.interval`'s own ruled
+  // string already says "per month, VAT included".
+  "offer.cancel_self_service": ["TODO(copy)", { slots: {}, fixedBy: "REQ-021 c2" }],
   "offer.start": ["Start ReachKit", { slots: {}, fixedBy: "REQ-021 c4" }],
+
+  // 2026-09-05, issue #13: the four values the four slotted lines above
+  // take. BP-031's `offerTerms()` was to supply them and does not exist;
+  // the free report's pricing card (`BUILD.md` §4.1 module 6) needs them
+  // now. Three are pure owner words with no number in them. The fourth
+  // carries the number from its pin — `VETO.defaultHours`
+  // (`src/lib/config/constants.ts`) — through an `{hours}` slot, so the
+  // veto window is written down once, in the pin, and the owner supplies
+  // only the unit around it. `TODO(copy)` per `CLAUDE.md`.
+  "offer.cadence.page.value": ["TODO(copy)", { slots: {}, fixedBy: "REQ-021 c2" }],
+  "offer.cadence.measure.value": ["TODO(copy)", { slots: {}, fixedBy: "REQ-021 c2" }],
+  "offer.cadence.movement.value": ["TODO(copy)", { slots: {}, fixedBy: "REQ-021 c2" }],
+  "offer.veto.window.value": ["TODO(copy)", { slots: { hours: "text" }, fixedBy: "REQ-021 c2" }],
 }) satisfies CopyPartition;
