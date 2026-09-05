@@ -1,0 +1,215 @@
+/* src/ui/layout/shell.css — BUILD §4.4, §2.2
+ *
+ * The app shell's stylesheet: the sidebar, the frame it sits in, and the
+ * narrow-viewport switch to top tabs. `BUILD.md` §2.2 closes custom CSS at
+ * five surfaces — "the calendar grid, the day panel, the AI dot-matrix,
+ * chart SVGs, and **the sidebar** — nothing else" — and this file is the
+ * sidebar's. Everything else the shell renders is a registered daisyUI
+ * component (`Card`, `Badge`, `Toggle`, `Tabs`); the rules below place
+ * those components, and style none of them.
+ *
+ * §4.4, verbatim: "Left sidebar (222px, sticky) … Mobile: sidebar hidden,
+ * top tabs." Which width counts as mobile is not §4.4's — it is
+ * `--breakpoint-lg`, `design/tokens.md` §2b's derivation ("The sidebar
+ * returns. --w-sidebar 222 + 2 × --s-5 + the 696 a seven-column grid needs
+ * = 966", rounded up to Tailwind's own 1024 step) and `BAND_MIN.medium`.
+ * A media query prelude cannot read a `var()` (see `layout.css`'s header),
+ * so 1024px is written literally below and pinned back against `BAND_MIN`
+ * by `tests/ui/shell-css.test.ts` — the same shape `layout.css` and
+ * `tests/ui/layout-tokens.test.ts` already use.
+ *
+ * SPACING. `design/tokens.md` §1's spacing scale was ruled by the owner on
+ * 2026-09-02 (4px base, seven steps) but has no home in this repository
+ * yet: `src/ui/theme.css`'s `:root` is `BUILD.md` §2.1 verbatim and
+ * `tests/ui/tokens.test.ts` refuses any token §2.1 does not state. The four
+ * steps this sheet needs are therefore transcribed here, scoped to
+ * `.rk-shell` rather than `:root`, so they are one shell-local declaration
+ * and not a second global vocabulary. Their proper home is the design
+ * system's own order (issue #12); moving them there costs this block.
+ */
+
+.rk-shell {
+  /* `BUILD.md` §4.4, verbatim: "Left sidebar (222px, sticky)". */
+  --w-sidebar: 222px;
+
+  /* design/tokens.md §1, owner ruling 2026-09-02 — transcribed, not chosen. */
+  --s-1: 4px;
+  --s-2: 8px;
+  --s-3: 12px;
+  --s-4: 16px;
+  --s-5: 24px;
+
+  background: var(--bg);
+  /* The ink token, stated on the shell's own root. `src/ui/theme.css` maps
+   * `--ink` onto daisyUI's `base-content` slot, but daisyUI's stylesheet is
+   * not imported anywhere in this repository yet (nothing runs
+   * `@import "tailwindcss"`), so no rule binds it to anything — and a shell
+   * that inherited the user agent's black would be unreadable in the dark
+   * state §2.1 requires. One declaration, on this subtree only; when the
+   * design system's own pipeline lands (issue #12) it is redundant, not
+   * wrong. */
+  color: var(--ink);
+}
+
+/* A fixed 222px column with padding is 222px only under border-box. No
+ * global reset ships in this repository (Tailwind's preflight is not
+ * imported anywhere), so the shell states it for its own subtree. */
+.rk-shell,
+.rk-shell * {
+  box-sizing: border-box;
+}
+
+/* ── The domain block and the publishing card ─────────────────────────── */
+
+.rk-domain {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-1);
+  min-width: 0;
+}
+
+.rk-domain-name {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  min-width: 0;
+  margin: 0;
+  font-weight: 700;
+}
+
+/* Decoration only — the accent dot carries no meaning of its own, which is
+ * why the markup marks it `aria-hidden`. */
+.rk-dot {
+  flex: 0 0 auto;
+  width: var(--s-2);
+  height: var(--s-2);
+  border-radius: var(--r-pill);
+  background: var(--accent);
+}
+
+/* §2.5: "Provenance is always visible but always quiet … mono, dim, small."
+ * `--t-floor` is the floor itself (11px), never below it (ADR-093 d3). */
+.rk-prov {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: var(--t-floor);
+  color: var(--ink-3);
+  overflow-wrap: anywhere;
+}
+
+.num,
+.rk-domain-name .num {
+  overflow-wrap: anywhere;
+}
+
+/* ── Nav ──────────────────────────────────────────────────────────────── */
+
+.rk-nav {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-1);
+  min-width: 0;
+}
+
+.rk-navlink {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-2);
+  min-width: 0;
+  padding: var(--s-2) var(--s-3);
+  border-radius: var(--r-field);
+  color: var(--ink-2);
+  text-decoration: none;
+}
+
+.rk-navlink[aria-current="page"] {
+  background: var(--accent-bg);
+  color: var(--accent);
+}
+
+.rk-count {
+  flex: 0 0 auto;
+  color: var(--ink-3);
+}
+
+/* ── The frame ────────────────────────────────────────────────────────── */
+
+/* Below --breakpoint-lg: one column. The sidebar is hidden and the domain
+ * block, the tabs and the publishing state collapse into the top header
+ * rather than disappearing (REQ-040 c5 — "the same three destinations
+ * remain reachable"). */
+.rk-shell-top {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-3);
+  padding: var(--s-3);
+  border-bottom: 1px solid var(--line);
+  background: var(--surface);
+}
+
+.rk-shell-body {
+  display: block;
+}
+
+.rk-sidebar {
+  display: none;
+}
+
+.rk-sidebar-inner {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-5);
+  padding: var(--s-4);
+}
+
+.rk-main {
+  min-width: 0;
+  padding: var(--s-4);
+}
+
+/* --breakpoint-lg (1024px) = BAND_MIN.medium. "The sidebar returns."
+ * Pinned by tests/ui/shell-css.test.ts. */
+@media (min-width: 1024px) {
+  .rk-shell-top {
+    display: none;
+  }
+
+  .rk-shell-body {
+    display: flex;
+    align-items: stretch;
+    min-height: 100vh;
+  }
+
+  /* §4.4: "Left sidebar (222px, sticky)". Two elements, not one, and the
+   * split is load-bearing: the column stretches so its surface and its rule
+   * run the whole height of the screen, and the *contents* are what stick —
+   * a stretched flex item has no free space to stick within, so a sticky
+   * `.rk-sidebar` would silently never stick once a screen is long enough
+   * for it to matter. */
+  .rk-sidebar {
+    display: block;
+    flex: 0 0 var(--w-sidebar);
+    width: var(--w-sidebar);
+    border-right: 1px solid var(--line);
+    background: var(--surface);
+  }
+
+  .rk-sidebar-inner {
+    position: sticky;
+    top: 0;
+    min-height: 100vh;
+  }
+
+  /* §4.4: "footer autopilot card" — the foot of the sidebar, pushed there
+   * by the free space rather than by a fixed height. */
+  .rk-publishing {
+    margin-top: auto;
+  }
+
+  .rk-main {
+    flex: 1 1 0;
+    padding: var(--s-5);
+  }
+}

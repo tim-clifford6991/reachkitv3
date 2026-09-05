@@ -1,0 +1,124 @@
+// tests/ui/shell-css.test.ts — BUILD §4.4, §2.2; ADR-093
+//
+// `src/ui/layout/shell.css` is the sidebar's stylesheet — one of the five
+// surfaces `BUILD.md` §2.2 admits custom CSS for. Two numbers in it are the
+// spec's, not the author's, and a media query prelude cannot read a `var()`
+// (see `layout.css`'s own header), so both are written literally there and
+// pinned back here — the `tests/pins.test.ts` shape `layout-tokens.test.ts`
+// already uses for `layout.css`.
+//
+// Runs under the jsdom `ui` project: nothing here needs a layout engine, it
+// parses CSS with postcss and reads two source files.
+import { readFileSync } from "node:fs";
+import path from "node:path";
+import postcss, { type AtRule, type Root, type Rule } from "postcss";
+import { describe, expect, it } from "vitest";
+import { BAND_MIN } from "@/ui/layout/bands";
+
+/** `BUILD.md` §4.4, verbatim: "Left sidebar (222px, sticky)". */
+const SIDEBAR_WIDTH_PX = 222;
+
+const SHELL_CSS_PATH = path.resolve(import.meta.dirname, "../../src/ui/layout/shell.css");
+const SHELL_CSS = readFileSync(SHELL_CSS_PATH, "utf8");
+const APP_LAYOUT_PATH = path.resolve(
+  import.meta.dirname,
+  "../../src/app/(account)/app/layout.tsx"
+);
+
+const root: Root = postcss.parse(SHELL_CSS);
+
+function declsOf(selector: string, within?: AtRule): Map<string, string> {
+  const container = within ?? root;
+  const rule = (container.nodes ?? []).find(
+    (n): n is Rule => n.type === "rule" && n.selector === selector
+  );
+  if (!rule) throw new Error(`src/ui/layout/shell.css: missing rule "${selector}"`);
+  const out = new Map<string, string>();
+  for (const node of rule.nodes) {
+    if (node.type === "decl") out.set(node.prop, node.value.trim());
+  }
+  return out;
+}
+
+function mediaRules(): AtRule[] {
+  return root.nodes.filter((n): n is AtRule => n.type === "atrule" && n.name === "media");
+}
+
+describe('BUILD §4.4 — "Left sidebar (222px, sticky)"', () => {
+  it("--w-sidebar is 222px, declared once, scoped to the shell rather than :root", () => {
+    expect(declsOf(".rk-shell").get("--w-sidebar")).toBe(`${SIDEBAR_WIDTH_PX}px`);
+    // Not a global token: `src/ui/theme.css`'s `:root` is §2.1 verbatim and
+    // `tests/ui/tokens.test.ts` refuses anything §2.1 does not state.
+    expect(SHELL_CSS).not.toMatch(/^\s*:root\s*\{/m);
+  });
+
+  it("the sidebar's width and flex basis both come from the token, never a second 222", () => {
+    const [media] = mediaRules();
+    expect(media).toBeDefined();
+    const sidebar = declsOf(".rk-sidebar", media);
+    expect(sidebar.get("width")).toBe("var(--w-sidebar)");
+    expect(sidebar.get("flex")).toBe("0 0 var(--w-sidebar)");
+    // One literal 222 among every declaration in the sheet: the token's own.
+    // (Comments are excluded — they quote §4.4's sentence, which contains it.)
+    const values: string[] = [];
+    root.walkDecls((decl) => {
+      values.push(decl.value);
+    });
+    expect(values.filter((v) => v.includes(String(SIDEBAR_WIDTH_PX)))).toEqual([
+      `${SIDEBAR_WIDTH_PX}px`,
+    ]);
+  });
+
+  it("the column stretches and its contents stick — never the other way round", () => {
+    // A sticky element that is itself a stretched flex item has no free
+    // space to stick within, so it never sticks. The split is what makes
+    // §4.4's "sticky" true once a screen is long enough for it to matter.
+    const [media] = mediaRules();
+    const sidebar = declsOf(".rk-sidebar", media!);
+    const inner = declsOf(".rk-sidebar-inner", media!);
+    expect(sidebar.get("position")).toBeUndefined();
+    expect(inner.get("position")).toBe("sticky");
+    expect(inner.get("top")).toBe("0");
+    expect(declsOf(".rk-shell-body", media!).get("align-items")).toBe("stretch");
+  });
+});
+
+describe('BUILD §4.4 — "Mobile: sidebar hidden, top tabs", at --breakpoint-lg', () => {
+  it("there is exactly one media query, and its boundary is BAND_MIN.medium", () => {
+    const media = mediaRules();
+    expect(media).toHaveLength(1);
+    expect(media[0]?.params).toBe(`(min-width: ${BAND_MIN.medium}px)`);
+  });
+
+  it("below it the sidebar is hidden and the top header shows; above, the reverse", () => {
+    expect(declsOf(".rk-sidebar").get("display")).toBe("none");
+    expect(declsOf(".rk-shell-top").get("display")).toBe("flex");
+
+    const [media] = mediaRules();
+    expect(declsOf(".rk-sidebar", media!).get("display")).toBe("block");
+    expect(declsOf(".rk-shell-top", media!).get("display")).toBe("none");
+  });
+
+  it("mutation: a drifted breakpoint is caught", () => {
+    const mutated = postcss.parse(SHELL_CSS.replace("(min-width: 1024px)", "(min-width: 900px)"));
+    const media = mutated.nodes.filter(
+      (n): n is AtRule => n.type === "atrule" && n.name === "media"
+    );
+    expect(media[0]?.params).not.toBe(`(min-width: ${BAND_MIN.medium}px)`);
+  });
+});
+
+describe("the sheet reaches every app route, and no other", () => {
+  it("the (account)/app layout imports it, so every screen under /app carries it", () => {
+    expect(readFileSync(APP_LAYOUT_PATH, "utf8")).toMatch(
+      /import\s+["']@\/ui\/layout\/shell\.css["']/
+    );
+  });
+
+  it("no text is styled below the type floor (ADR-093 decision 3)", () => {
+    // The one font-size in the sheet is `--t-floor` itself; a literal px
+    // font-size here would be a step below the floor waiting to happen.
+    expect(SHELL_CSS).toMatch(/font-size:\s*var\(--t-floor\)/);
+    expect(SHELL_CSS).not.toMatch(/font-size:\s*\d/);
+  });
+});

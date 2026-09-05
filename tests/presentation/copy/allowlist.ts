@@ -108,6 +108,14 @@ export const ATTRIBUTE_ALLOWLIST: readonly AllowlistedAttribute[] = Object.freez
   },
   {
     kind: "exact",
+    name: "state",
+    reason:
+      "a registered component's own discriminant (e.g. Card's 'default' | 'degraded'), " +
+      "the same category as `variant`: it selects which arm of the component renders, " +
+      "and every sentence either arm carries arrives through a separate prop.",
+  },
+  {
+    kind: "exact",
     name: "lang",
     reason: "an HTML language tag (e.g. 'en'), not a sentence.",
   },
