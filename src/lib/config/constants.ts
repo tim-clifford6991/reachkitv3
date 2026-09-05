@@ -350,3 +350,19 @@ export const DRAFT_DUE_HOUR_LOCAL = 18 as const;              // BP-003 · BUILD
  *  `DAILY_WINDOW_H`, which is BP-023's free-scan rate-limit window and
  *  happens to share the number; the two move independently. */
 export const PUBLISH_VERIFY_DELAY_H = 24 as const;            // BP-049 · BUILD §11
+
+// ── Rival derivation and the presence card (issue #27) — BUILD §6.6
+/** `BUILD.md` §6.1's own price-book row, transcribed (rule 1.2 — nothing
+ *  chosen): "`RIVAL_SCORE` | top10Appearances + 2×aiCitations (§6.6)". The
+ *  two weights, never the formula, which is
+ *  `src/lib/market/rivals/derive.ts`'s (rule 2.5). §6.6 states the reason
+ *  the AI weight is the larger of the two: "cited-by-AI weighs double". */
+export const RIVAL_SCORE = Object.freeze({                    // BUILD §6.1 · §6.6
+  top10Weight: 1, aiCitationWeight: 2,
+} as const);
+
+/** REQ-008 criterion 4: of the searches the customer is absent from, "up
+ *  to five of the biggest are listed". Deliberately not
+ *  `BATTERY.COMPETITORS_MAX`, which happens to hold the same number today
+ *  and bounds a different thing — how many rivals a customer may track. */
+export const ABSENT_FROM_MAX = 5 as const;                    // BP-026 · REQ-008 c4
