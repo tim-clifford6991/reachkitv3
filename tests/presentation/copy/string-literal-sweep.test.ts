@@ -292,8 +292,12 @@ describe("REQ-093 c1 — string-literal sweep, over the real surface globs", () 
     expect(result.filesWalked).toBeGreaterThan(0);
   });
 
-  it("reports coverage per governed glob — src/app and src/ui must hold files; src/app/(hosted) and src/lib/mail are empty today, and that is asserted, not just unasserted (TST-028 finding 3)", () => {
-    assertGovernedCoverage(result, ["src/app", "src/ui"], ["src/app/(hosted)", "src/lib/mail"]);
+  it("reports coverage per governed glob — src/app and src/ui must hold files; src/app/(hosted) is empty today, and that is asserted, not just unasserted (TST-028 finding 3)", () => {
+    // 2026-09-05, issue #30: `src/lib/mail` now holds the mail seam, so it
+    // moves from the expected-empty list to the expected-non-empty one —
+    // the assertion that keeps a mistyped glob from reading as coverage
+    // still holds, on the other side.
+    assertGovernedCoverage(result, ["src/app", "src/ui", "src/lib/mail"], ["src/app/(hosted)"]);
   });
 
   it("no surface holds a product sentence", () => {
