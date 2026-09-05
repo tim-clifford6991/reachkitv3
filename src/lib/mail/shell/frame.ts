@@ -1,0 +1,62 @@
+// BUILD §12 · §2.1 — the one branded shell, HTML half.
+//
+// Header, body slot, the whole-mail line slot, footer, and the opt-out
+// slot rendered when one is supplied. There is one frame and every mail
+// wears it; a template supplies blocks and nothing else, so no kind can
+// grow a frame of its own.
+//
+// Every colour, radius and font stack is named through `tokens.ts` — no
+// hex literal and no font stack is written in this file
+// (`tests/mail/shell/shell-tokens.test.ts` reads the source and holds it
+// to that). Every sentence arrives already rendered from `compose.ts`;
+// this file contains no `copy()` call and authors no string.
+import { escapeHtml } from "../blocks/html";
+import { token } from "./tokens";
+
+export interface FrameParts {
+  /** The product's name, rendered from its copy key by `compose.ts`. */
+  wordmark: string;
+  /** The block rows, already rendered as `<tr>`s by `renderBlocksHtml`. */
+  rows: string;
+  /** The one line a mail carries when its conditional sections said
+   *  nothing — or when the week behind it could not be measured. `null`
+   *  on a mail that has something to say. */
+  wholeMailLine: string | null;
+  /** Rendered when the caller supplies a stop control. Its label is
+   *  chosen by the mechanism, in `compose.ts`, never by a template. */
+  optOut: { href: string; label: string } | null;
+}
+
+function optOutHtml(optOut: FrameParts["optOut"]): string {
+  if (optOut === null) return "";
+  return `<p style="margin:0;padding-top:8px"><a href="${escapeHtml(optOut.href)}" style="color:${token("--ink-3")};text-decoration:underline">${escapeHtml(optOut.label)}</a></p>`;
+}
+
+function wholeMailLineHtml(line: string | null): string {
+  if (line === null) return "";
+  return `<tr><td style="padding:0 0 16px 0;font-family:${token("--font-ui")};font-size:15px;line-height:1.55;color:${token("--ink-2")}">${escapeHtml(line)}</td></tr>`;
+}
+
+/** The frame. One 600px column on the page background, one card on the
+ *  surface colour, the wordmark above it and the footer below — the same
+ *  three bands `text-frame.ts` writes, in the same order. */
+export function frameHtml(parts: FrameParts): string {
+  return [
+    `<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width"></head>`,
+    `<body style="margin:0;padding:0;background:${token("--bg")}">`,
+    `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:${token("--bg")};padding:24px 12px">`,
+    `<tr><td align="center">`,
+    `<table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0" style="width:600px;max-width:100%">`,
+    `<tr><td style="padding:0 0 14px 0;font-family:${token("--font-ui")};font-size:15px;font-weight:800;letter-spacing:-0.02em;color:${token("--ink")}">${escapeHtml(parts.wordmark)}</td></tr>`,
+    `<tr><td style="background:${token("--surface")};border:1px solid ${token("--line")};border-radius:${token("--r-box")};padding:22px">`,
+    `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">`,
+    parts.rows,
+    wholeMailLineHtml(parts.wholeMailLine),
+    `</table>`,
+    `</td></tr>`,
+    `<tr><td style="padding:14px 0 0 0;font-family:${token("--font-ui")};font-size:12px;line-height:1.5;color:${token("--ink-3")}">`,
+    optOutHtml(parts.optOut),
+    `</td></tr>`,
+    `</table></td></tr></table></body></html>`,
+  ].join("");
+}

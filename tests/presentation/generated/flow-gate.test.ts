@@ -253,8 +253,9 @@ describe("REQ-093 c2/c3 — flow gate, over the real surface globs", () => {
     expect(result.filesWalked).toBeGreaterThan(0);
   });
 
-  it("reports coverage per governed glob — src/app and src/ui must hold files; src/app/(hosted) and src/lib/mail are empty today, and that is asserted, not just unasserted (TST-028 finding 3)", () => {
-    assertGovernedCoverage(result, ["src/app", "src/ui"], ["src/app/(hosted)", "src/lib/mail"]);
+  it("reports coverage per governed glob — src/app and src/ui must hold files; src/app/(hosted) is empty today, and that is asserted, not just unasserted (TST-028 finding 3)", () => {
+    // 2026-09-05, issue #30: `src/lib/mail` now holds the mail seam.
+    assertGovernedCoverage(result, ["src/app", "src/ui", "src/lib/mail"], ["src/app/(hosted)"]);
   });
 
   it("no GeneratedColumn value or GeneratedText field reaches a surface outside renderGenerated/renderQuestion", () => {
