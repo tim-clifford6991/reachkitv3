@@ -10,7 +10,7 @@ import https from "node:https";
 import dns from "node:dns";
 import path from "node:path";
 import { ESLint } from "eslint";
-import { afterEach, beforeEach, describe, expect, expectTypeOf, it, vi } from "vitest";
+import { afterEach, beforeAll, beforeEach, describe, expect, expectTypeOf, it, vi } from "vitest";
 import { checkAddress, checkSchemeAndPort, classifyAddress } from "../../src/lib/egress/policy";
 import type { RobotsPolicy } from "../../src/lib/egress/types";
 
@@ -219,6 +219,17 @@ async function lint(source: string, filePath: string): Promise<ESLint.LintResult
   if (!result) throw new Error("eslint returned no result");
   return result;
 }
+
+// The first ESLint run in a worker pays the whole flat-config bootstrap —
+// `eslint-config-next` resolves a TypeScript program over the repo, so that
+// one-off cost grows with the source tree and has outgrown Vitest's 5 s
+// per-test default (adding `src/jobs/**` in #39 was what pushed it over).
+// It is paid once here, under its own timeout; every assertion below then
+// runs in tens of milliseconds and keeps the default, so a rule that
+// actually breaks still fails fast.
+beforeAll(async () => {
+  await lint("export const warmUp = true;\n", "src/lib/measure/eslint-warm-up.ts");
+}, 60_000);
 
 describe("BP-006 NFR — fetch( is confined to src/lib/egress/** and src/lib/vendors/**", () => {
   it("reports a fetch( call under src/lib/measure/", async () => {
