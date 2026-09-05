@@ -1,5 +1,5 @@
 // src/app/api/scan/[scanId]/progress/route.ts — BP-022 `## Public
-// interface`, WO-281 (consolidates WO-063; see `sdlc-factory/docs/
+// interface`, WO-281 (consolidates WO-063; see `archive/sdlc-factory-2026-09-04/corpus/docs/
 // work-orders/WO-281.md` `## Consolidation`)
 //
 // "Serve BP-023's stage stream as server-sent events and nothing more —

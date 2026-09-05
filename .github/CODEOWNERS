@@ -1,0 +1,13 @@
+# The owner's files. A PR touching these needs the owner's review; an agent may
+# not loosen a rule to make its own PR pass. (Enforced by GitHub once the repo
+# is on a plan with branch protection; until then, enforced by /ship refusing.)
+BUILD.md              @tim-clifford6991
+DECISIONS.md          @tim-clifford6991
+ARCHITECTURE.md       @tim-clifford6991
+DATA-COSTS.md         @tim-clifford6991
+CLAUDE.md             @tim-clifford6991
+/.github/             @tim-clifford6991
+/scripts/             @tim-clifford6991
+eslint.config.mjs     @tim-clifford6991
+vitest.config.ts      @tim-clifford6991
+src/lib/config/       @tim-clifford6991

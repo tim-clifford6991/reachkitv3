@@ -6,6 +6,7 @@
 // line naming the factor holding it down.
 import { combine, mapMeasured, type Measured } from "./measured";
 import { bandOf, type BandHandle } from "./bands";
+import { SCORING } from "@/lib/config/constants";
 
 /** BP-010's own four measured quantities (`src/lib/measure/index.ts`,
  *  BP-010's file — `measureDomain` and this type's canonical home).
@@ -35,8 +36,13 @@ export interface Drivers {
 export type ScoreFactorName = "foundations" | "answerability" | "presence";
 export type ScoreFactors = Readonly<Record<ScoreFactorName, Measured<number>>>;
 
+// `PRESENCE_FLOOR` stays local and is not pointed at `SCORING`
+// (WO-251 file plan / out of scope). It equals `SCORING.answerabilityFloor`
+// today by coincidence of value, not by derivation — `BUILD.md` §5 states
+// the two floors independently (BP-005's `SCORING` comment) — so folding
+// this into the pin would make a later edit to Answerability's floor
+// silently move Presence's too. Leave it a local literal.
 const PRESENCE_FLOOR = 1;
-const ANSWERABILITY_FLOOR = 1;
 
 function floorAt(m: Measured<number>, floor: number): Measured<number> {
   return mapMeasured(m, (value) => Math.max(floor, value));
@@ -59,7 +65,7 @@ export function presenceOf(d: Pick<Drivers, "searchPresence" | "aiPresence">): M
 export function factorsOf(d: Drivers): ScoreFactors {
   return {
     foundations: d.foundations,
-    answerability: floorAt(d.answerability, ANSWERABILITY_FLOOR),
+    answerability: floorAt(d.answerability, SCORING.answerabilityFloor),
     presence: presenceOf(d),
   };
 }

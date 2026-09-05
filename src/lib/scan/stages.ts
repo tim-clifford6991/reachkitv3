@@ -1,5 +1,5 @@
 // src/lib/scan/stages.ts — BP-023 `## Public interface`, WO-281
-// (consolidates WO-060; see `sdlc-factory/docs/work-orders/WO-281.md`
+// (consolidates WO-060; see `archive/sdlc-factory-2026-09-04/corpus/docs/work-orders/WO-281.md`
 // `## Consolidation`)
 //
 // Six named handles, one per dataset boundary of `BUILD.md` §6.3's

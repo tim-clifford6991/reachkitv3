@@ -37,6 +37,27 @@ export const CAPS = Object.freeze({
   FREE_C: 12, DEEP_C: 150, WEEKLY_C: 40, DRAFT_C: 45,
 } as const);
 
+/** Per-token model prices, cents per million tokens — BP-005 `## Public
+ *  interface`, transcribed verbatim (rule 1.2 — data, not a chosen
+ *  parameter): `nano: { inCentsPerM: 20; outCentsPerM: 125 }`,
+ *  `haiku: { inCentsPerM: 100; outCentsPerM: 500 }`. `costCents` for one
+ *  call is `tokensIn/1e6 * inCentsPerM + tokensOut/1e6 * outCentsPerM`,
+ *  computed at BP-009's own call site (`src/lib/llm/tiers.ts`), never
+ *  here — this file holds the price, never the formula (rule 2.5). */
+export const INFERENCE_PRICE_BOOK = Object.freeze({
+  nano: Object.freeze({ inCentsPerM: 20, outCentsPerM: 125 } as const),
+  haiku: Object.freeze({ inCentsPerM: 100, outCentsPerM: 500 } as const),
+} as const);
+
+/** BP-009 `## NFR budget`, verbatim: "p95 latency: nano ≤ 3 s, haiku ≤
+ *  20 s." Not among the pins BP-005's own `## Public interface` lists —
+ *  added here under the same "pins live in `constants.ts` and nowhere
+ *  else" rule (rule 2.4, WO-026), transcribing the other approved
+ *  artifact that states a number `tiers.ts` and its test must agree on. */
+export const INFERENCE_TIMEOUT_MS = Object.freeze({
+  nano: 3000, haiku: 20000,
+} as const);
+
 export const BATTERY = Object.freeze({
   QUESTIONS: 12, TARGET_SERPS_MAX: 13, MEASURED_PAGES_MAX: 25, COMPETITORS_MAX: 5,
 } as const);
@@ -84,6 +105,24 @@ export const RIVAL_SIZE_BANDS = Object.freeze({
  *  `SCORE_BANDS`, which is already BP-019's `CopyKey` map. */
 export const SCORE_BAND_BOUNDS = Object.freeze({ // BP-024 · REQ-004 c1 · BUILD §5
   invisible: 0, "hard-to-find": 25, findable: 50, dominant: 75,
+} as const);
+
+/** The other two numbers BP-010 decision 2 assigns to this file — "the
+ *  coefficients that are numbers (band thresholds, the answerability floor,
+ *  the direct-answer character window) are pins in BP-005" — transcribed
+ *  verbatim from BP-005's `## Public interface` (2026-09-04, `2fe462e`),
+ *  which is itself `BUILD.md` §5, transcribed (rule 1.2 — nothing chosen):
+ *  "Answerability = shape of the home + measured pages, 0–100, floored at
+ *  1" and "`directAnswers` = question headings whose first block is
+ *  40–320 visible chars ÷ all headings × 100". The window is closed at
+ *  both ends. `PRESENCE_FLOOR` (`src/lib/measure/score.ts`) is
+ *  deliberately not a fourth member here — equal to `answerabilityFloor`
+ *  today by coincidence of value, not by derivation; `BUILD.md` §5 states
+ *  the two floors independently. */
+export const SCORING = Object.freeze({                    // BP-010 d2 · BUILD §5
+  directAnswerCharsMin: 40,   // inclusive
+  directAnswerCharsMax: 320,  // inclusive
+  answerabilityFloor: 1,
 } as const);
 
 export const GENERATION = Object.freeze({
