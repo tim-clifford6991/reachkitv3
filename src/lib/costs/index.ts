@@ -40,6 +40,14 @@ const CAP_VALUES: Record<CapName, number> = {
 };
 
 export interface CostContext {
+  /** Which ceiling this context runs under. Read by the one call site that
+   *  must refuse under a ceiling regardless of headroom: BUILD §6.2/§6.3 —
+   *  "the free path makes **zero** AI Optimization API calls" — is enforced
+   *  in `src/lib/vendors/dataforseo/ai.ts` by reading this, since no
+   *  compile-time shape can tell a free context from a paid one. Added
+   *  with issue #23; every other member is unchanged. */
+  readonly cap: CapName;
+
   /** Cache-first, ledger-always. `fresh` false means the payload came from
    *  cache and cost nothing. An empty payload is always a miss; there is
    *  no negative cache. */
@@ -104,6 +112,8 @@ export async function withCostContext<T>(
   }
 
   const cost: CostContext = {
+    cap: ctx.cap,
+
     async recordFetch<P>(call: {
       source: string;
       cacheKey: string;
