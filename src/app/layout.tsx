@@ -22,10 +22,16 @@
 // `type.css` is imported here too, alongside `fonts.ts`, for the class to
 // have a rule to match — WO-030's file plan: "Exports the two CSS variable
 // names the root layout binds."
+//
+// Layout tokens: `src/ui/layout/layout.css` declares `--breakpoint-lg`,
+// `--breakpoint-xl` and `--t-floor` on `:root` (ADR-093; issue #62). The
+// conformance suite reads them off every route's document, so the one
+// stylesheet every route shares is where they are imported.
 import type React from "react";
 
 import "@/ui/theme.css";
 import "@/ui/type.css";
+import "@/ui/layout/layout.css";
 import { fontVariables } from "@/ui/fonts";
 
 export default function RootLayout({

@@ -36,11 +36,21 @@
 // `landing.field.label` for both keeps this WO's copy-registry footprint
 // at exactly what its plan anticipated; the owner may split the sentence
 // into a second key later without a mechanism change here.
+//
+// **The screen root is a `Surface`** (ADR-093 decision 6, DECISIONS
+// 2026-09-02; issue #62): the landing predates the layout law and was
+// never re-composed onto it. Its three arms say the same thing — one
+// column at every band — because today the page is one heading, one
+// field and one control (REQ-001 c1), and REQ-099 c1's `compact` arm
+// already reads "follows directly below, in normal flow". When REQ-099's
+// own build adds the component beside the field at `medium` and `wide`,
+// that build re-declares those two arms here; nothing else changes.
 "use client";
 
 import { use, useState, type FormEvent } from "react";
 import { Input } from "@/ui/components/Input";
 import { Btn } from "@/ui/components/Btn";
+import { Surface } from "@/ui/layout";
 import { copy } from "@/lib/presentation/copy";
 import type { DomainProblem } from "@/lib/scan/domain";
 import type { StartScanResponse } from "@/app/api/scan/route";
@@ -122,30 +132,38 @@ export default function LandingPage(props: {
   }
 
   return (
-    <main>
-      <h1>{copy("landing.headline")}</h1>
-      <form action="/api/scan" method="post" onSubmit={handleSubmit}>
-        {problem ? (
-          <Input
-            label={copy("landing.field.label")}
-            placeholder={copy("landing.field.label")}
-            name="value"
-            value={value}
-            onChange={setValue}
-            invalid
-            invalidMessage={copy(PROBLEM_COPY_KEY[problem])}
-          />
-        ) : (
-          <Input
-            label={copy("landing.field.label")}
-            placeholder={copy("landing.field.label")}
-            name="value"
-            value={value}
-            onChange={setValue}
-          />
-        )}
-        <Btn type="submit" label={copy("landing.submit.label")} variant="primary" inFlight={submitting} />
-      </form>
-    </main>
+    <Surface
+      arms={{
+        compact: { kind: "columns", count: 1 },
+        medium: { kind: "same-as-below" },
+        wide: { kind: "same-as-below" },
+      }}
+    >
+      <main>
+        <h1>{copy("landing.headline")}</h1>
+        <form action="/api/scan" method="post" onSubmit={handleSubmit}>
+          {problem ? (
+            <Input
+              label={copy("landing.field.label")}
+              placeholder={copy("landing.field.label")}
+              name="value"
+              value={value}
+              onChange={setValue}
+              invalid
+              invalidMessage={copy(PROBLEM_COPY_KEY[problem])}
+            />
+          ) : (
+            <Input
+              label={copy("landing.field.label")}
+              placeholder={copy("landing.field.label")}
+              name="value"
+              value={value}
+              onChange={setValue}
+            />
+          )}
+          <Btn type="submit" label={copy("landing.submit.label")} variant="primary" inFlight={submitting} />
+        </form>
+      </main>
+    </Surface>
   );
 }
