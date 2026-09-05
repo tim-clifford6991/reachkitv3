@@ -128,7 +128,14 @@ describe("REQ-093 c5 — the registry renders with every model unavailable", () 
     // laws.ts) — 35 + 5 = 40 — and adds thirteen new, already-filled keys
     // for the report address's sentences (`removal.*`, `notice.*`,
     // `control.*`, `copy-link.label`, all in report.ts) — 40 + 13 = 53.
-    expect(nonOwnerOwed.length).toBe(53);
+    //
+    // 2026-09-05, issue #30 (the mail seam, BUILD §12): six keys added in
+    // `mail.ts`. Five are owner-owed and empty — the nothing-to-report
+    // line, the two measurement lines and the two stop-control labels —
+    // and one is filled: `mail.shell.wordmark` → "ReachKit", the product's
+    // own name transcribed, on the same footing as `unmeasured.dash`'s
+    // "—" and `removal.address`. 53 + 1 = 54.
+    expect(nonOwnerOwed.length).toBe(54);
 
     for (const key of nonOwnerOwed) {
       const slotNames = Object.keys(COPY_META[key].slots);
@@ -270,9 +277,16 @@ describe("owner-owed and empty agree both ways", () => {
     // `control.rescan-age`, `control.rescan-incomplete`, `control.retry`,
     // `control.correction-retry`, `copy-link.label`) — 40 + 13 = 53 filled,
     // 17 owner-owed, 57 + 13 = 70 total.
-    expect(OWNER_OWED.length).toBe(17);
-    expect(Object.keys(COPY).length - OWNER_OWED.length).toBe(53);
-    expect(Object.keys(COPY).length).toBe(70);
+    //
+    // 2026-09-05, issue #30 (the mail seam, BUILD §12): six keys in
+    // `mail.ts` — five owner-owed (`mail.nothing_to_report`,
+    // `mail.week_unmeasured`, `mail.week_partly_measured`,
+    // `mail.unsubscribe.label`, `mail.optout.label`) and one filled
+    // (`mail.shell.wordmark`). 17 + 5 = 22 owner-owed, 53 + 1 = 54
+    // filled, 70 + 6 = 76 total.
+    expect(OWNER_OWED.length).toBe(22);
+    expect(Object.keys(COPY).length - OWNER_OWED.length).toBe(54);
+    expect(Object.keys(COPY).length).toBe(76);
   });
 });
 
