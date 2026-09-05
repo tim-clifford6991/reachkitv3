@@ -79,8 +79,20 @@ export const LAWS_COPY = Object.freeze({
     "",
     { slots: { pageTitle: "text" }, fixedBy: "REQ-093 c2" },
   ],
+  // 2026-09-05, issue #13: value moved from "" to `TODO(copy)` per
+  // `CLAUDE.md`'s standing rule. The free report's free-page card
+  // (`BUILD.md` §4.1 module 5) renders a proposed page's title, which is
+  // model text and therefore reaches the screen only through
+  // `renderGenerated` — and `renderGenerated` resolves this key for the
+  // label that must ride with it. Left empty, `copy()` throws and the
+  // whole report screen goes down; `TODO(copy)` renders as itself, so the
+  // label is visibly present and visibly unwritten. Still the owner's
+  // sentence; no string is written here. `generated.page.written` is
+  // untouched — no surface renders it yet, and
+  // `tests/presentation/generated/text.test.ts` asserts the owner-owed
+  // throw against it.
   "generated.page.proposed": [
-    "",
+    "TODO(copy)",
     { slots: { pageTitle: "text" }, fixedBy: "REQ-093 c2" },
   ],
   "unmeasured.undeterminable": ["{what} couldn’t be measured — nothing came back that could be read.", { law: "unmeasured", slots: { what: "text" }, fixedBy: "REQ-004 c6" }],

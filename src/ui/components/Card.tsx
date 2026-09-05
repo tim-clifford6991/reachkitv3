@@ -32,7 +32,15 @@ export type CardProps = CardDefault | CardDegraded;
 
 export function Card(p: CardProps): React.JSX.Element {
   return (
-    <div className="card">
+    // 2026-09-05, issue #13: `card` alone is a radius and a layout in
+    // daisyUI 5 — it paints no surface, draws no edge and casts no shadow.
+    // `BUILD.md` §2.1 states the card idiom's own tokens (`--surface`,
+    // `--line`, `--r-box`, `--shadow-card`) and §2.1's mapping puts them on
+    // `base-100`/`base-300`, so the classes below are that mapping applied
+    // rather than a second set of values: with only `card`, every card in
+    // the product renders as white-on-white and the design system's own
+    // surfaces are invisible.
+    <div className="card bg-base-100 border-base-300 rounded-box border shadow-sm">
       <div className="card-body">
         <div className="card-title">{p.title}</div>
         {p.state === "degraded" ? <p>{p.degradedLine}</p> : p.children}

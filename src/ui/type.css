@@ -53,4 +53,14 @@ body {
 .num {
   font-family: var(--font-mono);
   font-variant-numeric: tabular-nums;
+  /* The mono face's own natural line height, added 2026-09-05 (issue #13).
+   * Tailwind's display sizes ship a `line-height: 1` — tighter than any
+   * font's ascent plus descent — so a mono numeral set at a heading size
+   * inside a UI-font line box escapes that box by a few pixels and the
+   * layout conformance sweep reports it, correctly, as content outside its
+   * container. `normal` is not a chosen number: it is whatever JetBrains
+   * Mono's own metrics say, so the glyph box and the line box are the same
+   * box at every size. Below body size it stays inside the surrounding
+   * 1.55 line box and changes nothing. */
+  line-height: normal;
 }

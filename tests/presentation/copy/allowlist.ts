@@ -124,6 +124,21 @@ export const ATTRIBUTE_ALLOWLIST: readonly AllowlistedAttribute[] = Object.freez
   },
   {
     kind: "exact",
+    name: "tone",
+    reason:
+      "a registered component's `Tone` token ('ok' | 'warn' | 'bad' | 'neutral' | " +
+      "'accent', src/ui/types.ts) — a state colour, never a sentence. On the same " +
+      "footing as `variant` and `state` above: the component's own required text " +
+      "child is what carries the meaning, which is exactly why `Badge` and `Alert` " +
+      "make it required.",
+  },
+  {
+    kind: "exact",
+    name: "size",
+    reason: "a registered component's size token ('default' | 'sm'), not a sentence.",
+  },
+  {
+    kind: "exact",
     name: "lang",
     reason: "an HTML language tag (e.g. 'en'), not a sentence.",
   },
