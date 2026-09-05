@@ -191,6 +191,7 @@ describe("the fixture resolution, until issue #25 replaces it", () => {
   it("each fixture domain reaches its own arm", () => {
     const expected: ReadonlyArray<readonly [string, AddressState["kind"]]> = [
       ["degraded.example.com", "report"],
+      ["cold-start.example.com", "report"],
       ["starting.example.com", "starting"],
       ["scanning.example.com", "scanning"],
       ["refused.example.com", "refused"],

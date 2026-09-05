@@ -172,6 +172,48 @@ export const FIXTURE_DEGRADED_REPORT: StoredReport = {
   freePage: null,
 };
 
+/** REQ-091/092's shape, at this screen: a domain that ranks for nothing
+ *  and has no derived rivals. Every section is *present* and every count
+ *  is measured — that is what makes it different from the degraded
+ *  fixture above, where sections are absent because the measurement did
+ *  not happen. Here the measurement happened and the answer is zero, and
+ *  a measured zero is a zero (REQ-004 c7): no dash anywhere.
+ *
+ *  It is the case that catches an empty-state written as a blank: the
+ *  presence card's `suppressed_no_rivals` framing, its empty absent-from
+ *  table, an AI matrix nobody was cited in, and no first page to offer. */
+export const FIXTURE_COLD_START_REPORT: StoredReport = {
+  ...FIXTURE_REPORT,
+  verdict: {
+    ...FIXTURE_REPORT.verdict,
+    scoreAndBand: measured({ score: 8, band: "invisible" }, MEASURED_AT),
+    limiting: { kind: "factor", factor: "presence" },
+    blockedReaders: measuredZero(0, MEASURED_AT),
+  },
+  blockedAgents: [],
+  aiAnswers: {
+    measuredSearches: 12,
+    answeredSearches: 9,
+    customerCitations: 0,
+    measuredAt: MEASURED_AT,
+    ownDomain: OWN_DOMAIN,
+    rivals: [],
+    rows: QUESTIONS.map((question, index) => ({ question, cell: cellFor(index) })),
+  },
+  presence: {
+    measuredSearches: 12,
+    you: { domain: OWN_DOMAIN, top10Count: 0 },
+    rivals: [],
+    absentFrom: [],
+    framing: "suppressed_no_rivals",
+  },
+  supply: {
+    missingPages: measuredZero(0, MEASURED_AT),
+    unquotablePages: measuredZero(0, MEASURED_AT),
+  },
+  freePage: null,
+};
+
 /** The fixture domains, one per arm the report route can resolve to. Any
  *  other domain resolves to the complete report above, so the screen the
  *  owner reviews first is the one a stranger actually lands on. */
@@ -182,6 +224,12 @@ const FIXTURE_ARMS: Readonly<Record<string, (domain: CanonicalDomain) => Address
       report: FIXTURE_DEGRADED_REPORT,
       notice: { kind: "incomplete", unmeasured: ["foundations", "presence"] },
       control: { kind: "rescan", because: "incomplete" },
+    }),
+    "cold-start.example.com": () => ({
+      kind: "report",
+      report: FIXTURE_COLD_START_REPORT,
+      notice: null,
+      control: { kind: "none" },
     }),
     "starting.example.com": (domain) => ({ kind: "starting", domain }),
     "scanning.example.com": (domain) => ({

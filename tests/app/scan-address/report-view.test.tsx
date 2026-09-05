@@ -29,6 +29,7 @@ vi.mock("@/lib/presentation/copy", () => ({
 import { ReportView } from "@/app/(public)/scan/[domain]/_address/report-view";
 import { RemovalAddressLine, RemovedView } from "@/app/(public)/scan/[domain]/_address/removal";
 import {
+  FIXTURE_COLD_START_REPORT,
   FIXTURE_DEGRADED_REPORT,
   FIXTURE_REPORT,
 } from "@/app/(public)/scan/[domain]/_fixture/states";
@@ -261,6 +262,61 @@ describe("REQ-004 c10/c11 — an absent section is named, and the rest stays usa
     expect(html).toContain("problem.missing-pages.title");
     expect(html).toContain("price.amount");
     expect(html).toContain("removal.line.on-report");
+  });
+});
+
+describe("REQ-091/092 — cold start: a domain that ranks for nothing still reads", () => {
+  const html = render(FIXTURE_COLD_START_REPORT);
+
+  it("shows a measured zero as a zero, never as a dash", () => {
+    // The score is 8 and the three counts are measured zeros. A dash here
+    // would be REQ-004 c7's exact failure: reading "we measured, and the
+    // answer is none" as "we could not measure".
+    expect(html).not.toContain("unmeasured.dash");
+    expect(html).toContain('class="num min-w-0 break-words">8<');
+    expect(html).toContain("band.score.invisible");
+  });
+
+  it("says so in writing where the rival list would be, rather than drawing an empty one", () => {
+    expect(html).toContain("presence.no-rivals");
+  });
+
+  it("the AI matrix keeps the customer's own row and drops every rival row", () => {
+    // The customer's row is not a rival row and never goes away — "you
+    // were named in none of them" is the card's answer, and a card with
+    // no rows at all would be that answer withheld. `Table`'s required
+    // `emptyMessage` therefore has no path on this card today, which is
+    // what a required prop with no default is for: it is supplied, and it
+    // is not reachable by accident.
+    expect(html).toContain("ai-answers.customer-citations(0|9)");
+    const table = html.slice(
+      html.indexOf("ai-answers.matrix.column.domain"),
+      html.indexOf("ai-answers.legend")
+    );
+    expect(table).toContain("example.com");
+    // Scoped to the table: the answers themselves still named rivals, and
+    // the 12-questions list below says so. What a cold start empties is
+    // the *derived rival set*, which is the matrix's rows.
+    expect(table).not.toContain("rival-one.example.net");
+  });
+
+  it("names the empty absent-from table in one written line", () => {
+    expect(html).toContain("presence.absent-from.empty");
+  });
+
+  it("offers the free page's own absent line when the scan found nothing to write", () => {
+    expect(html).toContain("free-page.absent");
+  });
+
+  it("renders no empty element anywhere a sentence belongs", () => {
+    expect(html).not.toMatch(/<p[^>]*><\/p>/);
+    expect(html).not.toMatch(/<td[^>]*><\/td>/);
+  });
+
+  it("the rest of the report is still there — nothing is suppressed by the emptiness", () => {
+    for (const key of ["problem.blocked-readers.title", "method.missing-pages.title", "price.amount"]) {
+      expect(html).toContain(key);
+    }
   });
 });
 
