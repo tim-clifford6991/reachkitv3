@@ -307,7 +307,7 @@ describe('REQ-093 c1 (BP-022: "This node contains no string literal a person rea
     // matching `);`) rather than the whole file — the whole-file scan
     // would also match TypeScript generics like `Promise<T>`, which are
     // `>`…`<` pairs with nothing to do with rendered text.
-    const returnBlock = PAGE_SOURCE.slice(PAGE_SOURCE.indexOf("return (\n    <main>"));
+    const returnBlock = PAGE_SOURCE.slice(PAGE_SOURCE.indexOf("return (\n    <Surface"));
     expect(returnBlock.length, "the JSX return block was not found").toBeGreaterThan(0);
     const jsxTextNodes = [...returnBlock.matchAll(/>([^<{}\n]+)</g)].map((m) => (m[1] ?? "").trim()).filter(Boolean);
     expect(jsxTextNodes).toEqual([]);
@@ -348,6 +348,20 @@ const OWNER_PROBLEM_LINES: Record<string, string> = {
   "landing.problem.no-public-suffix": "That address is missing its ending — try example.com rather than example.",
   "landing.problem.too-long": "That’s longer than any website address can be — check for extra text pasted in.",
 };
+
+describe('ADR-093 decision 6 — "every screen root is a `Surface`" (issue #62)', () => {
+  it("landing/surface · the rendered page has exactly one [data-surface] root, with all three arms, and <main> inside it", async () => {
+    const markup = await renderPage();
+    const surfaces = markup.match(/<div data-surface=""[^>]*>/g) ?? [];
+    expect(surfaces).toHaveLength(1);
+    expect(markup.startsWith(surfaces[0]!)).toBe(true);
+    expect(surfaces[0]).toMatch(/data-arm-compact="[^"]+"/);
+    expect(surfaces[0]).toMatch(/data-arm-medium="[^"]+"/);
+    expect(surfaces[0]).toMatch(/data-arm-wide="[^"]+"/);
+    expect(markup).toMatch(/^<div data-surface=""[^>]*><main>/);
+    expect(markup.endsWith("</main></div>")).toBe(true);
+  });
+});
 
 describe("WO-070 — all eight landing keys are supplied; none is owner-owed", () => {
   it("landing/copy · all eight landing keys resolve through the real (unmocked) registry and return exactly the owner's strings", async () => {

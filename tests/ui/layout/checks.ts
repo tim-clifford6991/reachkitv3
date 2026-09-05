@@ -76,6 +76,16 @@ export function checkContainment(opts: {
     const parent = el.parentElement;
     if (!parent) continue;
     if (matchesAny(parent, scrollContainerAllowlist)) continue;
+    // ADR-093 decision 6 point 2 speaks of an element's *border box*. An
+    // element that generates no box at all — `display: none`, which is
+    // every `<script>`, `<head>` child and `[hidden]` placeholder the
+    // framework writes into `<body>` — has none to contain, and
+    // `getBoundingClientRect()` reports it as a 0×0 rect at the origin,
+    // which lies outside any parent carrying a margin (issue #62: the
+    // landing's four "offenders" were Next.js's own empty hidden `<div>`
+    // and three `<script>` tags, against `<body>`'s 8px UA margin). No box,
+    // nothing to measure — skipped, never reported.
+    if (el.getClientRects().length === 0) continue;
     const box = el.getBoundingClientRect();
     const pbox = parent.getBoundingClientRect();
     if (

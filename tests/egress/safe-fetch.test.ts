@@ -68,10 +68,17 @@ function okResponse(body = "hi"): Scenario {
   return { type: "response", statusCode: 200, bodyChunks: [Buffer.from(body)] };
 }
 
-beforeEach(() => {
+beforeEach(async () => {
   vi.restoreAllMocks();
+  // This file tests the fetcher, not the robots reader (`robots.test.ts`).
+  // The wired reader would itself fetch `/robots.txt` through the mocked
+  // transport and consume the scenario scripted for the page, so every case
+  // here starts from "could not determine" unless it wires a port itself.
+  const { __setRobotsPortForTesting } = await import("../../src/lib/egress/safe-fetch");
+  __setRobotsPortForTesting(async () => ({ ok: false, reason: "robots reader stubbed out in safe-fetch.test.ts" }));
 });
 afterEach(() => {
+  vi.useRealTimers();
   vi.restoreAllMocks();
 });
 
@@ -194,11 +201,19 @@ describe("safeFetch · timeout (BP-006 NFR: default 8000 ms, hard max 15000 ms)"
     expect(outcome).toMatchObject({ ok: false, reason: "timeout" });
   });
 
+  // The two argument tests below freeze the clock. The module derives each
+  // timer's delay as `deadline - Date.now()`, so with a live clock a
+  // millisecond ticking between `start` and the `setTimeout` call reads as
+  // 7999 / 14999 under load (#63). Fake timers pin `Date.now()`, so the
+  // delay the fetcher applies is exactly the clamped value — no wall-clock
+  // resolution in the assertion. `queueMicrotask` is not faked, so the
+  // scripted transport still settles the request.
   it("uses the 8000 ms default when timeoutMs is omitted", async () => {
     const { safeFetch } = await import("../../src/lib/egress/safe-fetch");
     vi.spyOn(dns.promises, "lookup").mockResolvedValue({ address: "93.184.216.34", family: 4 });
     installTransport([okResponse()]);
-    const setTimeoutSpy = vi.spyOn(global, "setTimeout");
+    vi.useFakeTimers();
+    const setTimeoutSpy = vi.spyOn(globalThis, "setTimeout");
 
     await safeFetch("https://example.com/");
 
@@ -210,13 +225,16 @@ describe("safeFetch · timeout (BP-006 NFR: default 8000 ms, hard max 15000 ms)"
     const { safeFetch } = await import("../../src/lib/egress/safe-fetch");
     vi.spyOn(dns.promises, "lookup").mockResolvedValue({ address: "93.184.216.34", family: 4 });
     installTransport([okResponse()]);
-    const setTimeoutSpy = vi.spyOn(global, "setTimeout");
+    vi.useFakeTimers();
+    const setTimeoutSpy = vi.spyOn(globalThis, "setTimeout");
 
     await safeFetch("https://example.com/", { timeoutMs: 999_999 });
 
-    const usedMs = setTimeoutSpy.mock.calls.map((c) => c[1]).filter((ms) => typeof ms === "number");
+    const usedMs = setTimeoutSpy.mock.calls.map((c) => c[1]).filter((ms): ms is number => typeof ms === "number");
     expect(usedMs).toContain(15000);
-    expect(usedMs).not.toContain(999_999);
+    // Every timer the fetch armed sits at or under the hard max — the
+    // caller's 999_999 never reaches a timer.
+    expect(usedMs.every((ms) => ms <= 15000)).toBe(true);
   });
 });
 
@@ -253,7 +271,7 @@ describe("safeFetch · observability (BP-006 NFR: host, outcome reason, status, 
   });
 });
 
-describe("safeFetch · robots port (BP-006: on by default, delegated to WO-020's reader through a narrow port)", () => {
+describe("safeFetch · robots port (BP-006: on by default, delegated to robots.ts through a narrow port)", () => {
   it("blocks with robots_disallowed when the wired port reports the origin disallows this agent", async () => {
     const { safeFetch, __setRobotsPortForTesting } = await import("../../src/lib/egress/safe-fetch");
     vi.spyOn(dns.promises, "lookup").mockResolvedValue({ address: "93.184.216.34", family: 4 });
@@ -295,7 +313,7 @@ describe("safeFetch · robots port (BP-006: on by default, delegated to WO-020's
     __setRobotsPortForTesting(null);
   });
 
-  it("never blocks on the default (unwired) port — 'could not determine' is not a fabricated disallow", async () => {
+  it("never blocks when the reader cannot determine — 'could not determine' is not a fabricated disallow", async () => {
     const { safeFetch } = await import("../../src/lib/egress/safe-fetch");
     vi.spyOn(dns.promises, "lookup").mockResolvedValue({ address: "93.184.216.34", family: 4 });
     installTransport([okResponse()]);

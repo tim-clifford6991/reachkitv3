@@ -40,6 +40,30 @@ describe("ADR-093 decision 6 point 5 — the canary overflows on purpose and mus
     expect(offenders.length).toBeGreaterThan(0);
   });
 
+  it("check 2 — an element that generates no box is not an offender; the escapee still is (issue #62)", async () => {
+    // A `<script>` or a `[hidden]` `<div>` has `display: none` and no border
+    // box; its empty rect reads as 0×0 at the origin, outside a parent that
+    // carries a margin. The fixture's body has no margin, so the case is
+    // built here: give body the UA's 8px and prepend both no-box elements.
+    const offenders = await withPage(FLOOR_WIDTH, async (page) => {
+      await page.goto(FIXTURE_URL);
+      await page.evaluate(() => {
+        document.body.style.margin = "8px";
+        const hidden = document.createElement("div");
+        hidden.hidden = true;
+        hidden.id = "no-box-hidden";
+        const script = document.createElement("script");
+        script.id = "no-box-script";
+        script.textContent = "/* inert */";
+        document.body.prepend(hidden, script);
+      });
+      return page.evaluate(checkContainment, { scrollContainerAllowlist: [] });
+    });
+    expect(offenders.some((o) => o.element.includes("no-box-hidden"))).toBe(false);
+    expect(offenders.some((o) => o.element.includes("no-box-script"))).toBe(false);
+    expect(offenders.some((o) => o.element.includes("escapee"))).toBe(true);
+  });
+
   it("check 3 (no clipping or truncation) fails on the clipped name", async () => {
     const offenders = await withPage(FLOOR_WIDTH, async (page) => {
       await page.goto(FIXTURE_URL);
