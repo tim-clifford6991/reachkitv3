@@ -31,7 +31,15 @@ export function Table(p: {
   if (p.zebra) classes.push("table-zebra");
 
   return (
-    <div className="overflow-x-auto">
+    // `min-w-0` alongside the wrap, added 2026-09-05 (issue #13): a flex
+    // or grid child defaults to `min-width: auto`, so inside a `card-body`
+    // — which is a flex column, and where §2.2 puts most tables — this
+    // wrapper refused to narrow past the table's own content width and
+    // pushed the document sideways instead of scrolling. An
+    // `overflow-x-auto` box that cannot shrink never scrolls, so the wrap
+    // was not doing the job §2.2 gives it. Caught by the layout
+    // conformance sweep at 320px on the first route to render a table.
+    <div className="min-w-0 overflow-x-auto">
       <table className={classes.join(" ")}>
         <thead>
           <tr>
