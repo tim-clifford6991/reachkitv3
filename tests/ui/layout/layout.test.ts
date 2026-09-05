@@ -23,6 +23,8 @@ import {
   checkNoHorizontalScroll,
   checkTypeFloor,
   MONO_FONT_FAMILY,
+  SCROLL_CONTAINER_ALLOWLIST,
+  TRUNCATION_ALLOWLIST,
 } from "./checks";
 import { enumerateRoutes, type EnumeratedRoute } from "./routes";
 import { widths } from "./widths";
@@ -77,9 +79,11 @@ describe(`layout sweep — ${routes.length} route(s) × 5 widths`, () => {
             await page.goto(urlFor(route));
             const results = [
               await page.evaluate(checkNoHorizontalScroll),
-              await page.evaluate(checkContainment, { scrollContainerAllowlist: [] }),
+              await page.evaluate(checkContainment, {
+                scrollContainerAllowlist: SCROLL_CONTAINER_ALLOWLIST,
+              }),
               await page.evaluate(checkNoClippingOrTruncation, {
-                truncationAllowlist: [],
+                truncationAllowlist: TRUNCATION_ALLOWLIST,
                 monoFontFamily: MONO_FONT_FAMILY,
               }),
               await page.evaluate(checkTypeFloor),

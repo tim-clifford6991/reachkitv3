@@ -30,10 +30,23 @@ export interface Offender {
 // whether a clipped string is a value (ADR-093 decision 6 point 3).
 export const MONO_FONT_FAMILY = "JetBrains Mono";
 
-// Both empty at cut (WO-269 file plan): a surface that declares its own
-// scroll container, or its own registered truncation, adds its own row —
-// never a default.
-export const SCROLL_CONTAINER_ALLOWLIST: readonly string[] = [];
+// A surface that declares its own scroll container, or its own registered
+// truncation, adds its own row — never a default.
+//
+// 2026-09-05, issue #13: `.overflow-x-auto` is the first row. `BUILD.md`
+// §2.2 requires every `table` to sit "always inside an `overflow-x-auto`
+// wrap", and `src/ui/components/Table.tsx` is built that way — so a wide
+// table overflowing that wrapper is the design system working as
+// specified, not a containment defect. The row names the wrapper, so the
+// exemption reaches exactly one child level: anything overflowing a box
+// that is *not* declared scrollable is still reported.
+// `.collapse` is the second row, for the same kind of reason: daisyUI's
+// collapse *is* a clip container — a closed section keeps its content in
+// the document (collapsed markup, never a lazy fetch, so it is readable
+// with JavaScript off once opened) and hides it with `overflow: hidden`.
+// Its content box sitting outside the closed shell is the component
+// working, not text escaping its box.
+export const SCROLL_CONTAINER_ALLOWLIST: readonly string[] = [".overflow-x-auto", ".collapse"];
 export const TRUNCATION_ALLOWLIST: readonly string[] = [];
 
 /** Check 1 — no horizontal document scroll. */
@@ -87,6 +100,16 @@ export function checkContainment(opts: {
     // nothing to measure — skipped, never reported.
     if (el.getClientRects().length === 0) continue;
     const box = el.getBoundingClientRect();
+    // 2026-09-05, issue #13: the same reasoning one step further. An
+    // element whose border box has zero area draws nothing and has no
+    // extent to contain, so a rect sitting a few pixels past its parent's
+    // edge says nothing about layout. The case that surfaced it is
+    // `<next-route-announcer>` — the App Router's own screen-reader
+    // element, appended to `<body>` at hydration, empty and 0x0. It
+    // appears only once the client runtime has hydrated, so leaving it in
+    // makes every route's sweep a race with hydration rather than a
+    // measurement of the page.
+    if (box.width === 0 && box.height === 0) continue;
     const pbox = parent.getBoundingClientRect();
     if (
       box.left < pbox.left - EPS ||
