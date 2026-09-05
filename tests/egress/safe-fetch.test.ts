@@ -72,6 +72,7 @@ beforeEach(() => {
   vi.restoreAllMocks();
 });
 afterEach(() => {
+  vi.useRealTimers();
   vi.restoreAllMocks();
 });
 
@@ -194,11 +195,19 @@ describe("safeFetch · timeout (BP-006 NFR: default 8000 ms, hard max 15000 ms)"
     expect(outcome).toMatchObject({ ok: false, reason: "timeout" });
   });
 
+  // The two argument tests below freeze the clock. The module derives each
+  // timer's delay as `deadline - Date.now()`, so with a live clock a
+  // millisecond ticking between `start` and the `setTimeout` call reads as
+  // 7999 / 14999 under load (#63). Fake timers pin `Date.now()`, so the
+  // delay the fetcher applies is exactly the clamped value — no wall-clock
+  // resolution in the assertion. `queueMicrotask` is not faked, so the
+  // scripted transport still settles the request.
   it("uses the 8000 ms default when timeoutMs is omitted", async () => {
     const { safeFetch } = await import("../../src/lib/egress/safe-fetch");
     vi.spyOn(dns.promises, "lookup").mockResolvedValue({ address: "93.184.216.34", family: 4 });
     installTransport([okResponse()]);
-    const setTimeoutSpy = vi.spyOn(global, "setTimeout");
+    vi.useFakeTimers();
+    const setTimeoutSpy = vi.spyOn(globalThis, "setTimeout");
 
     await safeFetch("https://example.com/");
 
@@ -210,13 +219,16 @@ describe("safeFetch · timeout (BP-006 NFR: default 8000 ms, hard max 15000 ms)"
     const { safeFetch } = await import("../../src/lib/egress/safe-fetch");
     vi.spyOn(dns.promises, "lookup").mockResolvedValue({ address: "93.184.216.34", family: 4 });
     installTransport([okResponse()]);
-    const setTimeoutSpy = vi.spyOn(global, "setTimeout");
+    vi.useFakeTimers();
+    const setTimeoutSpy = vi.spyOn(globalThis, "setTimeout");
 
     await safeFetch("https://example.com/", { timeoutMs: 999_999 });
 
-    const usedMs = setTimeoutSpy.mock.calls.map((c) => c[1]).filter((ms) => typeof ms === "number");
+    const usedMs = setTimeoutSpy.mock.calls.map((c) => c[1]).filter((ms): ms is number => typeof ms === "number");
     expect(usedMs).toContain(15000);
-    expect(usedMs).not.toContain(999_999);
+    // Every timer the fetch armed sits at or under the hard max — the
+    // caller's 999_999 never reaches a timer.
+    expect(usedMs.every((ms) => ms <= 15000)).toBe(true);
   });
 });
 
