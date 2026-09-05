@@ -35,7 +35,7 @@
 // per-`it`, not a global default, so nothing else in the suite loses its
 // deadline.
 import path from "node:path";
-import { describe, expect, it } from "vitest";
+import { beforeAll, describe, expect, it } from "vitest";
 import { ESLint } from "eslint";
 
 const ROOT = path.resolve(__dirname, "../..");
@@ -54,6 +54,17 @@ async function lint(source: string, filePath: string): Promise<ESLint.LintResult
 function messages(result: ESLint.LintResult): string[] {
   return result.messages.map((m) => m.message);
 }
+
+// The first ESLint run in a worker pays the whole flat-config bootstrap —
+// `eslint-config-next` resolves a TypeScript program over the repo, so that
+// one-off cost grows with the source tree and has outgrown Vitest's 5 s
+// per-test default (adding `src/jobs/**` in #39 was what pushed it over).
+// It is paid once here, under its own timeout; every assertion below then
+// runs in tens of milliseconds and keeps the default, so a rule that
+// actually breaks still fails fast.
+beforeAll(async () => {
+  await lint("export const warmUp = true;\n", "src/lib/measure/eslint-warm-up.ts");
+}, 60_000);
 
 describe("structure.md rule 6 — src/lib/ may not import from src/app/", () => {
   it("reports a src/lib fixture importing @/app/...", async () => {

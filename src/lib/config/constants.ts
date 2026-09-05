@@ -328,3 +328,25 @@ export const VENDOR = Object.freeze({                         // #23 · BUILD §
  *  the address that brings it back. Owner ruling 2026-09-05 (#28) —
  *  supersedes the archived plan's `200`. */
 export const REPORT_REMOVED_STATUS = 410 as const;
+
+// ── The job runner — BUILD §11
+/** The fixed fan-out bound BP-003 names: "No job fans out across customers
+ *  inside one invocation past a fixed concurrency; a slow site never
+ *  starves the rest of Monday." Chosen here as a parameter (rule 1.1 — an
+ *  internal scheduling bound with no customer-visible consequence): ten is
+ *  wide enough that a Monday's fan-out is not serialised behind one slow
+ *  site and narrow enough that one tick cannot open more vendor work than
+ *  the cost seam's caps were sized for. Reversal cost: one number. */
+export const JOB_FAN_OUT_CONCURRENCY = 10 as const;           // BP-003 · BUILD §11
+/** The site-local hour `draft/generate` is due. BUILD §11 says "daily,
+ *  evening" and BP-003 adds "in the site's time zone … must finish before
+ *  the veto window would start"; neither states an hour, so 18:00 local is
+ *  chosen here as a parameter (rule 1.1) — the first hour that is evening
+ *  everywhere, leaving `VETO.defaultHours` clear of the next publish date.
+ *  Site-local, never UTC, on the same grounds ADR-060 states for the
+ *  weekly tick. Reversal cost: one number. */
+export const DRAFT_DUE_HOUR_LOCAL = 18 as const;              // BP-003 · BUILD §11 (chosen)
+/** BUILD §11: `publish/verify` runs "+24h" after a publish. Distinct from
+ *  `DAILY_WINDOW_H`, which is BP-023's free-scan rate-limit window and
+ *  happens to share the number; the two move independently. */
+export const PUBLISH_VERIFY_DELAY_H = 24 as const;            // BP-049 · BUILD §11
