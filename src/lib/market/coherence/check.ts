@@ -14,30 +14,17 @@
 // (`structure.md` rule 5) — both operands are read from `COHERENCE`.
 import { COHERENCE } from "@/lib/config/constants";
 import { registrableDomain } from "@/lib/market/rivals/domains";
+import type { MarketSerpOrganic } from "../views";
 
 /**
- * A local, structural view of BP-008's `SerpResult` — not a second
- * declaration of that type (rule 2.4), a narrower read of it.
- *
- * `checkCoherence` reads only the organic top ten's domains (BP-028 step 3
- * counts appearances in "the supplied SERPs' top tens"; it never touches
- * `ai_overview`). This WO's own purity clause (`check/is-pure`, below and
- * in the test file) forbids an import into `src/lib/vendors/`, where
- * BP-008's canonical `SerpResult` is declared
- * (`src/lib/vendors/dataforseo/types.ts`, WO-023's file plan) — and no
- * neutral re-export of it exists yet under `src/lib/market/` for a pure
- * consumer to import instead. WO-080's file plan is two files and cannot
- * add a third to hold one. Any real `SerpResult` (carrying `ai_overview`
- * and more besides) satisfies this narrower shape structurally.
- *
- * Flagged in the WO-080 return as a `rests-on` row: the same kind of
- * cross-node disagreement ADR-095 resolved for `report.market` and
- * `coherence`, and the architect's to resolve the same way — not decided
- * unilaterally here.
+ * The organic-only read of a bought SERP, re-exported under the name this
+ * module's callers already use. It is `src/lib/market/views.ts`' shared
+ * declaration now, not a second copy of one: this file used to declare its
+ * own and flagged the duplication for resolution, because a pure consumer
+ * that must resolve no import into `src/lib/vendors/` had nowhere neutral
+ * to read the shape from. `views.ts` is that place; the type is unchanged.
  */
-export interface SerpResult {
-  organic: readonly { domain: string }[];
-}
+export type { MarketSerpOrganic as SerpResult } from "../views";
 
 export type CoherenceVerdict =
   | { verdict: "coherent" }
@@ -67,7 +54,7 @@ export function coherenceThreshold(measuredCount: number): number {
  * mutation-tested against (doctrine 0.13.2).
  */
 export function checkCoherence(a: {
-  serps: readonly SerpResult[];
+  serps: readonly MarketSerpOrganic[];
   measuredCount: number;
 }): CoherenceVerdict {
   const { serps, measuredCount } = a;

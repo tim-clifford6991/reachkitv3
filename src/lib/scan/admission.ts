@@ -230,6 +230,18 @@ interface InsertedScanRow {
 
 type Client = ReturnType<typeof dbAdmin>;
 
+/** Whether the domain's report was taken down on a written request
+ *  (REQ-002 c4). Exported because this file is the one place under `src/`
+ *  that names `domain_blocks` at all, and the correction offer
+ *  (`src/lib/scan/correction.ts`) has to know the same fact the admission
+ *  order's first step reads — one reader of that table in the product, not
+ *  two. It reads and never writes, like every other use of the table here.
+ *  Throws on a read that could not be answered; each caller decides what
+ *  an unanswerable read means for it (this file's own order fails open). */
+export function isDomainRemoved(domain: CanonicalDomain): Promise<boolean> {
+  return isRemoved(dbAdmin(), domain);
+}
+
 async function isRemoved(client: Client, domain: CanonicalDomain): Promise<boolean> {
   const { data, error } = await untyped(client)
     .from<DomainBlockRow>("domain_blocks")
