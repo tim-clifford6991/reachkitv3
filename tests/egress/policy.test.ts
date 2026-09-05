@@ -10,7 +10,7 @@ import https from "node:https";
 import dns from "node:dns";
 import path from "node:path";
 import { ESLint } from "eslint";
-import { describe, expect, expectTypeOf, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, expectTypeOf, it, vi } from "vitest";
 import { checkAddress, checkSchemeAndPort, classifyAddress } from "../../src/lib/egress/policy";
 import type { RobotsPolicy } from "../../src/lib/egress/types";
 
@@ -131,6 +131,20 @@ function installTransport(scenarios: Scenario[]) {
 }
 
 describe("safeFetch · policy refusal opens no socket", () => {
+  // These cases are about the address policy, not robots. The wired reader
+  // would fetch `/robots.txt` through the same mocked transport and consume
+  // the scenario scripted for the page, so it is stubbed out to "could not
+  // determine" here — the arm that refuses nothing (`robots.test.ts` owns
+  // the reader's own behaviour).
+  beforeEach(async () => {
+    const { __setRobotsPortForTesting } = await import("../../src/lib/egress/safe-fetch");
+    __setRobotsPortForTesting(async () => ({ ok: false, reason: "robots reader stubbed out in policy.test.ts" }));
+  });
+  afterEach(async () => {
+    const { __setRobotsPortForTesting } = await import("../../src/lib/egress/safe-fetch");
+    __setRobotsPortForTesting(null);
+  });
+
   it.each([
     ["private", "10.1.2.3"],
     ["loopback", "127.0.0.1"],

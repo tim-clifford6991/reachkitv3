@@ -68,8 +68,14 @@ function okResponse(body = "hi"): Scenario {
   return { type: "response", statusCode: 200, bodyChunks: [Buffer.from(body)] };
 }
 
-beforeEach(() => {
+beforeEach(async () => {
   vi.restoreAllMocks();
+  // This file tests the fetcher, not the robots reader (`robots.test.ts`).
+  // The wired reader would itself fetch `/robots.txt` through the mocked
+  // transport and consume the scenario scripted for the page, so every case
+  // here starts from "could not determine" unless it wires a port itself.
+  const { __setRobotsPortForTesting } = await import("../../src/lib/egress/safe-fetch");
+  __setRobotsPortForTesting(async () => ({ ok: false, reason: "robots reader stubbed out in safe-fetch.test.ts" }));
 });
 afterEach(() => {
   vi.useRealTimers();
@@ -265,7 +271,7 @@ describe("safeFetch · observability (BP-006 NFR: host, outcome reason, status, 
   });
 });
 
-describe("safeFetch · robots port (BP-006: on by default, delegated to WO-020's reader through a narrow port)", () => {
+describe("safeFetch · robots port (BP-006: on by default, delegated to robots.ts through a narrow port)", () => {
   it("blocks with robots_disallowed when the wired port reports the origin disallows this agent", async () => {
     const { safeFetch, __setRobotsPortForTesting } = await import("../../src/lib/egress/safe-fetch");
     vi.spyOn(dns.promises, "lookup").mockResolvedValue({ address: "93.184.216.34", family: 4 });
@@ -307,7 +313,7 @@ describe("safeFetch · robots port (BP-006: on by default, delegated to WO-020's
     __setRobotsPortForTesting(null);
   });
 
-  it("never blocks on the default (unwired) port — 'could not determine' is not a fabricated disallow", async () => {
+  it("never blocks when the reader cannot determine — 'could not determine' is not a fabricated disallow", async () => {
     const { safeFetch } = await import("../../src/lib/egress/safe-fetch");
     vi.spyOn(dns.promises, "lookup").mockResolvedValue({ address: "93.184.216.34", family: 4 });
     installTransport([okResponse()]);

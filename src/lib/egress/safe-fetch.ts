@@ -19,6 +19,7 @@ import https from "node:https";
 import dns from "node:dns";
 import { isIP } from "node:net";
 import { checkAddress, checkSchemeAndPort } from "./policy";
+import { productToken, readRobots } from "./robots";
 import type { FetchOutcome, RobotsPolicy } from "./types";
 import { VERIFY } from "@/lib/config/constants";
 
@@ -67,34 +68,34 @@ export type SafeFetchOpts = {
 
 // ── The robots port (BP-006 `readRobots`) ───────────────────────────────
 //
-// WO-020 ships the reader that satisfies this signature; this WO ships only
-// `RobotsPolicy`'s declaration (src/lib/egress/types.ts) and this narrow
-// port so the two work orders share no file. Until WO-020 wires the real
-// reader, the default here never blocks — `{ ok: false }`, the "could not
-// determine" arm, which REQ-004 criterion 6 treats as undeterminable, never
-// as a fabricated disallow. Overridable only from this module's own test
-// file, so a real caller always gets the wired default.
+// `robots.ts` (issue #22) is the reader behind this narrow port: it fetches
+// the document through this very module with `respectRobots: false`, so the
+// import cycle below is deliberate and terminates. When the reader cannot
+// determine — `{ ok: false }`, REQ-004 criterion 6's undeterminable — this
+// module never fabricates a disallow. Overridable only from test files, so
+// a real caller always gets the wired default.
 export type RobotsPort = (
   origin: string,
   userAgent: string
 ) => Promise<RobotsPolicy | { ok: false; reason: string }>;
 
-const notWiredYet: RobotsPort = async () => ({
-  ok: false,
-  reason: "robots reader not wired (WO-020 not yet shipped)",
-});
+const wiredReader: RobotsPort = (origin) => readRobots(origin);
 
-let robotsPort: RobotsPort = notWiredYet;
+let robotsPort: RobotsPort = wiredReader;
 
-/** Test-only seam (constitution rule 2.4: the real wiring is WO-020's, this
- *  WO only ships the port). Never called from production code. */
+/** Test-only seam. Never called from production code. */
 export function __setRobotsPortForTesting(port: RobotsPort | null): void {
-  robotsPort = port ?? notWiredYet;
+  robotsPort = port ?? wiredReader;
 }
 
-function isDisallowed(policy: RobotsPolicy, userAgentToken: string): boolean {
-  if (policy.disallowsAll) return true;
-  return policy.disallowedAgents[userAgentToken] === true;
+/** RFC 9309 §2.2.1: the group that names our product token decides, and the
+ *  wildcard group applies only where no group names us — so a document that
+ *  disallows every reader but allows us by name allows us, and one that
+ *  allows every reader but disallows us by name refuses us. */
+function isDisallowed(policy: RobotsPolicy, userAgentToken: string, userAgentValue: string): boolean {
+  const named =
+    policy.disallowedAgents[productToken(userAgentValue)] ?? policy.disallowedAgents[userAgentToken];
+  return named ?? policy.disallowsAll;
 }
 
 // ── Observability — BP-006 NFR budget, verbatim field set ──────────────
@@ -146,8 +147,10 @@ type ResolveResult =
  *  caller wrote is the address checked and connected to). Bounded by
  *  `remainingMs` so a hanging resolver cannot itself exceed the fetch's own
  *  deadline; a lookup that does not finish in time is `"timeout"`, never
- *  `"dns"` — those are different failure classes in `FetchOutcome`. */
-async function resolveAddress(hostname: string, remainingMs: number): Promise<ResolveResult> {
+ *  `"dns"` — those are different failure classes in `FetchOutcome`.
+ *  Exported for `dns.ts`'s `resolvesInDns`, so "does this name resolve" is
+ *  answered by the same lookup this module connects on. */
+export async function resolveAddress(hostname: string, remainingMs: number): Promise<ResolveResult> {
   const family = isIP(hostname);
   if (family !== 0) return { kind: "resolved", address: hostname, family };
 
@@ -176,7 +179,8 @@ function performRequest(
   address: string,
   hostname: string,
   userAgentValue: string,
-  remainingMs: number
+  remainingMs: number,
+  maxBytes: number
 ): Promise<HopResult> {
   return new Promise((resolve) => {
     const isHttps = targetUrl.protocol === "https:";
@@ -213,7 +217,7 @@ function performRequest(
       res.on("data", (chunk: Buffer) => {
         if (tooLarge) return;
         bytes += chunk.length;
-        if (bytes > DEFAULT_MAX_BYTES_GUARD.current) {
+        if (bytes > maxBytes) {
           tooLarge = true;
           res.destroy();
           settle({ kind: "too_large" });
@@ -249,18 +253,12 @@ function performRequest(
   });
 }
 
-// `performRequest`'s size cap is set per-call via this mutable box so the
-// function above can read the caller's `maxBytes` without threading it
-// through every closure — module-private, never read outside this file.
-const DEFAULT_MAX_BYTES_GUARD = { current: DEFAULT_MAX_BYTES };
-
 /** BP-006 `safeFetch`. Never throws — see the module header. */
 export async function safeFetch(url: string, opts?: SafeFetchOpts): Promise<FetchOutcome> {
   const readAt = new Date();
   const start = Date.now();
   const timeoutMs = clampTimeout(opts?.timeoutMs);
   const maxBytes = opts?.maxBytes ?? DEFAULT_MAX_BYTES;
-  DEFAULT_MAX_BYTES_GUARD.current = maxBytes;
   const respectRobots = opts?.respectRobots ?? true;
   const userAgentToken = opts?.userAgent ?? DEFAULT_USER_AGENT_TOKEN;
   const userAgentValue = userAgentString(userAgentToken);
@@ -309,10 +307,10 @@ export async function safeFetch(url: string, opts?: SafeFetchOpts): Promise<Fetc
     }
 
     // 4. Robots — delegated through the port, on by default, never a
-    //    fabricated disallow when the port cannot determine (WO-020).
+    //    fabricated disallow when the reader cannot determine.
     if (respectRobots) {
       const robots = await robotsPort(currentUrl.origin, userAgentToken);
-      if (robots.ok && isDisallowed(robots, userAgentToken)) {
+      if (robots.ok && isDisallowed(robots, userAgentToken, userAgentValue)) {
         logFetch(currentUrl.hostname, "robots_disallowed", null, 0, Date.now() - start);
         return fail("robots_disallowed", hopUrlString, readAt);
       }
@@ -329,7 +327,8 @@ export async function safeFetch(url: string, opts?: SafeFetchOpts): Promise<Fetc
       resolved.address,
       currentUrl.hostname,
       userAgentValue,
-      remainingForConnect
+      remainingForConnect,
+      maxBytes
     );
 
     if (result.kind === "too_large") {

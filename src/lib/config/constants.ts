@@ -283,3 +283,14 @@ export const GOAL_VALUES = Object.freeze({
   searches_appeared_in: 400, ai_answers: 6, score: 50,
   pages_published: 30,          // owner ruling, 2026-08-31 — a month of daily pages
 } as const);
+
+// ── Egress — BUILD §6.4
+/** Bound on one DNS resolution inside `resolvesInDns()` (`src/lib/egress/dns.ts`).
+ *  Chosen here as a parameter (rule 1.1): BUILD §6.4 / BP-006 bound the
+ *  *fetch* (8 s default, 15 s hard max) but name no bound for the bare
+ *  "does this name resolve" question, which is asked where a human is
+ *  waiting on a setup or settings form. A healthy resolver answers in well
+ *  under a second; 5 s is long enough for a slow authoritative server and
+ *  short enough that a hanging resolver never holds the form longer than
+ *  a fetch would. Reversal cost: one number, no customer-visible string. */
+export const DNS_TIMEOUT_MS = 5000 as const;                  // BP-006 · BUILD §6.4 (chosen)
