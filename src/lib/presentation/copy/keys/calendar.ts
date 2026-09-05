@@ -5,6 +5,11 @@
 // lines. Empty value, owner-owed — no string is written here (constitution
 // §1). The block that owns the calendar fills every other sentence this
 // surface needs.
+//
+// 2026-09-05: issue #9 (BUILD §4.4) adds `calendar.head` — the one written
+// line this screen states inside the app shell until its own content lands
+// (issue #16, §4.6). Owner-owed and empty: it is a customer-visible sentence
+// (constitution §1).
 import type { CopyPartition } from "../registry.ts";
 
 export const CALENDAR_COPY = Object.freeze({
@@ -20,4 +25,5 @@ export const CALENDAR_COPY = Object.freeze({
     "",
     { law: "no-presence-yet", slots: {}, fixedBy: "REQ-043 c3" },
   ],
+  "calendar.head": ["", { slots: {}, fixedBy: "BUILD §4.6" }],
 }) satisfies CopyPartition;

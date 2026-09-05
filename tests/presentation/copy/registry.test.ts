@@ -135,7 +135,12 @@ describe("REQ-093 c5 — the registry renders with every model unavailable", () 
     // and one is filled: `mail.shell.wordmark` → "ReachKit", the product's
     // own name transcribed, on the same footing as `unmeasured.dash`'s
     // "—" and `removal.address`. 53 + 1 = 54.
-    expect(nonOwnerOwed.length).toBe(54);
+    //
+    // 2026-09-05, separately: issue #9 (the app shell, BUILD §4.4) adds
+    // five filled `shell.*` keys in `laws.ts`, each a transcription of a
+    // word `BUILD.md` §4.4 or §4.3 prints — the three destination names
+    // and the two publishing modes: 54 + 5 = 59.
+    expect(nonOwnerOwed.length).toBe(59);
 
     for (const key of nonOwnerOwed) {
       const slotNames = Object.keys(COPY_META[key].slots);
@@ -231,7 +236,7 @@ describe("owner-owed and empty agree both ways", () => {
     expect(new Set(emptyKeys)).toEqual(new Set(OWNER_OWED));
   });
 
-  it("counts: 17 owner-owed, 53 filled, 70 total (rule 5.5 — the index states its own coverage)", () => {
+  it("counts: 27 owner-owed, 59 filled, 86 total (rule 5.5 — the index states its own coverage)", () => {
     // WO-070 added report.ts's eight landing keys (headline, field label,
     // submit label, five DomainProblem lines), all owner-owed: 30 + 8 = 38.
     // 2026-09-03: the owner ruled on three of them (headline, field label,
@@ -284,9 +289,24 @@ describe("owner-owed and empty agree both ways", () => {
     // `mail.unsubscribe.label`, `mail.optout.label`) and one filled
     // (`mail.shell.wordmark`). 17 + 5 = 22 owner-owed, 53 + 1 = 54
     // filled, 70 + 6 = 76 total.
-    expect(OWNER_OWED.length).toBe(22);
-    expect(Object.keys(COPY).length - OWNER_OWED.length).toBe(54);
-    expect(Object.keys(COPY).length).toBe(76);
+    //
+    // 2026-09-05, separately: issue #9 (the app shell, BUILD §4.4,
+    // REQ-040) adds ten keys. Five are filled and every one is a
+    // transcription of a word `BUILD.md` itself prints, on the same
+    // footing as the thirteen band words — `laws.ts`'s
+    // `shell.nav.overview`/`.calendar`/`.settings` (§4.4's "nav
+    // **Overview / Calendar / Settings**") and
+    // `shell.publishing.mode.autopilot`/`.copilot` (§4.3's "Autopilot
+    // (default, selected) vs Copilot"). Five are owner-owed and empty:
+    // `laws.ts`'s `shell.domain.measured-weeks` and
+    // `shell.domain.not-measured` (REQ-040 c6 and c7's own written lines)
+    // and one `*.head` line each in `overview.ts`, `calendar.ts` and
+    // `settings.ts`, the sentence each screen states inside the shell
+    // until its own content lands (#15, #16, #18). 22 + 5 = 27
+    // owner-owed, 54 + 5 = 59 filled, 76 + 10 = 86 total.
+    expect(OWNER_OWED.length).toBe(27);
+    expect(Object.keys(COPY).length - OWNER_OWED.length).toBe(59);
+    expect(Object.keys(COPY).length).toBe(86);
   });
 });
 

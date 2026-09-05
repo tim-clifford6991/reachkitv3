@@ -30,6 +30,17 @@
 // slot the ruled sentence itself takes; `renderMeasured` (BP-019,
 // `src/lib/presentation/measured.ts`) gains the matching options member
 // to supply it. `unmeasured.dash` is untouched.
+//
+// 2026-09-05, separately again: issue #9 (BUILD §4.4, REQ-040) adds the
+// seven `shell.*` keys the app shell speaks on every app screen — sentences
+// no single screen owns, which is why they sit here beside the
+// `next-publish.*` family the same shell renders. Two are owner-owed and
+// empty (REQ-040 c6's week line and c7's not-measured line are written
+// sentences and therefore the owner's, constitution §1). Five carry a
+// value, and every one of them is a **transcription** of a word `BUILD.md`
+// itself prints, on the same footing as the thirteen band words: §4.4's
+// "nav **Overview / Calendar / Settings**" and §4.3's "Autopilot (default,
+// selected) vs Copilot". Nothing here is composed.
 import type { CopyPartition } from "../registry.ts";
 
 export const LAWS_COPY = Object.freeze({
@@ -75,4 +86,17 @@ export const LAWS_COPY = Object.freeze({
   "unmeasured.undeterminable": ["{what} couldn’t be measured — nothing came back that could be read.", { law: "unmeasured", slots: { what: "text" }, fixedBy: "REQ-004 c6" }],
   "unmeasured.not-attempted": ["{what} wasn’t measured — the scan stopped early, before it got there.", { law: "unmeasured", slots: { what: "text" }, fixedBy: "REQ-004 c9" }],
   "unmeasured.dash": ["—", { law: "unmeasured", slots: {}, fixedBy: "REQ-004 c2" }],
+  "shell.nav.overview": ["Overview", { slots: {}, fixedBy: "REQ-040 c1" }],
+  "shell.nav.calendar": ["Calendar", { slots: {}, fixedBy: "REQ-040 c1" }],
+  "shell.nav.settings": ["Settings", { slots: {}, fixedBy: "REQ-040 c1" }],
+  "shell.publishing.mode.autopilot": ["Autopilot", { slots: {}, fixedBy: "REQ-040 c3" }],
+  "shell.publishing.mode.copilot": ["Copilot", { slots: {}, fixedBy: "REQ-040 c3" }],
+  "shell.domain.measured-weeks": [
+    "",
+    { slots: { weeks: "text", on: "date" }, fixedBy: "REQ-040 c6" },
+  ],
+  "shell.domain.not-measured": [
+    "",
+    { slots: { due: "date" }, fixedBy: "REQ-040 c7" },
+  ],
 }) satisfies CopyPartition;
