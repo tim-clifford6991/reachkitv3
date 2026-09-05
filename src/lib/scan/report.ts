@@ -7,21 +7,29 @@
 // no reader, no writer and no SQL — issue #25 (`runScan`, `assembleReport`,
 // `storeCurrentReport`) supplies those against this shape.
 //
-// **Three sections are declared here and will be imported later.** BP-025
-// owns the AI-answers card (`src/lib/market/questions/matrix.ts`, issue
-// #26) and BP-026 the presence card (`src/lib/market/rivals/presence.ts`,
-// issue #27); neither leaf exists yet. Rather than invent a second,
-// differently-named shape inside the surface, the three sections take
-// those interfaces' declared members verbatim, in one place, with the leaf
-// that will own each named beside it. When #26/#27 land, the declaration
-// here becomes a re-export of theirs and no consumer changes — the members
-// are already the ones those blueprints state.
+// **The market sections belong to the market leaves, and one of them is
+// now theirs.** #27 landed `buildPresenceCard` while this branch was open,
+// and its `PresenceCard` is member-for-member what this file had declared,
+// so `PresenceSection` is that type and no longer a second copy of it.
+//
+// `AiAnswersSection` is still declared here, and deliberately: #27's
+// `AiAnswersCard` is the *engine's* output and this is what the screen
+// stores, and they differ in three ways that are decisions, not drift.
+// Its `AnswerRow` carries the question as a plain `text: string`, which
+// would reach the screen without passing `renderQuestion` — the gate
+// REQ-093 c3 exists to hold — so this keeps a `GeneratedText`. It carries
+// no `rivals`, and the dot matrix `BUILD.md` §4.1 draws is one row per
+// rival. And it carries no `measuredAt`, which the card's source chip
+// shows. Reconciling the two is `assembleReport`'s job (#25) and the
+// first of the three is the owner's call; flagged there rather than
+// settled quietly here by adopting a shape that drops a promise.
 //
 // Nothing here is optional-by-accident: a section that could not be
 // produced is `null`, which the screen renders as a named absent section
 // with one written line (REQ-004 c10/c11), never as an empty card and
 // never as a spinner.
 import type { AI_READER_AGENTS } from "@/lib/config/constants";
+import type { PresenceCard } from "@/lib/market/rivals/presence";
 import type { Measured } from "@/lib/measure/measured";
 import type { GeneratedText } from "@/lib/presentation/generated";
 import type { Verdict } from "@/lib/measure/verdict";
@@ -70,19 +78,15 @@ export interface AiAnswersSection {
   rows: readonly { question: StoredQuestion; cell: AnswerCell }[];
 }
 
-/** BUILD §4.1 module 2, right card. BP-026's `PresenceCard`, verbatim.
+/** BUILD §4.1 module 2, right card — #27's own `PresenceCard`, re-exported
+ *  under the name the report blob uses for it rather than re-declared.
  *
- *  No `totalMonthlyVolume` member: the market-total footnote was removed
- *  by the owner on 2026-09-03, both halves (BP-026 decision 4). No rival
- *  size, band, traffic value or severity member either — the card's
- *  honesty bound is the absence of somewhere to put such a claim. */
-export interface PresenceSection {
-  measuredSearches: number;
-  you: { domain: string; top10Count: number };
-  rivals: readonly { domain: string; top10Count: number }[];
-  absentFrom: readonly { keyword: string; volume: number; topHolder: string | null }[];
-  framing: "shown" | "suppressed_no_rivals";
-}
+ *  What it has no member for is the point of it: no rival ranked count,
+ *  size, band, revenue, traffic value, funding, headcount or projected
+ *  return, no severity, and no `totalMonthlyVolume` — the market-total
+ *  footnote the owner removed on 2026-09-03, both halves. The card's
+ *  honesty bound is the absence of anywhere to put a violation. */
+export type PresenceSection = PresenceCard;
 
 /** BUILD §4.1 module 3's two counts that are not on the verdict. The
  *  third, blocked readers, is `Verdict.blockedReaders` and is not
