@@ -73,6 +73,7 @@ beforeEach(() => {
 });
 afterEach(() => {
   vi.restoreAllMocks();
+  vi.useRealTimers();
 });
 
 describe("safeFetch · DNS pinning (BP-006: resolve, check, connect to that resolved address)", () => {
@@ -184,6 +185,21 @@ describe("safeFetch · size cap (BP-006 NFR: 2 MB, `too_large` not a truncated p
 });
 
 describe("safeFetch · timeout (BP-006 NFR: default 8000 ms, hard max 15000 ms)", () => {
+  // The two bound-and-clamp cases below read the numeric argument of every
+  // `setTimeout` the fetcher schedules. The module never hands a timer the
+  // clamped `timeoutMs` itself: each one receives `deadline - Date.now()`,
+  // the *remaining* budget, so a single clock tick between the start stamp
+  // and the timer read 14999 for a 15000 clamp (issue #63 — seen locally
+  // and in CI). Freezing the clock with fake timers makes the remaining
+  // budget equal the clamp exactly, so the assertion reads the clamped
+  // value and nothing about wall-clock resolution. Nothing in either case
+  // needs a timer to *fire*: the mocked lookup and transport settle through
+  // microtasks, which fake timers leave real, and every deadline timer is
+  // cleared on the way out.
+  function timerArgumentsUsed(setTimeoutSpy: { mock: { calls: unknown[][] } }): number[] {
+    return setTimeoutSpy.mock.calls.map((c) => c[1]).filter((ms): ms is number => typeof ms === "number");
+  }
+
   it("yields timeout when the server hangs past the configured bound", async () => {
     const { safeFetch } = await import("../../src/lib/egress/safe-fetch");
     vi.spyOn(dns.promises, "lookup").mockResolvedValue({ address: "93.184.216.34", family: 4 });
@@ -198,25 +214,31 @@ describe("safeFetch · timeout (BP-006 NFR: default 8000 ms, hard max 15000 ms)"
     const { safeFetch } = await import("../../src/lib/egress/safe-fetch");
     vi.spyOn(dns.promises, "lookup").mockResolvedValue({ address: "93.184.216.34", family: 4 });
     installTransport([okResponse()]);
+    vi.useFakeTimers();
     const setTimeoutSpy = vi.spyOn(global, "setTimeout");
 
     await safeFetch("https://example.com/");
 
-    const usedMs = setTimeoutSpy.mock.calls.map((c) => c[1]).filter((ms) => typeof ms === "number");
-    expect(usedMs).toContain(8000);
+    const usedMs = timerArgumentsUsed(setTimeoutSpy);
+    expect(usedMs.length).toBeGreaterThan(0);
+    // Every timer the fetch scheduled carries the full default budget.
+    expect(usedMs).toEqual(usedMs.map(() => 8000));
   });
 
   it("clamps a timeoutMs above 15000 to the hard max", async () => {
     const { safeFetch } = await import("../../src/lib/egress/safe-fetch");
     vi.spyOn(dns.promises, "lookup").mockResolvedValue({ address: "93.184.216.34", family: 4 });
     installTransport([okResponse()]);
+    vi.useFakeTimers();
     const setTimeoutSpy = vi.spyOn(global, "setTimeout");
 
     await safeFetch("https://example.com/", { timeoutMs: 999_999 });
 
-    const usedMs = setTimeoutSpy.mock.calls.map((c) => c[1]).filter((ms) => typeof ms === "number");
-    expect(usedMs).toContain(15000);
-    expect(usedMs).not.toContain(999_999);
+    const usedMs = timerArgumentsUsed(setTimeoutSpy);
+    expect(usedMs.length).toBeGreaterThan(0);
+    // Every timer the fetch scheduled carries exactly the clamped value —
+    // never the caller's 999_999, and never one tick short of the clamp.
+    expect(usedMs).toEqual(usedMs.map(() => 15000));
   });
 });
 
