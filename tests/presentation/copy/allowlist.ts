@@ -103,6 +103,14 @@ export const ATTRIBUTE_ALLOWLIST: readonly AllowlistedAttribute[] = Object.freez
   },
   {
     kind: "exact",
+    name: "state",
+    reason:
+      "a registered component's own discriminant token (e.g. Card's " +
+      "'default' | 'degraded', BP-018 decision 2) — it chooses which arm of " +
+      "the component renders, and is never read by a person.",
+  },
+  {
+    kind: "exact",
     name: "variant",
     reason: "a registered component's style-variant token (e.g. 'primary'), not a sentence.",
   },
@@ -113,6 +121,21 @@ export const ATTRIBUTE_ALLOWLIST: readonly AllowlistedAttribute[] = Object.freez
       "a registered component's own discriminant (e.g. Card's 'default' | 'degraded'), " +
       "the same category as `variant`: it selects which arm of the component renders, " +
       "and every sentence either arm carries arrives through a separate prop.",
+  },
+  {
+    kind: "exact",
+    name: "tone",
+    reason:
+      "a registered component's `Tone` token ('ok' | 'warn' | 'bad' | 'neutral' | " +
+      "'accent', src/ui/types.ts) — a state colour, never a sentence. On the same " +
+      "footing as `variant` and `state` above: the component's own required text " +
+      "child is what carries the meaning, which is exactly why `Badge` and `Alert` " +
+      "make it required.",
+  },
+  {
+    kind: "exact",
+    name: "size",
+    reason: "a registered component's size token ('default' | 'sm'), not a sentence.",
   },
   {
     kind: "exact",

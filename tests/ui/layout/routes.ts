@@ -26,11 +26,31 @@ export interface EnumeratedRoute {
 
 /**
  * One row per dynamic segment this suite knows how to fill, keyed by the
- * segment's own bracket text (e.g. `"[domain]"`). Empty today: no dynamic
- * route exists yet (`src/app/` holds no route at all — WO-269 rests-on row
- * 5). The work order that adds the first one adds its row here.
+ * segment's own bracket text (e.g. `"[domain]"`). A segment with no row
+ * here fails, naming the route, rather than being silently skipped. The
+ * work that adds a dynamic route adds its row here.
  */
-const SEGMENT_FIXTURES: Readonly<Record<string, string>> = {};
+const SEGMENT_FIXTURES: Readonly<Record<string, string>> = {
+  /**
+   * `GET /opt-out/{token}` (issue #31, `BUILD.md` §4.2). Deliberately a
+   * value that does not verify: the page then renders its invalid-link
+   * arm, which is a written line inside the same one card as the
+   * confirmation, so the sweep measures the layout it is here to measure
+   * — and it reaches no store, writes nothing, and suppresses no address.
+   * A real token would have the sweep opt an address out at five widths
+   * on every run.
+   */
+  "[token]": "layout-sweep-fixture",
+  /**
+   * The free report address (issue #13). The value is the one domain that
+   * resolves to the *complete* report — every module present, every count
+   * measured — because that is the widest, densest page this route can
+   * produce, and the layout law is about content fitting its box. The
+   * narrower arms (degraded, scanning, cooldown, removed, refused) are
+   * strictly less content in the same boxes.
+   */
+  "[domain]": "example.com",
+};
 
 /**
  * One row per `(hosted)` page, keyed by the file's own path relative to the

@@ -13,7 +13,7 @@ import { COPY, COPY_META, copy, type CopyKey, type CopyPartition } from "../../.
 // (WO-041 `## Interfaces` "Exposes additionally") — it is declared in
 // registry.ts, not re-exported through the public barrel, so it is
 // imported from its declaring file here.
-import { OWNER_OWED } from "../../../src/lib/presentation/copy/registry.ts";
+import { OWNER_OWED, AWAITING_COPY, TODO_COPY_MARKER } from "../../../src/lib/presentation/copy/registry.ts";
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const COPY_DIR = path.resolve(HERE, "../../../src/lib/presentation/copy");
@@ -140,9 +140,24 @@ describe("REQ-093 c5 — the registry renders with every model unavailable", () 
     // five filled `shell.*` keys in `laws.ts`, each a transcription of a
     // word `BUILD.md` §4.4 or §4.3 prints — the three destination names
     // and the two publishing modes: 54 + 5 = 59.
-    expect(nonOwnerOwed.length).toBe(59);
+    //
+    // 2026-09-05, separately again: issue #13 (the free report screen)
+    // brings a third standing of a key — `AWAITING_COPY`, the
+    // `TODO(copy)` marker `CLAUDE.md` prescribes. Such a key renders (it
+    // is not empty, so `copy()` does not throw) but carries no owner
+    // sentence, so it is *not* one of the ruled ones. The count below is
+    // therefore split rather than raised: the number of genuinely ruled
+    // sentences is still 59, and every key that renders without one is
+    // counted separately, which is what keeps this assertion meaning what
+    // it said before the marker existed.
+    const awaiting = new Set<CopyKey>(AWAITING_COPY);
+    const ruled = nonOwnerOwed.filter((key) => !awaiting.has(key));
+    expect(ruled.length).toBe(59);
 
-    for (const key of nonOwnerOwed) {
+    // Only the ruled sentences carry their slots' `{name}` placeholders —
+    // a `TODO(copy)` marker is one literal with no placeholder in it, so
+    // substituting into it proves nothing about `copy()`.
+    for (const key of ruled) {
       const slotNames = Object.keys(COPY_META[key].slots);
       if (slotNames.length === 0) {
         expect(copy(key)).toBe(COPY[key]);
@@ -304,9 +319,37 @@ describe("owner-owed and empty agree both ways", () => {
     // `settings.ts`, the sentence each screen states inside the shell
     // until its own content lands (#15, #16, #18). 22 + 5 = 27
     // owner-owed, 54 + 5 = 59 filled, 76 + 10 = 86 total.
-    expect(OWNER_OWED.length).toBe(27);
-    expect(Object.keys(COPY).length - OWNER_OWED.length).toBe(59);
-    expect(Object.keys(COPY).length).toBe(86);
+    //
+    // 2026-09-05, separately again: issue #31 (lead capture and the
+    // giveaway, BUILD §4.2) adds twenty keys in `mail.ts`, every one
+    // owner-owed and empty — the five the first-page mail speaks, the six
+    // the unavailable notice speaks (its subject and one line per
+    // `FirstPageFailure`), the six the three nurture touches speak, the
+    // three `POST /api/lead` answers with, and the opt-out page's third
+    // arm. Not one of them is written by this feature (constitution §1).
+    // 27 + 20 = 47 owner-owed, 59 filled unchanged, 86 + 20 = 106 total.
+    //
+    // 2026-09-05, separately again: issue #13 (the free report screen)
+    // mints 67 new keys for `BUILD.md` §4.1's modules and the six scan
+    // stages, all carrying `CLAUDE.md`'s `TODO(copy)` marker, and moves
+    // two keys off the empty-value representation onto the same marker
+    // (`offer.cancel_self_service`, which §4.1 module 6 has to speak, and
+    // `generated.page.proposed`, which `renderGenerated` resolves for the
+    // free-page card's label). So: 47 - 2 = 45 owner-owed and empty, 67 +
+    // 2 = 69 awaiting copy and rendering the marker, 59 ruled — 106 + 67 =
+    // 173 total. The three numbers are asserted separately on purpose: a
+    // key that quietly moved from "the owner still owes this" to "someone
+    // wrote something" fails here rather than passing on a total that
+    // happens to add up.
+    expect(OWNER_OWED.length).toBe(45);
+    expect(AWAITING_COPY.length).toBe(69);
+    expect(Object.keys(COPY).length - OWNER_OWED.length - AWAITING_COPY.length).toBe(59);
+    expect(Object.keys(COPY).length).toBe(173);
+
+    // The two representations never overlap: an empty value and the marker
+    // are different values, so no key can be on both lists.
+    for (const key of AWAITING_COPY) expect(OWNER_OWED).not.toContain(key);
+    for (const key of AWAITING_COPY) expect(COPY[key]).toBe(TODO_COPY_MARKER);
   });
 });
 
@@ -388,10 +431,19 @@ describe("the thirteen keys the owner ruled 2026-09-04 (WO-041 `## Log`, this da
     );
   });
 
-  it("the two keys this ruling did not cover remain owner-owed and copy() still refuses them", () => {
+  it("the two keys this ruling did not cover still carry no owner sentence", () => {
+    // `price.vat_included` is unchanged: no surface renders it, so the
+    // empty-value throw still guards it.
     expect(COPY["price.vat_included"]).toBe("");
-    expect(COPY["offer.cancel_self_service"]).toBe("");
     expect(() => copy("price.vat_included")).toThrow(/owner-owed/);
-    expect(() => copy("offer.cancel_self_service")).toThrow(/owner-owed/);
+
+    // `offer.cancel_self_service` moved to the `TODO(copy)` marker on
+    // 2026-09-05 (issue #13): `BUILD.md` §4.1 module 6 requires the
+    // pricing card to carry it, and an empty value would throw the whole
+    // report screen away rather than show the owner an unwritten line. It
+    // is still unwritten, and this asserts exactly that — the marker, not
+    // a sentence somebody supplied on the owner's behalf.
+    expect(COPY["offer.cancel_self_service"]).toBe(TODO_COPY_MARKER);
+    expect(AWAITING_COPY).toContain("offer.cancel_self_service");
   });
 });

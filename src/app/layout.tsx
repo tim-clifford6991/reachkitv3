@@ -23,6 +23,13 @@
 // have a rule to match — WO-030's file plan: "Exports the two CSS variable
 // names the root layout binds."
 //
+// Design system: `src/ui/tailwind.css` is what actually emits Tailwind's
+// utilities and daisyUI's component classes (Tailwind 4 has no implicit
+// entry point, and loads `tailwind.config.ts` only when a stylesheet names
+// it). It is imported after `theme.css` so `:root`'s tokens exist before
+// the daisyUI theme mapping that reads them, and before `type.css`, whose
+// element rules are meant to win over the reset.
+//
 // Layout tokens: `src/ui/layout/layout.css` declares `--breakpoint-lg`,
 // `--breakpoint-xl` and `--t-floor` on `:root` (ADR-093; issue #62). The
 // conformance suite reads them off every route's document, so the one
@@ -30,6 +37,7 @@
 import type React from "react";
 
 import "@/ui/theme.css";
+import "@/ui/tailwind.css";
 import "@/ui/type.css";
 import "@/ui/layout/layout.css";
 import { fontVariables } from "@/ui/fonts";
