@@ -379,43 +379,32 @@ describe("the five keys the owner ruled 2026-09-11 (DECISIONS 2026-09-11, #516)"
     }
   });
 
-  // 2026-09-12, issue #577: the registry stood at "nothing is owed or
-  // awaiting" until a new surface arrived. SPEC.md §5 ("The site profile is
-  // confirmed here") adds a card whose sentences are the owner's and are
-  // not written yet, and `CLAUDE.md`'s standing rule for exactly that is
-  // "add the key, leave the value `TODO(copy)`, flag it in the PR".
-  //
-  // So the assertion is not relaxed into silence — it is made a **closed
-  // list**. Every key still awaiting an owner sentence is named here, and
-  // a sixteenth that appeared without being named would fail this row the
-  // way the sweeping version did. Nothing may be owner-owed (`''`), which
-  // is the arm that takes a screen down; the marker renders as itself.
-  const AWAITING_THE_OWNER = [
-    "setup.profile.title",
-    "setup.profile.pages-read",
-    "setup.profile.site-name",
-    "setup.profile.purposes",
-    "setup.profile.voice.label",
-    "setup.profile.voice.later",
-    "setup.profile.purpose.pricing",
-    "setup.profile.purpose.about",
-    "setup.profile.purpose.features",
-    "setup.profile.purpose.product",
-    "setup.profile.purpose.blog",
-    "setup.profile.purpose.contact",
-    "setup.profile.purpose.legal",
-    "setup.profile.purpose.other",
-    "settings.voice.save",
-  ] satisfies CopyKey[];
-
-  it("nothing is owner-owed, and exactly the named keys await the owner's sentence", () => {
+  it("no key is owed, and the only unwritten ones are the ledger's own named set", () => {
+    // `OWNER_OWED` stays empty: the empty value takes a whole screen down
+    // when it is read, and nothing in this product may ship with one.
     expect(OWNER_OWED).toEqual([]);
-    expect([...AWAITING_COPY].sort()).toEqual([...AWAITING_THE_OWNER].sort());
+
+    // **`AWAITING_COPY` is checked against the ledger, not against
+    // nothing** (issue #322). `CLAUDE.md`'s standing rule is that an
+    // implementer who needs a sentence "adds the key as `TODO(copy)` and
+    // names it in the PR", and #402's `counts.snapshot.json` is where that
+    // set is recorded — by name, per partition, so a key that quietly
+    // stopped being written shows up as a snapshot diff naming it. This
+    // assertion read `toEqual([])` from the moment the last partition was
+    // filled (#460) until SPEC §5's ruling of 2026-09-12 added a field
+    // whose sentence the owner has not written; an empty literal here
+    // would have meant the next owner-owed sentence could not be added at
+    // all, which is not what it was protecting.
+    const recorded = Object.values(RECORDED_LEDGER)
+      .flatMap((partition) => [...partition.awaiting])
+      .sort();
+    expect([...AWAITING_COPY].sort()).toEqual(recorded);
+
+    const awaiting = new Set<string>(AWAITING_COPY);
     for (const [key, value] of Object.entries(COPY)) {
+      if (awaiting.has(key)) continue;
+      expect(value, key).not.toBe(TODO_COPY_MARKER);
       expect(value, key).not.toBe("");
-      if (!(AWAITING_THE_OWNER as string[]).includes(key)) {
-        expect(value, key).not.toBe(TODO_COPY_MARKER);
-      }
     }
   });
 });

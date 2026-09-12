@@ -64,11 +64,14 @@
     "awaiting": [
       "settings.voice.save"
     ],
-    "ruled": 101
+    "ruled": 103
   },
   "setup.ts": {
     "owed": [],
     "awaiting": [
+      "setup.destination.label.label",
+      "setup.destination.label.refused.invalid",
+      "setup.destination.label.refused.taken",
       "setup.profile.title",
       "setup.profile.pages-read",
       "setup.profile.site-name",

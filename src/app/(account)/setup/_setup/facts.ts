@@ -39,6 +39,15 @@ export interface SetupFacts {
 export interface SetupScreenModel {
   state: SetupState;
   cards: SetupCards;
+  /** §9's edge hostname, carried onto the model (SPEC §5, 2026-09-12).
+   *
+   *  The record is no longer a fact the server can settle alone: its name
+   *  is `<label>.<domain>` and both halves move while the founder is on
+   *  the screen — they type their address, and they choose their label. So
+   *  the screen composes it, and the one thing it cannot derive is the
+   *  target the record points at. It is a deployment binding, not a
+   *  sentence and not a secret. */
+  cnameTarget: string;
   /** The profile, carried through unchanged. Nothing is derived from it
    *  here: the chips' counts are `purposeCounts`'s, over the inventory. */
   profile: SiteProfile | null;
@@ -55,6 +64,7 @@ export function assembleSetup(facts: SetupFacts): SetupScreenModel {
   return {
     state,
     cards: setupCards({ siteDomain: state.siteDomain, cnameTarget: facts.cnameTarget }),
+    cnameTarget: facts.cnameTarget,
     profile: facts.profile,
     competitorsMax: BATTERY.COMPETITORS_MAX,
   };

@@ -19,11 +19,16 @@ vi.mock("@/lib/publish/destinations/hosted", async () => {
   return {
     hostedHostFor: address.hostedHostFor,
     liveUrlFor: address.liveUrlFor,
+    liveUrlOnHost: address.liveUrlOnHost,
     tags: { site: (s: string) => `hosted:site:${s}`, page: (p: string) => `hosted:page:${p}` },
     hostedSiteForDomain: async (domain: string) => {
       const id = sites.get(domain);
-      return id === undefined ? null : { siteId: id, domain };
+      return id === undefined ? null : { siteId: id, domain, host: `content.${domain}` };
     },
+    // SPEC §5 (2026-09-12): a Host is matched whole against the row's host
+    // first. These suites describe a row that predates the choice, so that
+    // lookup finds nothing and the default-label one beside it serves them.
+    hostedSiteForHostname: async () => null,
     livePagesForSite: async () => [],
     livePageBySlug: async (siteId: string, slug: string) =>
       (live.get(siteId) ?? []).includes(slug) ? { slug } : null,
@@ -96,8 +101,21 @@ describe("every path on a customer's own domain lands in the hosted group", () =
   });
 
   it("a ReachKit host is untouched by any of this", async () => {
-    const response = await middleware(requestTo("/pricing", "reachkit.example"));
+    // The deployment's own address, from the binding this harness sets.
+    // Since §5's ruling the label is the customer's, so the rewrite is
+    // decided by subtracting our own hosts rather than by a `content.`
+    // prefix — and this row holds the app's own screens out of the group.
+    const response = await middleware(requestTo("/pricing", "app.example.com"));
     expect(rewrittenTo(response)).toBeNull();
+  });
+
+  it("a customer's own host reaches the hosted group whatever label they chose", async () => {
+    // SPEC §5 (2026-09-12). The row a prefix test fails: the same customer,
+    // the same record, served under `content.` and 404 under `blog.`.
+    for (const host of ["blog.example.com", "news.example.com", "learn.acme.test"]) {
+      const response = await middleware(requestTo("/a-page", host));
+      expect(rewrittenTo(response), host).toBe("/hosted-page/a-page");
+    }
   });
 });
 
