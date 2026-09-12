@@ -47,7 +47,7 @@
 // exactly what it read: a site of nine pages yields nine rows, and nothing
 // is invented to reach a hundred (§2, and issue #577's own done-when).
 import { CACHE_WINDOWS_D, SITE_PROFILE } from "@/lib/config/constants";
-import type { CostContext } from "@/lib/costs";
+import { refusalOf, type CostContext, type FetchRefusal } from "@/lib/costs";
 import type { SafeFetchOpts } from "@/lib/egress/safe-fetch";
 import { safeFetch } from "@/lib/egress/safe-fetch";
 import type { FetchOutcome } from "@/lib/egress/types";
@@ -212,13 +212,18 @@ export async function crawlSite(
 /** One own-document row, at zero cents under `OWN_FETCH_SOURCE` — the same
  *  shape `measureDomain` writes, so one reader serves both. A refusal and
  *  a cap-skip are both "no row", never a throw: a page that would not load
- *  is a page the inventory does not claim. */
+ *  is a page the inventory does not claim.
+ *
+ *  A failure is ledgered as `refusalOf`'s row, which is the shape
+ *  `costs/cache.ts` refuses to serve back: this key is the measurement
+ *  pass's own, and a crawl-time refusal must not negative-cache it for the
+ *  window (BUILD §6.4 — no negative cache). */
 async function ledger(
   c: CostContext,
   url: string,
   prefetched: FetchOutcome
 ): Promise<StoredDocument | null> {
-  const result = await c.recordFetch<StoredDocument | { refused: true }>({
+  const result = await c.recordFetch<StoredDocument | FetchRefusal>({
     source: OWN_FETCH_SOURCE,
     cacheKey: url,
     freshnessDays: CACHE_WINDOWS_D.own,
@@ -226,7 +231,7 @@ async function ledger(
     // The document is already in hand: `run` hands the ledger what phase
     // one fetched. It is called only on a cache miss, which is the
     // ordinary case for a crawl (see the header).
-    run: async () => (prefetched.ok ? toStoredDocument(prefetched) : { refused: true }),
+    run: async () => (prefetched.ok ? toStoredDocument(prefetched) : refusalOf(prefetched)),
   });
   if ("skipped" in result) return null;
   return isStoredDocument(result.payload) ? result.payload : null;
@@ -244,14 +249,16 @@ async function readHome(
   homeUrl: string,
   ports: CrawlPorts
 ): Promise<{ url: string; html: string } | null> {
-  const result = await c.recordFetch<StoredDocument | { refused: true }>({
+  const result = await c.recordFetch<StoredDocument | FetchRefusal>({
     source: OWN_FETCH_SOURCE,
     cacheKey: homeUrl,
     freshnessDays: CACHE_WINDOWS_D.own,
     costCents: 0,
     run: async () => {
       const outcome = await ports.fetchDocument(homeUrl, OWN_FETCH_OPTS);
-      return outcome.ok ? toStoredDocument(outcome) : { refused: true };
+      // A refusal here is the measurement pass's home key: `refusalOf`'s
+      // row is the shape the cache never serves back (BUILD §6.4).
+      return outcome.ok ? toStoredDocument(outcome) : refusalOf(outcome);
     },
   });
   if ("skipped" in result) return null;

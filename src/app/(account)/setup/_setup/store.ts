@@ -185,20 +185,23 @@ export function liveSetupStore(): SetupStore {
       });
 
       // SPEC.md §5 (2026-09-12): the voice the founder confirmed or
-      // edited. Written through the profile leaf's own writer, which is
-      // what stamps `sites.voice_edited_at` — and it is called only where
-      // the text actually differs from what the scan read. Submitting the
-      // summary unchanged is a confirmation, not an edit: stamping it
-      // would freeze the voice against every weekly refresh, and §5's
-      // rule is the narrower one — a customer's *edit* survives a
-      // refresh. A failure here never un-completes a setup the founder
-      // has finished answering.
+      // edited — two different writes into the same field. An edit goes
+      // through `saveVoiceText`, which stamps `sites.voice_edited_at` so
+      // no later refresh overwrites their words. Confirming the summary
+      // unchanged seeds that field through `adoptVoiceText`: stored, so
+      // Settings shows it and drafting reads it, but unstamped, so every
+      // weekly refresh still reaches it. A failure here never
+      // un-completes a setup the founder has finished answering.
       try {
-        const { readSiteProfile, saveVoiceText } = await import("@/lib/site-profile");
+        const { adoptVoiceText, readSiteProfile, saveVoiceText } = await import(
+          "@/lib/site-profile"
+        );
         const profile = await readSiteProfile(a.submission.domain);
         const asRead = profile?.voice?.text ?? "";
         if (a.submission.voiceText !== asRead) {
           await saveVoiceText({ siteId: a.siteId, text: a.submission.voiceText });
+        } else {
+          await adoptVoiceText({ siteId: a.siteId, domain: a.submission.domain });
         }
       } catch {
         // Swallowed for `enqueueDeepPass`'s reason: the three decisions

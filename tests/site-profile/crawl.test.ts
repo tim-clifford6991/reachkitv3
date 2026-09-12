@@ -37,7 +37,7 @@ vi.hoisted(() => {
 
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { SITE_PROFILE } from "@/lib/config/constants";
-import type { CostContext } from "@/lib/costs";
+import { isFetchRefusal, type CostContext } from "@/lib/costs";
 import type { FetchOutcome } from "@/lib/egress/types";
 import { OWN_FETCH_SOURCE } from "@/lib/measure/own-fetch";
 import { crawlSite, type CrawlPorts } from "@/lib/site-profile/crawl";
@@ -56,6 +56,7 @@ interface Ledgered {
   source: string;
   cacheKey: string;
   costCents: number;
+  payload: unknown;
 }
 
 /** A `CostContext` double that records every ledgered call, runs each
@@ -74,7 +75,7 @@ function fakeCost(opts: { capped?: boolean } = {}): CostContext & { ledgered: Le
       try {
         if (opts.capped === true) return { skipped: "cap" as const };
         const payload = await call.run();
-        ledgered.push({ source: call.source, cacheKey: call.cacheKey, costCents: call.costCents });
+        ledgered.push({ source: call.source, cacheKey: call.cacheKey, costCents: call.costCents, payload });
         return { payload, fresh: true, costCents: call.costCents };
       } finally {
         inFlight--;
@@ -109,6 +110,32 @@ afterEach(() => {
 });
 
 describe("crawlSite", () => {
+  it("writes a page that would not load as a refusal row, so next week's measurement is never served a negative cache", async () => {
+    // BUILD §6.4, "no negative cache". The crawl ledgers under the
+    // measurement pass's own `(source, cacheKey)`, so a 404 stored in any
+    // shape `costs/cache.ts` does not read as empty would be served back
+    // to `readDocument` for the rest of the window — and a healthy site
+    // would come out `site_unreadable` on the next free scan.
+    const home = page("Home", `<a href="/pricing">Pricing</a>`);
+    const cost = fakeCost();
+
+    const out = await crawlSite(
+      cost,
+      { domain: DOMAIN, homeUrl: HOME, homeHtml: home, sitemaps: [] },
+      fakePorts({})
+    );
+
+    // The page that would not load is ledgered, and claimed by nothing.
+    expect(out.pages.map((p) => p.url)).toEqual([HOME]);
+    const refused = cost.ledgered.find((l) => l.cacheKey === "https://example.com/pricing");
+    expect(refused?.source).toBe(OWN_FETCH_SOURCE);
+    expect(refused?.costCents).toBe(0);
+    // `isFetchRefusal` is the whole of what `isEmptyPayload` asks of this
+    // payload, and it carries the reason rather than a bare marker.
+    expect(isFetchRefusal(refused?.payload)).toBe(true);
+    expect(refused?.payload).toEqual({ refusal: "status", status: 404, bytes: 0, host: DOMAIN });
+  });
+
   it("reads the pages the site's own sitemap declares, and never re-reads the home document", async () => {
     const sitemap = `<urlset><url><loc>https://example.com/pricing</loc></url><url><loc>https://example.com/about</loc></url></urlset>`;
     const ports = fakePorts({

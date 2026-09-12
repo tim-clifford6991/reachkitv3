@@ -124,6 +124,42 @@ describe("commitSetup — the three answers, the transaction, then the stamp", (
     expect(db.tables.destinations![0]!.config).toBeNull();
   });
 
+  it("a founder who confirms the summary without typing still has the voice stored — unstamped, so a later refresh still reaches it", async () => {
+    // SPEC.md §5 (2026-09-12): the voice is shown and editable, and what
+    // is stored is what Settings shows and drafting reads. Confirming it
+    // unchanged is the ordinary path, and it must still seed
+    // `sites.voice_text` — otherwise the founder who typed nothing gets an
+    // empty Settings box and a draft prompt with no voice in it.
+    const READ_VOICE = "Plain and direct, second person.";
+    db = fakeDb({
+      sites: [site({ voice_text: null, voice_edited_at: null })],
+      destinations: [],
+      site_profiles: [
+        {
+          domain: "example.com",
+          site_name: "Example",
+          products: [],
+          claims: [],
+          voice: { text: READ_VOICE, tone: "plain", person: "second" },
+          inventory: [],
+          pages_read: 4,
+          refreshed_at: "2026-09-12T09:00:00.000Z",
+        },
+      ],
+    });
+
+    await liveSetupStore().commitSetup({
+      siteId: SITE,
+      submission: { ...SUBMISSION, voiceText: READ_VOICE },
+    });
+
+    const row = db.tables.sites![0]!;
+    expect(row.voice_text).toBe(READ_VOICE);
+    // Stored, not claimed: the stamp is what makes a customer's own words
+    // survive a refresh, and a confirmation is not an edit.
+    expect(row.voice_edited_at ?? null).toBeNull();
+  });
+
   it("the stamp is written last, so a crash before it leaves a founder who is asked again rather than one whose choices are missing", async () => {
     const order: string[] = [];
     const original = db.client.from;
