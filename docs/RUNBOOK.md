@@ -188,6 +188,60 @@ Routes log the same way: `{"event":"request","routeId":…,"status":…,"duratio
 one exists, `scanId` (`src/app/api/_log.ts`). Vercel's runtime logs are the only place these go —
 there is no log sink, no APM and no error tracker.
 
+### Verifying a WordPress destination end to end
+
+The walk, in order, with the observation each step should produce. It has not been run against a
+real WordPress — when it is, §11 records it. The site must be **publicly addressed, over https, on
+port 80 or 443**: the egress policy refuses loopback, private, link-local, multicast and reserved
+addresses and every other port (`src/lib/egress/policy.ts`), so a laptop install or a tunnel on
+`:8080` cannot be the site, and WordPress itself offers Application Passwords only over https. The
+credential is sealed with a key derived from `IP_HASH_SALT` (§3), so that binding must exist in
+whichever environment is walked.
+
+1. **Connect.** `/app/settings` → Publishing → the WordPress row → **Connect WordPress**. Three
+   fields: Site URL, Username, Application password — the last made in wp-admin under Users →
+   Profile → Application Passwords. The Site URL is the site root, not the REST root; `/wp-json` is
+   appended at every call. Expect the form to close and the row to read **ok** with no line under
+   it. Underneath: the credential is sealed, then validated by the health check — one authenticated
+   `GET {site}/wp-json` — and never by the act of connecting, so a refusal leaves the row reading
+   *expired* or *error* with that reason's own written line and no vendor text, and the password
+   field clears on both arms.
+2. **The two probe results**, which is what this step exists to record. They are written beside
+   health and never inside it: `destinations.publish_capable` from `capabilities.publish_posts`, and
+   `destinations.stamp_capable` from `capabilities.manage_categories`, both read from one
+   `GET /wp-json/wp/v2/users/me?context=edit`. A Contributor-level password is the case that makes
+   the first `false`; the card then reads *error* and offers **Connect a different account**, never
+   Reconnect, because re-entering a valid credential that cannot publish changes nothing.
+3. **One page, delivered live.** Publication is a job (`publish/execute`, above) — no endpoint and
+   no script — so either let a draft reach the end of its veto window or *Invoke* it from the
+   Inngest dashboard with `draftId` and `destinationId`. Expect one post at status `publish`, and on
+   the publication row the permalink **the site returned**, never one computed here. Expect the
+   title and description in `_yoast_wpseo_title` / `_yoast_wpseo_metadesc` or `rank_math_title` /
+   `rank_math_description`, for whichever plugin the REST index announced (`yoast/v1`,
+   `rankmath/v1`) — read back from the create response, so a site that dropped the meta records
+   *no SEO plugin was found* instead of a claim. Expect **both marks**: the `reachkit` tag, which
+   the customer sees, and `<!-- reachkit-draft:{draftId} -->` at the foot of the post body, which
+   only ReachKit reads. Re-run the same delivery: it must find that post by the comment and create
+   nothing, and it must never search for the tag.
+4. **Unpublish, once.** `/app/settings` → Danger zone → **unpublish all**, confirmed by typing
+   `unpublish all`. A post ReachKit made live is returned to draft by one write of one field and
+   stays in the site; the record reads *returned to draft in your WordPress*. The other three arms
+   are *already gone from your site*, *your site couldn't be reached — the post may still be live*
+   (the stop is taken all the same), and *never live there — yours to remove*.
+5. **Revoke the password** in wp-admin, and watch a state rather than an error. Nothing re-reads
+   health on the publish path: the card turns on the next check, which is the read path's own once
+   the stored one is older than `DESTINATION_HEALTH_MAX_AGE_H` (24 h, debounced 60 s per process),
+   or immediately on the next connect attempt. Expect **expired**, the line *The connection has
+   expired. Your pages are being held — nothing is lost — and reconnecting releases them.*, and
+   **Reconnect** offered — not an error page. A destination broken for 24 h whose customer has not
+   been back since mails them once, from `draft/generate`'s per-site tick.
+6. **What must never appear**, on a screen or in a log line: the password. The field is
+   `type="password"`; the connect outcome is a boolean and a reason token, with no member a string
+   could travel in; `safeFetch` logs five fields — host, reason, status, bytes, duration — and no
+   header; the destination lifecycle line carries an id, a kind, a state and an actor; the seal logs
+   the operation alone. A 401 becomes the token `credentials_expired` in
+   `destinations/wordpress/errors.ts`, and the payload stops there.
+
 ---
 
 ## 5. The kill switch
@@ -577,6 +631,7 @@ deployment (`dpl_2NEUXishMXAkzXG4Ti85yTy7NDda`, 23 Aug 2026).
 | the site is 500ing | §7 — read the runtime log, find the last `boot_invariants` line |
 | every page 500s and nothing changed | §2 — the Supabase project may have paused after seven idle days |
 | nothing has published for days | §4 — is the Inngest app registered? The ticks are silent when it is not |
+| a WordPress destination needs proving | §4 — the six-step walk, and what each step should show |
 | spend looks wrong | §8 — the SQL is there; `fetches` is the truth |
 | stop the spend now | §5 — `KILL_SWITCH=true` on every target, **then redeploy** |
 | a key leaked | §3 — rotate: mint, paste both targets, redeploy, verify, revoke |
