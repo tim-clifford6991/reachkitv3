@@ -80,6 +80,12 @@ export interface Bounds {
   siteUnreadable(refusal: FetchRefusalReason | null): void;
   /** What `siteUnreadable` recorded, or `undefined` where it was never called. */
   unreadable(): { refusal: FetchRefusalReason | null } | undefined;
+  /** Called by the body when a stage the pass cannot continue without spent
+   *  that stage's own budget (issue #539): the pass ends bounded, by the
+   *  column that ran out. A ceiling the pass itself hit still outranks it. */
+  stageExhausted(reason: "time_ceiling" | "spend_ceiling"): void;
+  /** What `stageExhausted` recorded, or `undefined` where it was never called. */
+  exhausted(): "time_ceiling" | "spend_ceiling" | undefined;
 }
 
 // Rule 1.1 parameter: the generation `withCostContext`'s own cache reads
@@ -113,6 +119,7 @@ interface CapReader {
 function makeBounds(a: { startedAt: Date; clock: () => Date; cost: CapReader }): Bounds {
   const deadlineMs = a.startedAt.getTime() + TIMING.reportCeilingS * 1000;
   let unreadable: { refusal: FetchRefusalReason | null } | undefined;
+  let exhausted: "time_ceiling" | "spend_ceiling" | undefined;
   const bounds: Bounds = {
     expired(): boolean {
       return a.clock().getTime() >= deadlineMs;
@@ -134,6 +141,12 @@ function makeBounds(a: { startedAt: Date; clock: () => Date; cost: CapReader }):
     unreadable() {
       return unreadable;
     },
+    stageExhausted(reason: "time_ceiling" | "spend_ceiling"): void {
+      exhausted = reason;
+    },
+    exhausted() {
+      return exhausted;
+    },
   };
   return bounds;
 }
@@ -152,6 +165,9 @@ function delay(ms: number): Promise<void> {
  *     race settles) → always `{ kind: 'report', complete: false,
  *     stoppedReason }`, whatever `body` itself did — ADR-021's "a ceiling
  *     always produces a report".
+ *   - no ceiling fired and `body` resolved having called `stageExhausted`
+ *     → `{ kind: 'report', complete: false, stoppedReason }` carrying the
+ *     column that stage ran out of (issue #539).
  *   - no ceiling fired, `body` resolved and called `siteUnreadable` →
  *     `{ kind: 'report', complete: false, stoppedReason: 'site_unreadable',
  *     refusal }` (issue #479 — a pass that read nothing is never
@@ -173,6 +189,11 @@ async function runBounded<T>(
       const result = await body(bounds, a.cost);
       const stopped = bounds.stopNow();
       if (stopped) return { result, ending: { kind: "report" as const, complete: false as const, stoppedReason: stopped } };
+      // A stage the pass cannot continue without spent its own budget: the
+      // pass is bounded by that column, and its report is not whole (#539).
+      const exhausted = bounds.exhausted();
+      if (exhausted)
+        return { result, ending: { kind: "report" as const, complete: false as const, stoppedReason: exhausted } };
       const unread = bounds.unreadable();
       return unread
         ? {
@@ -186,7 +207,7 @@ async function runBounded<T>(
           }
         : { result, ending: { kind: "report" as const, complete: true as const, stoppedReason: "complete" as const } };
     } catch {
-      const stopped = bounds.stopNow();
+      const stopped = bounds.stopNow() ?? bounds.exhausted();
       return stopped
         ? { result: null, ending: { kind: "report" as const, complete: false as const, stoppedReason: stopped } }
         : { result: null, ending: { kind: "no_report" as const, stoppedReason: "failed" as const } };

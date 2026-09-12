@@ -39,7 +39,7 @@ after the merge. `Vercel` is not a check: Git deployments are off (`vercel.json`
 | Database | one Supabase project, `reachkit` (`kleepxxddbcnfsfwudoe`), Postgres 17, us-east-1, **Free plan**. v2's objects sit in schema `v2_archive`, the rollback path (§9). The org is Vercel-Marketplace-managed: uninstalling that integration would delete the org and the database; the exit path is a transfer to a Supabase-managed org |
 | Jobs | Inngest app `reachkit`, registered at `https://reachkit.app/api/jobs` — owed by the owner: create the app, paste the two keys, sync the functions (#315, §4) |
 | Mail | Resend, sending domain `reachkit.app` (SPF, DKIM, DMARC) — pending #325; `MAIL_FROM` is `hello@reachkit.app` (§6) |
-| Payments | Stripe live: one product `ReachKit`, one €49/month tax-inclusive price bound as `STRIPE_PRICE_ID`; v2's products and prices inactive; webhook `/api/stripe/webhook`; customer portal on |
+| Payments | Stripe live: one product `ReachKit`, one €49/month tax-inclusive price bound as `STRIPE_PRICE_ID`; v2's products and prices inactive; webhook `/api/stripe/webhook`; customer portal on. The dashboard steps, and the test-mode walk that proves them, are `docs/stripe-setup.md` |
 | Hosted CMS | customers point `content.{their-domain}` at `HOSTED_EDGE_CNAME_TARGET` (`edge.reachkit.app`); per-customer domains are added to the project through the Vercel Domains API (#322) |
 | Local | `npm run dev` on `http://localhost:3000`, bindings from `.env.local` (names in `.env.example`) |
 
@@ -188,6 +188,60 @@ Routes log the same way: `{"event":"request","routeId":…,"status":…,"duratio
 one exists, `scanId` (`src/app/api/_log.ts`). Vercel's runtime logs are the only place these go —
 there is no log sink, no APM and no error tracker.
 
+### Verifying a WordPress destination end to end
+
+The walk, in order, with the observation each step should produce. It has not been run against a
+real WordPress — when it is, §11 records it. The site must be **publicly addressed, over https, on
+port 80 or 443**: the egress policy refuses loopback, private, link-local, multicast and reserved
+addresses and every other port (`src/lib/egress/policy.ts`), so a laptop install or a tunnel on
+`:8080` cannot be the site, and WordPress itself offers Application Passwords only over https. The
+credential is sealed with a key derived from `IP_HASH_SALT` (§3), so that binding must exist in
+whichever environment is walked.
+
+1. **Connect.** `/app/settings` → Publishing → the WordPress row → **Connect WordPress**. Three
+   fields: Site URL, Username, Application password — the last made in wp-admin under Users →
+   Profile → Application Passwords. The Site URL is the site root, not the REST root; `/wp-json` is
+   appended at every call. Expect the form to close and the row to read **ok** with no line under
+   it. Underneath: the credential is sealed, then validated by the health check — one authenticated
+   `GET {site}/wp-json` — and never by the act of connecting, so a refusal leaves the row reading
+   *expired* or *error* with that reason's own written line and no vendor text, and the password
+   field clears on both arms.
+2. **The two probe results**, which is what this step exists to record. They are written beside
+   health and never inside it: `destinations.publish_capable` from `capabilities.publish_posts`, and
+   `destinations.stamp_capable` from `capabilities.manage_categories`, both read from one
+   `GET /wp-json/wp/v2/users/me?context=edit`. A Contributor-level password is the case that makes
+   the first `false`; the card then reads *error* and offers **Connect a different account**, never
+   Reconnect, because re-entering a valid credential that cannot publish changes nothing.
+3. **One page, delivered live.** Publication is a job (`publish/execute`, above) — no endpoint and
+   no script — so either let a draft reach the end of its veto window or *Invoke* it from the
+   Inngest dashboard with `draftId` and `destinationId`. Expect one post at status `publish`, and on
+   the publication row the permalink **the site returned**, never one computed here. Expect the
+   title and description in `_yoast_wpseo_title` / `_yoast_wpseo_metadesc` or `rank_math_title` /
+   `rank_math_description`, for whichever plugin the REST index announced (`yoast/v1`,
+   `rankmath/v1`) — read back from the create response, so a site that dropped the meta records
+   *no SEO plugin was found* instead of a claim. Expect **both marks**: the `reachkit` tag, which
+   the customer sees, and `<!-- reachkit-draft:{draftId} -->` at the foot of the post body, which
+   only ReachKit reads. Re-run the same delivery: it must find that post by the comment and create
+   nothing, and it must never search for the tag.
+4. **Unpublish, once.** `/app/settings` → Danger zone → **unpublish all**, confirmed by typing
+   `unpublish all`. A post ReachKit made live is returned to draft by one write of one field and
+   stays in the site; the record reads *returned to draft in your WordPress*. The other three arms
+   are *already gone from your site*, *your site couldn't be reached — the post may still be live*
+   (the stop is taken all the same), and *never live there — yours to remove*.
+5. **Revoke the password** in wp-admin, and watch a state rather than an error. Nothing re-reads
+   health on the publish path: the card turns on the next check, which is the read path's own once
+   the stored one is older than `DESTINATION_HEALTH_MAX_AGE_H` (24 h, debounced 60 s per process),
+   or immediately on the next connect attempt. Expect **expired**, the line *The connection has
+   expired. Your pages are being held — nothing is lost — and reconnecting releases them.*, and
+   **Reconnect** offered — not an error page. A destination broken for 24 h whose customer has not
+   been back since mails them once, from `draft/generate`'s per-site tick.
+6. **What must never appear**, on a screen or in a log line: the password. The field is
+   `type="password"`; the connect outcome is a boolean and a reason token, with no member a string
+   could travel in; `safeFetch` logs five fields — host, reason, status, bytes, duration — and no
+   header; the destination lifecycle line carries an id, a kind, a state and an actor; the seal logs
+   the operation alone. A 401 becomes the token `credentials_expired` in
+   `destinations/wordpress/errors.ts`, and the payload stops there.
+
 ---
 
 ## 5. The kill switch
@@ -257,6 +311,36 @@ fix for every one of them is the owner writing the copy key, never a code change
 
 Failed and unsent mail is visible in two places: Resend's own dashboard for what left, and the
 runtime log for what did not (`event: "spend_alert_failed"`, and the per-kind `*_not_sent` lines).
+
+### Verifying the sign-in link end to end
+
+The only door into the paid product, walked in order. Every observation below is one the browser or
+`curl` shows; nothing here changes a setting.
+
+1. **An account must exist for the address.** A link is only ever sent to an address the `users`
+   table already holds (`src/lib/account/provisioning/magic-link.ts`), and the account is created by
+   the payment webhook, never by a form (`docs/SPEC.md` §3). So either complete one checkout at
+   `/pricing` with an `OWNER_EMAILS` address (#319), or confirm the row first: Supabase → Table
+   editor → `users`, one row whose `email` is that address, with an `auth.users` row of the same
+   `id`. An address with no row is answered at step 2 by *There's no ReachKit account for that
+   address* — which is that check, done from the outside.
+2. **Ask for the link.** Open `https://reachkit.app/signin`, type the address, press **Send my
+   link**. Expect *Check your inbox* and *Your sign-in link is on its way. It works once…*.
+3. **The mail.** Subject **Your sign-in link**, from `MAIL_FROM`, one action reading **Sign in**.
+   Resend's dashboard shows what left; a mail that did not compose or send is in the runtime log as
+   `mail_not_composable` or `sign_in_link_not_issued` (§6 above).
+4. **Follow it.** The link is `https://reachkit.app/auth/confirm?token_hash=…&type=magiclink` — this
+   product's own host, never Supabase's `action_link`. Expect `307` to `/setup` on a first sign-in
+   and to `/app` afterwards, carrying an `sb-…-auth-token` cookie on that same redirect.
+5. **Use it twice.** Re-open the same confirm URL: `307` to `/signin?link=dead`, and the screen says
+   *This link no longer works*. An expired link, a link superseded by a newer one and a token this
+   product never issued all answer identically — that sameness is the point.
+6. **The gate.** Signed out, `https://reachkit.app/app` answers `307` to `/signin`; with the session
+   from step 4 it serves.
+
+A link lasts 24 h (`SIGNIN_LINK_TTL_H`), but it is Supabase's own OTP expiry that spends it, so the
+two must agree. The Auth dashboard settings this walk depends on — Site URL, `/auth/confirm` on the
+redirect allow-list, Email OTP expiry 86400 s — are the owner's, listed in §11 under 2026-09-10.
 
 ---
 
@@ -547,6 +631,7 @@ deployment (`dpl_2NEUXishMXAkzXG4Ti85yTy7NDda`, 23 Aug 2026).
 | the site is 500ing | §7 — read the runtime log, find the last `boot_invariants` line |
 | every page 500s and nothing changed | §2 — the Supabase project may have paused after seven idle days |
 | nothing has published for days | §4 — is the Inngest app registered? The ticks are silent when it is not |
+| a WordPress destination needs proving | §4 — the six-step walk, and what each step should show |
 | spend looks wrong | §8 — the SQL is there; `fetches` is the truth |
 | stop the spend now | §5 — `KILL_SWITCH=true` on every target, **then redeploy** |
 | a key leaked | §3 — rotate: mint, paste both targets, redeploy, verify, revoke |
