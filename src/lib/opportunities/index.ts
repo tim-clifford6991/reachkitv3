@@ -6,6 +6,7 @@
 // reached them could produce an opportunity measured evidence did not.
 export type {
   Acceptance,
+  AssetKind,
   Barrier,
   Evidence,
   Family,
@@ -17,7 +18,7 @@ export type {
   Shortfall,
   Winnability,
 } from "./types";
-export { BARRIERS, FAMILY_OF, OPPORTUNITY_TYPES } from "./types";
+export { ASSET_KIND_OF, BARRIERS, FAMILY_OF, OPPORTUNITY_TYPES, assetKindOf } from "./types";
 
 export { bandWinnability, qualifies } from "./winnability/band";
 export { qualifyingBar, winnableBar } from "./winnability/bars";
