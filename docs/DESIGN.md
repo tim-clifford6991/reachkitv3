@@ -21,7 +21,7 @@ Owner ruling 2026-09-11: ten components keep the design of the previous version 
 | ScoreHero | report header, degraded report, dashboard: gauge with band chip and driver bars |
 | Kpi | dashboard tiles and report counts: mono uppercase label, mono numeral |
 | SignalPanel | report and dashboard panels: mono title, inner 12px-radius tiles |
-| Auth Login Page | sign-in: full-bleed split, 384px form column, accent field with a glass score card |
+| Auth Login Page | sign-in: one rounded card of two flush, equal-height halves — form left, accent field with the glass score card right (#549, 2026-09-12; the SignIn artboard is re-seeded to this in #618) |
 
 Four v2 colours have no v3 token and are added to the theme: `gradient-violet` (#7056e4 to #4e3fba), `tint-violet` (#f7f5ff with line #ddd8fa), `on-dark-muted` (#b7b4c4), `brand-arc` (#c3b2ff).
 
