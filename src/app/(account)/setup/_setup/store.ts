@@ -225,6 +225,32 @@ export function liveSetupStore(): SetupStore {
         }
       }
 
+      // SPEC.md §5 (2026-09-12): the voice the founder confirmed or
+      // edited — two different writes into the same field. An edit goes
+      // through `saveVoiceText`, which stamps `sites.voice_edited_at` so
+      // no later refresh overwrites their words. Confirming the summary
+      // unchanged seeds that field through `adoptVoiceText`: stored, so
+      // Settings shows it and drafting reads it, but unstamped, so every
+      // weekly refresh still reaches it. A failure here never
+      // un-completes a setup the founder has finished answering.
+      try {
+        const { adoptVoiceText, readSiteProfile, saveVoiceText } = await import(
+          "@/lib/site-profile"
+        );
+        const profile = await readSiteProfile(a.submission.domain);
+        const asRead = profile?.voice?.text ?? "";
+        if (a.submission.voiceText !== asRead) {
+          await saveVoiceText({ siteId: a.siteId, text: a.submission.voiceText });
+        } else {
+          await adoptVoiceText({ siteId: a.siteId, domain: a.submission.domain });
+        }
+      } catch {
+        // Swallowed for `enqueueDeepPass`'s reason: the three decisions
+        // are committed, and a voice that did not store is the next
+        // refresh's or Settings' to fix, never this founder's to answer
+        // again.
+      }
+
       const stamped = await untyped()
         .from<SiteSetupRow>("sites")
         .update({ setup_completed_at: new Date().toISOString() })

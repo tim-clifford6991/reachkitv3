@@ -12,6 +12,7 @@ import {
 } from "@/lib/market/setup/state";
 import { setupCards, type SetupCards } from "@/lib/publish/setup/cards";
 import { BATTERY } from "@/lib/config/constants";
+import type { SiteProfile } from "@/lib/site-profile/types";
 
 export interface SetupFacts {
   /** REQ-021 c6 versus c7. A completed report for the address the account
@@ -27,6 +28,12 @@ export interface SetupFacts {
   /** §9's edge hostname, from `HOSTED_EDGE_CNAME_TARGET`. Read by the
    *  provider, never by the cards. */
   cnameTarget: string;
+  /** SPEC.md §5 (2026-09-12), "The site profile is confirmed here": what
+   *  the scan read of this site — the inventory, the site name and the
+   *  brand-voice summary. `null` where no scan has built one for this
+   *  domain yet, and then the card does not render: a profile card with
+   *  no profile in it would state a reading nobody made. */
+  profile: SiteProfile | null;
 }
 
 export interface SetupScreenModel {
@@ -41,6 +48,9 @@ export interface SetupScreenModel {
    *  target the record points at. It is a deployment binding, not a
    *  sentence and not a secret. */
   cnameTarget: string;
+  /** The profile, carried through unchanged. Nothing is derived from it
+   *  here: the chips' counts are `purposeCounts`'s, over the inventory. */
+  profile: SiteProfile | null;
   /** REQ-026 c9: the limit is stated on screen, so the screen is given it
    *  rather than spelling the number itself. */
   competitorsMax: number;
@@ -55,6 +65,7 @@ export function assembleSetup(facts: SetupFacts): SetupScreenModel {
     state,
     cards: setupCards({ siteDomain: state.siteDomain, cnameTarget: facts.cnameTarget }),
     cnameTarget: facts.cnameTarget,
+    profile: facts.profile,
     competitorsMax: BATTERY.COMPETITORS_MAX,
   };
 }

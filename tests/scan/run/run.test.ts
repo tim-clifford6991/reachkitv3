@@ -25,6 +25,16 @@ vi.mock("@/lib/measure", async (importOriginal) => ({
   measureDomain: (...args: unknown[]) => measureDomain(...args),
 }));
 
+// Issue #577's leaf, doubled like every other callee this suite drives
+// (see the header). Left real it reaches the crawl's own fetcher, whose
+// deadline and timeouts are timers — and a suite that controls the clock
+// to test a stage budget can never fire them, so the pass never returns.
+const buildSiteProfile = vi.fn();
+vi.mock("@/lib/site-profile", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("../../../src/lib/site-profile")>()),
+  buildSiteProfile: (...a: unknown[]) => buildSiteProfile(...a),
+}));
+
 const deriveProfile = vi.fn();
 vi.mock("@/lib/market/questions/profile", async (importOriginal) => ({
   ...(await importOriginal<typeof import("../../../src/lib/market/questions/profile")>()),

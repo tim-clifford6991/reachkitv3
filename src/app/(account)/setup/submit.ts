@@ -38,6 +38,21 @@ export interface SetupSubmission {
    *  one: a hosted destination with no label is a host with an empty first
    *  segment, and the screen always has a value — the default. */
   destination: { kind: "hosted"; label: string } | { kind: "wordpress"; connectLater: true };
+  /**
+   * SPEC.md §5 (2026-09-12), "The site profile is confirmed here": the
+   * brand-voice summary as the founder leaves it — the text the scan read
+   * off their site, or their edit of it.
+   *
+   * **Not a fourth decision, and not an engine parameter.** §5's "User
+   * gets" lists it beside the three: "The voice ReachKit read from their
+   * site, shown and editable before anything is written." It carries no
+   * cadence, cap, depth or model choice — it is the customer's own words
+   * about how their pages should sound, and it reaches the prompt through
+   * `sites.voice_text`, which is where drafting already reads a voice
+   * from. The one submit carries it because §5 allows this screen one
+   * submit and no second save control.
+   */
+  voiceText: string;
 }
 
 export type SetupRefusal =

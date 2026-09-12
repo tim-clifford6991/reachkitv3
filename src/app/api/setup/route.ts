@@ -39,6 +39,10 @@ function parseSubmission(body: unknown): SetupSubmission | null {
   if (typeof b.category !== "string") return null;
   if (!Array.isArray(b.competitors) || b.competitors.some((c) => typeof c !== "string")) return null;
   if (b.mode !== "autopilot" && b.mode !== "copilot") return null;
+  // SPEC.md §5 (2026-09-12). A body with no voice is a founder whose site
+  // had no profile to confirm: the empty string, never a `null` the store
+  // would have to arm for.
+  if (b.voiceText !== undefined && typeof b.voiceText !== "string") return null;
 
   const destination = b.destination;
   if (typeof destination !== "object" || destination === null) return null;
@@ -61,6 +65,7 @@ function parseSubmission(body: unknown): SetupSubmission | null {
       kind === "hosted"
         ? { kind: "hosted", label: label ?? DEFAULT_HOSTED_LABEL }
         : { kind: "wordpress", connectLater: true },
+    voiceText: typeof b.voiceText === "string" ? b.voiceText : "",
   };
 }
 
