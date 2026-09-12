@@ -49,9 +49,12 @@ export function DecidePanel(p: {
     recorded: view.recordedChecks,
   });
 
+  // No window is running on a page past review, and §4.6's autopilot
+  // sentence is only true with a time in it: without one the box states its
+  // title alone rather than asking `copy()` for a slot it cannot fill.
   const doNothingLine =
     view.doNothing.publishesAt === null
-      ? writtenLine(view.doNothing.key)
+      ? null
       : writtenLine(view.doNothing.key, {
           at: formatDateTime(view.doNothing.publishesAt, view.timeZone),
         });
@@ -107,7 +110,7 @@ export function DecidePanel(p: {
 
       {/* §4.6's "what happens if you do nothing". The time is a value and
           renders whether or not the sentence around it has been written;
-          under copilot there is no time, because nothing happens. */}
+          a page with no window left has neither. */}
       <div className="rk-note" data-testid="draft-do-nothing">
         <span className="rk-note-title">{copy("draft.do-nothing.title")}</span>
         {doNothingLine === null ? null : <span>{doNothingLine}</span>}

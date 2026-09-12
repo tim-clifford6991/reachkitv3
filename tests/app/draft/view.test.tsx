@@ -294,6 +294,17 @@ describe("REQ-045 c4 — told what happens if nothing is done, and able to appro
     expect(textOf(root, "draft-do-nothing")).toBe(copy("draft.do-nothing.title"));
   });
 
+  it("the autopilot arm states no time and no sentence once the window is gone", () => {
+    // A page past review has no deadline to read, so the sentence has no
+    // time to state: the rail renders the box and says nothing else.
+    const root = markup({
+      ...VIEW,
+      doNothing: { key: "draft.do-nothing.autopilot", publishesAt: null },
+    });
+    expect(root.querySelector('[data-testid="draft-do-nothing-at"]')).toBeNull();
+    expect(textOf(root, "draft-do-nothing")).toBe(copy("draft.do-nothing.title"));
+  });
+
   it("a page past review offers no control at all, and still renders whole", () => {
     const root = markup({ ...VIEW, state: "published" });
     expect(root.querySelectorAll('[data-testid="draft-actions"] button').length).toBe(0);
