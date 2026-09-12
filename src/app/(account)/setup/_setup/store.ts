@@ -7,7 +7,7 @@
 //   readProgress     `sites.setup_completed_at` — the one predicate every
 //                    account route consults, with no second copy
 //   commitSetup      the three answers, then `applySetupChoice()`'s
-//                    mode-and-destination transaction, then the stamp
+//                    destination transaction, then the stamp
 //   enqueueDeepPass  `scan/run` at tier `deep`, on the queue
 //   resolvesInDns    §6.4's resolver, through the egress seam
 //
@@ -197,7 +197,6 @@ export function liveSetupStore(): SetupStore {
 
       const applied = await applySetupChoice({
         siteId: a.siteId,
-        mode: a.submission.mode,
         destinationKind: a.submission.destination.kind,
         hostname,
       });
