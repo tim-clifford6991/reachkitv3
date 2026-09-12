@@ -269,7 +269,7 @@ describe("the six stages", () => {
 });
 
 describe("a stage that spends its own budget (issue #539)", () => {
-  it("a stage one that ran out of budget ends the pass unreadable, never `complete`", async () => {
+  it("a stage one that ran out of budget ends the pass bounded — never `complete`, never unreadable", async () => {
     vi.useFakeTimers();
     try {
       const { STAGE_BUDGETS } = await import("../../../src/lib/scan/budgets");
@@ -281,9 +281,12 @@ describe("a stage that spends its own budget (issue #539)", () => {
       await vi.advanceTimersByTimeAsync(STAGE_BUDGETS.reading_your_site.seconds * 1000);
       await pass;
 
-      // Nothing was measured. The one thing such a pass must never claim is
-      // that its report is whole.
-      expect(storedReport().complete).toBe(false);
+      // Nothing was measured, so the report is not whole — and the reason
+      // is our own budget. `site_unreadable` would blame the customer's
+      // domain, invite a re-scan and hide the drivers behind §479's line.
+      const report = storedReport();
+      expect(report.complete).toBe(false);
+      expect(report.stoppedReason).toBe("time_ceiling");
       expect(stages.lines).toEqual(["reading_your_site:enter"]);
     } finally {
       vi.useRealTimers();

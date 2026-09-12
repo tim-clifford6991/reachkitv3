@@ -686,21 +686,12 @@ async function runStages(a: StageArgs): Promise<void> {
   const read = await inBudget("reading_your_site", () =>
     attempt("reading_your_site", () => measureDomain(cost, { domain, tier: a.tier }))
   );
-  // The one stage whose budget ends the pass rather than just itself:
-  // nothing after it measures anything without the site's own documents,
-  // exactly as a refused home ends it below.
-  //
-  // **And it ends the pass the way §479 ends a home nobody could read**
-  // (#539 review). Returning here without recording anything left the pass
-  // with no ceiling fired and no unreadable arm, so `runBounded` settled
-  // the one ending that says the report is whole: a scan that measured
-  // nothing, every section `not_attempted`, stored as `complete`. That is
-  // the very metric this issue is judged on. `siteUnreadable(null)` is the
-  // honest arm — we read nothing of the customer's own site, and `refusal`
-  // is `null` because nobody refused us, which is the same arm a read that
-  // raised already records. Never `complete`.
+  // Stage one's budget ends the pass, not just the stage: nothing after it
+  // measures anything without the site's own documents. It ends by the
+  // column that ran out — never `complete`, never §479's refusal, which
+  // would blame the customer's domain for a budget of our own (#539).
   if (read.spent) {
-    bounds.siteUnreadable(null);
+    bounds.stageExhausted(read.reason);
     return;
   }
   const measurement = read.value;

@@ -413,3 +413,33 @@ describe("issue #479 — `siteUnreadable` ends the pass with its cause, not `com
     expect(ending).toMatchObject({ stoppedReason: "site_unreadable", refusal: null });
   });
 });
+
+// ── Issue #539 — a stage the pass cannot continue without ends it bounded ──
+
+describe("issue #539 — `stageExhausted` ends the pass by the column that ran out, not `complete`", () => {
+  it("ceilings/stage · a stage that spent its time budget ends the pass `time_ceiling`", async () => {
+    const outcome = await withFreeBounds({ scanId: "scan-539", startedAt: startedNow() }, async (bounds: Bounds) => {
+      bounds.stageExhausted("time_ceiling");
+      return "stopped after the first stage";
+    });
+    expect(outcome.ending).toEqual({ kind: "report", complete: false, stoppedReason: "time_ceiling" });
+    expect(outcome.result).toBe("stopped after the first stage");
+  });
+
+  it("ceilings/stage · a stage that spent its cents ends it `spend_ceiling`, and never `site_unreadable`", async () => {
+    const outcome = await withFreeBounds({ scanId: "scan-539b", startedAt: startedNow() }, async (bounds: Bounds) => {
+      bounds.stageExhausted("spend_ceiling");
+      return null;
+    });
+    expect(outcome.ending).toEqual({ kind: "report", complete: false, stoppedReason: "spend_ceiling" });
+  });
+
+  it("ceilings/stage · a ceiling the pass itself hit outranks a stage's own (ADR-021)", async () => {
+    const outcome = await withFreeBounds({ scanId: "scan-539c", startedAt: startedNow() }, async (bounds: Bounds) => {
+      bounds.stageExhausted("time_ceiling");
+      activeCost.setCapHit(true);
+      return null;
+    });
+    expect(outcome.ending).toEqual({ kind: "report", complete: false, stoppedReason: "spend_ceiling" });
+  });
+});

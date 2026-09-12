@@ -102,8 +102,14 @@ export const SERP_FANOUT = 4;
 /** What a stage's work came back with, or the fact that the stage spent its
  *  budget before the work finished. `spent` is never an error: the stage's
  *  sections keep the arm they were initialised with — `not_attempted`, "we
- *  did not get to it" — and the pass moves to the next stage. */
-export type StageOutcome<T> = { readonly spent: false; readonly value: T } | { readonly spent: true };
+ *  did not get to it" — and the pass moves to the next stage.
+ *
+ *  `reason` is the column that ran out, in the pass's own bounded
+ *  vocabulary, so the one stage the pass cannot continue without can end
+ *  the pass bounded rather than `complete` (#539 review). */
+export type StageOutcome<T> =
+  | { readonly spent: false; readonly value: T }
+  | { readonly spent: true; readonly reason: "time_ceiling" | "spend_ceiling" };
 
 /** Both sums, checked when this module loads — the same discipline
  *  `stages.ts` uses for "exactly six stages". A widened budget that the
@@ -154,9 +160,10 @@ function cancellableDelay(ms: number): { promise: Promise<void>; cancel: () => v
  * budget must not make the *pass* read as cut off — the pass still ends
  * `complete` where no overall ceiling fired, with the cut-off stage's
  * drivers `not_attempted` and every other stage's measured, which is
- * exactly the report §2 describes. `siteUnreadable` is the one member that
- * is deliberately delegated through: it is the pass's ending, not a
- * ceiling, and stage one is where it is decided.
+ * exactly the report §2 describes. The two recording members are
+ * deliberately delegated through — `siteUnreadable` and `stageExhausted`
+ * are the pass's ending rather than a ceiling, and stage one is where
+ * either is decided.
  */
 function stageBounds(a: {
   bounds: Bounds;
@@ -186,6 +193,12 @@ function stageBounds(a: {
     },
     unreadable() {
       return a.bounds.unreadable();
+    },
+    stageExhausted(reason): void {
+      a.bounds.stageExhausted(reason);
+    },
+    exhausted() {
+      return a.bounds.exhausted();
     },
   };
   return bounds;
@@ -267,7 +280,10 @@ export async function withStageBudget<T>(
     (async (): Promise<StageOutcome<T>> => ({ spent: false, value: await work(bounds, () => abandoned) }))(),
     (async (): Promise<StageOutcome<T>> => {
       await timer.promise;
-      return { spent: true };
+      // The column that ran out, answered by the stage's own two rather
+      // than guessed at the call site — the timer that settles this race is
+      // the time column, so that is the usual answer.
+      return { spent: true, reason: bounds.stopNow() ?? "time_ceiling" };
     })(),
   ]);
   timer.cancel();

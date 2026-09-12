@@ -30,6 +30,7 @@ import { STAGES } from "@/lib/scan/stages";
 function passBounds(over: { expired?: boolean; capHit?: boolean } = {}): Bounds {
   const expired = over.expired ?? false;
   const capHit = over.capHit ?? false;
+  let exhausted: "time_ceiling" | "spend_ceiling" | undefined;
   return {
     expired: () => expired,
     remainingMs: () => (expired ? 0 : TIMING.reportCeilingS * 1000),
@@ -37,6 +38,10 @@ function passBounds(over: { expired?: boolean; capHit?: boolean } = {}): Bounds 
     stopNow: () => (expired ? "time_ceiling" : capHit ? "spend_ceiling" : null),
     siteUnreadable: () => undefined,
     unreadable: () => undefined,
+    stageExhausted: (reason) => {
+      exhausted = reason;
+    },
+    exhausted: () => exhausted,
   };
 }
 
@@ -77,7 +82,7 @@ describe("a stage driven to its time budget ends there, and the pass does not", 
     );
     await vi.advanceTimersByTimeAsync(budget.seconds * 1000);
 
-    expect(await outcome).toEqual({ spent: true });
+    expect(await outcome).toEqual({ spent: true, reason: "time_ceiling" });
     // The pass's own ceilings never fired: it is the *stage* that ended, so
     // the stages after it still run and the ending is still `complete`.
     expect(bounds.stopNow()).toBeNull();
@@ -110,6 +115,17 @@ describe("a stage driven to its time budget ends there, and the pass does not", 
     // The pass itself is untouched — its cap is the sum of every stage's.
     expect(bounds.stopNow()).toBeNull();
     expect(bounds.capHit()).toBe(false);
+  });
+
+  it("the stage records the pass's bounded ending through its own bounds, never a second channel", async () => {
+    // How a stage one that spent its budget reaches the pass's ending: the
+    // `Bounds` the work holds, the same door §479's refusal uses.
+    const bounds = passBounds();
+    await withStageBudget(
+      { stage: "reading_your_site", bounds, cost: fakeCost(() => 0), applies: true },
+      async (stageBounds) => stageBounds.stageExhausted("spend_ceiling")
+    );
+    expect(bounds.exhausted()).toBe("spend_ceiling");
   });
 
   it("a pass with no report deadline gets no per-stage bound at all", async () => {
@@ -157,7 +173,7 @@ describe("a stage that was abandoned says so to the work still running inside it
     );
 
     await vi.advanceTimersByTimeAsync(budget.seconds * 1000);
-    expect(await outcome).toEqual({ spent: true });
+    expect(await outcome).toEqual({ spent: true, reason: "time_ceiling" });
 
     // The vendor answers after the stage ended. The worker asks before it
     // writes, and keeps its answer out of a `sections` the pass has already
