@@ -1,17 +1,9 @@
 // tests/vendors/vercel-domains.test.ts — SPEC §5 (2026-09-12)
 //
-// The Vercel Domains API call §5 rules: "on save the app adds the hostname
-// to the project's domain list through the Vercel Domains API with our
-// server-only token".
-//
-// Three rows matter, and each is one a plausible implementation fails:
-// the call is **idempotent** — a hostname the project already holds is the
-// vendor's 409, and a client that treated that as a failure would leave a
-// pointed record answering 404 for ever; a deployment with **no token**
-// answers rather than throwing, because a founder's submit must not fail
-// over a binding they cannot see; and **no vendor payload and no credential
-// leaves this module**, which is what keeps §5's "never a vendor error" a
-// property of the type.
+// The call §5 rules: "on save the app adds the hostname to the project's
+// domain list … with our server-only token". A 409 for a hostname this
+// project already holds is the idempotent case, not a failure; no token is
+// an answer, not a throw; and no payload or credential leaves this module.
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { readFileSync } from "node:fs";
 import path from "node:path";
@@ -82,9 +74,8 @@ describe("§5 — the hostname is added to the project's domain list", () => {
   });
 
   it("**idempotent**: a hostname this project already holds answers 409, and the read behind it says attached", async () => {
-    // The row a client that read 409 as a failure would fail: the second
-    // save of the same label must not leave the customer's record pointing
-    // at a project that has never heard of them.
+    // A second save of the same label must not leave the customer's record
+    // pointing at a project that has never heard of them.
     answers.push({ status: 409, body: { error: { code: "domain_already_in_use" } } });
     answers.push({ status: 200, body: { name: "blog.example.com", verified: true } });
     await expect(addProjectDomain("blog.example.com")).resolves.toEqual({

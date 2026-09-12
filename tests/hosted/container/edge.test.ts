@@ -25,10 +25,9 @@ vi.mock("@/lib/publish/destinations/hosted", async () => {
       const id = sites.get(domain);
       return id === undefined ? null : { siteId: id, domain, host: `content.${domain}` };
     },
-    // SPEC §5 (2026-09-12): a Host is matched whole against the host on
-    // the destination row first. These suites describe a site whose row
-    // predates the label being a choice, so that lookup finds nothing and
-    // the default-label lookup beside it is what serves them.
+    // SPEC §5 (2026-09-12): a Host is matched whole against the row's host
+    // first. These suites describe a row that predates the choice, so that
+    // lookup finds nothing and the default-label one beside it serves them.
     hostedSiteForHostname: async () => null,
     livePagesForSite: async () => [],
     livePageBySlug: async (siteId: string, slug: string) =>
@@ -102,13 +101,10 @@ describe("every path on a customer's own domain lands in the hosted group", () =
   });
 
   it("a ReachKit host is untouched by any of this", async () => {
-    // **The deployment's own address, from the binding this harness sets**
-    // — not an arbitrary name. Since SPEC §5's ruling of 2026-09-12 the
-    // label is the customer's, so the rewrite is decided by subtraction
-    // rather than by a `content.` prefix: a Host that is not one of ours
-    // arrived because somebody pointed a record at us. That makes "one of
-    // ours" a fact to read rather than a stand-in to pick, and this row is
-    // what holds the app's own screens out of the hosted group.
+    // The deployment's own address, from the binding this harness sets.
+    // Since §5's ruling the label is the customer's, so the rewrite is
+    // decided by subtracting our own hosts rather than by a `content.`
+    // prefix — and this row holds the app's own screens out of the group.
     const response = await middleware(requestTo("/pricing", "app.example.com"));
     expect(rewrittenTo(response)).toBeNull();
   });

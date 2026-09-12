@@ -53,12 +53,10 @@ const BINDING_NAMES = [
   "HOSTED_EDGE_CNAME_TARGET",
   "INNGEST_SIGNING_KEY",
   "INNGEST_EVENT_KEY",
-  // Issue #322 — SPEC §5's ruling of 2026-09-12: the customer's subdomain
-  // is added to the project's domain list "through the Vercel Domains API
-  // with our server-only token". Optional at the schema level for the same
-  // reason the jobs pair is: a local build and the layout suite add no
-  // domain to any project, and a deployment that carries neither attaches
-  // nothing rather than failing to boot.
+  // Issue #322 — §5's subdomain is added "through the Vercel Domains API
+  // with our server-only token". Optional for the same reason the jobs pair
+  // is: a deployment carrying neither attaches nothing rather than failing
+  // to boot.
   "VERCEL_API_TOKEN",
   "VERCEL_PROJECT_ID",
 ] as const;

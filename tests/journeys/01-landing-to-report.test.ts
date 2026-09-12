@@ -76,23 +76,13 @@ const PRICING_HTML = `<!doctype html><html><body><h1>Pricing</h1>
 
 /**
  * The instant the pass read the site — **an hour before this journey runs,
- * not a calendar date** (issue #322's CI run).
- *
- * It was `2026-09-05T10:00:00.000Z`, and the report the journey stores
- * carries it as its `measuredAt`. `_address/resolve.ts` offers a rescan
- * once that is `FREE_RESCAN_WINDOW_D` whole days old, so on 2026-09-12 —
- * exactly seven days later — the last step of this journey started reading
- * `{ kind: 'rescan', because: 'age' }` where it expects `{ kind: 'none' }`,
- * on every branch and on `main` alike. The fixture had aged out of the
- * window it is meant to sit inside.
- *
- * Anchoring it to the run fixes the class rather than the day: the stored
- * report is always inside the free-rescan window, so this journey asserts
- * the behaviour it is about — a visitor landing on the report their own
- * scan produced, with no control in the way — on whatever day the suite
- * runs. Nothing here reads the value as a *date*: it travels as the
- * `readAt` of two mocked reads, and the only assertion made of it is that
- * a date survives the `jsonb` round trip as a `Date`.
+ * not a calendar date**. It was `2026-09-05T10:00:00.000Z`; the report the
+ * journey stores carries it as `measuredAt`, and `_address/resolve.ts`
+ * offers a rescan once that is `FREE_RESCAN_WINDOW_D` whole days old — so
+ * on 2026-09-12 the last step read `{ kind: 'rescan' }` where it expects
+ * `{ kind: 'none' }`, on every branch and on `main` alike. Anchoring it to
+ * the run fixes the class rather than the day. Nothing reads it as a date:
+ * it travels as the `readAt` of two mocked reads.
  */
 const READ_AT = new Date(Date.now() - 60 * 60 * 1000);
 

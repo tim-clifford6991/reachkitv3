@@ -59,10 +59,13 @@ async function siteDomain(siteId: string): Promise<string | null> {
  *
  * **The hostname is attached to the project here too, and that is where
  * "idempotently" lives.** The submit attaches it once; this check attaches
- * it again on every pass, so a founder whose save happened while the vendor
- * was unreachable is not left with a record pointing at a project that has
- * never heard of them. The word the customer reads — "waiting for DNS" or
- * "live" — is written from the resolution below and from nothing else.
+ * it again — at most once an hour per host, the throttle `syncHostname`
+ * keeps — so a founder whose save happened while the vendor was unreachable
+ * is not left with a record pointing at a project that has never heard of
+ * them. The word the customer reads is the domain list's own answer and is
+ * decided there, never from the resolution below: a record can resolve
+ * perfectly at a host this project was never told about, and that host
+ * serves the platform's 404 rather than the customer's pages.
  *
  * A name that *does* resolve raises the one question resolution cannot
  * answer — whether it points at our edge or at somebody else's server —
@@ -80,10 +83,11 @@ async function hostedHealth(row: DestinationRecord): Promise<{ health: Destinati
   }
   const host = row.hostname ?? hostFor({ label: null, domain });
   const resolves = await resolvesInDns(host);
-  // Idempotent, and made whether or not the record resolves: the hostname
-  // has to be on the project *before* the record resolves, because that is
-  // when the certificate is issued.
-  await syncHostname({ destinationId: row.id, hostname: host, resolves });
+  // Made whether or not the record resolves — the host has to be on the
+  // project before a certificate can be issued for it — and throttled
+  // inside `syncHostname`, so a health pass per destination is not a vendor
+  // call per destination.
+  await syncHostname({ destinationId: row.id, hostname: host });
   if (!resolves) {
     return { health: "expired", reason: "dns_unset" };
   }

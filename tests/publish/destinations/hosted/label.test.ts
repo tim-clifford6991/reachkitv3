@@ -1,14 +1,9 @@
 // tests/publish/destinations/hosted/label.test.ts — SPEC §5 (2026-09-12)
 //
-// The subdomain label the customer chooses. §5: "onboarding step 3 offers a
-// subdomain label the customer chooses (default `content`), refusing an
-// invalid … label in one written line".
-//
-// The rows that matter are the ones a permissive check would pass: a label
-// with a dot in it is two labels and not a subdomain of their domain; a
-// label that is only a hyphen composes a host no resolver will answer for;
-// and an empty one composes `.example.com`, which is the shape that turns a
-// customer's own apex into our address.
+// The subdomain label the customer chooses (§5: "default `content`, refusing
+// an invalid … label in one written line"). The rows that matter are the
+// ones a permissive check passes: a dot is two labels, a lone hyphen is a
+// host no resolver answers for, and an empty one composes `.example.com`.
 import { describe, expect, it } from "vitest";
 import {
   DEFAULT_HOSTED_LABEL,
@@ -60,8 +55,7 @@ describe('§5 — "refusing an invalid … label in one written line"', () => {
   });
 
   it('"taken" is never decided here: this module reads no row', () => {
-    // The row-shaped refusal has one home (`hostname.ts`), so a string
-    // check that guessed at it would be a second answer to one question.
+    // The row-shaped refusal has one home (`hostname.ts`).
     for (const label of ["blog", "", "-x"]) {
       const checked = checkLabel(label);
       expect(checked.ok ? null : checked.because).not.toBe("taken");

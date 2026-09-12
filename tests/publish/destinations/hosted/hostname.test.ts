@@ -1,15 +1,9 @@
 // tests/publish/destinations/hosted/hostname.test.ts — SPEC §5 (2026-09-12)
 //
 // The host a customer's pages are served at: whether it is free, whether it
-// is on the project, and which of §5's two words the customer reads.
-//
-// The rows that matter are the ones a plausible implementation gets wrong:
-// a founder must not be told their **own** host is taken; the word must
-// follow the **record resolving** and not the vendor's mood, because §5
-// words it that way ("waiting for DNS until the record resolves and live
-// after"); and the attachment must be made **whether or not** the record
-// resolves, because the hostname has to be on the project before a
-// certificate can be issued for it.
+// is on the project, which of §5's two words the customer reads, and how
+// often the vendor is asked. Only the domain list's own verification reads
+// "live" — a record can resolve at a host Vercel was never told about.
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { readFileSync } from "node:fs";
 import path from "node:path";
@@ -18,13 +12,24 @@ import { fakeDb } from "../../harness";
 const db = fakeDb();
 vi.mock("@/lib/db", () => ({ dbAdmin: () => db.client, db: () => db.client }));
 
-const attached: string[] = [];
+type Answer =
+  | { ok: true; attached: true; verified: boolean }
+  | { ok: false; because: "not_configured" | "elsewhere" | "no_answer" };
+
+const vendor = vi.hoisted(() => ({
+  answer: { ok: true, attached: true, verified: false } as Answer,
+  asked: [] as string[],
+}));
 vi.mock("@/lib/vendors/vercel/domains", () => ({
   addProjectDomain: async (hostname: string) => {
-    attached.push(hostname);
-    return { ok: true, attached: true, verified: false };
+    vendor.asked.push(hostname);
+    return vendor.answer;
   },
 }));
+
+function answers(answer: Answer): void {
+  vendor.answer = answer;
+}
 
 const { hostnameTaken, syncHostname } = await import(
   "@/lib/publish/destinations/hosted/hostname"
@@ -32,8 +37,16 @@ const { hostnameTaken, syncHostname } = await import(
 
 beforeEach(() => {
   db.reset();
-  attached.length = 0;
+  vendor.asked.length = 0;
+  answers({ ok: true, attached: true, verified: false });
 });
+
+const NOW = new Date("2026-09-12T12:00:00.000Z");
+const AGES_AGO = "2026-09-10T00:00:00.000Z";
+
+function sync(now: Date = NOW): Promise<"pending_dns" | "live"> {
+  return syncHostname({ destinationId: "dest-1", hostname: "blog.example.com", now });
+}
 
 function seedDestination(over: Record<string, unknown> = {}): void {
   db.seed("destinations", [
@@ -79,40 +92,63 @@ describe('§5 — "refusing an … already-taken label in one written line"', ()
 });
 
 describe("§5 — the hostname is attached, and the customer reads one of two words", () => {
-  it("a record that has not resolved is waiting for DNS — and the host is attached anyway", async () => {
-    // The row that matters: a certificate is issued when the record
-    // resolves, which cannot happen unless the host is already on the
-    // project. An implementation that attached only once DNS was pointed
-    // would deadlock every customer.
+  it("a host the domain list has not verified is waiting for DNS — and it is attached anyway", async () => {
+    // A certificate is issued when the record resolves, which needs the host
+    // on the project already: attaching only after DNS would deadlock.
     seedDestination();
-    await expect(
-      syncHostname({ destinationId: "dest-1", hostname: "blog.example.com", resolves: false })
-    ).resolves.toBe("pending_dns");
-    expect(attached).toEqual(["blog.example.com"]);
+    await expect(sync()).resolves.toBe("pending_dns");
+    expect(vendor.asked).toEqual(["blog.example.com"]);
     expect(db.rows("destinations")[0]?.hostname_state).toBe("pending_dns");
   });
 
-  it("a record that resolves is live, and the row carries it", async () => {
+  it("**only the domain list's own verification reads live**", async () => {
     seedDestination();
-    await expect(
-      syncHostname({ destinationId: "dest-1", hostname: "blog.example.com", resolves: true })
-    ).resolves.toBe("live");
+    answers({ ok: true, attached: true, verified: true });
+    await expect(sync()).resolves.toBe("live");
     expect(db.rows("destinations")[0]?.hostname_state).toBe("live");
   });
 
-  it("it is idempotent: a second sync attaches again and says the same thing", async () => {
+  it("**a deployment with no token never reads live** — the row a resolved record would have lied about", async () => {
+    // Nothing is attached, so a pointed record gets the platform's 404.
     seedDestination();
-    await syncHostname({ destinationId: "dest-1", hostname: "blog.example.com", resolves: true });
-    await expect(
-      syncHostname({ destinationId: "dest-1", hostname: "blog.example.com", resolves: true })
-    ).resolves.toBe("live");
-    expect(attached).toEqual(["blog.example.com", "blog.example.com"]);
+    answers({ ok: false, because: "not_configured" });
+    await expect(sync()).resolves.toBe("pending_dns");
+    expect(db.rows("destinations")[0]?.hostname_state).toBe("pending_dns");
+  });
+
+  it("a host another project holds is an answer, and it is not live", async () => {
+    seedDestination({ hostname_state: "live" });
+    answers({ ok: false, because: "elsewhere" });
+    await expect(sync()).resolves.toBe("pending_dns");
+  });
+
+  it("a pass that could not ask leaves a served host live, and still stamps the date", async () => {
+    seedDestination({ hostname_state: "live" });
+    answers({ ok: false, because: "no_answer" });
+    await expect(sync()).resolves.toBe("live");
+    const row = db.rows("destinations")[0] ?? {};
+    expect(row.hostname_state).toBe("live");
+    expect(typeof row.hostname_checked_at).toBe("string");
+  });
+
+  it("**asked once an hour, not once a pass** — the scheduled path's cost", async () => {
+    seedDestination();
+    await sync();
+    await sync(new Date(NOW.getTime() + 60_000));
+    expect(vendor.asked).toEqual(["blog.example.com"]);
+  });
+
+  it("once the window has passed it asks again, which is how an unreachable save heals", async () => {
+    seedDestination({ hostname_checked_at: AGES_AGO });
+    answers({ ok: true, attached: true, verified: true });
+    await expect(sync()).resolves.toBe("live");
+    expect(vendor.asked).toEqual(["blog.example.com"]);
     expect(db.rows("destinations")).toHaveLength(1);
   });
 
   it("what the vendor answered never reaches the row — only the state and the date it was asked", async () => {
     seedDestination();
-    await syncHostname({ destinationId: "dest-1", hostname: "blog.example.com", resolves: false });
+    await sync();
     const row = db.rows("destinations")[0] ?? {};
     expect(Object.keys(row)).not.toContain("vendor");
     expect(JSON.stringify(row)).not.toContain("verified");

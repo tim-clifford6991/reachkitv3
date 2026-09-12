@@ -212,16 +212,13 @@ export function liveSetupStore(): SetupStore {
       if (hostname !== null) {
         try {
           const { syncHostname } = await import("@/lib/publish/destinations/hosted/hostname");
-          await syncHostname({
-            destinationId: applied.destinationId,
-            hostname,
-            // Nothing is resolved on this path: §4.3's footer is a founder
-            // pressing one control and the product starting, and a DNS
-            // lookup here would put a third party's timeout between the
-            // press and the pass. The record has just been shown to them,
-            // so "waiting for DNS" is what it honestly is.
-            resolves: false,
-          });
+          // No DNS lookup on this path: §4.3's footer is a founder pressing
+          // one control and the product starting, and a resolution here
+          // would put a third party's timeout between the press and the
+          // pass. What the state is comes from the domain list's answer to
+          // this one call, which is "not verified yet" for a record the
+          // founder has only just been shown.
+          await syncHostname({ destinationId: applied.destinationId, hostname });
         } catch {
           // The next health check attaches it. Nothing is swallowed that
           // this founder could act on.

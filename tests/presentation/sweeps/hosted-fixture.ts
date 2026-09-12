@@ -92,17 +92,13 @@ export async function hostedModuleMock(
             siteId: HOSTED_SWEEP_SITE_ID,
             domain: HOSTED_SWEEP_DOMAIN,
             // SPEC §5 (2026-09-12): a resolved site carries the host it
-            // answered at, and the canonical is composed from it — so the
-            // sweep reads the address a visitor would, not a recomposed
-            // guess at one.
+            // answered at, and the canonical is composed from it.
             host: HOSTED_SWEEP_HOST,
           }
         : null,
-    // SPEC §5: the Host is matched whole against the host on the
-    // destination row before any label is assumed. This fixture's site has
-    // no such row — it is a site whose row predates the label being a
-    // choice — so this answers nothing and the default-label lookup beside
-    // it is what resolves it. Mocked rather than left real because the real
+    // SPEC §5: the Host is matched whole against the row's host first. This
+    // fixture's site predates the choice, so this answers nothing and the
+    // default-label lookup beside it resolves it. Mocked because the real
     // one reads a database these sweeps must never reach.
     hostedSiteForHostname: async () => null,
     livePageBySlug: async (_siteId: string, slug: string) =>

@@ -481,6 +481,15 @@ export const DESTINATION_HEALTH_DEBOUNCE_S = 60 as const;    // BP-058 NFR budge
  *  stale a check may be, the other is how long a breakage stands before
  *  the customer is written to, and they move independently. */
 export const DESTINATION_BREAKAGE_MAIL_DELAY_H = 24 as const; // BP-058 · REQ-074 c6
+/** How long the project's domain list stands before one hostname is asked
+ *  about again (SPEC §5, 2026-09-12 — the hostname is added "on save … and
+ *  the certificate is automatic once the CNAME resolves"). Chosen, not
+ *  transcribed: the health pass reaches every hosted destination, so
+ *  without a window each pass is one vendor call per destination. An hour
+ *  is the coarsest window that still heals a save made while the vendor was
+ *  unreachable on the same day the founder made it. Reversal cost is this
+ *  one number. */
+export const DESTINATION_HOSTNAME_RECHECK_H = 1 as const;     // SPEC §5 (2026-09-12)
 
 /** BP-049 NFR budget: "`VERIFY.coverageFloor = 0.95` and `VERIFY.userAgent`
  *  belong in BP-005 (config over constants, rule 7)." `userAgent` is our own
