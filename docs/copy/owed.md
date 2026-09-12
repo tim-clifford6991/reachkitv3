@@ -2,7 +2,7 @@
 
 **Generated. Do not type into this file** — `npm run copy:owed` rewrites it and `tests/presentation/copy/owed-sheet.test.ts` fails when it is out of date. Write the sentences in your reply, or straight into `src/lib/presentation/copy/keys/*.ts`, and run the generator again: a key that gains a sentence leaves this sheet by itself.
 
-**18 keys**, across 819 in the registry — **0 empty** (`copy()` throws on these: a mail with one does not send, a screen with one does not render) and **18 `TODO(copy)`** (these render the marker, in public, until they are written).
+**20 keys**, across 813 in the registry — **2 empty** (`copy()` throws on these: a mail with one does not send, a screen with one does not render) and **18 `TODO(copy)`** (these render the marker, in public, until they are written).
 
 **How to read a row.**
 
@@ -24,7 +24,7 @@ A key with slots (`{value}`, `{date}`) carries them beside its name; the sentenc
 | S3 | Report states | none | 0 |
 | S4 | Pricing | none | 0 |
 | S5 | Legal | none | 0 |
-| S6 | Veto page | none | 0 |
+| S6 | [Veto page](#s6-veto-page-public) | 1 | 1 |
 | S7 | Opt-out | none | 0 |
 | S8 | Not found | none | 0 |
 | S9 | Sign in | none | 0 |
@@ -34,11 +34,21 @@ A key with slots (`{value}`, `{date}`) carries them beside its name; the sentenc
 | S13 | Overview · week 0 | none | 0 |
 | S14 | Calendar | none | 0 |
 | S15 | Day panel states | none | 0 |
-| S16 | Draft | none | 0 |
+| S16 | [Draft](#s16-draft-app) | 1 | 1 |
 | S17 | Draft · edit | none | 0 |
 | S18 | [Settings](#s18-settings-app) | 1 | 0 |
 | S19 | Hosted page | none | 0 |
 | S20 | Mails | none | 0 |
+
+## S6 · Veto page — Public
+
+Screen `S6` · the set draws it as `current="veto"` (`docs/archive/2026-09-11/approved/full-set/screens/veto-light.png`).
+
+Every bracketed hint the set draws on this screen: `[page title 15]` · `[rights line — owner’s]`
+
+| key | standing | where | the set says | fixed by | max |
+|---|---|---|---|---|---|
+| `mail.draftReady.copilot`<br>`mail.ts` | empty | composed in the engine · `lib/publish/publishable/telling.ts` · +1 more<br>also on S20 |  | REQ-057 c1 · §7 | 46 — sibling `mail.draftReady.body` |
 
 ## S10 · Setup — Join
 
@@ -52,19 +62,29 @@ Every bracketed hint the set draws on this screen: `[competitor-picker line — 
 | `setup.destination.label.refused.invalid`<br>`setup.ts` | marker | `LABEL_REFUSAL_COPY` · `app/(account)/setup/SetupForm.tsx` · +1 more |  | SPEC §5 (2026-09-12) |  |
 | `setup.destination.label.refused.taken`<br>`setup.ts` | marker | `LABEL_REFUSAL_COPY` · `app/(account)/setup/SetupForm.tsx` · +1 more |  | SPEC §5 (2026-09-12) |  |
 | `setup.profile.pages-read` `{pages}`<br>`setup.ts` | marker | badge · `<span class="num">` · `app/(account)/setup/SetupForm.tsx` |  | SPEC.md §5 (2026-09-12) |  |
-| `setup.profile.purpose.about`<br>`setup.ts` | marker | control · `<div class="rk-pick">` · `app/(account)/setup/SetupForm.tsx` |  | SPEC.md §2 (2026-09-12) | 175 — sibling `setup.waiting.about` |
-| `setup.profile.purpose.blog`<br>`setup.ts` | marker | control · `<div class="rk-pick">` · `app/(account)/setup/SetupForm.tsx` |  | SPEC.md §2 (2026-09-12) |  |
-| `setup.profile.purpose.contact`<br>`setup.ts` | marker | control · `<div class="rk-pick">` · `app/(account)/setup/SetupForm.tsx` |  | SPEC.md §2 (2026-09-12) |  |
-| `setup.profile.purpose.features`<br>`setup.ts` | marker | control · `<div class="rk-pick">` · `app/(account)/setup/SetupForm.tsx` |  | SPEC.md §2 (2026-09-12) |  |
-| `setup.profile.purpose.legal`<br>`setup.ts` | marker | control · `<div class="rk-pick">` · `app/(account)/setup/SetupForm.tsx` |  | SPEC.md §2 (2026-09-12) |  |
-| `setup.profile.purpose.other`<br>`setup.ts` | marker | control · `<div class="rk-pick">` · `app/(account)/setup/SetupForm.tsx` |  | SPEC.md §2 (2026-09-12) |  |
-| `setup.profile.purpose.pricing`<br>`setup.ts` | marker | control · `<div class="rk-pick">` · `app/(account)/setup/SetupForm.tsx` |  | SPEC.md §2 (2026-09-12) |  |
-| `setup.profile.purpose.product`<br>`setup.ts` | marker | control · `<div class="rk-pick">` · `app/(account)/setup/SetupForm.tsx` |  | SPEC.md §2 (2026-09-12) |  |
+| `setup.profile.purpose.about`<br>`setup.ts` | marker | control · `<div class="flex flex-wrap items-center gap-2">` · `app/(account)/setup/SetupForm.tsx` |  | SPEC.md §2 (2026-09-12) | 175 — sibling `setup.waiting.about` |
+| `setup.profile.purpose.blog`<br>`setup.ts` | marker | control · `<div class="flex flex-wrap items-center gap-2">` · `app/(account)/setup/SetupForm.tsx` |  | SPEC.md §2 (2026-09-12) |  |
+| `setup.profile.purpose.contact`<br>`setup.ts` | marker | control · `<div class="flex flex-wrap items-center gap-2">` · `app/(account)/setup/SetupForm.tsx` |  | SPEC.md §2 (2026-09-12) |  |
+| `setup.profile.purpose.features`<br>`setup.ts` | marker | control · `<div class="flex flex-wrap items-center gap-2">` · `app/(account)/setup/SetupForm.tsx` |  | SPEC.md §2 (2026-09-12) |  |
+| `setup.profile.purpose.legal`<br>`setup.ts` | marker | control · `<div class="flex flex-wrap items-center gap-2">` · `app/(account)/setup/SetupForm.tsx` |  | SPEC.md §2 (2026-09-12) |  |
+| `setup.profile.purpose.other`<br>`setup.ts` | marker | control · `<div class="flex flex-wrap items-center gap-2">` · `app/(account)/setup/SetupForm.tsx` |  | SPEC.md §2 (2026-09-12) |  |
+| `setup.profile.purpose.pricing`<br>`setup.ts` | marker | control · `<div class="flex flex-wrap items-center gap-2">` · `app/(account)/setup/SetupForm.tsx` |  | SPEC.md §2 (2026-09-12) |  |
+| `setup.profile.purpose.product`<br>`setup.ts` | marker | control · `<div class="flex flex-wrap items-center gap-2">` · `app/(account)/setup/SetupForm.tsx` |  | SPEC.md §2 (2026-09-12) |  |
 | `setup.profile.purposes`<br>`setup.ts` | marker | control · `<p class="rk-quiet">` · `app/(account)/setup/SetupForm.tsx` |  | SPEC.md §5 (2026-09-12) |  |
 | `setup.profile.site-name`<br>`setup.ts` | marker | — · placed with its group |  | SPEC.md §5 (2026-09-12) |  |
 | `setup.profile.title`<br>`setup.ts` | marker | control · `<div class="flex flex-wrap items-center gap-2">` · `app/(account)/setup/SetupForm.tsx` |  | SPEC.md §5 (2026-09-12) | 18 — sibling `setup.site-and-market.title` |
 | `setup.profile.voice.label`<br>`setup.ts` | marker | control · `<div class="flex flex-wrap items-center gap-2">` · `app/(account)/setup/SetupForm.tsx` |  | SPEC.md §5 (2026-09-12) | 26 — sibling `setup.market.label` |
 | `setup.profile.voice.later`<br>`setup.ts` | marker | control · `<p class="rk-quiet">` · `app/(account)/setup/SetupForm.tsx` |  | SPEC.md §5 (2026-09-12) |  |
+
+## S16 · Draft — App
+
+Screen `S16` · the set draws it as `current="draft"` (`docs/archive/2026-09-11/approved/full-set/screens/draft-light.png`).
+
+Every bracketed hint the set draws on this screen: `[page title 15]` · `[do-nothing explanation — owner’s]` · `[opening paragraph — generated, labelled below]` · `[section heading]` · `[body paragraph]` · `[grounded fact]` · `[body continues]` · `[source title]`
+
+| key | standing | where | the set says | fixed by | max |
+|---|---|---|---|---|---|
+| `draft.do-nothing.copilot`<br>`draft.ts` | empty | `DO_NOTHING_COPY_KEY` · `app/(account)/app/draft/[draftId]/model.ts` |  | REQ-045 c4 · §7 | 30 — sibling `draft.do-nothing.title` |
 
 ## S18 · Settings — App
 

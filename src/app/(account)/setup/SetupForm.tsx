@@ -63,7 +63,6 @@ import {
   type DestinationKind,
   type DnsPending,
   type DnsRecord,
-  type PublishingMode,
 } from "@/lib/publish/setup/cards";
 import { purposeCounts, type PagePurpose } from "@/lib/site-profile/types";
 import { checkLabel, type LabelRefusal } from "@/lib/publish/destinations/hosted/label";
@@ -157,7 +156,6 @@ export function SetupForm(p: { model: SetupScreenModel }): React.JSX.Element {
   );
   const [rivalDraft, setRivalDraft] = useState("");
   const [rivalRefusal, setRivalRefusal] = useState<RivalRefusal | null>(null);
-  const [mode, setMode] = useState<PublishingMode>(defaults.mode);
   const [destination, setDestination] = useState<DestinationKind>(
     defaults.destination,
   );
@@ -310,7 +308,6 @@ export function SetupForm(p: { model: SetupScreenModel }): React.JSX.Element {
       domain: state.siteDomain,
       category,
       competitors: state.rivals.map((rival) => rival.domain),
-      mode,
       destination:
         destination === "hosted"
           ? { kind: "hosted", label }
@@ -765,28 +762,10 @@ export function SetupForm(p: { model: SetupScreenModel }): React.JSX.Element {
         }
         testId={PUBLISHING_TEST_ID}
       >
-        {/* Two option pairs, as the set draws them: the mode, a rule, the
-              destination. Each card carries its own line, and the hosted
-              destination carries its CNAME record inside the option it
-              belongs to rather than under the whole card. */}
-        <div className="rk-pick" data-testid="setup-mode">
-          {p.model.cards.mode.map((option) => (
-            <OptionCard
-              key={option.mode}
-              title={copy(option.name)}
-              line={copy(option.copy)}
-              chosen={mode === option.mode}
-              badge={
-                option.preselected ? copy("setup.mode.default") : undefined
-              }
-              onChoose={() => setMode(option.mode)}
-              testId={`setup-mode-${option.mode}`}
-            />
-          ))}
-        </div>
-
-        <Divider />
-
+        {/* One option pair, as the set draws it: where the pages go. The
+              hosted destination carries its CNAME record inside the option it
+              belongs to rather than under the whole card, and the chosen
+              default carries the set's own badge. */}
         <div className="rk-pick" data-testid="setup-destination">
           {p.model.cards.destination.map((option) => (
             <OptionCard
@@ -794,6 +773,7 @@ export function SetupForm(p: { model: SetupScreenModel }): React.JSX.Element {
               title={copy(option.name)}
               line={copy(option.copy)}
               chosen={destination === option.kind}
+              badge={option.preselected ? copy("setup.mode.default") : undefined}
               onChoose={() => setDestination(option.kind)}
               testId={`setup-destination-${option.kind}`}
             >
@@ -833,6 +813,15 @@ export function SetupForm(p: { model: SetupScreenModel }): React.JSX.Element {
             )}
           </div>
         ) : null}
+
+        <Divider />
+
+        {/* §7's one mode, stated rather than chosen: the founder is told
+              what will happen to every page, and is offered no control over
+              it (REQ-025 c3). */}
+        <p className="rk-choice-d" data-testid="setup-publishing-line">
+          {copy("setup.mode.autopilot")}
+        </p>
       </IdiomCard>
 
       {submitRefusal === null ? null : (
