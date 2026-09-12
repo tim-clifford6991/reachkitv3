@@ -51,7 +51,9 @@
   },
   "publish.ts": {
     "owed": [],
-    "awaiting": [],
+    "awaiting": [
+      "publish.links.heading"
+    ],
     "ruled": 50
   },
   "report.ts": {
