@@ -74,7 +74,17 @@ const PRICING_HTML = `<!doctype html><html><body><h1>Pricing</h1>
   <h2>What does it cost?</h2><p>Plans start at 49 euro per month, billed
   monthly, with no seat minimum and a 14 day trial.</p></body></html>`;
 
-const READ_AT = new Date("2026-09-05T10:00:00.000Z");
+/**
+ * The instant the pass read the site — **an hour before this journey runs,
+ * not a calendar date**. It was `2026-09-05T10:00:00.000Z`; the report the
+ * journey stores carries it as `measuredAt`, and `_address/resolve.ts`
+ * offers a rescan once that is `FREE_RESCAN_WINDOW_D` whole days old — so
+ * on 2026-09-12 the last step read `{ kind: 'rescan' }` where it expects
+ * `{ kind: 'none' }`, on every branch and on `main` alike. Anchoring it to
+ * the run fixes the class rather than the day. Nothing reads it as a date:
+ * it travels as the `readAt` of two mocked reads.
+ */
+const READ_AT = new Date(Date.now() - 60 * 60 * 1000);
 
 vi.mock("@/lib/egress/safe-fetch", () => ({
   safeFetch: async (url: string): Promise<FetchOutcome> => {
