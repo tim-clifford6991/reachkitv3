@@ -18,6 +18,8 @@ jobs:
         with:
           script: |
             const body = context.payload.pull_request.body ?? "";
+            const files = await github.paginate(github.rest.pulls.listFiles, { owner: context.repo.owner, repo: context.repo.repo, pull_number: context.payload.pull_request.number, per_page: 100 });
+            if (files.length && files.every(f => /^(docs\/|README\.md$|CLAUDE\.md$)/.test(f.filename))) { core.info('docs-only PR: the Closes rule is waived (PROCESS, 2026-09-12).'); return; }
             const refs = [...body.matchAll(/\b(?:closes|fixes|resolves)\s+#(\d+)/gi)].map(m => Number(m[1]));
             const unique = [...new Set(refs)];
             if (unique.length !== 1) {
